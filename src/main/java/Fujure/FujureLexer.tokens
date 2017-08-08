@@ -1,0 +1,8 @@
+Surrogate_id_SYMB_0=1
+Surrogate_id_SYMB_1=2
+INTEGER=3
+IDENT=4
+WS=5
+ErrorToken=6
+'='=1
+'def'=2
