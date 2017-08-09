@@ -1,0 +1,4 @@
+rootProject.name = 'fujure'
+
+include 'src:main:fjc-bnfc',
+        'src:main:fujure-java-compiler'
