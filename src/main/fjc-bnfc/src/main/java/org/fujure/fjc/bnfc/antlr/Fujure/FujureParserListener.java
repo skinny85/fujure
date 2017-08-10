@@ -8,15 +8,15 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface FujureParserListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by the {@code VDef}
-	 * labeled alternative in {@link FujureParser#valueDef}.
+	 * Enter a parse tree produced by the {@code ValueDef}
+	 * labeled alternative in {@link FujureParser#valDef}.
 	 * @param ctx the parse tree
 	 */
-	void enterVDef(FujureParser.VDefContext ctx);
+	void enterValueDef(FujureParser.ValueDefContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code VDef}
-	 * labeled alternative in {@link FujureParser#valueDef}.
+	 * Exit a parse tree produced by the {@code ValueDef}
+	 * labeled alternative in {@link FujureParser#valDef}.
 	 * @param ctx the parse tree
 	 */
-	void exitVDef(FujureParser.VDefContext ctx);
+	void exitValueDef(FujureParser.ValueDefContext ctx);
 }

@@ -16,13 +16,13 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVDef(FujureParser.VDefContext ctx) { }
+	@Override public void enterValueDef(FujureParser.ValueDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVDef(FujureParser.VDefContext ctx) { }
+	@Override public void exitValueDef(FujureParser.ValueDefContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

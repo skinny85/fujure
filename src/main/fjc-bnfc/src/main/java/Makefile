@@ -15,7 +15,7 @@ test: absyn org/fujure/fjc/bnfc/antlr/Fujure/FujureLexer.class org/fujure/fjc/bn
 %.class: %.java
 	${JAVAC} ${JAVAC_FLAGS} $^
 
-absyn: org/fujure/fjc/bnfc/antlr/Fujure/Absyn/ValueDef.java org/fujure/fjc/bnfc/antlr/Fujure/Absyn/VDef.java
+absyn: org/fujure/fjc/bnfc/antlr/Fujure/Absyn/ValDef.java org/fujure/fjc/bnfc/antlr/Fujure/Absyn/ValueDef.java
 	${JAVAC} ${JAVAC_FLAGS} $^
 
 org/fujure/fjc/bnfc/antlr/Fujure/FujureLexer.java: org/fujure/fjc/bnfc/antlr/Fujure/FujureLexer.g4
@@ -36,7 +36,7 @@ clean:
 distclean: vclean
 
 vclean:
-	 rm -f org/fujure/fjc/bnfc/antlr/Fujure/Absyn/ValueDef.java org/fujure/fjc/bnfc/antlr/Fujure/Absyn/VDef.java org/fujure/fjc/bnfc/antlr/Fujure/Absyn/ValueDef.class org/fujure/fjc/bnfc/antlr/Fujure/Absyn/VDef.class
+	 rm -f org/fujure/fjc/bnfc/antlr/Fujure/Absyn/ValDef.java org/fujure/fjc/bnfc/antlr/Fujure/Absyn/ValueDef.java org/fujure/fjc/bnfc/antlr/Fujure/Absyn/ValDef.class org/fujure/fjc/bnfc/antlr/Fujure/Absyn/ValueDef.class
 	 rm -f org/fujure/fjc/bnfc/antlr/Fujure/Absyn/*.class
 	 rmdir org/fujure/fjc/bnfc/antlr/Fujure/Absyn/
 	 rm -f org/fujure/fjc/bnfc/antlr/Fujure/FujureLexer.g4 org/fujure/fjc/bnfc/antlr/Fujure/FujureParser.g4 org/fujure/fjc/bnfc/antlr/Fujure/FujureLexer.java org/fujure/fjc/bnfc/antlr/Fujure/VisitSkel.java org/fujure/fjc/bnfc/antlr/Fujure/ComposVisitor.java org/fujure/fjc/bnfc/antlr/Fujure/AbstractVisitor.java org/fujure/fjc/bnfc/antlr/Fujure/FoldVisitor.java org/fujure/fjc/bnfc/antlr/Fujure/AllVisitor.java org/fujure/fjc/bnfc/antlr/Fujure/PrettyPrinter.java org/fujure/fjc/bnfc/antlr/Fujure/Skeleton.java org/fujure/fjc/bnfc/antlr/Fujure/Test.java org/fujure/fjc/bnfc/antlr/Fujure/FujureParser.java org/fujure/fjc/bnfc/antlr/Fujure/*.class

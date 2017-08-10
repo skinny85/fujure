@@ -20,9 +20,9 @@ public class FujureParser extends Parser {
 		Surrogate_id_SYMB_0=1, Surrogate_id_SYMB_1=2, INTEGER=3, IDENT=4, WS=5, 
 		ErrorToken=6;
 	public static final int
-		RULE_valueDef = 0;
+		RULE_valDef = 0;
 	public static final String[] ruleNames = {
-		"valueDef"
+		"valDef"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -81,53 +81,53 @@ public class FujureParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
-	public static class ValueDefContext extends ParserRuleContext {
-		public org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef result;
-		public ValueDefContext(ParserRuleContext parent, int invokingState) {
+	public static class ValDefContext extends ParserRuleContext {
+		public org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValDef result;
+		public ValDefContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_valueDef; }
+		@Override public int getRuleIndex() { return RULE_valDef; }
 	 
-		public ValueDefContext() { }
-		public void copyFrom(ValueDefContext ctx) {
+		public ValDefContext() { }
+		public void copyFrom(ValDefContext ctx) {
 			super.copyFrom(ctx);
 			this.result = ctx.result;
 		}
 	}
-	public static class VDefContext extends ValueDefContext {
+	public static class ValueDefContext extends ValDefContext {
 		public Token p_1_2;
 		public Token p_1_4;
 		public TerminalNode Surrogate_id_SYMB_1() { return getToken(FujureParser.Surrogate_id_SYMB_1, 0); }
 		public TerminalNode Surrogate_id_SYMB_0() { return getToken(FujureParser.Surrogate_id_SYMB_0, 0); }
 		public TerminalNode IDENT() { return getToken(FujureParser.IDENT, 0); }
 		public TerminalNode INTEGER() { return getToken(FujureParser.INTEGER, 0); }
-		public VDefContext(ValueDefContext ctx) { copyFrom(ctx); }
+		public ValueDefContext(ValDefContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterVDef(this);
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterValueDef(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitVDef(this);
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitValueDef(this);
 		}
 	}
 
-	public final ValueDefContext valueDef() throws RecognitionException {
-		ValueDefContext _localctx = new ValueDefContext(_ctx, getState());
-		enterRule(_localctx, 0, RULE_valueDef);
+	public final ValDefContext valDef() throws RecognitionException {
+		ValDefContext _localctx = new ValDefContext(_ctx, getState());
+		enterRule(_localctx, 0, RULE_valDef);
 		try {
-			_localctx = new VDefContext(_localctx);
+			_localctx = new ValueDefContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(2);
 			match(Surrogate_id_SYMB_1);
 			setState(3);
-			((VDefContext)_localctx).p_1_2 = match(IDENT);
+			((ValueDefContext)_localctx).p_1_2 = match(IDENT);
 			setState(4);
 			match(Surrogate_id_SYMB_0);
 			setState(5);
-			((VDefContext)_localctx).p_1_4 = match(INTEGER);
-			 ((VDefContext)_localctx).result =  new org.fujure.fjc.bnfc.antlr.Fujure.Absyn.VDef(((VDefContext)_localctx).p_1_2.getText(),Integer.parseInt(((VDefContext)_localctx).p_1_4.getText())); 
+			((ValueDefContext)_localctx).p_1_4 = match(INTEGER);
+			 ((ValueDefContext)_localctx).result =  new org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef(((ValueDefContext)_localctx).p_1_2.getText(),Integer.parseInt(((ValueDefContext)_localctx).p_1_4.getText())); 
 			}
 		}
 		catch (RecognitionException re) {

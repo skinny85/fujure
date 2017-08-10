@@ -5,6 +5,6 @@ options {
   tokenVocab = FujureLexer;
 }
 
-valueDef returns [ org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef result ] : Surrogate_id_SYMB_1 p_1_2=IDENT Surrogate_id_SYMB_0 p_1_4=INTEGER  { $result = new org.fujure.fjc.bnfc.antlr.Fujure.Absyn.VDef($p_1_2.getText(),Integer.parseInt($p_1_4.getText())); } # VDef 
+valDef returns [ org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValDef result ] : Surrogate_id_SYMB_1 p_1_2=IDENT Surrogate_id_SYMB_0 p_1_4=INTEGER  { $result = new org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef($p_1_2.getText(),Integer.parseInt($p_1_4.getText())); } # ValueDef 
 ;
 

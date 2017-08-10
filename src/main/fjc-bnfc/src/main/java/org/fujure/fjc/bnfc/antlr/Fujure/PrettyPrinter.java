@@ -63,7 +63,7 @@ public class PrettyPrinter
 
 
   //  print and show methods are defined for each category.
-  public static String print(org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef foo)
+  public static String print(org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValDef foo)
   {
     pp(foo, 0);
     trim();
@@ -71,7 +71,7 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String show(org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef foo)
+  public static String show(org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValDef foo)
   {
     sh(foo);
     String temp = buf_.toString();
@@ -80,30 +80,30 @@ public class PrettyPrinter
   }
   /***   You shouldn't need to change anything beyond this point.   ***/
 
-  private static void pp(org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef foo, int _i_)
+  private static void pp(org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValDef foo, int _i_)
   {
-    if (foo instanceof org.fujure.fjc.bnfc.antlr.Fujure.Absyn.VDef)
+    if (foo instanceof org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef)
     {
-       org.fujure.fjc.bnfc.antlr.Fujure.Absyn.VDef _vdef = (org.fujure.fjc.bnfc.antlr.Fujure.Absyn.VDef) foo;
+       org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef _valuedef = (org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("def");
-       pp(_vdef.ident_, 0);
+       pp(_valuedef.ident_, 0);
        render("=");
-       pp(_vdef.integer_, 0);
+       pp(_valuedef.integer_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
 
 
-  private static void sh(org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef foo)
+  private static void sh(org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValDef foo)
   {
-    if (foo instanceof org.fujure.fjc.bnfc.antlr.Fujure.Absyn.VDef)
+    if (foo instanceof org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef)
     {
-       org.fujure.fjc.bnfc.antlr.Fujure.Absyn.VDef _vdef = (org.fujure.fjc.bnfc.antlr.Fujure.Absyn.VDef) foo;
+       org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef _valuedef = (org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef) foo;
        render("(");
-       render("VDef");
-       sh(_vdef.ident_);
-       sh(_vdef.integer_);
+       render("ValueDef");
+       sh(_valuedef.ident_);
+       sh(_valuedef.integer_);
        render(")");
     }
   }

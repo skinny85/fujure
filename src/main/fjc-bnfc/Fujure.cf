@@ -1,1 +1,1 @@
-VDef . ValueDef ::= "def" Ident "=" Integer ;
+ValueDef . ValDef ::= "def" Ident "=" Integer ;

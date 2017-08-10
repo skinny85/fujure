@@ -10,8 +10,8 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
     public abstract R leaf(A arg);
     public abstract R combine(R x, R y, A arg);
 
-/* ValueDef */
-    public R visit(org.fujure.fjc.bnfc.antlr.Fujure.Absyn.VDef p, A arg) {
+/* ValDef */
+    public R visit(org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg) {
       R r = leaf(arg);
       return r;
     }
