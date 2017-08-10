@@ -1,5 +1,0 @@
-*.tokens
-FujureLexer.java
-FujureParser.java
-FujureParserListener.java
-FujureParserBaseListener.java

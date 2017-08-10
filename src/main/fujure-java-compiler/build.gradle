@@ -4,12 +4,6 @@ repositories {
     mavenCentral()
 }
 
-task run(type: JavaExec) {
-    main = "Main"
-    classpath = sourceSets.main.runtimeClasspath
-    args = ["example.fjr"]
-}
-
 dependencies {
     compile project(':src:main:fjc-bnfc')
 }
