@@ -1,0 +1,12 @@
+allprojects {
+    group 'org.fujure'
+    version '0.0.1'
+}
+
+subprojects {
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin: 'java'
+}
