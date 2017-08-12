@@ -7,7 +7,7 @@ object Main {
     @JvmStatic
     fun main(args: Array<String>) {
         if (args.isEmpty()) {
-            println("Usage: fjc <file-to-compile>.fjr")
+            println("Usage: fjc file1.fjr file2.fjr ...")
         } else {
             compileFiles(*args)
         }
@@ -26,7 +26,7 @@ object Main {
             val result = parsedFile.ast.accept({ valueDef, str ->
                 "def ${valueDef.ident_} = ${valueDef.integer_} (input: $str)"
             }, "5")
-            println("Result is: $result")
+            println("Result for ${parsedFile.userProvidedFile}:\n$result")
         }
     }
 
@@ -35,6 +35,12 @@ object Main {
         for (file in files) {
             val tryOpenFile = ArgumentFile.openFile(file)
             when (tryOpenFile) {
+                is ArgumentFile.InvalidFilename -> {
+                    println("Invalid file name: $file. Fujure source files must have the .fjr extension")
+                }
+                is ArgumentFile.MissingFile -> {
+                    println("Error opening $file: file not found")
+                }
                 is ArgumentFile.FailedFile -> {
                     println("Error opening $file: ${tryOpenFile.error.message}")
                 }
