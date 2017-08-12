@@ -10,7 +10,7 @@ import java.util.BitSet
 
 class FjcAntlrErrorListener() : ANTLRErrorListener {
     private val syntaxErrors = mutableListOf<SyntaxError>()
-    val hasSyntaxErrors: Boolean get() = !syntaxErrors.isEmpty()
+    val hasErrors: Boolean get() = !syntaxErrors.isEmpty()
     val errors: List<SyntaxError> get() = syntaxErrors
 
     override fun syntaxError(recognizer: Recognizer<*, *>, offendingSymbol: Any?, line: Int,

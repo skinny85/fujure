@@ -16,7 +16,7 @@ sealed class ReadFile(val userProvidedFile: String) {
 
             val valDefContext = parser.valDef()
 
-            return if (errorListener.hasSyntaxErrors) {
+            return if (errorListener.hasErrors) {
                 ReadFile.UnparsedFile(openFile.userProvidedFile, errorListener.errors)
             } else {
                 ReadFile.ParsedFile(openFile.userProvidedFile, valDefContext.result)

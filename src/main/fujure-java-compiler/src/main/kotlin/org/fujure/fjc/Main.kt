@@ -59,11 +59,11 @@ object Main {
             when (tryParseFile) {
                 is ReadFile.UnparsedFile -> {
                     println("Couldn't parse ${tryParseFile.userProvidedFile}:")
-                    for (error in tryParseFile.errors) {
-                        println("${tryParseFile.userProvidedFile}:${error.line},${error.column}: ${error.msg}")
+                    for ((line, column, msg) in tryParseFile.errors) {
+                        println("${tryParseFile.userProvidedFile}:${line},${column}: ${msg}")
                     }
                 }
-               is ReadFile.ParsedFile -> {
+                is ReadFile.ParsedFile -> {
                     parsedFiles.add(tryParseFile)
                 }
             }
