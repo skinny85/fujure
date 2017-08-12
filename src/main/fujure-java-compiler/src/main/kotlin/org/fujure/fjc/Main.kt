@@ -1,45 +1,67 @@
 package org.fujure.fjc
 
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
-import org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValDef
-import org.fujure.fjc.bnfc.antlr.Fujure.FujureLexer
-import org.fujure.fjc.bnfc.antlr.Fujure.FujureParser
-import org.fujure.fjc.internal.FjcAntlrErrorListener
+import org.fujure.fjc.internal.ArgumentFile
+import org.fujure.fjc.internal.ReadFile
 
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
         if (args.isEmpty()) {
-            println("Usage: Main <file-to-compile>.fjr")
+            println("Usage: fjc <file-to-compile>.fjr")
         } else {
-            compileFile(args[0])
+            compileFiles(*args)
         }
     }
 
-    private fun compileFile(file: String) {
-        println("Compiling $file")
+    private fun compileFiles(vararg files: String) {
+        val openFiles = openFiles(*files)
+        if (openFiles.size != files.size)
+            return
 
-        val lexer = FujureLexer(CharStreams.fromFileName(file))
+        val parsedFiles = parseFiles(openFiles)
+        if (parsedFiles.size != files.size)
+            return
 
-        val parser = FujureParser(CommonTokenStream(lexer))
-        parser.removeErrorListeners() // remove the default console listener
-        val errorListener = FjcAntlrErrorListener()
-        parser.addErrorListener(errorListener)
-
-        val valDefContext = parser.valDef()
-
-        if (errorListener.hasSyntaxErrors) {
-            println("Couldn't parse $file")
-            errorListener.forEachError { syntaxError ->
-                println("$file:${syntaxError.line},${syntaxError.column}: ${syntaxError.msg}")
-            }
-        } else {
-            val valDef: ValDef = valDefContext.result
-            val result = valDef.accept({ valueDef, str ->
+        for (parsedFile in parsedFiles) {
+            val result = parsedFile.ast.accept({ valueDef, str ->
                 "def ${valueDef.ident_} = ${valueDef.integer_} (input: $str)"
             }, "5")
             println("Result is: $result")
         }
+    }
+
+    private fun openFiles(vararg files: String): List<ArgumentFile.OpenedFile> {
+        val openFiles = mutableListOf<ArgumentFile.OpenedFile>()
+        for (file in files) {
+            val tryOpenFile = ArgumentFile.openFile(file)
+            when (tryOpenFile) {
+                is ArgumentFile.FailedFile -> {
+                    println("Error opening $file: ${tryOpenFile.error.message}")
+                }
+                is ArgumentFile.OpenedFile -> {
+                    openFiles.add(tryOpenFile)
+                }
+            }
+        }
+        return openFiles
+    }
+
+    private fun parseFiles(openFiles: List<ArgumentFile.OpenedFile>): List<ReadFile.ParsedFile> {
+        val parsedFiles = mutableListOf<ReadFile.ParsedFile>()
+        for (openFile in openFiles) {
+            val tryParseFile = ReadFile.parse(openFile)
+            when (tryParseFile) {
+                is ReadFile.UnparsedFile -> {
+                    println("Couldn't parse ${tryParseFile.userProvidedFile}:")
+                    for (error in tryParseFile.errors) {
+                        println("${tryParseFile.userProvidedFile}:${error.line},${error.column}: ${error.msg}")
+                    }
+                }
+               is ReadFile.ParsedFile -> {
+                    parsedFiles.add(tryParseFile)
+                }
+            }
+        }
+        return parsedFiles
     }
 }

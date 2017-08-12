@@ -11,14 +11,10 @@ import java.util.BitSet
 class FjcAntlrErrorListener() : ANTLRErrorListener {
     private val syntaxErrors = mutableListOf<SyntaxError>()
     val hasSyntaxErrors: Boolean get() = !syntaxErrors.isEmpty()
-
-    fun forEachError(closure: (SyntaxError) -> Unit) {
-        syntaxErrors.forEach(closure)
-    }
+    val errors: List<SyntaxError> get() = syntaxErrors
 
     override fun syntaxError(recognizer: Recognizer<*, *>, offendingSymbol: Any?, line: Int,
                              charPositionInLine: Int, msg: String, e: RecognitionException?) {
-//        println("FjcAntlrErrorListener.syntaxError($line, $charPositionInLine, $msg) called")
         syntaxErrors.add(SyntaxError(line, charPositionInLine, msg))
     }
 
