@@ -17,6 +17,6 @@ if it succeeds, commit the changed/added files in `src/main/java`.
 
 BNFC is actually quite tricky to install, as it's a Haskell project.
 The simplest way seems to be compiling it from source -
-try the instructions [here](https://github.com/BNFC/bnfc#installation).
+try the instructions [here](https://github.com/BNFC/bnfc#requirements).
 After the build succeeds, the executable will be somewhere inside the `source` directory -
 for me, it was `<git_repo_root>/source/dist/build/bnfc/bnfc`.
