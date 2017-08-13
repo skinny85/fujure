@@ -12,9 +12,14 @@ buildscript {
 
 apply plugin: 'kotlin'
 
+repositories {
+    jcenter()
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     compile group: 'com.squareup', name: 'javapoet', version: '1.9.0'
+    compile "com.xenomachina:kotlin-argparser:2.0.3"
 
     compile project(':src:main:fjc-bnfc')
 }
