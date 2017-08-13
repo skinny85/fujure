@@ -1,6 +1,8 @@
 package org.fujure.fjc
 
 import org.fujure.fjc.internal.ArgumentFile
+import org.fujure.fjc.internal.CodeGenResult
+import org.fujure.fjc.internal.CodeGenerator
 import org.fujure.fjc.internal.ReadFile
 
 object Main {
@@ -22,11 +24,12 @@ object Main {
         if (parsedFiles.size != files.size)
             return
 
-        for (parsedFile in parsedFiles) {
-            val result = parsedFile.ast.accept({ valueDef, str ->
-                "def ${valueDef.ident_} = ${valueDef.integer_} (input: $str)"
-            }, "5")
-            println("Result for ${parsedFile.userProvidedFile}:\n$result")
+        val codeGenerator = CodeGenerator(parsedFiles)
+        val codeGenResults = codeGenerator.generate()
+        for (codeGenResult in codeGenResults) {
+            if (codeGenResult is CodeGenResult.Failure) {
+                println("Error compiling ${codeGenResult.userProvidedFile}: ${codeGenResult.error.message}")
+            }
         }
     }
 
@@ -36,7 +39,7 @@ object Main {
             val tryOpenFile = ArgumentFile.openFile(file)
             openFiles.add(when (tryOpenFile) {
                 is ArgumentFile.InvalidFilename -> {
-                    println("Invalid file name: $file. Fujure source files must have the .fjr extension")
+                    println("Invalid file name: '$file'. Fujure source files must have the .fjr extension")
                     null
                 }
                 is ArgumentFile.MissingFile -> {
