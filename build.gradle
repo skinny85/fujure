@@ -6,7 +6,24 @@ allprojects {
 subprojects {
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+    publishing {
+        repositories {
+            maven {
+                url "${rootProject.projectDir}/repo"
+            }
+        }
+    }
 }

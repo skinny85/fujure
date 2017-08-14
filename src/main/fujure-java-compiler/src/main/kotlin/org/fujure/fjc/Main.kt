@@ -20,6 +20,7 @@ object Main {
         }
     }
 
+    @JvmStatic
     fun mainReturningExitCode(args: Array<String>): Int {
         val compilerArgs = CompilerArgs(ArgParser(args))
 

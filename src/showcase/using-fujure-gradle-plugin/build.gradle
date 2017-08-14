@@ -1,0 +1,15 @@
+buildscript {
+    repositories {
+        maven {
+            url uri('../../../repo')
+        }
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath "org.fujure:fujure-gradle-plugin:0.0.1"
+    }
+}
+
+apply plugin: 'fujure'

@@ -12,10 +12,6 @@ buildscript {
 
 apply plugin: 'kotlin'
 
-repositories {
-    jcenter()
-}
-
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     compile group: 'com.squareup', name: 'javapoet', version: '1.9.0'

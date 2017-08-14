@@ -1,4 +1,5 @@
 rootProject.name = 'fujure'
 
 include 'src:main:fjc-bnfc',
-        'src:main:fujure-java-compiler'
+        'src:main:fujure-java-compiler',
+        'src:tools:fujure-gradle-plugin'
