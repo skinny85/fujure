@@ -7,7 +7,8 @@ import java.io.File
 import java.io.IOException
 import javax.lang.model.element.Modifier
 
-class CodeGenerator(private val parsedFiles: List<ReadFile.ParsedFile>) {
+class CodeGenerator(private val parsedFiles: List<ReadFile.ParsedFile>,
+                    private val outputDir: String) {
     fun generate(): List<CodeGenResult> {
         val ret = mutableListOf<CodeGenResult>()
         for (parsedFile in parsedFiles) {
@@ -31,7 +32,7 @@ class CodeGenerator(private val parsedFiles: List<ReadFile.ParsedFile>) {
         }, "")
 
         val javaFile = JavaFile.builder("", typeSpec).build()
-        val destFile = File(".", "$className.java")
+        val destFile = File(outputDir, "$className.java")
 
         return try {
             javaFile.writeTo(destFile.parentFile)

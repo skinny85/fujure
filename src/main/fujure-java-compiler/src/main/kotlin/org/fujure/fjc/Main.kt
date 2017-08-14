@@ -48,11 +48,12 @@ object Main {
                 compilerArgs.printUsageAndHelpTip()
                 return 2
             }
-            return compileFiles(files)
+            val outputDir = compilerArgs.output
+            return compileFiles(files, outputDir)
         }
     }
 
-    private fun compileFiles(files: List<String>): Int {
+    private fun compileFiles(files: List<String>, outputDir: String): Int {
         val openFiles = openFiles(files)
         if (openFiles.size != files.size)
             return 3
@@ -61,7 +62,7 @@ object Main {
         if (parsedFiles.size != files.size)
             return 4
 
-        val codeGenerator = CodeGenerator(parsedFiles)
+        val codeGenerator = CodeGenerator(parsedFiles, outputDir)
         val codeGenResults = codeGenerator.generate()
         for (codeGenResult in codeGenResults) {
             if (codeGenResult is CodeGenResult.Failure) {
