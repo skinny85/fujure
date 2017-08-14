@@ -4,6 +4,7 @@ import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.MissingRequiredPositionalArgumentException
 import com.xenomachina.argparser.OptionMissingRequiredArgumentException
 import com.xenomachina.argparser.ShowHelpException
+import com.xenomachina.argparser.UnrecognizedOptionException
 import com.xenomachina.argparser.default
 import org.fujure.fjc.internal.ArgumentFile
 import org.fujure.fjc.internal.CodeGenResult
@@ -39,6 +40,10 @@ object Main {
                 return 2
             } catch (e: OptionMissingRequiredArgumentException) {
                 // no value provided to eg. -o
+                println("fjc: ${e.message}")
+                compilerArgs.printUsageAndHelpTip()
+                return 2
+            } catch (e: UnrecognizedOptionException) {
                 println("fjc: ${e.message}")
                 compilerArgs.printUsageAndHelpTip()
                 return 2
