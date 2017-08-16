@@ -1,5 +1,5 @@
-// Generated from org/fujure/fjc/bnfc/antlr/Fujure/FujureLexer.g4 by ANTLR 4.7
-package org.fujure.fjc.bnfc.antlr.Fujure;
+// Generated from org/fujure/fbc/bnfc/antlr/Fujure/FujureLexer.g4 by ANTLR 4.7
+package org.fujure.fbc.bnfc.antlr.Fujure;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

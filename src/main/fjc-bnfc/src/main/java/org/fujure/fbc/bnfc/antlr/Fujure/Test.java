@@ -1,6 +1,6 @@
-package org.fujure.fjc.bnfc.antlr.Fujure;
-import org.fujure.fjc.bnfc.antlr.Fujure.*;
-import org.fujure.fjc.bnfc.antlr.Fujure.Absyn.*;
+package org.fujure.fbc.bnfc.antlr.Fujure;
+import org.fujure.fbc.bnfc.antlr.Fujure.*;
+import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.*;
 import java.io.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.*;
@@ -63,7 +63,7 @@ public class Test
             p.addErrorListener(new BNFCErrorListener());
   }
   
-  public org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValDef parse() throws Exception
+  public org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef parse() throws Exception
   {
     /* The default parser is the first-defined entry point. */
     /* Other options are: */
@@ -71,7 +71,7 @@ public class Test
     FujureParser.ValDefContext pc = p.valDef();
     org.antlr.v4.runtime.Token _tkn = p.getInputStream().getTokenSource().nextToken();
     if(_tkn.getType() != -1) throw new TestError("Stream does not end with EOF",_tkn.getLine(),_tkn.getCharPositionInLine());
-    org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValDef ast = pc.result;
+    org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef ast = pc.result;
     System.out.println();
     System.out.println("Parse Succesful!");
     System.out.println();

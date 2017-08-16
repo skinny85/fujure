@@ -1,5 +1,5 @@
-// Generated from org/fujure/fjc/bnfc/antlr/Fujure/FujureParser.g4 by ANTLR 4.7
-package org.fujure.fjc.bnfc.antlr.Fujure;
+// Generated from org/fujure/fbc/bnfc/antlr/Fujure/FujureParser.g4 by ANTLR 4.7
+package org.fujure.fbc.bnfc.antlr.Fujure;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**

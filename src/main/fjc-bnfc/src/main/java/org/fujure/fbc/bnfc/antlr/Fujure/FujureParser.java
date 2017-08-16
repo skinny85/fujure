@@ -1,5 +1,5 @@
-// Generated from org/fujure/fjc/bnfc/antlr/Fujure/FujureParser.g4 by ANTLR 4.7
-package org.fujure.fjc.bnfc.antlr.Fujure;
+// Generated from org/fujure/fbc/bnfc/antlr/Fujure/FujureParser.g4 by ANTLR 4.7
+package org.fujure.fbc.bnfc.antlr.Fujure;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -82,7 +82,7 @@ public class FujureParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class ValDefContext extends ParserRuleContext {
-		public org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValDef result;
+		public org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef result;
 		public ValDefContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -127,7 +127,7 @@ public class FujureParser extends Parser {
 			match(Surrogate_id_SYMB_0);
 			setState(5);
 			((ValueDefContext)_localctx).p_1_4 = match(INTEGER);
-			 ((ValueDefContext)_localctx).result =  new org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef(((ValueDefContext)_localctx).p_1_2.getText(),Integer.parseInt(((ValueDefContext)_localctx).p_1_4.getText())); 
+			 ((ValueDefContext)_localctx).result =  new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef(((ValueDefContext)_localctx).p_1_2.getText(),Integer.parseInt(((ValueDefContext)_localctx).p_1_4.getText())); 
 			}
 		}
 		catch (RecognitionException re) {

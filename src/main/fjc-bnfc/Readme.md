@@ -5,8 +5,9 @@ To regenerate these files after a change to `Fujure.cf`,
 issue a command in this directory similar to:
 
 ```bash
-bnfc --java --antlr4 -m -o src/main/java -p org.fujure.fjc.bnfc.antlr Fujure.cf
+bnfc --java --antlr4 -m -o src/main/java -p org.fujure.fbc.bnfc.antlr Fujure.cf
 CLASSPATH=`pwd`/lib/* make -C src/main/java
+make clean -C src/main/java # this only removes the generated .class files
 ```
 
 After `make` succeeds, Gradle should take over compiling the generated files.

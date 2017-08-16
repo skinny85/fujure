@@ -1,5 +1,5 @@
-package org.fujure.fjc.bnfc.antlr.Fujure;
-import org.fujure.fjc.bnfc.antlr.Fujure.Absyn.*;
+package org.fujure.fbc.bnfc.antlr.Fujure;
+import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.*;
 /*** BNFC-Generated Visitor Design Pattern Skeleton. ***/
 /* This implements the common visitor design pattern.
    Tests show it to be slightly less efficient than the
@@ -11,7 +11,7 @@ public class VisitSkel
 {
   public class ValDefVisitor<R,A> implements ValDef.Visitor<R,A>
   {
-    public R visit(org.fujure.fjc.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg)
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg)
     { /* Code For ValueDef Goes Here */
       //p.ident_;
       //p.integer_;
