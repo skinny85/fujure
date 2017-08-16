@@ -17,5 +17,5 @@ dependencies {
     compile group: 'com.squareup', name: 'javapoet', version: '1.9.0'
     compile "com.xenomachina:kotlin-argparser:2.0.3"
 
-    compile project(':src:main:fjc-bnfc')
+    compile project(':src:main:fbc-bnfc')
 }
