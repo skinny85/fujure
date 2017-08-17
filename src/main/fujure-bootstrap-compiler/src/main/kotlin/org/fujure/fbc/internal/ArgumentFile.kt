@@ -1,4 +1,4 @@
-package org.fujure.fjc.internal
+package org.fujure.fbc.internal
 
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CharStreams

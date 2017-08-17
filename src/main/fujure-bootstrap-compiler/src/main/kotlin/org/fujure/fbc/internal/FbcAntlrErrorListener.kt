@@ -1,4 +1,4 @@
-package org.fujure.fjc.internal
+package org.fujure.fbc.internal
 
 import org.antlr.v4.runtime.ANTLRErrorListener
 import org.antlr.v4.runtime.Parser
@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.atn.ATNConfigSet
 import org.antlr.v4.runtime.dfa.DFA
 import java.util.BitSet
 
-class FjcAntlrErrorListener() : ANTLRErrorListener {
+class FbcAntlrErrorListener : ANTLRErrorListener {
     private val syntaxErrors = mutableListOf<SyntaxError>()
     val hasErrors: Boolean get() = !syntaxErrors.isEmpty()
     val errors: List<SyntaxError> get() = syntaxErrors

@@ -1,6 +1,6 @@
 package org.fujure.gradle
 
-import org.fujure.fjc.Main
+import org.fujure.fbc.Main
 import org.gradle.api.Project
 import org.gradle.api.Plugin
 

@@ -1,3 +1,3 @@
-package org.fujure.fjc.internal
+package org.fujure.fbc.internal
 
 data class SyntaxError(val line: Int, val column: Int, val msg: String)

@@ -1,4 +1,4 @@
-package org.fujure.fjc.internal
+package org.fujure.fbc.internal
 
 import org.antlr.v4.runtime.CommonTokenStream
 import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef
@@ -11,7 +11,7 @@ sealed class ReadFile(val userProvidedFile: String) {
             val lexer = FujureLexer(openFile.stream)
             val parser = FujureParser(CommonTokenStream(lexer))
             parser.removeErrorListeners() // remove the default console listener
-            val errorListener = FjcAntlrErrorListener()
+            val errorListener = FbcAntlrErrorListener()
             parser.addErrorListener(errorListener)
 
             val valDefContext = parser.valDef()

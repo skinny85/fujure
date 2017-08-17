@@ -1,4 +1,4 @@
-package org.fujure.fjc
+package org.fujure.fbc
 
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.MissingRequiredPositionalArgumentException
@@ -6,10 +6,10 @@ import com.xenomachina.argparser.OptionMissingRequiredArgumentException
 import com.xenomachina.argparser.ShowHelpException
 import com.xenomachina.argparser.UnrecognizedOptionException
 import com.xenomachina.argparser.default
-import org.fujure.fjc.internal.ArgumentFile
-import org.fujure.fjc.internal.CodeGenResult
-import org.fujure.fjc.internal.CodeGenerator
-import org.fujure.fjc.internal.ReadFile
+import org.fujure.fbc.internal.ArgumentFile
+import org.fujure.fbc.internal.CodeGenResult
+import org.fujure.fbc.internal.CodeGenerator
+import org.fujure.fbc.internal.ReadFile
 
 object Main {
     @JvmStatic
@@ -36,16 +36,16 @@ object Main {
                 return 0
             } catch (_: MissingRequiredPositionalArgumentException) {
                 // no source files provided
-                println("fjc: No source files provided")
+                println("fbc: No source files provided")
                 compilerArgs.printUsageAndHelpTip()
                 return 2
             } catch (e: OptionMissingRequiredArgumentException) {
                 // no value provided to eg. -o
-                println("fjc: ${e.message}")
+                println("fbc: ${e.message}")
                 compilerArgs.printUsageAndHelpTip()
                 return 2
             } catch (e: UnrecognizedOptionException) {
-                println("fjc: ${e.message}")
+                println("fbc: ${e.message}")
                 compilerArgs.printUsageAndHelpTip()
                 return 2
             }
@@ -145,6 +145,6 @@ class CompilerArgs(parser: ArgParser) {
     }
 
     companion object {
-        private val USAGE_STRING = "Usage: fjc <options> file1.fjr file2.fjr ..."
+        private val USAGE_STRING = "Usage: fbc <options> file1.fjr file2.fjr ..."
     }
 }

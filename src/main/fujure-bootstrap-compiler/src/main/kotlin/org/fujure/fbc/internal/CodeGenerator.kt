@@ -1,4 +1,4 @@
-package org.fujure.fjc.internal
+package org.fujure.fbc.internal
 
 import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile
