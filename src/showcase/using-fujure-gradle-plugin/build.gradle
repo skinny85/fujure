@@ -12,4 +12,12 @@ buildscript {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 apply plugin: 'fujure'
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}

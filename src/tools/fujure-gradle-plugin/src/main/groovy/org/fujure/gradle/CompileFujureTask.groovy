@@ -5,6 +5,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
 class CompileFujureTask extends DefaultTask {
+    final String outputDir = "generated-src"
+
     @TaskAction
     protected void compile() {
         println "Calling Fujure compiler (from a task)"
@@ -12,7 +14,7 @@ class CompileFujureTask extends DefaultTask {
         def files = fileTree.files
         String[] args = new String[files.size() + 2]
         args[0] = "-o"
-        args[1] = "generated-src"
+        args[1] = outputDir
         int i = 2
         for (File file : files) {
             args[i++] = file.path

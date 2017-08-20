@@ -17,9 +17,15 @@ class FujureGradlePlugin implements Plugin<Project> {
 
     private void configureSourceSetDefaults(Project project) {
         project.convention.getPlugin(JavaPluginConvention).sourceSets.all { sourceSet ->
-            def taskName = sourceSet.getCompileTaskName('fujure')
-            def task = project.tasks.create(taskName, CompileFujureTask)
-            task.description = "Compiles ${sourceSet.name} Fujure source."
+            def compileFujureTaskName = sourceSet.getCompileTaskName('fujure')
+            def compileFujureTask = project.tasks.create(compileFujureTaskName, CompileFujureTask)
+            compileFujureTask.description = "Compiles ${sourceSet.name} Fujure source."
+
+            def compileJavaTask = project.tasks.getByName(sourceSet.compileJavaTaskName)
+            // execute the Fujure compile task before the Java compile task
+            compileJavaTask.dependsOn(compileFujureTaskName)
+            // add the Fujure task output directory to the Java input directories
+            sourceSet.java.srcDir(compileFujureTask.outputDir)
         }
     }
 }
