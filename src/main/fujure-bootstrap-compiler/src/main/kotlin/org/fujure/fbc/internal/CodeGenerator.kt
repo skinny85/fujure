@@ -1,11 +1,9 @@
 package org.fujure.fbc.internal
 
-import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile
-import com.squareup.javapoet.TypeSpec
+import org.fujure.fbc.internal.codegen.FileContentsCodegenVisitor
 import java.io.File
 import java.io.IOException
-import javax.lang.model.element.Modifier
 
 class CodeGenerator(private val parsedFiles: List<ReadFile.ParsedFile>,
                     private val outputDir: String) {
@@ -21,15 +19,7 @@ class CodeGenerator(private val parsedFiles: List<ReadFile.ParsedFile>,
         val file = File(parsedFile.userProvidedFile)
         val className = file.nameWithoutExtension
 
-        val typeSpec = parsedFile.ast.accept({ valueDef, _ ->
-            TypeSpec.classBuilder(className)
-                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                    .addField(FieldSpec.builder(Integer.TYPE, valueDef.ident_,
-                            Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                            .initializer("\$L", valueDef.integer_)
-                            .build())
-                    .build()
-        }, "")
+        val typeSpec = parsedFile.ast.accept(FileContentsCodegenVisitor, className)
 
         val javaFile = JavaFile.builder("", typeSpec).build()
         val destFile = File(outputDir, "$className.java")
