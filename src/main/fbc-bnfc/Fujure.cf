@@ -1,1 +1,9 @@
+entrypoints FileContents ;
+
+FileInNamedPackage   . FileContents ::= "package" [PkgFragm] ValDef ;
+FileInDefaultPackage . FileContents ::= ValDef ;
+
+separator nonempty PkgFragm "." ;
+PackageFragment . PkgFragm ::= Ident ;
+
 ValueDef . ValDef ::= "def" Ident "=" Integer ;

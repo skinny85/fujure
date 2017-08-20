@@ -5,6 +5,14 @@ options {
   tokenVocab = FujureLexer;
 }
 
-valDef returns [ org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef result ] : Surrogate_id_SYMB_1 p_1_2=IDENT Surrogate_id_SYMB_0 p_1_4=INTEGER  { $result = new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef($p_1_2.getText(),Integer.parseInt($p_1_4.getText())); } # ValueDef 
+fileContents returns [ org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileContents result ] : Surrogate_id_SYMB_3 p_1_2=listPkgFragm p_1_3=valDef  { $result = new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage($p_1_2.result,$p_1_3.result); } # FileInNamedPackage 
+  | p_2_1=valDef  { $result = new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage($p_2_1.result); } # FileInDefaultPackage
+;
+listPkgFragm returns [ org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListPkgFragm result ] : p_1_1=pkgFragm  { $result = new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListPkgFragm(); $result.addLast($p_1_1.result); } # ListPkgFragm_AppendLast 
+  | p_2_1=pkgFragm Surrogate_id_SYMB_0 p_2_3=listPkgFragm  { $result = $p_2_3.result; $result.addFirst($p_2_1.result); } # ListPkgFragm_PrependFirst
+;
+pkgFragm returns [ org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PkgFragm result ] : p_1_1=IDENT  { $result = new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageFragment($p_1_1.getText()); } # PackageFragment 
+;
+valDef returns [ org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef result ] : Surrogate_id_SYMB_2 p_1_2=IDENT Surrogate_id_SYMB_1 p_1_4=INTEGER  { $result = new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef($p_1_2.getText(),Integer.parseInt($p_1_4.getText())); } # ValueDef 
 ;
 
