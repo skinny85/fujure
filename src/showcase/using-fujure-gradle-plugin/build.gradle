@@ -20,4 +20,5 @@ apply plugin: 'fujure'
 
 dependencies {
     testCompile 'junit:junit:4.12'
+    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.8.0'
 }

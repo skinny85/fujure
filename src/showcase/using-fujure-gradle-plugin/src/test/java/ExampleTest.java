@@ -1,9 +1,10 @@
 import org.junit.Test;
-import org.junit.Assert;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExampleTest {
     @Test
     public void testExample() {
-        Assert.assertEquals(342, Example.val);
+        assertThat(Example.val).isEqualTo(342);
     }
 }
