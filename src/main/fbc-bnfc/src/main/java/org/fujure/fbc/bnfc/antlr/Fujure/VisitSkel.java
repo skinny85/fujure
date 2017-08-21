@@ -15,11 +15,13 @@ public class VisitSkel
     { /* Code For FileInNamedPackage Goes Here */
       for (PkgFragm x: p.listpkgfragm_)
       { /* ... */ }
-      p.valdef_.accept(new ValDefVisitor<R,A>(), arg);
+      for (ValDef x: p.listvaldef_)
+      { /* ... */ }
       return null;
     }    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage p, A arg)
     { /* Code For FileInDefaultPackage Goes Here */
-      p.valdef_.accept(new ValDefVisitor<R,A>(), arg);
+      for (ValDef x: p.listvaldef_)
+      { /* ... */ }
       return null;
     }
   }

@@ -1,4 +1,6 @@
 package com.
           example
 
-def val = 342
+def val1 = 342
+
+def val2 = 23

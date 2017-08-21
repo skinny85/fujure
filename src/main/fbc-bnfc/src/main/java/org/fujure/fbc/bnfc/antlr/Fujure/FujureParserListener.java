@@ -68,6 +68,30 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitPackageFragment(FujureParser.PackageFragmentContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code ListValDef_Empty}
+	 * labeled alternative in {@link FujureParser#listValDef}.
+	 * @param ctx the parse tree
+	 */
+	void enterListValDef_Empty(FujureParser.ListValDef_EmptyContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListValDef_Empty}
+	 * labeled alternative in {@link FujureParser#listValDef}.
+	 * @param ctx the parse tree
+	 */
+	void exitListValDef_Empty(FujureParser.ListValDef_EmptyContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListValDef_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listValDef}.
+	 * @param ctx the parse tree
+	 */
+	void enterListValDef_PrependFirst(FujureParser.ListValDef_PrependFirstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListValDef_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listValDef}.
+	 * @param ctx the parse tree
+	 */
+	void exitListValDef_PrependFirst(FujureParser.ListValDef_PrependFirstContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code ValueDef}
 	 * labeled alternative in {@link FujureParser#valDef}.
 	 * @param ctx the parse tree

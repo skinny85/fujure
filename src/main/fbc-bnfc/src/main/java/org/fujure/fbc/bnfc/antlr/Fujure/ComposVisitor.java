@@ -16,12 +16,20 @@ public class ComposVisitor<A> implements
       {
         listpkgfragm_.add(x.accept(this,arg));
       }
-      ValDef valdef_ = p.valdef_.accept(this, arg);
-      return new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage(listpkgfragm_, valdef_);
+      ListValDef listvaldef_ = new ListValDef();
+      for (ValDef x : p.listvaldef_)
+      {
+        listvaldef_.add(x.accept(this,arg));
+      }
+      return new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage(listpkgfragm_, listvaldef_);
     }    public FileContents visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage p, A arg)
     {
-      ValDef valdef_ = p.valdef_.accept(this, arg);
-      return new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage(valdef_);
+      ListValDef listvaldef_ = new ListValDef();
+      for (ValDef x : p.listvaldef_)
+      {
+        listvaldef_.add(x.accept(this,arg));
+      }
+      return new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage(listvaldef_);
     }
 /* PkgFragm */
     public PkgFragm visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageFragment p, A arg)

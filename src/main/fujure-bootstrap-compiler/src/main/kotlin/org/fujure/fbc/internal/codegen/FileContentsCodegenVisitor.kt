@@ -1,6 +1,5 @@
 package org.fujure.fbc.internal.codegen
 
-import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
 import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileContents
@@ -12,27 +11,27 @@ import javax.lang.model.element.Modifier
 
 object FileContentsCodegenVisitor : FileContents.Visitor<JavaFile, String> {
     override fun visit(fileContents: FileInNamedPackage, className: String): JavaFile {
-        return javaFile(fileContents, fileContents.valdef_, className)
+        return javaFile(fileContents, fileContents.listvaldef_, className)
     }
 
     override fun visit(fileContents: FileInDefaultPackage, className: String): JavaFile {
-        return javaFile(fileContents, fileContents.valdef_, className)
+        return javaFile(fileContents, fileContents.listvaldef_, className)
     }
 
-    private fun javaFile(fileContents: FileContents, valDef: ValDef, className: String): JavaFile {
-        return javaFileInPackage(valDef, fileContents.accept(PackageNameExtractor, Unit), className)
+    private fun javaFile(fileContents: FileContents, valDefs: List<ValDef>, className: String): JavaFile {
+        return javaFileInPackage(valDefs, fileContents.accept(PackageNameExtractor, Unit), className)
     }
 
-    private fun javaFileInPackage(valDef: ValDef, packageName: String, className: String): JavaFile {
-        return valDef.accept({ valueDef, _ ->
-            JavaFile.builder(packageName, TypeSpec.classBuilder(className)
-                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                    .addField(FieldSpec.builder(Integer.TYPE, valueDef.ident_,
-                            Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                            .initializer("\$L", valueDef.integer_)
-                            .build())
-                    .build())
-                    .build()
-        }, 0)
+    private fun javaFileInPackage(valDefs: List<ValDef>, packageName: String, className: String): JavaFile {
+        val typeSpecBuilder = TypeSpec.classBuilder(className)
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+
+        for (valDef in valDefs) {
+            typeSpecBuilder.addField(valDef.accept(ValDefCodegenVisitor, Unit))
+        }
+
+        return JavaFile
+                .builder(packageName, typeSpecBuilder.build())
+                .build()
     }
 }

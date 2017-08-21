@@ -17,12 +17,18 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
       {
         r = combine(x.accept(this, arg), r, arg);
       }
-      r = combine(p.valdef_.accept(this, arg), r, arg);
+      for (ValDef x : p.listvaldef_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
       return r;
     }
     public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage p, A arg) {
       R r = leaf(arg);
-      r = combine(p.valdef_.accept(this, arg), r, arg);
+      for (ValDef x : p.listvaldef_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
       return r;
     }
 
