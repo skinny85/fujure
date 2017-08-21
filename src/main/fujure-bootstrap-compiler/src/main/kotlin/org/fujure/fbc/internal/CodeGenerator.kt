@@ -1,6 +1,5 @@
 package org.fujure.fbc.internal
 
-import com.squareup.javapoet.JavaFile
 import org.fujure.fbc.internal.codegen.FileContentsCodegenVisitor
 import java.io.File
 import java.io.IOException

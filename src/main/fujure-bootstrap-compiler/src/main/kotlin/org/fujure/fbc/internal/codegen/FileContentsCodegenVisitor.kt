@@ -7,20 +7,25 @@ import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileContents
 import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage
 import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage
 import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef
+import org.fujure.fbc.internal.ast.PackageNameExtractor
 import javax.lang.model.element.Modifier
 
 object FileContentsCodegenVisitor : FileContents.Visitor<JavaFile, String> {
     override fun visit(fileContents: FileInNamedPackage, className: String): JavaFile {
-        return javaFile(fileContents.valdef_, className)
+        return javaFile(fileContents, fileContents.valdef_, className)
     }
 
     override fun visit(fileContents: FileInDefaultPackage, className: String): JavaFile {
-        return javaFile(fileContents.valdef_, className)
+        return javaFile(fileContents, fileContents.valdef_, className)
     }
 
-    private fun javaFile(valDef: ValDef, className: String): JavaFile {
+    private fun javaFile(fileContents: FileContents, valDef: ValDef, className: String): JavaFile {
+        return javaFileInPackage(valDef, fileContents.accept(PackageNameExtractor, Unit), className)
+    }
+
+    private fun javaFileInPackage(valDef: ValDef, packageName: String, className: String): JavaFile {
         return valDef.accept({ valueDef, _ ->
-            JavaFile.builder("", TypeSpec.classBuilder(className)
+            JavaFile.builder(packageName, TypeSpec.classBuilder(className)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addField(FieldSpec.builder(Integer.TYPE, valueDef.ident_,
                             Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
