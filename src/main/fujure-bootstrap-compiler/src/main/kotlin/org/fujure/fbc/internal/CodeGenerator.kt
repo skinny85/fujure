@@ -19,9 +19,8 @@ class CodeGenerator(private val parsedFiles: List<ReadFile.ParsedFile>,
         val file = File(parsedFile.userProvidedFile)
         val className = file.nameWithoutExtension
 
-        val typeSpec = parsedFile.ast.accept(FileContentsCodegenVisitor, className)
+        val javaFile = parsedFile.ast.accept(FileContentsCodegenVisitor, className)
 
-        val javaFile = JavaFile.builder("", typeSpec).build()
         val destFile = File(outputDir, "$className.java")
 
         return try {
