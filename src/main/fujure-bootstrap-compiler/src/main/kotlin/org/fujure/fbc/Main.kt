@@ -107,7 +107,7 @@ object Main {
                 is ReadFile.UnparsedFile -> {
                     println("Couldn't parse ${tryParseFile.userProvidedFile}:")
                     for ((line, column, msg) in tryParseFile.errors) {
-                        println("${tryParseFile.userProvidedFile}:${line},${column}: ${msg}")
+                        println("${tryParseFile.userProvidedFile}:($line:$column): $msg")
                     }
                     null
                 }
