@@ -14,8 +14,19 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* ValDef */
-    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypedValueDef p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+/* TypeSpec */
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecifier p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpec p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+/* TypeSpecFragm */
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragment p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragm p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 

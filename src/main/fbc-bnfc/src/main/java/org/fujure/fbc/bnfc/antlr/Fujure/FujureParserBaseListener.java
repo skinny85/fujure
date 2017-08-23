@@ -100,13 +100,73 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterValueDef(FujureParser.ValueDefContext ctx) { }
+	@Override public void enterUntypedValueDef(FujureParser.UntypedValueDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitValueDef(FujureParser.ValueDefContext ctx) { }
+	@Override public void exitUntypedValueDef(FujureParser.UntypedValueDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTypedValueDef(FujureParser.TypedValueDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTypedValueDef(FujureParser.TypedValueDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTypeSpecifier(FujureParser.TypeSpecifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTypeSpecifier(FujureParser.TypeSpecifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListTypeSpecFragm_AppendLast(FujureParser.ListTypeSpecFragm_AppendLastContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListTypeSpecFragm_AppendLast(FujureParser.ListTypeSpecFragm_AppendLastContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListTypeSpecFragm_PrependFirst(FujureParser.ListTypeSpecFragm_PrependFirstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListTypeSpecFragm_PrependFirst(FujureParser.ListTypeSpecFragm_PrependFirstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTypeSpecFragment(FujureParser.TypeSpecFragmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTypeSpecFragment(FujureParser.TypeSpecFragmentContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

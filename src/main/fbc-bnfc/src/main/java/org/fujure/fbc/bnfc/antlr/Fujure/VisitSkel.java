@@ -35,10 +35,33 @@ public class VisitSkel
   }
   public class ValDefVisitor<R,A> implements ValDef.Visitor<R,A>
   {
-    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg)
-    { /* Code For ValueDef Goes Here */
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg)
+    { /* Code For UntypedValueDef Goes Here */
       //p.ident_;
       //p.integer_;
+      return null;
+    }    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypedValueDef p, A arg)
+    { /* Code For TypedValueDef Goes Here */
+      //p.ident_;
+      p.typespec_.accept(new TypeSpecVisitor<R,A>(), arg);
+      //p.integer_;
+      return null;
+    }
+  }
+  public class TypeSpecVisitor<R,A> implements TypeSpec.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecifier p, A arg)
+    { /* Code For TypeSpecifier Goes Here */
+      for (TypeSpecFragm x: p.listtypespecfragm_)
+      { /* ... */ }
+      return null;
+    }
+  }
+  public class TypeSpecFragmVisitor<R,A> implements TypeSpecFragm.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragment p, A arg)
+    { /* Code For TypeSpecFragment Goes Here */
+      //p.ident_;
       return null;
     }
   }

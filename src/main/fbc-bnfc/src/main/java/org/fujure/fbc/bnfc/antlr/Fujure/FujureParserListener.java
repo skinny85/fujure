@@ -92,15 +92,75 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitListValDef_PrependFirst(FujureParser.ListValDef_PrependFirstContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ValueDef}
+	 * Enter a parse tree produced by the {@code UntypedValueDef}
 	 * labeled alternative in {@link FujureParser#valDef}.
 	 * @param ctx the parse tree
 	 */
-	void enterValueDef(FujureParser.ValueDefContext ctx);
+	void enterUntypedValueDef(FujureParser.UntypedValueDefContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ValueDef}
+	 * Exit a parse tree produced by the {@code UntypedValueDef}
 	 * labeled alternative in {@link FujureParser#valDef}.
 	 * @param ctx the parse tree
 	 */
-	void exitValueDef(FujureParser.ValueDefContext ctx);
+	void exitUntypedValueDef(FujureParser.UntypedValueDefContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code TypedValueDef}
+	 * labeled alternative in {@link FujureParser#valDef}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypedValueDef(FujureParser.TypedValueDefContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code TypedValueDef}
+	 * labeled alternative in {@link FujureParser#valDef}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypedValueDef(FujureParser.TypedValueDefContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code TypeSpecifier}
+	 * labeled alternative in {@link FujureParser#typeSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeSpecifier(FujureParser.TypeSpecifierContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code TypeSpecifier}
+	 * labeled alternative in {@link FujureParser#typeSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeSpecifier(FujureParser.TypeSpecifierContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListTypeSpecFragm_AppendLast}
+	 * labeled alternative in {@link FujureParser#listTypeSpecFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterListTypeSpecFragm_AppendLast(FujureParser.ListTypeSpecFragm_AppendLastContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListTypeSpecFragm_AppendLast}
+	 * labeled alternative in {@link FujureParser#listTypeSpecFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitListTypeSpecFragm_AppendLast(FujureParser.ListTypeSpecFragm_AppendLastContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListTypeSpecFragm_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listTypeSpecFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterListTypeSpecFragm_PrependFirst(FujureParser.ListTypeSpecFragm_PrependFirstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListTypeSpecFragm_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listTypeSpecFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitListTypeSpecFragm_PrependFirst(FujureParser.ListTypeSpecFragm_PrependFirstContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code TypeSpecFragment}
+	 * labeled alternative in {@link FujureParser#typeSpecFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeSpecFragment(FujureParser.TypeSpecFragmentContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code TypeSpecFragment}
+	 * labeled alternative in {@link FujureParser#typeSpecFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeSpecFragment(FujureParser.TypeSpecFragmentContext ctx);
 }

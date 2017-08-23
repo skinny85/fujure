@@ -39,7 +39,28 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
     }
 
 /* ValDef */
-    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg) {
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg) {
+      R r = leaf(arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypedValueDef p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.typespec_.accept(this, arg), r, arg);
+      return r;
+    }
+
+/* TypeSpec */
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecifier p, A arg) {
+      R r = leaf(arg);
+      for (TypeSpecFragm x : p.listtypespecfragm_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
+      return r;
+    }
+
+/* TypeSpecFragm */
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragment p, A arg) {
       R r = leaf(arg);
       return r;
     }

@@ -7,8 +7,9 @@ fragment SMALL   : [a-z\u00DF-\u00F6\u00F8-\u00FF] ;
 fragment DIGIT   : [0-9] ;
 Surrogate_id_SYMB_0 : '.' ;
 Surrogate_id_SYMB_1 : '=' ;
-Surrogate_id_SYMB_2 : 'def' ;
-Surrogate_id_SYMB_3 : 'package' ;
+Surrogate_id_SYMB_2 : ':' ;
+Surrogate_id_SYMB_3 : 'def' ;
+Surrogate_id_SYMB_4 : 'package' ;
 
 
 

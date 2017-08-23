@@ -138,6 +138,51 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
+  public static String print(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpec foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpec foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListTypeSpecFragm foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListTypeSpecFragm foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragm foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragm foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
   /***   You shouldn't need to change anything beyond this point.   ***/
 
   private static void pp(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileContents foo, int _i_)
@@ -197,14 +242,60 @@ public class PrettyPrinter
 
   private static void pp(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef foo, int _i_)
   {
-    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef)
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.UntypedValueDef)
     {
-       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef _valuedef = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef) foo;
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.UntypedValueDef _untypedvaluedef = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.UntypedValueDef) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("def");
-       pp(_valuedef.ident_, 0);
+       pp(_untypedvaluedef.ident_, 0);
        render("=");
-       pp(_valuedef.integer_, 0);
+       pp(_untypedvaluedef.integer_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypedValueDef)
+    {
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypedValueDef _typedvaluedef = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypedValueDef) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("def");
+       pp(_typedvaluedef.ident_, 0);
+       render(":");
+       pp(_typedvaluedef.typespec_, 0);
+       render("=");
+       pp(_typedvaluedef.integer_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpec foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecifier)
+    {
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecifier _typespecifier = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecifier) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_typespecifier.listtypespecfragm_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListTypeSpecFragm foo, int _i_)
+  {
+     for (java.util.Iterator<TypeSpecFragm> it = foo.iterator(); it.hasNext();)
+     {
+       pp(it.next(), _i_);
+       if (it.hasNext()) {
+         render(".");
+       } else {
+         render("");
+       }
+     }  }
+
+  private static void pp(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragm foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragment)
+    {
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragment _typespecfragment = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragment) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_typespecfragment.ident_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -271,13 +362,59 @@ public class PrettyPrinter
 
   private static void sh(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef foo)
   {
-    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef)
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.UntypedValueDef)
     {
-       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef _valuedef = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef) foo;
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.UntypedValueDef _untypedvaluedef = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.UntypedValueDef) foo;
        render("(");
-       render("ValueDef");
-       sh(_valuedef.ident_);
-       sh(_valuedef.integer_);
+       render("UntypedValueDef");
+       sh(_untypedvaluedef.ident_);
+       sh(_untypedvaluedef.integer_);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypedValueDef)
+    {
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypedValueDef _typedvaluedef = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypedValueDef) foo;
+       render("(");
+       render("TypedValueDef");
+       sh(_typedvaluedef.ident_);
+       sh(_typedvaluedef.typespec_);
+       sh(_typedvaluedef.integer_);
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpec foo)
+  {
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecifier)
+    {
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecifier _typespecifier = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecifier) foo;
+       render("(");
+       render("TypeSpecifier");
+       render("[");
+       sh(_typespecifier.listtypespecfragm_);
+       render("]");
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListTypeSpecFragm foo)
+  {
+     for (java.util.Iterator<TypeSpecFragm> it = foo.iterator(); it.hasNext();)
+     {
+       sh(it.next());
+       if (it.hasNext())
+         render(",");
+     }
+  }
+
+  private static void sh(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragm foo)
+  {
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragment)
+    {
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragment _typespecfragment = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragment) foo;
+       render("(");
+       render("TypeSpecFragment");
+       sh(_typespecfragment.ident_);
        render(")");
     }
   }

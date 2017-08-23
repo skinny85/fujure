@@ -7,4 +7,9 @@ separator nonempty PkgFragm "." ;
 PackageFragment . PkgFragm ::= Ident ;
 
 separator ValDef "" ;
-ValueDef . ValDef ::= "def" Ident "=" Integer ;
+UntypedValueDef . ValDef ::= "def" Ident "=" Integer ;
+TypedValueDef   . ValDef ::= "def" Ident ":" TypeSpec "=" Integer ;
+
+TypeSpecifier . TypeSpec ::= [TypeSpecFragm] ;
+separator nonempty TypeSpecFragm "." ;
+TypeSpecFragment . TypeSpecFragm ::= Ident ;
