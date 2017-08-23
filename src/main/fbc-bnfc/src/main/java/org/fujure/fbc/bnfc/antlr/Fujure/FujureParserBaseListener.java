@@ -40,6 +40,18 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterPackageName(FujureParser.PackageNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPackageName(FujureParser.PackageNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterListPkgFragm_AppendLast(FujureParser.ListPkgFragm_AppendLastContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -76,25 +88,49 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterListValDef_Empty(FujureParser.ListValDef_EmptyContext ctx) { }
+	@Override public void enterDefinitions(FujureParser.DefinitionsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitListValDef_Empty(FujureParser.ListValDef_EmptyContext ctx) { }
+	@Override public void exitDefinitions(FujureParser.DefinitionsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterListValDef_PrependFirst(FujureParser.ListValDef_PrependFirstContext ctx) { }
+	@Override public void enterListDef_Empty(FujureParser.ListDef_EmptyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitListValDef_PrependFirst(FujureParser.ListValDef_PrependFirstContext ctx) { }
+	@Override public void exitListDef_Empty(FujureParser.ListDef_EmptyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListDef_PrependFirst(FujureParser.ListDef_PrependFirstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListDef_PrependFirst(FujureParser.ListDef_PrependFirstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterValueDef(FujureParser.ValueDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitValueDef(FujureParser.ValueDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

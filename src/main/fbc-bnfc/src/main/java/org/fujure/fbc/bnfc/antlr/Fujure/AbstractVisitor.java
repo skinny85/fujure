@@ -8,9 +8,24 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
     public R visitDefault(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileContents p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
+/* PkgName */
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageName p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PkgName p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
 /* PkgFragm */
     public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageFragment p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PkgFragm p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+/* Defs */
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Definitions p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Defs p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+/* Def */
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Def p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* ValDef */

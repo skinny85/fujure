@@ -1,12 +1,16 @@
 entrypoints FileContents ;
 
-FileInNamedPackage   . FileContents ::= "package" [PkgFragm] [ValDef] ;
-FileInDefaultPackage . FileContents ::= [ValDef] ;
+FileInNamedPackage   . FileContents ::= "package" PkgName Defs ;
+FileInDefaultPackage . FileContents ::= Defs ;
 
+PackageName . PkgName ::= [PkgFragm] ;
 separator nonempty PkgFragm "." ;
 PackageFragment . PkgFragm ::= Ident ;
 
-separator ValDef "" ;
+Definitions . Defs ::= [Def] ;
+separator Def "" ;
+ValueDef . Def ::= ValDef ;
+
 UntypedValueDef . ValDef ::= "def" Ident "=" Integer ;
 TypedValueDef   . ValDef ::= "def" Ident ":" TypeSpec "=" Integer ;
 

@@ -78,6 +78,21 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
+  public static String print(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PkgName foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PkgName foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
   public static String print(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListPkgFragm foo)
   {
     pp(foo, 0);
@@ -108,7 +123,7 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String print(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListValDef foo)
+  public static String print(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Defs foo)
   {
     pp(foo, 0);
     trim();
@@ -116,7 +131,37 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String show(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListValDef foo)
+  public static String show(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Defs foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListDef foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListDef foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Def foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Def foo)
   {
     sh(foo);
     String temp = buf_.toString();
@@ -192,15 +237,26 @@ public class PrettyPrinter
        org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage _fileinnamedpackage = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("package");
-       pp(_fileinnamedpackage.listpkgfragm_, 0);
-       pp(_fileinnamedpackage.listvaldef_, 0);
+       pp(_fileinnamedpackage.pkgname_, 0);
+       pp(_fileinnamedpackage.defs_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
     else     if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage)
     {
        org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage _fileindefaultpackage = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage) foo;
        if (_i_ > 0) render(_L_PAREN);
-       pp(_fileindefaultpackage.listvaldef_, 0);
+       pp(_fileindefaultpackage.defs_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PkgName foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageName)
+    {
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageName _packagename = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageName) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_packagename.listpkgfragm_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -228,9 +284,20 @@ public class PrettyPrinter
     }
   }
 
-  private static void pp(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListValDef foo, int _i_)
+  private static void pp(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Defs foo, int _i_)
   {
-     for (java.util.Iterator<ValDef> it = foo.iterator(); it.hasNext();)
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Definitions)
+    {
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Definitions _definitions = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Definitions) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_definitions.listdef_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListDef foo, int _i_)
+  {
+     for (java.util.Iterator<Def> it = foo.iterator(); it.hasNext();)
      {
        pp(it.next(), _i_);
        if (it.hasNext()) {
@@ -239,6 +306,17 @@ public class PrettyPrinter
          render("");
        }
      }  }
+
+  private static void pp(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Def foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef)
+    {
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef _valuedef = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_valuedef.valdef_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
 
   private static void pp(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef foo, int _i_)
   {
@@ -308,12 +386,8 @@ public class PrettyPrinter
        org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage _fileinnamedpackage = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage) foo;
        render("(");
        render("FileInNamedPackage");
-       render("[");
-       sh(_fileinnamedpackage.listpkgfragm_);
-       render("]");
-       render("[");
-       sh(_fileinnamedpackage.listvaldef_);
-       render("]");
+       sh(_fileinnamedpackage.pkgname_);
+       sh(_fileinnamedpackage.defs_);
        render(")");
     }
     if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage)
@@ -321,8 +395,20 @@ public class PrettyPrinter
        org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage _fileindefaultpackage = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage) foo;
        render("(");
        render("FileInDefaultPackage");
+       sh(_fileindefaultpackage.defs_);
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PkgName foo)
+  {
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageName)
+    {
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageName _packagename = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageName) foo;
+       render("(");
+       render("PackageName");
        render("[");
-       sh(_fileindefaultpackage.listvaldef_);
+       sh(_packagename.listpkgfragm_);
        render("]");
        render(")");
     }
@@ -350,14 +436,40 @@ public class PrettyPrinter
     }
   }
 
-  private static void sh(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListValDef foo)
+  private static void sh(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Defs foo)
   {
-     for (java.util.Iterator<ValDef> it = foo.iterator(); it.hasNext();)
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Definitions)
+    {
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Definitions _definitions = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Definitions) foo;
+       render("(");
+       render("Definitions");
+       render("[");
+       sh(_definitions.listdef_);
+       render("]");
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ListDef foo)
+  {
+     for (java.util.Iterator<Def> it = foo.iterator(); it.hasNext();)
      {
        sh(it.next());
        if (it.hasNext())
          render(",");
      }
+  }
+
+  private static void sh(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Def foo)
+  {
+    if (foo instanceof org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef)
+    {
+       org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef _valuedef = (org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef) foo;
+       render("(");
+       render("ValueDef");
+       sh(_valuedef.valdef_);
+       render(")");
+    }
   }
 
   private static void sh(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef foo)

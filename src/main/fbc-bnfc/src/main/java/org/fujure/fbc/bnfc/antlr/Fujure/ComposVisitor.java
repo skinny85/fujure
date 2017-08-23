@@ -5,7 +5,10 @@ import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.*;
 
 public class ComposVisitor<A> implements
   org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileContents.Visitor<org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileContents,A>,
+  org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PkgName.Visitor<org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PkgName,A>,
   org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PkgFragm.Visitor<org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PkgFragm,A>,
+  org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Defs.Visitor<org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Defs,A>,
+  org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Def.Visitor<org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Def,A>,
   org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef.Visitor<org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef,A>,
   org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpec.Visitor<org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpec,A>,
   org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragm.Visitor<org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypeSpecFragm,A>
@@ -13,31 +16,45 @@ public class ComposVisitor<A> implements
 /* FileContents */
     public FileContents visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage p, A arg)
     {
+      PkgName pkgname_ = p.pkgname_.accept(this, arg);
+      Defs defs_ = p.defs_.accept(this, arg);
+      return new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage(pkgname_, defs_);
+    }    public FileContents visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage p, A arg)
+    {
+      Defs defs_ = p.defs_.accept(this, arg);
+      return new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage(defs_);
+    }
+/* PkgName */
+    public PkgName visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageName p, A arg)
+    {
       ListPkgFragm listpkgfragm_ = new ListPkgFragm();
       for (PkgFragm x : p.listpkgfragm_)
       {
         listpkgfragm_.add(x.accept(this,arg));
       }
-      ListValDef listvaldef_ = new ListValDef();
-      for (ValDef x : p.listvaldef_)
-      {
-        listvaldef_.add(x.accept(this,arg));
-      }
-      return new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage(listpkgfragm_, listvaldef_);
-    }    public FileContents visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage p, A arg)
-    {
-      ListValDef listvaldef_ = new ListValDef();
-      for (ValDef x : p.listvaldef_)
-      {
-        listvaldef_.add(x.accept(this,arg));
-      }
-      return new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage(listvaldef_);
+      return new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageName(listpkgfragm_);
     }
 /* PkgFragm */
     public PkgFragm visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageFragment p, A arg)
     {
       String ident_ = p.ident_;
       return new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageFragment(ident_);
+    }
+/* Defs */
+    public Defs visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Definitions p, A arg)
+    {
+      ListDef listdef_ = new ListDef();
+      for (Def x : p.listdef_)
+      {
+        listdef_.add(x.accept(this,arg));
+      }
+      return new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Definitions(listdef_);
+    }
+/* Def */
+    public Def visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg)
+    {
+      ValDef valdef_ = p.valdef_.accept(this, arg);
+      return new org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef(valdef_);
     }
 /* ValDef */
     public ValDef visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg)

@@ -13,19 +13,20 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
 /* FileContents */
     public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage p, A arg) {
       R r = leaf(arg);
-      for (PkgFragm x : p.listpkgfragm_)
-      {
-        r = combine(x.accept(this, arg), r, arg);
-      }
-      for (ValDef x : p.listvaldef_)
-      {
-        r = combine(x.accept(this, arg), r, arg);
-      }
+      r = combine(p.pkgname_.accept(this, arg), r, arg);
+      r = combine(p.defs_.accept(this, arg), r, arg);
       return r;
     }
     public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage p, A arg) {
       R r = leaf(arg);
-      for (ValDef x : p.listvaldef_)
+      r = combine(p.defs_.accept(this, arg), r, arg);
+      return r;
+    }
+
+/* PkgName */
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageName p, A arg) {
+      R r = leaf(arg);
+      for (PkgFragm x : p.listpkgfragm_)
       {
         r = combine(x.accept(this, arg), r, arg);
       }
@@ -35,6 +36,23 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
 /* PkgFragm */
     public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.PackageFragment p, A arg) {
       R r = leaf(arg);
+      return r;
+    }
+
+/* Defs */
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.Definitions p, A arg) {
+      R r = leaf(arg);
+      for (Def x : p.listdef_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
+      return r;
+    }
+
+/* Def */
+    public R visit(org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.valdef_.accept(this, arg), r, arg);
       return r;
     }
 
