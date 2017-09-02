@@ -19,7 +19,7 @@ class CompileFujureTask extends DefaultTask {
         for (File file : files) {
             args[i++] = file.path
         }
-        def exitCode = Main.mainReturningExitCode(args)
+        def exitCode = Main.runCompiler(args)
         if (exitCode != 0)
             throw new RuntimeException("Compilation failed (exit code: $exitCode)")
     }
