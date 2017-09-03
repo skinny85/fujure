@@ -35,7 +35,7 @@ def kotlin_subprojects = ['fbc-core', 'fbc-cli']
 configure(subprojects.findAll { subproject ->
         kotlin_subprojects.any { subproject.name.contains(it) }}) {
     buildscript {
-        ext.kotlin_version = '1.1.3-2'
+        ext.kotlin_version = '1.1.4-3'
 
         repositories {
             mavenCentral()
@@ -60,7 +60,7 @@ configure(subprojects.findAll { subproject ->
 }
 
 buildscript {
-    ext.kotlin_version = '1.1.3-2'
+    ext.kotlin_version = '1.1.4-3'
 
     repositories {
         mavenCentral()
