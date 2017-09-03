@@ -1,0 +1,4 @@
+dependencies {
+    compile "com.xenomachina:kotlin-argparser:2.0.3"
+    compile project(':src:main:fujure-bootstrap-compiler:fbc-core')
+}
