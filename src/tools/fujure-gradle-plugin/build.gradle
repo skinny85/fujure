@@ -4,5 +4,5 @@ dependencies {
     compile gradleApi()
     compile localGroovy()
 
-    compile project(':src:main:fujure-bootstrap-compiler')
+    compile project(':src:main:fujure-bootstrap-compiler:fbc-core')
 }
