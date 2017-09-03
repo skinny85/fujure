@@ -1,9 +1,9 @@
 package org.fujure.fbc.internal.codegen
 
 import com.squareup.javapoet.FieldSpec
-import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.TypedValueDef
-import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.UntypedValueDef
-import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.ValDef
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef
 import javax.lang.model.element.Modifier
 
 object ValDefCodegenVisitor : ValDef.Visitor<FieldSpec, Unit> {

@@ -1,6 +1,6 @@
 package org.fujure.fbc.parse
 
-import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileContents
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
 import org.fujure.fbc.internal.ArgumentFile
 import org.fujure.fbc.internal.SyntaxError
 

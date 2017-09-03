@@ -1,8 +1,8 @@
 package org.fujure.fbc.internal.ast
 
-import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileContents
-import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage
-import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileInNamedPackage
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage
 
 object PackageNameExtractor : FileContents.Visitor<String, Unit> {
     override fun visit(fileContents: FileInNamedPackage, arg: Unit): String {

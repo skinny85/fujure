@@ -1,9 +1,9 @@
 package org.fujure.fbc.internal
 
 import org.antlr.v4.runtime.CommonTokenStream
-import org.fujure.fbc.bnfc.antlr.Fujure.Absyn.FileContents
-import org.fujure.fbc.bnfc.antlr.Fujure.FujureLexer
-import org.fujure.fbc.bnfc.antlr.Fujure.FujureParser
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureLexer
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureParser
 
 sealed class ReadFile(val userProvidedFile: String) {
     companion object {
