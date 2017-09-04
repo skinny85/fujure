@@ -1,4 +1,4 @@
-package org.fujure.fbc.internal.codegen
+package org.fujure.fbc.codegen.ast
 
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
@@ -6,7 +6,6 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage
-import org.fujure.fbc.internal.ast.PackageNameExtractor
 import javax.lang.model.element.Modifier
 
 object FileContentsCodegenVisitor : FileContents.Visitor<JavaFile, String> {

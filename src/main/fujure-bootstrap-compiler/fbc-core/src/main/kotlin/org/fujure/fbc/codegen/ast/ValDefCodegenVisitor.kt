@@ -1,4 +1,4 @@
-package org.fujure.fbc.internal.codegen
+package org.fujure.fbc.codegen.ast
 
 import com.squareup.javapoet.FieldSpec
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef

@@ -2,8 +2,9 @@ package org.fujure.fbc
 
 import org.fujure.fbc.cli.CompilerCli
 import org.fujure.fbc.cli.ConsoleLogger
-import org.fujure.fbc.internal.codegen.JavaPoetCodeGenarator
+import org.fujure.fbc.codegen.JavaPoetCodeGenerator
 import org.fujure.fbc.parse.BnfcParser
+import org.fujure.fbc.read.SimpleFileOpener
 
 object Main {
     @JvmStatic
@@ -16,7 +17,7 @@ object Main {
 
     @JvmStatic
     fun runCompiler(args: Array<String>): Int {
-        val compiler = BootstrapCompiler(SimpleFileOpener, BnfcParser, JavaPoetCodeGenarator)
+        val compiler = BootstrapCompiler(SimpleFileOpener, BnfcParser, JavaPoetCodeGenerator)
         val compilerCli = CompilerCli(ConsoleLogger, compiler)
         return compilerCli.invokeCompiler(args)
     }

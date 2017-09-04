@@ -9,8 +9,8 @@ import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 import org.specnaz.kotlin.utils.Deferred
 import org.fujure.fbc.Compiler
 import org.fujure.fbc.ProblematicFile
-import org.fujure.fbc.internal.CodeGenResult
-import org.fujure.fbc.internal.SyntaxError
+import org.fujure.fbc.codegen.CodeGenResult
+import org.fujure.fbc.parse.SyntaxError
 import java.io.File
 import java.io.IOException
 
@@ -231,8 +231,8 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
             Mockito.`when`(mockCompiler.v.compile(any(), any()))
                     .thenReturn(CompilationResults.CompilationNotAttempted(listOf(
                             ProblematicFile.ParsingFileIssue("../whatever.fjr", listOf(
-                                SyntaxError(1, 2, "expected 'def'"),
-                                SyntaxError(11, 22, "unrecognized token"))))))
+                                    SyntaxError(1, 2, "expected 'def'"),
+                                    SyntaxError(11, 22, "unrecognized token"))))))
         }
 
         var result = -100

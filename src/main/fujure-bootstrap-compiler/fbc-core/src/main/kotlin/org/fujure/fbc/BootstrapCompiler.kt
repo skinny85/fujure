@@ -1,32 +1,27 @@
 package org.fujure.fbc
 
 import org.fujure.fbc.CompilationResults.CompilationAttempted
-import org.fujure.fbc.internal.ArgumentFile
-import org.fujure.fbc.internal.codegen.CodeGenerator
+import org.fujure.fbc.codegen.CodeGenerator
+import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.parse.Parser
 import org.fujure.fbc.parse.ParsingResult
+import org.fujure.fbc.read.FileOpenResult
+import org.fujure.fbc.read.FileOpener
+import org.fujure.fbc.read.OpenedFile
 
 class BootstrapCompiler(private val fileOpener: FileOpener,
                         private val parser: Parser,
                         private val codeGenerator: CodeGenerator) : Compiler {
     override fun compile(compileOptions: CompileOptions, files: List<String>): CompilationResults {
         val unparsableFiles = mutableListOf<ProblematicFile.BasicFileIssue>()
-        val parsableFiles = mutableListOf<ArgumentFile.OpenedFile>()
+        val parsableFiles = mutableListOf<OpenedFile>()
 
         for (file in files) {
-            val argFile = fileOpener.open(file)
-            val problematicFile: ProblematicFile.BasicFileIssue? = when (argFile) {
-                is ArgumentFile.InvalidFilename -> {
-                    ProblematicFile.BasicFileIssue.InvalidFileExtension(argFile.userProvidedFile)
-                }
-                is ArgumentFile.MissingFile -> {
-                    ProblematicFile.BasicFileIssue.FileNotFound(argFile.userProvidedFile)
-                }
-                is ArgumentFile.FailedFile -> {
-                    ProblematicFile.BasicFileIssue.CouldNotOpenFile(argFile.userProvidedFile, argFile.error)
-                }
-                is ArgumentFile.OpenedFile -> {
-                    parsableFiles.add(argFile)
+            val fileOpenResult = fileOpener.open(file)
+            val problematicFile: ProblematicFile.BasicFileIssue? = when (fileOpenResult) {
+                is FileOpenResult.Failure -> fileOpenResult.cause
+                is FileOpenResult.Success -> {
+                    parsableFiles.add(fileOpenResult.openedFile)
                     null
                 }
             }
@@ -36,22 +31,23 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
         }
 
         return if (unparsableFiles.isEmpty())
-            compileOpenFiles(compileOptions, parsableFiles)
+            compileOpenedFiles(compileOptions, parsableFiles)
         else
             CompilationResults.CompilationNotAttempted(unparsableFiles)
     }
 
-    fun compileOpenFiles(compileOptions: CompileOptions, openFiles: List<ArgumentFile.OpenedFile>): CompilationResults {
+    fun compileOpenedFiles(compileOptions: CompileOptions, openedFiles: List<OpenedFile>): CompilationResults {
         val failedParsingFiles = mutableListOf<ProblematicFile.ParsingFileIssue>()
-        val parsedFiles = mutableListOf<ParsingResult.ParsingSucceeded>()
-        for (openFile in openFiles) {
-            val parsingResult = parser.parse(openFile)
+        val parsedFiles = mutableListOf<ParsedFile>()
+
+        for (openedFile in openedFiles) {
+            val parsingResult = parser.parse(openedFile)
             val problematicFile: ProblematicFile.ParsingFileIssue? = when (parsingResult) {
-                is ParsingResult.ParsingFailed -> {
-                    ProblematicFile.ParsingFileIssue(openFile.userProvidedFile, parsingResult.errors)
+                is ParsingResult.Failure -> {
+                    parsingResult.cause
                 }
-                is ParsingResult.ParsingSucceeded -> {
-                    parsedFiles.add(parsingResult)
+                is ParsingResult.Success -> {
+                    parsedFiles.add(parsingResult.parsedFile)
                     null
                 }
             }
@@ -66,7 +62,7 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
             CompilationResults.CompilationNotAttempted(failedParsingFiles)
     }
 
-    private fun generateCode(compileOptions: CompileOptions, parsedFiles: List<ParsingResult.ParsingSucceeded>): CompilationAttempted {
+    fun generateCode(compileOptions: CompileOptions, parsedFiles: List<ParsedFile>): CompilationAttempted {
         val builder = CompilationAttempted.Builder()
         for (parsedFile in parsedFiles) {
             val codeGenResult = codeGenerator.generate(compileOptions, parsedFile)

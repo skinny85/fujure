@@ -1,4 +1,4 @@
-package org.fujure.fbc.internal
+package org.fujure.fbc.parse
 
 import org.antlr.v4.runtime.ANTLRErrorListener
 import org.antlr.v4.runtime.Parser
