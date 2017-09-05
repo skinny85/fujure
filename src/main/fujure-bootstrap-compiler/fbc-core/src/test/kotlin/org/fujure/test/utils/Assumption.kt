@@ -14,8 +14,8 @@ class Assumption private constructor(val subject: Any) {
             }
 
     companion object {
-        fun assume(suject: Any): Assumption {
-            return Assumption(suject)
+        fun assume(subject: Any): Assumption {
+            return Assumption(subject)
         }
     }
 }
