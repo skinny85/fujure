@@ -69,6 +69,10 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
                                 log.error("${problematicFile.userProvidedFilePath}:($line:$column): $msg")
                             1
                         }
+                        is ProblematicFile.SemanticFileIssue -> {
+                            log.error("${problematicFile.userProvidedFilePath}: $problematicFile")
+                            1
+                        }
                     }
                 }
                 ret

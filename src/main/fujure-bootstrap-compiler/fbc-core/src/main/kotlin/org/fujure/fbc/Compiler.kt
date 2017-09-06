@@ -1,5 +1,6 @@
 package org.fujure.fbc
 
+import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.codegen.CodeGenResult
 import org.fujure.fbc.parse.SyntaxError
 
@@ -48,5 +49,6 @@ sealed class ProblematicFile(open val userProvidedFilePath: String) {
     data class ParsingFileIssue(override val userProvidedFilePath: String, val errors: List<SyntaxError>) :
             ProblematicFile(userProvidedFilePath)
 
-//    data class SemanticFileIssue(override val userProvidedFilePath: String) : ProblematicFile("")
+    data class SemanticFileIssue(override val userProvidedFilePath: String, val errors: List<SemanticError>) :
+            ProblematicFile(userProvidedFilePath)
 }
