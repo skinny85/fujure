@@ -19,7 +19,7 @@ sealed class ParsingResult {
             ParsingResult()
 }
 
-data class ParsedFile(val userProvidedFilePath: String, val ast: FileContents)
+data class ParsedFile(val userProvidedFilePath: String, val parseTree: FileContents)
 
 object BnfcParser : Parser {
     override fun parse(openedFile: OpenedFile): ParsingResult {

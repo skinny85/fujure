@@ -73,9 +73,9 @@ object SimpleSemanticAnalyzer : SemanticAnalyzer {
     }
 
     fun analyze(parsedFile: ParsedFile, symbolTableBuilder: SymbolTableBuilder): FileAnalysisResult {
-        val packageName = parsedFile.ast.accept(PackageNameExtractor, Unit)
+        val packageName = parsedFile.parseTree.accept(PackageNameExtractor, Unit)
 
-        val defs = parsedFile.ast.accept(DefsAnalyzeVisitor, symbolTableBuilder)
+        val defs = parsedFile.parseTree.accept(DefsAnalyzeVisitor, symbolTableBuilder)
 
         return FileAnalysisResult.Success(AstRoot(parsedFile.userProvidedFilePath, FileContents(packageName, defs)))
     }

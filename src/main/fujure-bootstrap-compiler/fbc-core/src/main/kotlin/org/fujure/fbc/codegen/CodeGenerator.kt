@@ -27,7 +27,7 @@ object JavaPoetCodeGenerator : CodeGenerator {
         val file = File(parsedFile.userProvidedFilePath)
         val className = file.nameWithoutExtension
 
-        val javaFile = parsedFile.ast.accept(FileContentsCodegenVisitor, className)
+        val javaFile = parsedFile.parseTree.accept(FileContentsCodegenVisitor, className)
 
         val destFile = File(compileOptions.outputDir, "$className.java")
 
