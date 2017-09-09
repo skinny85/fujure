@@ -1,6 +1,9 @@
 package org.fujure.fbc
 
 import org.fujure.fbc.CompilationResults.CompilationAttempted
+import org.fujure.fbc.analyze.AnalyzedProgram
+import org.fujure.fbc.analyze.SemanticAnalysisResult
+import org.fujure.fbc.analyze.SemanticAnalyzer
 import org.fujure.fbc.codegen.CodeGenerator
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.parse.Parser
@@ -11,6 +14,7 @@ import org.fujure.fbc.read.OpenedFile
 
 class BootstrapCompiler(private val fileOpener: FileOpener,
                         private val parser: Parser,
+                        private val semanticAnalyzer: SemanticAnalyzer,
                         private val codeGenerator: CodeGenerator) : Compiler {
     override fun compile(compileOptions: CompileOptions, files: List<String>): CompilationResults {
         val unparsableFiles = mutableListOf<ProblematicFile.BasicFileIssue>()
@@ -57,15 +61,25 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
         }
 
         return if (failedParsingFiles.isEmpty())
-            generateCode(compileOptions, parsedFiles)
+            compileParsedFiles(compileOptions, parsedFiles)
         else
             CompilationResults.CompilationNotAttempted(failedParsingFiles)
     }
 
-    fun generateCode(compileOptions: CompileOptions, parsedFiles: List<ParsedFile>): CompilationAttempted {
+    fun compileParsedFiles(compileOptions: CompileOptions, parsedFiles: List<ParsedFile>): CompilationResults {
+        val semanticAnalysisResult = semanticAnalyzer.analyze(parsedFiles)
+        return when (semanticAnalysisResult) {
+            is SemanticAnalysisResult.Failure ->
+                    CompilationResults.CompilationNotAttempted(semanticAnalysisResult.issues)
+            is SemanticAnalysisResult.Success ->
+                    generateCode(compileOptions, semanticAnalysisResult.analyzedProgram)
+        }
+    }
+
+    fun generateCode(compileOptions: CompileOptions, analyzedProgram: AnalyzedProgram): CompilationAttempted {
         val builder = CompilationAttempted.Builder()
-        for (parsedFile in parsedFiles) {
-            val codeGenResult = codeGenerator.generate(compileOptions, parsedFile)
+        for (astRoot in analyzedProgram.asts) {
+            val codeGenResult = codeGenerator.generate(compileOptions, astRoot, analyzedProgram.symbolTable)
             builder.add(codeGenResult)
         }
         return builder.build()

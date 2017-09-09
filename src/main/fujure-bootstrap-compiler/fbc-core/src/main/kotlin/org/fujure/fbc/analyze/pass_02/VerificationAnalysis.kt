@@ -6,7 +6,7 @@ import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.FileContents
 import org.fujure.fbc.ast.SymbolTable
-import org.fujure.fbc.codegen.ast.PackageNameExtractor
+import org.fujure.fbc.analyze.PackageNameExtractor
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs

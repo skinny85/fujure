@@ -1,7 +1,6 @@
 package org.fujure.fbc.analyze.pass_01
 
 import org.fujure.fbc.ProblematicFile
-import org.fujure.fbc.analyze.SymbolTableBuilder
 import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.parse.ParsedFile
 
@@ -36,4 +35,10 @@ sealed class SymbolsGatheringResult {
 
     data class Success(val symbolTable: SymbolTable):
             SymbolsGatheringResult()
+}
+
+class SymbolTableBuilder {
+    fun build(): SymbolTable {
+        return SymbolTable()
+    }
 }

@@ -1,4 +1,4 @@
-package org.fujure.fbc.codegen.ast
+package org.fujure.fbc.analyze
 
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage

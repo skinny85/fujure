@@ -4,8 +4,6 @@ import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.analyze.pass_01.SymbolsGatheringAnalysis
 import org.fujure.fbc.analyze.pass_01.SymbolsGatheringResult
 import org.fujure.fbc.analyze.pass_02.VerificationAnalysis
-import org.fujure.fbc.ast.AstRoot
-import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.parse.ParsedFile
 
 interface SemanticAnalyzer {
@@ -18,17 +16,6 @@ sealed class SemanticAnalysisResult {
 
     data class Success(val analyzedProgram: AnalyzedProgram):
             SemanticAnalysisResult()
-}
-
-class SemanticError
-
-data class AnalyzedProgram(val asts: List<AstRoot>,
-                           val symbolTable: SymbolTable)
-
-class SymbolTableBuilder {
-    fun build(): SymbolTable {
-        return SymbolTable()
-    }
 }
 
 object SimpleSemanticAnalyzer : SemanticAnalyzer {
