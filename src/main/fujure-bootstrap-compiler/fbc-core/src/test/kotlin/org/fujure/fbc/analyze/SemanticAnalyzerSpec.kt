@@ -3,6 +3,7 @@ package org.fujure.fbc.analyze
 import org.antlr.v4.runtime.CharStreams
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.ast.AstRoot
+import org.fujure.fbc.ast.Def
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.parse.ParsingResult
@@ -70,6 +71,11 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
             val fileContents = analyzedSuccess(result.v).fileContents
 
             assertThat(fileContents.defs).hasSize(1)
+            val def = fileContents.defs[0]
+
+            val simpleValueDef = assume(def).isA<Def.ValueDef.SimpleValueDef>()
+            assertThat(simpleValueDef.id).isEqualTo("a")
+            assertThat(simpleValueDef.value).isEqualTo(42)
         }
     }
 })

@@ -53,10 +53,10 @@ object DefsVerificationVisitor :
     }
 
     override fun visit(untypedValueDef: UntypedValueDef, symbolTable: SymbolTable): Def {
-        return Def.ValueDef.SimpleValueDef()
+        return Def.ValueDef.SimpleValueDef(untypedValueDef.ident_, untypedValueDef.integer_)
     }
 
     override fun visit(typedValueDef: TypedValueDef, symbolTable: SymbolTable): Def {
-        return Def.ValueDef.SimpleValueDef()
+        return Def.ValueDef.SimpleValueDef(typedValueDef.ident_, typedValueDef.integer_)
     }
 }
