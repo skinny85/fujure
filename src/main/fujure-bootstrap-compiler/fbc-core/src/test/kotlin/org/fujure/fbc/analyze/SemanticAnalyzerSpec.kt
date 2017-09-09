@@ -2,6 +2,7 @@ package org.fujure.fbc.analyze
 
 import org.antlr.v4.runtime.CharStreams
 import org.assertj.core.api.Assertions.assertThat
+import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.parse.ParsingResult
@@ -24,6 +25,11 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
         return analyzer.analyze(listOf(parseProgram(program)))
     }
 
+    fun analyzedSuccess(result: SemanticAnalysisResult): AstRoot {
+        val success = assume(result).isA<SemanticAnalysisResult.Success>()
+        return success.analyzedProgram.asts[0]
+    }
+
     val result = Deferred<SemanticAnalysisResult>()
 
     it.describes("called with an empty program") {
@@ -32,15 +38,38 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
                 """)
         }
 
-        val success = Deferred<SemanticAnalysisResult.Success>()
+        it.should("parse an empty package name") {
+            val astRoot = analyzedSuccess(result.v)
 
-        it.should("return SemanticAnalysisResult\$Success") {
-            success.v = assume(result.v).isA<SemanticAnalysisResult.Success>()
+            assertThat(astRoot.fileContents.packageName).isEmpty()
+        }
+    }
+
+    it.describes("called with just a package name") {
+        it.beginsAll {
+            result.v = analyzeProgram("""
+                package com.example
+                """)
         }
 
-        it.should("parse an empty package name") {
-            val astRoot = success.v.analyzedProgram.asts[0]
-            assertThat(astRoot.fileContents.packageName).isEmpty()
+        it.should("parse the package name") {
+            val astRoot = analyzedSuccess(result.v)
+
+            assertThat(astRoot.fileContents.packageName).isEqualTo("com.example")
+        }
+    }
+
+    it.describes("called with one simple value definition") {
+        it.beginsAll {
+            result.v = analyzeProgram("""
+                def a = 42
+                """)
+        }
+
+        it.should("parse the one definition") {
+            val fileContents = analyzedSuccess(result.v).fileContents
+
+            assertThat(fileContents.defs).hasSize(1)
         }
     }
 })
