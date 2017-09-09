@@ -1,12 +1,32 @@
 package org.fujure.fbc.analyze.pass_01
 
 import org.fujure.fbc.ProblematicFile
+import org.fujure.fbc.analyze.SymbolTableBuilder
 import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.parse.ParsedFile
 
 object SymbolsGatheringAnalysis {
     fun analyze(parsedFiles: List<ParsedFile>): SymbolsGatheringResult {
-        throw UnsupportedOperationException()
+        val symbolTableBuilder = SymbolTableBuilder()
+        val fileSymbolTables = mutableListOf<FileSymbolTable>()
+        val issues = mutableListOf<ProblematicFile.SemanticFileIssue>()
+        for (parsedFile in parsedFiles) {
+            val fileSymbolsGatheringResult = FileSymbolsGatheringAnalysis.analyze(parsedFile)
+            when (fileSymbolsGatheringResult) {
+                is FileSymbolsGatheringResult.Failure -> {
+                    issues.add(ProblematicFile.SemanticFileIssue(parsedFile.userProvidedFilePath,
+                            fileSymbolsGatheringResult.errors))
+                }
+                is FileSymbolsGatheringResult.Success -> {
+                    fileSymbolTables.add(fileSymbolsGatheringResult.fileSymbolTable)
+                    // symbolsTableBuilder.add(fileSymbolTable) ?
+                }
+            }
+        }
+        return if (issues.isEmpty())
+            SymbolsGatheringResult.Success(symbolTableBuilder.build())
+        else
+            SymbolsGatheringResult.Failure(issues)
     }
 }
 
