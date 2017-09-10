@@ -1,5 +1,6 @@
 dependencies {
     compile group: 'com.squareup', name: 'javapoet', version: '1.9.0'
+    compile 'org.funktionale:funktionale-all:1.1'
 
     compile project(':src:main:fujure-bootstrap-compiler:fbc-parser')
 }

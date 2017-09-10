@@ -1,3 +1,6 @@
 package org.fujure.fbc.analyze
 
-class SemanticError
+sealed class SemanticError {
+    data class DuplicateDefintion(val name: String) :
+            SemanticError()
+}

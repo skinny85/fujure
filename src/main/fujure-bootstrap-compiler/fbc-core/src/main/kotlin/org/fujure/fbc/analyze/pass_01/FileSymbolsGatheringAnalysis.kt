@@ -1,6 +1,10 @@
 package org.fujure.fbc.analyze.pass_01
 
+import org.fujure.fbc.analyze.PackageNameExtractor
 import org.fujure.fbc.analyze.SemanticError
+import org.fujure.fbc.ast.AstRoot
+import org.fujure.fbc.ast.Def
+import org.fujure.fbc.ast.FileContents
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs
@@ -9,15 +13,24 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef
+import org.funktionale.either.Either
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def as AbsynDef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents as AbsynFileContents
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef as AbsynValueDef
 
 object FileSymbolsGatheringAnalysis {
     fun analyze(parsedFile: ParsedFile): FileSymbolsGatheringResult {
+        val packageName = parsedFile.parseTree.accept(PackageNameExtractor, Unit)
         val fileSymbolTableBuilder = FileSymbolTableBuilder()
-        return FileSymbolsGatheringResult.Success(
-                parsedFile.parseTree.accept(DefsGatherVisitor, fileSymbolTableBuilder))
+
+        val eitherFailureOrListOfDefs = parsedFile.parseTree.accept(DefsGatherVisitor, fileSymbolTableBuilder)
+        return when (eitherFailureOrListOfDefs) {
+            is Either.Left -> eitherFailureOrListOfDefs.l
+            is Either.Right -> FileSymbolsGatheringResult.Success(
+                    AstRoot(parsedFile.userProvidedFilePath,
+                            FileContents(packageName, eitherFailureOrListOfDefs.r)),
+                    fileSymbolTableBuilder.build())
+        }
     }
 }
 
@@ -25,7 +38,7 @@ sealed class FileSymbolsGatheringResult {
     data class Failure(val errors: List<SemanticError>) :
             FileSymbolsGatheringResult()
 
-    data class Success(val fileSymbolTable: FileSymbolTable) :
+    data class Success(val astRoot: AstRoot, val fileSymbolTable: FileSymbolTable) :
             FileSymbolsGatheringResult()
 }
 
@@ -38,32 +51,59 @@ class FileSymbolTableBuilder {
 class FileSymbolTable
 
 object DefsGatherVisitor :
-        AbsynFileContents.Visitor<FileSymbolTable, FileSymbolTableBuilder>,
-        Defs.Visitor<FileSymbolTable, FileSymbolTableBuilder>,
-        AbsynDef.Visitor<Unit, FileSymbolTableBuilder>,
-        ValDef.Visitor<Unit, FileSymbolTableBuilder> {
-    override fun visit(fileContents: FileInNamedPackage, fileSymbolTableBuilder: FileSymbolTableBuilder): FileSymbolTable {
+        AbsynFileContents.Visitor<
+                Either<FileSymbolsGatheringResult.Failure, List<Def>>,
+                FileSymbolTableBuilder>,
+        Defs.Visitor<
+                Either<FileSymbolsGatheringResult.Failure, List<Def>>,
+                FileSymbolTableBuilder>,
+        AbsynDef.Visitor<
+                Either<SemanticError, Def>,
+                FileSymbolTableBuilder>,
+        ValDef.Visitor<
+                Either<SemanticError.DuplicateDefintion, Def.ValueDef>,
+                FileSymbolTableBuilder> {
+    override fun visit(fileContents: FileInNamedPackage, fileSymbolTableBuilder: FileSymbolTableBuilder):
+            Either<FileSymbolsGatheringResult.Failure, List<Def>> {
         return fileContents.defs_.accept(this, fileSymbolTableBuilder)
     }
 
-    override fun visit(fileContents: FileInDefaultPackage, fileSymbolTableBuilder: FileSymbolTableBuilder): FileSymbolTable {
+    override fun visit(fileContents: FileInDefaultPackage, fileSymbolTableBuilder: FileSymbolTableBuilder):
+            Either<FileSymbolsGatheringResult.Failure, List<Def>> {
         return fileContents.defs_.accept(this, fileSymbolTableBuilder)
     }
 
-    override fun visit(defs: Definitions, fileSymbolTableBuilder: FileSymbolTableBuilder): FileSymbolTable {
-        for (def in defs.listdef_) {
-            def.accept(this, fileSymbolTableBuilder)
+    override fun visit(definitions: Definitions, fileSymbolTableBuilder: FileSymbolTableBuilder):
+            Either<FileSymbolsGatheringResult.Failure, List<Def>> {
+        val defs = mutableListOf<Def>()
+        val errors = mutableListOf<SemanticError>()
+
+        for (def in definitions.listdef_) {
+            val valueDefOrError = def.accept(this, fileSymbolTableBuilder)
+            when (valueDefOrError) {
+                is Either.Left -> errors.add(valueDefOrError.l)
+                is Either.Right -> defs.add(valueDefOrError.r)
+            }
         }
-        return fileSymbolTableBuilder.build()
+
+        return if (errors.isEmpty())
+            Either.Right(defs)
+        else
+            Either.Left(FileSymbolsGatheringResult.Failure(errors))
     }
 
-    override fun visit(valueDef: ValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder) {
+    override fun visit(valueDef: AbsynValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
+            Either<SemanticError, Def.ValueDef> {
         return valueDef.valdef_.accept(this, fileSymbolTableBuilder)
     }
 
-    override fun visit(untypedValueDef: UntypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder) {
+    override fun visit(untypedValueDef: UntypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
+            Either<SemanticError.DuplicateDefintion, Def.ValueDef> {
+        return Either.Right(Def.ValueDef.SimpleValueDef(untypedValueDef.ident_, untypedValueDef.integer_))
     }
 
-    override fun visit(typedValueDef: TypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder) {
+    override fun visit(typedValueDef: TypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
+            Either<SemanticError.DuplicateDefintion, Def.ValueDef> {
+        return Either.Right(Def.ValueDef.SimpleValueDef(typedValueDef.ident_, typedValueDef.integer_))
     }
 }

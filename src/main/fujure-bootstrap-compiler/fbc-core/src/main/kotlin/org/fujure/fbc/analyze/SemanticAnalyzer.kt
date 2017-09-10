@@ -26,7 +26,7 @@ object SimpleSemanticAnalyzer : SemanticAnalyzer {
                 SemanticAnalysisResult.Failure(symbolsGatheringResult.issues)
             }
             is SymbolsGatheringResult.Success -> {
-                VerificationAnalysis.analyze(parsedFiles, symbolsGatheringResult.symbolTable)
+                VerificationAnalysis.analyze(symbolsGatheringResult.asts, symbolsGatheringResult.symbolTable)
             }
         }
     }
