@@ -1,6 +1,5 @@
 package org.fujure.fbc.analyze.pass_01
 
-import org.fujure.fbc.analyze.PackageNameExtractor
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
@@ -10,6 +9,8 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpec
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecifier
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef
@@ -41,14 +42,6 @@ sealed class FileSymbolsGatheringResult {
     data class Success(val astRoot: AstRoot, val fileSymbolTable: FileSymbolTable) :
             FileSymbolsGatheringResult()
 }
-
-class FileSymbolTableBuilder {
-    fun build(): FileSymbolTable {
-        return FileSymbolTable()
-    }
-}
-
-class FileSymbolTable
 
 object DefsGatherVisitor :
         AbsynFileContents.Visitor<
@@ -99,11 +92,28 @@ object DefsGatherVisitor :
 
     override fun visit(untypedValueDef: UntypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<SemanticError.DuplicateDefintion, Def.ValueDef> {
-        return Either.Right(Def.ValueDef.SimpleValueDef(untypedValueDef.ident_, untypedValueDef.integer_))
+        return visitValueDef(untypedValueDef.ident_, null, untypedValueDef.integer_, fileSymbolTableBuilder)
     }
 
     override fun visit(typedValueDef: TypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<SemanticError.DuplicateDefintion, Def.ValueDef> {
-        return Either.Right(Def.ValueDef.SimpleValueDef(typedValueDef.ident_, typedValueDef.integer_))
+        val declaredType = typedValueDef.typespec_.accept(TypeSpec2StringVisitor, Unit)
+        return visitValueDef(typedValueDef.ident_, declaredType, typedValueDef.integer_, fileSymbolTableBuilder)
+    }
+
+    private fun visitValueDef(id: String, declaredType: String?, value: Int, fileSymbolTableBuilder: FileSymbolTableBuilder):
+            Either<SemanticError.DuplicateDefintion, Def.ValueDef> {
+        return if (fileSymbolTableBuilder.addSimpleValueDeclaration(id, declaredType))
+            Either.Right(Def.ValueDef.SimpleValueDef(id, value))
+        else
+            Either.Left(SemanticError.DuplicateDefintion(id))
+    }
+}
+
+object TypeSpec2StringVisitor : TypeSpec.Visitor<String, Unit> {
+    override fun visit(typeSpecifier: TypeSpecifier, arg: Unit): String {
+        return typeSpecifier.listtypespecfragm_.map { typeSpecFragm ->
+            typeSpecFragm.accept({ typeSpecFragment, _ -> typeSpecFragment.ident_ }, Unit)
+        }.joinToString(".")
     }
 }

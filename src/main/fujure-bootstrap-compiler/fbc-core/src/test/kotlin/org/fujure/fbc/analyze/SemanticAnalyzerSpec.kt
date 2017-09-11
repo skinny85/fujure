@@ -28,7 +28,14 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
 
     fun analyzedSuccess(result: SemanticAnalysisResult): AstRoot {
         val success = assume(result).isA<SemanticAnalysisResult.Success>()
+        assertThat(success.analyzedProgram.asts).hasSize(1)
         return success.analyzedProgram.asts[0]
+    }
+
+    fun analyzedFailure(result: SemanticAnalysisResult): List<SemanticError> {
+        val failure = assume(result).isA<SemanticAnalysisResult.Failure>()
+        assertThat(failure.issues).hasSize(1)
+        return failure.issues[0].errors
     }
 
     val result = Deferred<SemanticAnalysisResult>()
@@ -60,7 +67,7 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
         }
     }
 
-    it.describes("called with one simple value definition") {
+    it.describes("called with one simple value definition without a declared type") {
         it.beginsAll {
             result.v = analyzeProgram("""
                 def a = 42
@@ -76,6 +83,22 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
             val simpleValueDef = assume(def).isA<Def.ValueDef.SimpleValueDef>()
             assertThat(simpleValueDef.id).isEqualTo("a")
             assertThat(simpleValueDef.value).isEqualTo(42)
+        }
+    }
+
+    it.describes("called with duplicate value definition") {
+        it.beginsAll {
+            result.v = analyzeProgram("""
+                def a = 1
+                def a: Int = 2
+                """)
+        }
+
+        it.should("return a DuplicateDefinition error") {
+            val errors = analyzedFailure(result.v)
+
+            assertThat(errors).containsExactly(
+                    SemanticError.DuplicateDefintion("a"))
         }
     }
 })

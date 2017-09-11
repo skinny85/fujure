@@ -1,4 +1,4 @@
-package org.fujure.fbc.analyze
+package org.fujure.fbc.analyze.pass_01
 
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage

@@ -9,6 +9,7 @@ import org.fujure.fbc.CompilationResults
 import org.fujure.fbc.CompileOptions
 import org.fujure.fbc.Compiler
 import org.fujure.fbc.ProblematicFile
+import org.fujure.fbc.analyze.SemanticError
 
 /**
  * This class encapsulates invoking the (bootstrap) compiler
@@ -70,7 +71,9 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
                             1
                         }
                         is ProblematicFile.SemanticFileIssue -> {
-                            log.error("${problematicFile.userProvidedFilePath}: $problematicFile")
+                            for (semanticError in problematicFile.errors) {
+                                log.error("${problematicFile.userProvidedFilePath}: ${semanticErrorMessage(semanticError)}")
+                            }
                             1
                         }
                     }
@@ -90,6 +93,11 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
         }
 
         return exitCode
+    }
+
+    private fun semanticErrorMessage(semanticFileIssue: SemanticError): String = when (semanticFileIssue) {
+        is SemanticError.DuplicateDefintion ->
+                "${semanticFileIssue.name} is already defined"
     }
 
     private fun printHelp() {
