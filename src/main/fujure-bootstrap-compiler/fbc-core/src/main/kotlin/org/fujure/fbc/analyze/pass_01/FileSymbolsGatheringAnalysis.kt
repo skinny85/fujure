@@ -4,6 +4,7 @@ import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.FileContents
+import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs
@@ -97,23 +98,23 @@ object DefsGatherVisitor :
 
     override fun visit(typedValueDef: TypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<SemanticError.DuplicateDefintion, Def.ValueDef> {
-        val declaredType = typedValueDef.typespec_.accept(TypeSpec2StringVisitor, Unit)
+        val declaredType = typedValueDef.typespec_.accept(TypeSpec2TypeReference, Unit)
         return visitValueDef(typedValueDef.ident_, declaredType, typedValueDef.integer_, fileSymbolTableBuilder)
     }
 
-    private fun visitValueDef(id: String, declaredType: String?, value: Int, fileSymbolTableBuilder: FileSymbolTableBuilder):
+    private fun visitValueDef(id: String, declaredType: TypeReference?, value: Int, fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<SemanticError.DuplicateDefintion, Def.ValueDef> {
         return if (fileSymbolTableBuilder.addSimpleValueDeclaration(id, declaredType))
-            Either.Right(Def.ValueDef.SimpleValueDef(id, value))
+            Either.Right(Def.ValueDef.SimpleValueDef(id, declaredType, value))
         else
             Either.Left(SemanticError.DuplicateDefintion(id))
     }
 }
 
-object TypeSpec2StringVisitor : TypeSpec.Visitor<String, Unit> {
-    override fun visit(typeSpecifier: TypeSpecifier, arg: Unit): String {
-        return typeSpecifier.listtypespecfragm_.map { typeSpecFragm ->
+object TypeSpec2TypeReference : TypeSpec.Visitor<TypeReference, Unit> {
+    override fun visit(typeSpecifier: TypeSpecifier, arg: Unit): TypeReference {
+        return TypeReference(typeSpecifier.listtypespecfragm_.map { typeSpecFragm ->
             typeSpecFragm.accept({ typeSpecFragment, _ -> typeSpecFragment.ident_ }, Unit)
-        }.joinToString(".")
+        })
     }
 }

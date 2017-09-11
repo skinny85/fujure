@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.CharStreams
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
+import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.parse.ParsingResult
@@ -82,7 +83,23 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
 
             val simpleValueDef = assume(def).isA<Def.ValueDef.SimpleValueDef>()
             assertThat(simpleValueDef.id).isEqualTo("a")
+            assertThat(simpleValueDef.declaredType).isNull()
             assertThat(simpleValueDef.value).isEqualTo(42)
+        }
+    }
+
+    it.describes("called with one simple value definition with a declared type") {
+        it.beginsAll {
+            result.v = analyzeProgram("""
+                def a: Int = 42
+                """)
+        }
+
+        it.should("parse the one definition") {
+            val fileContents = analyzedSuccess(result.v).fileContents
+
+            assertThat(fileContents.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), 42))
         }
     }
 
