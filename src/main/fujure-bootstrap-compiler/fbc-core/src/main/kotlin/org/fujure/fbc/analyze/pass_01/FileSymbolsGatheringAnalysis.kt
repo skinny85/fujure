@@ -55,7 +55,7 @@ object DefsGatherVisitor :
                 Either<SemanticError, Def>,
                 FileSymbolTableBuilder>,
         ValDef.Visitor<
-                Either<SemanticError.DuplicateDefintion, Def.ValueDef>,
+                Either<SemanticError.DuplicateDefinition, Def.ValueDef>,
                 FileSymbolTableBuilder> {
     override fun visit(fileContents: FileInNamedPackage, fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<FileSymbolsGatheringResult.Failure, List<Def>> {
@@ -92,22 +92,22 @@ object DefsGatherVisitor :
     }
 
     override fun visit(untypedValueDef: UntypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
-            Either<SemanticError.DuplicateDefintion, Def.ValueDef> {
+            Either<SemanticError.DuplicateDefinition, Def.ValueDef> {
         return visitValueDef(untypedValueDef.ident_, null, untypedValueDef.integer_, fileSymbolTableBuilder)
     }
 
     override fun visit(typedValueDef: TypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
-            Either<SemanticError.DuplicateDefintion, Def.ValueDef> {
+            Either<SemanticError.DuplicateDefinition, Def.ValueDef> {
         val declaredType = typedValueDef.typespec_.accept(TypeSpec2TypeReference, Unit)
         return visitValueDef(typedValueDef.ident_, declaredType, typedValueDef.integer_, fileSymbolTableBuilder)
     }
 
     private fun visitValueDef(id: String, declaredType: TypeReference?, value: Int, fileSymbolTableBuilder: FileSymbolTableBuilder):
-            Either<SemanticError.DuplicateDefintion, Def.ValueDef> {
+            Either<SemanticError.DuplicateDefinition, Def.ValueDef> {
         return if (fileSymbolTableBuilder.addSimpleValueDeclaration(id, declaredType))
             Either.Right(Def.ValueDef.SimpleValueDef(id, declaredType, value))
         else
-            Either.Left(SemanticError.DuplicateDefintion(id))
+            Either.Left(SemanticError.DuplicateDefinition(id))
     }
 }
 

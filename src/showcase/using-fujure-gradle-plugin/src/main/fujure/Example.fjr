@@ -3,4 +3,4 @@ package com.
 
 def val1 = 342
 
-def val2: Bool = 23
+def val2: Int = 23

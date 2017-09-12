@@ -58,7 +58,7 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
         it.beginsAll {
             result.v = analyzeProgram("""
                 package com.example
-                """)
+            """)
         }
 
         it.should("parse the package name") {
@@ -72,7 +72,7 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
         it.beginsAll {
             result.v = analyzeProgram("""
                 def a = 42
-                """)
+            """)
         }
 
         it.should("parse the one definition") {
@@ -92,7 +92,7 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
         it.beginsAll {
             result.v = analyzeProgram("""
                 def a: Int = 42
-                """)
+            """)
         }
 
         it.should("parse the one definition") {
@@ -108,14 +108,48 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
             result.v = analyzeProgram("""
                 def a = 1
                 def a: Int = 2
-                """)
+            """)
         }
 
         it.should("return a DuplicateDefinition error") {
             val errors = analyzedFailure(result.v)
 
             assertThat(errors).containsExactly(
-                    SemanticError.DuplicateDefintion("a"))
+                    SemanticError.DuplicateDefinition("a"))
+        }
+    }
+
+    it.describes("called with a variable of an unknown type") {
+        it.beginsAll {
+            result.v = analyzeProgram("""
+                def a: DoesNotExist = 1
+            """)
+        }
+
+        it.should("return a TypeNotFound error") {
+            val errors = analyzedFailure(result.v)
+
+            assertThat(errors).containsExactly(
+                    SemanticError.TypeNotFound(
+                            TypeErrorContext.VariableDefinition("a"),
+                            TypeReference("DoesNotExist")))
+        }
+    }
+
+    it.describes("called with a variable declared as Bool but initialized as an Int") {
+        it.beginsAll {
+            result.v = analyzeProgram("""
+                def a: Bool = 1
+            """)
+        }
+
+        it.should("return a TypeMismatch error") {
+            val errors = analyzedFailure(result.v)
+
+            assertThat(errors).containsExactly(
+                    SemanticError.TypeMismatch(
+                            TypeErrorContext.VariableDefinition("a"),
+                            BuiltInTypes.Bool, BuiltInTypes.Int))
         }
     }
 })

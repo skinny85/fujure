@@ -10,6 +10,7 @@ import org.fujure.fbc.CompileOptions
 import org.fujure.fbc.Compiler
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.analyze.SemanticError
+import org.fujure.fbc.analyze.TypeErrorContext
 
 /**
  * This class encapsulates invoking the (bootstrap) compiler
@@ -96,8 +97,22 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
     }
 
     private fun semanticErrorMessage(semanticFileIssue: SemanticError): String = when (semanticFileIssue) {
-        is SemanticError.DuplicateDefintion ->
+        is SemanticError.DuplicateDefinition ->
                 "${semanticFileIssue.name} is already defined"
+        is SemanticError.TypeNotFound ->
+                "Error ${contextMessage(semanticFileIssue.context)}: " +
+                        "Unresolved type reference ${semanticFileIssue.typeReference.inStringForm()}"
+        is SemanticError.TypeMismatch ->
+                "Error ${contextMessage(semanticFileIssue.context)}: " +
+                        "Type mismatch, expected: ${semanticFileIssue.expected.inStringForm()} " +
+                        "but got: ${semanticFileIssue.actual.inStringForm()}"
+    }
+
+    private fun contextMessage(context: TypeErrorContext): String {
+        return when (context) {
+            is TypeErrorContext.VariableDefinition ->
+                    "in declaration of ${context.name}"
+        }
     }
 
     private fun printHelp() {
