@@ -228,6 +228,36 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
   /***   You shouldn't need to change anything beyond this point.   ***/
 
   private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents foo, int _i_)
@@ -327,7 +357,7 @@ public class PrettyPrinter
        render("def");
        pp(_untypedvaluedef.ident_, 0);
        render("=");
-       pp(_untypedvaluedef.integer_, 0);
+       pp(_untypedvaluedef.expr_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
     else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef)
@@ -339,7 +369,7 @@ public class PrettyPrinter
        render(":");
        pp(_typedvaluedef.typespec_, 0);
        render("=");
-       pp(_typedvaluedef.integer_, 0);
+       pp(_typedvaluedef.expr_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -374,6 +404,42 @@ public class PrettyPrinter
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment _typespecfragment = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment) foo;
        if (_i_ > 0) render(_L_PAREN);
        pp(_typespecfragment.ident_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral _exprliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_exprliteral.literal_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral _intliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_intliteral.integer_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral _booltrueliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("true");
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral _boolfalseliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("false");
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -480,7 +546,7 @@ public class PrettyPrinter
        render("(");
        render("UntypedValueDef");
        sh(_untypedvaluedef.ident_);
-       sh(_untypedvaluedef.integer_);
+       sh(_untypedvaluedef.expr_);
        render(")");
     }
     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef)
@@ -490,7 +556,7 @@ public class PrettyPrinter
        render("TypedValueDef");
        sh(_typedvaluedef.ident_);
        sh(_typedvaluedef.typespec_);
-       sh(_typedvaluedef.integer_);
+       sh(_typedvaluedef.expr_);
        render(")");
     }
   }
@@ -528,6 +594,40 @@ public class PrettyPrinter
        render("TypeSpecFragment");
        sh(_typespecfragment.ident_);
        render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr foo)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral _exprliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral) foo;
+       render("(");
+       render("ExprLiteral");
+       sh(_exprliteral.literal_);
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal foo)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral _intliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral) foo;
+       render("(");
+       render("IntLiteral");
+       sh(_intliteral.integer_);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral _booltrueliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral) foo;
+       render("BoolTrueLiteral");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral _boolfalseliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral) foo;
+       render("BoolFalseLiteral");
     }
   }
 

@@ -4,3 +4,7 @@ package com.
 def val1 = 342
 
 def val2: Int = 23
+
+def truthy = true
+
+def falsy: Bool = false

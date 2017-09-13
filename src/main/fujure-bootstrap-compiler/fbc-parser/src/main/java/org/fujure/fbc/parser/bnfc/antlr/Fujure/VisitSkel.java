@@ -61,13 +61,13 @@ public class VisitSkel
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg)
     { /* Code For UntypedValueDef Goes Here */
       //p.ident_;
-      //p.integer_;
+      p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
     }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef p, A arg)
     { /* Code For TypedValueDef Goes Here */
       //p.ident_;
       p.typespec_.accept(new TypeSpecVisitor<R,A>(), arg);
-      //p.integer_;
+      p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
     }
   }
@@ -85,6 +85,28 @@ public class VisitSkel
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment p, A arg)
     { /* Code For TypeSpecFragment Goes Here */
       //p.ident_;
+      return null;
+    }
+  }
+  public class ExprVisitor<R,A> implements Expr.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral p, A arg)
+    { /* Code For ExprLiteral Goes Here */
+      p.literal_.accept(new LiteralVisitor<R,A>(), arg);
+      return null;
+    }
+  }
+  public class LiteralVisitor<R,A> implements Literal.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral p, A arg)
+    { /* Code For IntLiteral Goes Here */
+      //p.integer_;
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral p, A arg)
+    { /* Code For BoolTrueLiteral Goes Here */
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral p, A arg)
+    { /* Code For BoolFalseLiteral Goes Here */
       return null;
     }
   }

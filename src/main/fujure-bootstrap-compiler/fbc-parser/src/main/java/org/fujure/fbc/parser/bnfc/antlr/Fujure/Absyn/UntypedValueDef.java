@@ -2,8 +2,8 @@ package org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn; // Java Package generated
 
 public class UntypedValueDef extends ValDef {
   public final String ident_;
-  public final Integer integer_;
-  public UntypedValueDef(String p1, Integer p2) { ident_ = p1; integer_ = p2; }
+  public final Expr expr_;
+  public UntypedValueDef(String p1, Expr p2) { ident_ = p1; expr_ = p2; }
 
   public <R,A> R accept(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef.Visitor<R,A> v, A arg) { return v.visit(this, arg); }
 
@@ -11,13 +11,13 @@ public class UntypedValueDef extends ValDef {
     if (this == o) return true;
     if (o instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef) {
       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef x = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef)o;
-      return this.ident_.equals(x.ident_) && this.integer_.equals(x.integer_);
+      return this.ident_.equals(x.ident_) && this.expr_.equals(x.expr_);
     }
     return false;
   }
 
   public int hashCode() {
-    return 37*(this.ident_.hashCode())+this.integer_.hashCode();
+    return 37*(this.ident_.hashCode())+this.expr_.hashCode();
   }
 
 

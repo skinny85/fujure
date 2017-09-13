@@ -199,4 +199,52 @@ public interface FujureParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTypeSpecFragment(FujureParser.TypeSpecFragmentContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ExprLiteral}
+	 * labeled alternative in {@link FujureParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprLiteral(FujureParser.ExprLiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ExprLiteral}
+	 * labeled alternative in {@link FujureParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprLiteral(FujureParser.ExprLiteralContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code IntLiteral}
+	 * labeled alternative in {@link FujureParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void enterIntLiteral(FujureParser.IntLiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code IntLiteral}
+	 * labeled alternative in {@link FujureParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void exitIntLiteral(FujureParser.IntLiteralContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code BoolTrueLiteral}
+	 * labeled alternative in {@link FujureParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void enterBoolTrueLiteral(FujureParser.BoolTrueLiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code BoolTrueLiteral}
+	 * labeled alternative in {@link FujureParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void exitBoolTrueLiteral(FujureParser.BoolTrueLiteralContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code BoolFalseLiteral}
+	 * labeled alternative in {@link FujureParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void enterBoolFalseLiteral(FujureParser.BoolFalseLiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code BoolFalseLiteral}
+	 * labeled alternative in {@link FujureParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void exitBoolFalseLiteral(FujureParser.BoolFalseLiteralContext ctx);
 }

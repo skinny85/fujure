@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.CharStreams
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
+import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.parse.ParsedFile
@@ -84,7 +85,7 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
             val simpleValueDef = assume(def).isA<Def.ValueDef.SimpleValueDef>()
             assertThat(simpleValueDef.id).isEqualTo("a")
             assertThat(simpleValueDef.declaredType).isNull()
-            assertThat(simpleValueDef.value).isEqualTo(42)
+            assertThat(simpleValueDef.initializer).isEqualTo(Expr.IntLiteral(42))
         }
     }
 
@@ -99,7 +100,7 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
             val fileContents = analyzedSuccess(result.v).fileContents
 
             assertThat(fileContents.defs).containsExactly(
-                    Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), 42))
+                    Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.IntLiteral(42)))
         }
     }
 
@@ -150,6 +151,40 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
                     SemanticError.TypeMismatch(
                             TypeErrorContext.VariableDefinition("a"),
                             BuiltInTypes.Bool, BuiltInTypes.Int))
+        }
+    }
+
+    it.describes("called with 2 simple Boolean value definitions") {
+        it.beginsAll {
+            result.v = analyzeProgram("""
+                def a = true
+                def b: Bool = false
+            """)
+        }
+
+        it.should("parse the one definition") {
+            val fileContents = analyzedSuccess(result.v).fileContents
+
+            assertThat(fileContents.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("a", null, Expr.BoolLiteral.True),
+                    Def.ValueDef.SimpleValueDef("b", TypeReference("Bool"), Expr.BoolLiteral.False))
+        }
+    }
+
+    it.describes("called with a variable declared as Int but initialized as a Bool") {
+        it.beginsAll {
+            result.v = analyzeProgram("""
+                def a: Int = false
+            """)
+        }
+
+        it.should("return a TypeMismatch error") {
+            val errors = analyzedFailure(result.v)
+
+            assertThat(errors).containsExactly(
+                    SemanticError.TypeMismatch(
+                            TypeErrorContext.VariableDefinition("a"),
+                            BuiltInTypes.Int, BuiltInTypes.Bool))
         }
     }
 })

@@ -8,6 +8,7 @@ import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.analyze.TypeErrorContext
 import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
+import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def as AbsynDef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents as AbsynFileContents
@@ -48,7 +49,7 @@ object VerificationAnalysis {
                     if (declaredType == null) {
                         SemanticError.TypeNotFound(context, def.declaredType)
                     } else {
-                        val actualType = BuiltInTypes.Int
+                        val actualType = initializerType(def.initializer)
                         if (declaredType != actualType) {
                             SemanticError.TypeMismatch(context, declaredType, actualType)
                         } else {
@@ -64,5 +65,10 @@ object VerificationAnalysis {
             emptyList()
         else
             listOf(typeError)
+    }
+
+    private fun initializerType(initializer: Expr) = when (initializer) {
+        is Expr.IntLiteral -> BuiltInTypes.Int
+        is Expr.BoolLiteral -> BuiltInTypes.Bool
     }
 }

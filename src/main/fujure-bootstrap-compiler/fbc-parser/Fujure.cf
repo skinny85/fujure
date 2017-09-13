@@ -11,9 +11,15 @@ Definitions . Defs ::= [Def] ;
 separator Def "" ;
 ValueDef . Def ::= ValDef ;
 
-UntypedValueDef . ValDef ::= "def" Ident "=" Integer ;
-TypedValueDef   . ValDef ::= "def" Ident ":" TypeSpec "=" Integer ;
+UntypedValueDef . ValDef ::= "def" Ident "=" Expr ;
+TypedValueDef   . ValDef ::= "def" Ident ":" TypeSpec "=" Expr ;
 
 TypeSpecifier . TypeSpec ::= [TypeSpecFragm] ;
 separator nonempty TypeSpecFragm "." ;
 TypeSpecFragment . TypeSpecFragm ::= Ident ;
+
+ExprLiteral . Expr ::= Literal ;
+
+IntLiteral        . Literal ::= Integer ;
+BoolTrueLiteral   . Literal ::= "true" ;
+BoolFalseLiteral  . Literal ::= "false" ;

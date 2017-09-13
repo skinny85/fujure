@@ -11,7 +11,9 @@ public class ComposVisitor<A> implements
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpec.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpec,A>,
-  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm,A>
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal,A>
 {
 /* FileContents */
     public FileContents visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage p, A arg)
@@ -60,14 +62,14 @@ public class ComposVisitor<A> implements
     public ValDef visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg)
     {
       String ident_ = p.ident_;
-      Integer integer_ = p.integer_;
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef(ident_, integer_);
+      Expr expr_ = p.expr_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef(ident_, expr_);
     }    public ValDef visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef p, A arg)
     {
       String ident_ = p.ident_;
       TypeSpec typespec_ = p.typespec_.accept(this, arg);
-      Integer integer_ = p.integer_;
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef(ident_, typespec_, integer_);
+      Expr expr_ = p.expr_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef(ident_, typespec_, expr_);
     }
 /* TypeSpec */
     public TypeSpec visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecifier p, A arg)
@@ -84,5 +86,23 @@ public class ComposVisitor<A> implements
     {
       String ident_ = p.ident_;
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment(ident_);
+    }
+/* Expr */
+    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral p, A arg)
+    {
+      Literal literal_ = p.literal_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral(literal_);
+    }
+/* Literal */
+    public Literal visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral p, A arg)
+    {
+      Integer integer_ = p.integer_;
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral(integer_);
+    }    public Literal visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral p, A arg)
+    {
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral();
+    }    public Literal visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral p, A arg)
+    {
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral();
     }
 }

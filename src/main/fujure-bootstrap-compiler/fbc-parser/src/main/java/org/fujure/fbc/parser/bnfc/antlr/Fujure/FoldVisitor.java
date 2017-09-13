@@ -59,11 +59,13 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
 /* ValDef */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg) {
       R r = leaf(arg);
+      r = combine(p.expr_.accept(this, arg), r, arg);
       return r;
     }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef p, A arg) {
       R r = leaf(arg);
       r = combine(p.typespec_.accept(this, arg), r, arg);
+      r = combine(p.expr_.accept(this, arg), r, arg);
       return r;
     }
 
@@ -79,6 +81,27 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
 
 /* TypeSpecFragm */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment p, A arg) {
+      R r = leaf(arg);
+      return r;
+    }
+
+/* Expr */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.literal_.accept(this, arg), r, arg);
+      return r;
+    }
+
+/* Literal */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral p, A arg) {
+      R r = leaf(arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral p, A arg) {
+      R r = leaf(arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral p, A arg) {
       R r = leaf(arg);
       return r;
     }
