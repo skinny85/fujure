@@ -5,21 +5,23 @@ FileInDefaultPackage . FileContents ::= Defs ;
 
 PackageName . PkgName ::= [PkgFragm] ;
 separator nonempty PkgFragm "." ;
-PackageFragment . PkgFragm ::= Ident ;
+PackageFragment . PkgFragm ::= JID ;
 
 Definitions . Defs ::= [Def] ;
 separator Def "" ;
 ValueDef . Def ::= ValDef ;
 
-UntypedValueDef . ValDef ::= "def" Ident "=" Expr ;
-TypedValueDef   . ValDef ::= "def" Ident ":" TypeSpec "=" Expr ;
+UntypedValueDef . ValDef ::= "def" JID "=" Expr ;
+TypedValueDef   . ValDef ::= "def" JID ":" TypeSpec "=" Expr ;
 
 TypeSpecifier . TypeSpec ::= [TypeSpecFragm] ;
 separator nonempty TypeSpecFragm "." ;
-TypeSpecFragment . TypeSpecFragm ::= Ident ;
+TypeSpecFragment . TypeSpecFragm ::= JID ;
 
 ExprLiteral . Expr ::= Literal ;
 
 IntLiteral        . Literal ::= Integer ;
 BoolTrueLiteral   . Literal ::= "true" ;
 BoolFalseLiteral  . Literal ::= "false" ;
+
+token JID ('_' | '$' | letter) ('_' | '$' | letter | digit)*

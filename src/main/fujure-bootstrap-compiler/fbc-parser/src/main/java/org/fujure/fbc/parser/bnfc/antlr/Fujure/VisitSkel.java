@@ -35,7 +35,7 @@ public class VisitSkel
   {
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment p, A arg)
     { /* Code For PackageFragment Goes Here */
-      //p.ident_;
+      //p.jid_;
       return null;
     }
   }
@@ -60,12 +60,12 @@ public class VisitSkel
   {
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg)
     { /* Code For UntypedValueDef Goes Here */
-      //p.ident_;
+      //p.jid_;
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
     }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef p, A arg)
     { /* Code For TypedValueDef Goes Here */
-      //p.ident_;
+      //p.jid_;
       p.typespec_.accept(new TypeSpecVisitor<R,A>(), arg);
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
@@ -84,7 +84,7 @@ public class VisitSkel
   {
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment p, A arg)
     { /* Code For TypeSpecFragment Goes Here */
-      //p.ident_;
+      //p.jid_;
       return null;
     }
   }

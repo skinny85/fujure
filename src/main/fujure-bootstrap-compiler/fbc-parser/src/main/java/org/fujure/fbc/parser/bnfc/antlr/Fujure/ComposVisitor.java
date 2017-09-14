@@ -39,8 +39,8 @@ public class ComposVisitor<A> implements
 /* PkgFragm */
     public PkgFragm visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment p, A arg)
     {
-      String ident_ = p.ident_;
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment(ident_);
+      String jid_ = p.jid_;
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment(jid_);
     }
 /* Defs */
     public Defs visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions p, A arg)
@@ -61,15 +61,15 @@ public class ComposVisitor<A> implements
 /* ValDef */
     public ValDef visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg)
     {
-      String ident_ = p.ident_;
+      String jid_ = p.jid_;
       Expr expr_ = p.expr_.accept(this, arg);
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef(ident_, expr_);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef(jid_, expr_);
     }    public ValDef visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef p, A arg)
     {
-      String ident_ = p.ident_;
+      String jid_ = p.jid_;
       TypeSpec typespec_ = p.typespec_.accept(this, arg);
       Expr expr_ = p.expr_.accept(this, arg);
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef(ident_, typespec_, expr_);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef(jid_, typespec_, expr_);
     }
 /* TypeSpec */
     public TypeSpec visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecifier p, A arg)
@@ -84,8 +84,8 @@ public class ComposVisitor<A> implements
 /* TypeSpecFragm */
     public TypeSpecFragm visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment p, A arg)
     {
-      String ident_ = p.ident_;
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment(ident_);
+      String jid_ = p.jid_;
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment(jid_);
     }
 /* Expr */
     public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral p, A arg)

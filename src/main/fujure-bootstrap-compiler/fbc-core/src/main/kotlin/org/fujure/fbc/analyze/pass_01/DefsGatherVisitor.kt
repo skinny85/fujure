@@ -65,14 +65,14 @@ object DefsGatherVisitor :
 
     override fun visit(untypedValueDef: UntypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<SemanticError.DuplicateDefinition, Def.ValueDef> {
-        return visitValueDef(untypedValueDef.ident_, null,
+        return visitValueDef(untypedValueDef.jid_, null,
                 untypedValueDef.expr_.accept(ParseTree2AstExprVisitor, Unit), fileSymbolTableBuilder)
     }
 
     override fun visit(typedValueDef: TypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<SemanticError.DuplicateDefinition, Def.ValueDef> {
         val declaredType = typedValueDef.typespec_.accept(TypeSpec2TypeReference, Unit)
-        return visitValueDef(typedValueDef.ident_, declaredType,
+        return visitValueDef(typedValueDef.jid_, declaredType,
                 typedValueDef.expr_.accept(ParseTree2AstExprVisitor, Unit), fileSymbolTableBuilder)
     }
 

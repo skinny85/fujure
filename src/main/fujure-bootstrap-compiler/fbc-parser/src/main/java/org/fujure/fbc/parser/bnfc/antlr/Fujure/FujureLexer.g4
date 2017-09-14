@@ -14,15 +14,13 @@ Surrogate_id_SYMB_5 : 'package' ;
 Surrogate_id_SYMB_6 : 'true' ;
 
 
+JID : ('_'|'$'|LETTER)('_'|'$'|LETTER|DIGIT)*;
 
 
 
 //Integer predefined token type
 INTEGER : DIGIT+;
-// Identifier token type
-fragment
-IDENTIFIER_FIRST : LETTER | '_';
-IDENT : IDENTIFIER_FIRST (IDENTIFIER_FIRST | DIGIT)*;
+
 // Whitespace
 WS : (' ' | '\r' | '\t' | '\n')+ ->  skip;
 // Escapable sequences

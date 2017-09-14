@@ -309,7 +309,7 @@ public class PrettyPrinter
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment _packagefragment = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment) foo;
        if (_i_ > 0) render(_L_PAREN);
-       pp(_packagefragment.ident_, 0);
+       pp(_packagefragment.jid_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -355,7 +355,7 @@ public class PrettyPrinter
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef _untypedvaluedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("def");
-       pp(_untypedvaluedef.ident_, 0);
+       pp(_untypedvaluedef.jid_, 0);
        render("=");
        pp(_untypedvaluedef.expr_, 0);
        if (_i_ > 0) render(_R_PAREN);
@@ -365,7 +365,7 @@ public class PrettyPrinter
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef _typedvaluedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("def");
-       pp(_typedvaluedef.ident_, 0);
+       pp(_typedvaluedef.jid_, 0);
        render(":");
        pp(_typedvaluedef.typespec_, 0);
        render("=");
@@ -403,7 +403,7 @@ public class PrettyPrinter
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment _typespecfragment = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment) foo;
        if (_i_ > 0) render(_L_PAREN);
-       pp(_typespecfragment.ident_, 0);
+       pp(_typespecfragment.jid_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -497,7 +497,7 @@ public class PrettyPrinter
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment _packagefragment = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment) foo;
        render("(");
        render("PackageFragment");
-       sh(_packagefragment.ident_);
+       sh(_packagefragment.jid_);
        render(")");
     }
   }
@@ -545,7 +545,7 @@ public class PrettyPrinter
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef _untypedvaluedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef) foo;
        render("(");
        render("UntypedValueDef");
-       sh(_untypedvaluedef.ident_);
+       sh(_untypedvaluedef.jid_);
        sh(_untypedvaluedef.expr_);
        render(")");
     }
@@ -554,7 +554,7 @@ public class PrettyPrinter
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef _typedvaluedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef) foo;
        render("(");
        render("TypedValueDef");
-       sh(_typedvaluedef.ident_);
+       sh(_typedvaluedef.jid_);
        sh(_typedvaluedef.typespec_);
        sh(_typedvaluedef.expr_);
        render(")");
@@ -592,7 +592,7 @@ public class PrettyPrinter
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment _typespecfragment = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment) foo;
        render("(");
        render("TypeSpecFragment");
-       sh(_typespecfragment.ident_);
+       sh(_typespecfragment.jid_);
        render(")");
     }
   }

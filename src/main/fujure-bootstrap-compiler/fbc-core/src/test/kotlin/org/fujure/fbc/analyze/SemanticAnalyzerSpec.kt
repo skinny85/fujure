@@ -58,14 +58,15 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
     it.describes("called with just a package name") {
         it.beginsAll {
             result.v = analyzeProgram("""
-                package com.example
+                package com.
+                    ${'$'}example
             """)
         }
 
         it.should("parse the package name") {
             val astRoot = analyzedSuccess(result.v)
 
-            assertThat(astRoot.fileContents.packageName).isEqualTo("com.example")
+            assertThat(astRoot.fileContents.packageName).isEqualTo("com.\$example")
         }
     }
 

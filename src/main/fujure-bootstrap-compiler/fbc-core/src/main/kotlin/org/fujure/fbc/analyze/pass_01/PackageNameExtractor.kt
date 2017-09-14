@@ -8,7 +8,7 @@ object PackageNameExtractor : FileContents.Visitor<String, Unit> {
     override fun visit(fileContents: FileInNamedPackage, arg: Unit): String {
         return fileContents.pkgname_.accept({ packageName, _ ->
             packageName.listpkgfragm_
-                    .map { it.accept({ packageFragment, _ -> packageFragment.ident_ }, Unit) }
+                    .map { it.accept({ packageFragment, _ -> packageFragment.jid_ }, Unit) }
                     .joinToString(".")
         }, Unit)
     }
