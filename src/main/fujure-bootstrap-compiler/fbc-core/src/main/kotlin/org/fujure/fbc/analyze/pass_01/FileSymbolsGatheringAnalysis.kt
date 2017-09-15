@@ -9,7 +9,7 @@ import org.funktionale.either.Either
 object FileSymbolsGatheringAnalysis {
     fun analyze(parsedFile: ParsedFile): FileSymbolsGatheringResult {
         val packageName = parsedFile.parseTree.accept(PackageNameExtractor, Unit)
-        val fileSymbolTableBuilder = FileSymbolTableBuilder()
+        val fileSymbolTableBuilder = FileSymbolTableBuilder(parsedFile.userProvidedFilePath)
 
         val eitherFailureOrListOfDefs = parsedFile.parseTree.accept(DefsGatherVisitor, fileSymbolTableBuilder)
         return when (eitherFailureOrListOfDefs) {

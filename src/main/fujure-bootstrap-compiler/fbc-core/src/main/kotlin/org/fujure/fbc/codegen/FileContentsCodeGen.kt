@@ -3,6 +3,8 @@ package org.fujure.fbc.codegen
 import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
+import org.fujure.fbc.analyze.BuiltInTypes
+import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.FileContents
@@ -39,10 +41,25 @@ object FileContentsCodeGen {
                 variableType = java.lang.Boolean.TYPE
                 initializer = simpleValueDef.initializer == Expr.BoolLiteral.True
             }
+            is Expr.VariableExpr -> {
+                val qualifiedType = symbolTable.lookup(simpleValueDef.initializer.id)
+                variableType = toJavaType(qualifiedType)!!
+                initializer = simpleValueDef.initializer.id
+            }
         }
         return FieldSpec.builder(variableType, simpleValueDef.id,
                 Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                 .initializer("\$L", initializer)
                 .build()
+    }
+
+    private fun toJavaType(qualifiedType: QualifiedType?): Type? {
+        if (qualifiedType == null)
+            return null
+        return when (qualifiedType) {
+            BuiltInTypes.Int -> Integer.TYPE
+            BuiltInTypes.Bool -> java.lang.Boolean.TYPE
+            else -> null
+        }
     }
 }

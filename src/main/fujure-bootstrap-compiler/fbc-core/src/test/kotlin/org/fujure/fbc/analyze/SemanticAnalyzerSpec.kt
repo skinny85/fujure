@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
+import org.fujure.fbc.ast.FileContents
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.parse.ParsedFile
@@ -42,16 +43,26 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
 
     val result = Deferred<SemanticAnalysisResult>()
 
+    // for analyzedSuccess
+    val fileContents = Deferred<FileContents>()
+
+    // for analyzedFailure
+    val errors = Deferred<List<SemanticError>>()
+
     it.describes("called with an empty program") {
         it.beginsAll {
             result.v = analyzeProgram("""
                 """)
+
+            fileContents.v = analyzedSuccess(result.v).fileContents
         }
 
         it.should("parse an empty package name") {
-            val astRoot = analyzedSuccess(result.v)
+            assertThat(fileContents.v.packageName).isEmpty()
+        }
 
-            assertThat(astRoot.fileContents.packageName).isEmpty()
+        it.should("parse an empty list of definitions") {
+            assertThat(fileContents.v.defs).isEmpty()
         }
     }
 
@@ -61,114 +72,52 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
                 package com.
                     ${'$'}example
             """)
+            fileContents.v = analyzedSuccess(result.v).fileContents
         }
 
         it.should("parse the package name") {
-            val astRoot = analyzedSuccess(result.v)
+            assertThat(fileContents.v.packageName).isEqualTo("com.\$example")
+        }
 
-            assertThat(astRoot.fileContents.packageName).isEqualTo("com.\$example")
+        it.should("parse an empty list of definitions") {
+            assertThat(fileContents.v.defs).isEmpty()
         }
     }
 
-    it.describes("called with one simple value definition without a declared type") {
+    it.describes("called with values referencing previously defined variables") {
         it.beginsAll {
             result.v = analyzeProgram("""
-                def a = 42
+                def x = 42
+                def y: Bool = false
+                def a: Int = x
+                def b = y
             """)
+
+            fileContents.v = analyzedSuccess(result.v).fileContents
         }
 
-        it.should("parse the one definition") {
-            val fileContents = analyzedSuccess(result.v).fileContents
-
-            assertThat(fileContents.defs).hasSize(1)
-            val def = fileContents.defs[0]
-
-            val simpleValueDef = assume(def).isA<Def.ValueDef.SimpleValueDef>()
-            assertThat(simpleValueDef.id).isEqualTo("a")
-            assertThat(simpleValueDef.declaredType).isNull()
-            assertThat(simpleValueDef.initializer).isEqualTo(Expr.IntLiteral(42))
-        }
-    }
-
-    it.describes("called with one simple value definition with a declared type") {
-        it.beginsAll {
-            result.v = analyzeProgram("""
-                def a: Int = 42
-            """)
-        }
-
-        it.should("parse the one definition") {
-            val fileContents = analyzedSuccess(result.v).fileContents
-
-            assertThat(fileContents.defs).containsExactly(
-                    Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.IntLiteral(42)))
+        it.should("parse all 4 definitions correctly") {
+            assertThat(fileContents.v.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("x", null, Expr.IntLiteral(42)),
+                    Def.ValueDef.SimpleValueDef("y", TypeReference("Bool"), Expr.BoolLiteral.False),
+                    Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.VariableExpr("x")),
+                    Def.ValueDef.SimpleValueDef("b", null, Expr.VariableExpr("y")))
         }
     }
 
     it.describes("called with duplicate value definition") {
         it.beginsAll {
             result.v = analyzeProgram("""
-                def a = 1
+                def a = true
                 def a: Int = 2
             """)
+
+            errors.v = analyzedFailure(result.v)
         }
 
         it.should("return a DuplicateDefinition error") {
-            val errors = analyzedFailure(result.v)
-
-            assertThat(errors).containsExactly(
+            assertThat(errors.v).containsExactly(
                     SemanticError.DuplicateDefinition("a"))
-        }
-    }
-
-    it.describes("called with a variable of an unknown type") {
-        it.beginsAll {
-            result.v = analyzeProgram("""
-                def a: DoesNotExist = 1
-            """)
-        }
-
-        it.should("return a TypeNotFound error") {
-            val errors = analyzedFailure(result.v)
-
-            assertThat(errors).containsExactly(
-                    SemanticError.TypeNotFound(
-                            TypeErrorContext.VariableDefinition("a"),
-                            TypeReference("DoesNotExist")))
-        }
-    }
-
-    it.describes("called with a variable declared as Bool but initialized as an Int") {
-        it.beginsAll {
-            result.v = analyzeProgram("""
-                def a: Bool = 1
-            """)
-        }
-
-        it.should("return a TypeMismatch error") {
-            val errors = analyzedFailure(result.v)
-
-            assertThat(errors).containsExactly(
-                    SemanticError.TypeMismatch(
-                            TypeErrorContext.VariableDefinition("a"),
-                            BuiltInTypes.Bool, BuiltInTypes.Int))
-        }
-    }
-
-    it.describes("called with 2 simple Boolean value definitions") {
-        it.beginsAll {
-            result.v = analyzeProgram("""
-                def a = true
-                def b: Bool = false
-            """)
-        }
-
-        it.should("parse the one definition") {
-            val fileContents = analyzedSuccess(result.v).fileContents
-
-            assertThat(fileContents.defs).containsExactly(
-                    Def.ValueDef.SimpleValueDef("a", null, Expr.BoolLiteral.True),
-                    Def.ValueDef.SimpleValueDef("b", TypeReference("Bool"), Expr.BoolLiteral.False))
         }
     }
 
@@ -177,15 +126,72 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
             result.v = analyzeProgram("""
                 def a: Int = false
             """)
+
+            errors.v = analyzedFailure(result.v)
         }
 
         it.should("return a TypeMismatch error") {
-            val errors = analyzedFailure(result.v)
-
-            assertThat(errors).containsExactly(
+            assertThat(errors.v).containsExactly(
                     SemanticError.TypeMismatch(
                             TypeErrorContext.VariableDefinition("a"),
                             BuiltInTypes.Int, BuiltInTypes.Bool))
+        }
+    }
+
+    it.describes("called with a value referencing an undefined variable") {
+        it.beginsAll {
+            result.v = analyzeProgram("""
+                def a = x
+            """)
+
+            errors.v = analyzedFailure(result.v)
+        }
+
+        it.should("return a VariableNotFound error") {
+            assertThat(errors.v).containsExactly(
+                    SemanticError.VariableNotFound(TypeErrorContext.VariableDefinition("a"), "x"))
+        }
+    }
+
+    it.describes("called with a value referencing a forward-declared variable") {
+        it.beginsAll {
+            result.v = analyzeProgram("""
+                def a = x
+                def x = true
+            """)
+
+            errors.v = analyzedFailure(result.v)
+        }
+
+        it.should("return a VariableNotFound error") {
+            assertThat(errors.v).containsExactly(
+                    SemanticError.VariableNotFound(TypeErrorContext.VariableDefinition("a"), "x"))
+        }
+    }
+
+    it.describes("called with values referencing previously incorrectly defined variables") {
+        it.beginsAll {
+            result.v = analyzeProgram("""
+                def x: Bool = 1
+                def y: a.B.C = true
+
+                def a: Int = x
+                def b: Bool = y
+            """)
+
+            errors.v = analyzedFailure(result.v)
+        }
+
+        it.should("take the incorrectly defined variables into account during analysis") {
+            assertThat(errors.v).containsExactly(
+                    SemanticError.TypeMismatch(
+                            TypeErrorContext.VariableDefinition("x"),
+                            BuiltInTypes.Bool, BuiltInTypes.Int),
+                    SemanticError.TypeNotFound(
+                            TypeErrorContext.VariableDefinition("y"),
+                            TypeReference("a", "B", "C")
+                    )
+            )
         }
     }
 })

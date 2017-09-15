@@ -39,12 +39,3 @@ sealed class SymbolsGatheringResult {
     data class Success(val asts: List<AstRoot>, val symbolTable: SymbolTable) :
             SymbolsGatheringResult()
 }
-
-class SymbolTableBuilder {
-    fun build(): SymbolTable {
-        return SymbolTable()
-    }
-
-    fun add(fileSymbolTable: FileSymbolTable) {
-    }
-}

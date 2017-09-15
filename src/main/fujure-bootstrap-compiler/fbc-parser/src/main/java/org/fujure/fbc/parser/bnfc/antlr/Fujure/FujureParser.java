@@ -911,17 +911,49 @@ public class FujureParser extends Parser {
 			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitExprLiteral(this);
 		}
 	}
+	public static class VariableExprContext extends ExprContext {
+		public Token p_2_1;
+		public TerminalNode JID() { return getToken(FujureParser.JID, 0); }
+		public VariableExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterVariableExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitVariableExpr(this);
+		}
+	}
 
 	public final ExprContext expr() throws RecognitionException {
 		ExprContext _localctx = new ExprContext(_ctx, getState());
 		enterRule(_localctx, 22, RULE_expr);
 		try {
-			_localctx = new ExprLiteralContext(_localctx);
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(102);
-			((ExprLiteralContext)_localctx).p_1_1 = literal();
-			 ((ExprLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral(((ExprLiteralContext)_localctx).p_1_1.result); 
+			setState(107);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case Surrogate_id_SYMB_4:
+			case Surrogate_id_SYMB_6:
+			case INTEGER:
+				_localctx = new ExprLiteralContext(_localctx);
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(102);
+				((ExprLiteralContext)_localctx).p_1_1 = literal();
+				 ((ExprLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral(((ExprLiteralContext)_localctx).p_1_1.result); 
+				}
+				break;
+			case JID:
+				_localctx = new VariableExprContext(_localctx);
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(105);
+				((VariableExprContext)_localctx).p_2_1 = match(JID);
+				 ((VariableExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr(((VariableExprContext)_localctx).p_2_1.getText()); 
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -990,14 +1022,14 @@ public class FujureParser extends Parser {
 		LiteralContext _localctx = new LiteralContext(_ctx, getState());
 		enterRule(_localctx, 24, RULE_literal);
 		try {
-			setState(111);
+			setState(115);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INTEGER:
 				_localctx = new IntLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(105);
+				setState(109);
 				((IntLiteralContext)_localctx).p_1_1 = match(INTEGER);
 				 ((IntLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral(Integer.parseInt(((IntLiteralContext)_localctx).p_1_1.getText())); 
 				}
@@ -1006,7 +1038,7 @@ public class FujureParser extends Parser {
 				_localctx = new BoolTrueLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(107);
+				setState(111);
 				match(Surrogate_id_SYMB_6);
 				 ((BoolTrueLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral(); 
 				}
@@ -1015,7 +1047,7 @@ public class FujureParser extends Parser {
 				_localctx = new BoolFalseLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(109);
+				setState(113);
 				match(Surrogate_id_SYMB_4);
 				 ((BoolFalseLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral(); 
 				}
@@ -1051,32 +1083,33 @@ public class FujureParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\rt\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\rx\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
 		"\f\t\f\4\r\t\r\4\16\t\16\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\5\2%\n\2\3\3"+
 		"\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4\62\n\4\3\5\3\5\3\5\3\6\3"+
 		"\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\7\7A\n\7\f\7\16\7D\13\7\3\b\3\b\3\b"+
 		"\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\5\tW\n\t\3\n"+
 		"\3\n\3\n\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\5\13d\n\13\3\f\3\f\3"+
-		"\f\3\r\3\r\3\r\3\16\3\16\3\16\3\16\3\16\3\16\5\16r\n\16\3\16\2\3\f\17"+
-		"\2\4\6\b\n\f\16\20\22\24\26\30\32\2\2\2m\2$\3\2\2\2\4&\3\2\2\2\6\61\3"+
-		"\2\2\2\b\63\3\2\2\2\n\66\3\2\2\2\f9\3\2\2\2\16E\3\2\2\2\20V\3\2\2\2\22"+
-		"X\3\2\2\2\24c\3\2\2\2\26e\3\2\2\2\30h\3\2\2\2\32q\3\2\2\2\34\35\7\b\2"+
-		"\2\35\36\5\4\3\2\36\37\5\n\6\2\37 \b\2\1\2 %\3\2\2\2!\"\5\n\6\2\"#\b\2"+
-		"\1\2#%\3\2\2\2$\34\3\2\2\2$!\3\2\2\2%\3\3\2\2\2&\'\5\6\4\2\'(\b\3\1\2"+
-		"(\5\3\2\2\2)*\5\b\5\2*+\b\4\1\2+\62\3\2\2\2,-\5\b\5\2-.\7\3\2\2./\5\6"+
-		"\4\2/\60\b\4\1\2\60\62\3\2\2\2\61)\3\2\2\2\61,\3\2\2\2\62\7\3\2\2\2\63"+
-		"\64\7\n\2\2\64\65\b\5\1\2\65\t\3\2\2\2\66\67\5\f\7\2\678\b\6\1\28\13\3"+
-		"\2\2\29:\b\7\1\2:;\b\7\1\2;B\3\2\2\2<=\f\3\2\2=>\5\16\b\2>?\b\7\1\2?A"+
-		"\3\2\2\2@<\3\2\2\2AD\3\2\2\2B@\3\2\2\2BC\3\2\2\2C\r\3\2\2\2DB\3\2\2\2"+
-		"EF\5\20\t\2FG\b\b\1\2G\17\3\2\2\2HI\7\6\2\2IJ\7\n\2\2JK\7\4\2\2KL\5\30"+
-		"\r\2LM\b\t\1\2MW\3\2\2\2NO\7\6\2\2OP\7\n\2\2PQ\7\5\2\2QR\5\22\n\2RS\7"+
-		"\4\2\2ST\5\30\r\2TU\b\t\1\2UW\3\2\2\2VH\3\2\2\2VN\3\2\2\2W\21\3\2\2\2"+
-		"XY\5\24\13\2YZ\b\n\1\2Z\23\3\2\2\2[\\\5\26\f\2\\]\b\13\1\2]d\3\2\2\2^"+
-		"_\5\26\f\2_`\7\3\2\2`a\5\24\13\2ab\b\13\1\2bd\3\2\2\2c[\3\2\2\2c^\3\2"+
-		"\2\2d\25\3\2\2\2ef\7\n\2\2fg\b\f\1\2g\27\3\2\2\2hi\5\32\16\2ij\b\r\1\2"+
-		"j\31\3\2\2\2kl\7\13\2\2lr\b\16\1\2mn\7\t\2\2nr\b\16\1\2op\7\7\2\2pr\b"+
-		"\16\1\2qk\3\2\2\2qm\3\2\2\2qo\3\2\2\2r\33\3\2\2\2\b$\61BVcq";
+		"\f\3\r\3\r\3\r\3\r\3\r\5\rn\n\r\3\16\3\16\3\16\3\16\3\16\3\16\5\16v\n"+
+		"\16\3\16\2\3\f\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2\2\2r\2$\3\2\2\2\4"+
+		"&\3\2\2\2\6\61\3\2\2\2\b\63\3\2\2\2\n\66\3\2\2\2\f9\3\2\2\2\16E\3\2\2"+
+		"\2\20V\3\2\2\2\22X\3\2\2\2\24c\3\2\2\2\26e\3\2\2\2\30m\3\2\2\2\32u\3\2"+
+		"\2\2\34\35\7\b\2\2\35\36\5\4\3\2\36\37\5\n\6\2\37 \b\2\1\2 %\3\2\2\2!"+
+		"\"\5\n\6\2\"#\b\2\1\2#%\3\2\2\2$\34\3\2\2\2$!\3\2\2\2%\3\3\2\2\2&\'\5"+
+		"\6\4\2\'(\b\3\1\2(\5\3\2\2\2)*\5\b\5\2*+\b\4\1\2+\62\3\2\2\2,-\5\b\5\2"+
+		"-.\7\3\2\2./\5\6\4\2/\60\b\4\1\2\60\62\3\2\2\2\61)\3\2\2\2\61,\3\2\2\2"+
+		"\62\7\3\2\2\2\63\64\7\n\2\2\64\65\b\5\1\2\65\t\3\2\2\2\66\67\5\f\7\2\67"+
+		"8\b\6\1\28\13\3\2\2\29:\b\7\1\2:;\b\7\1\2;B\3\2\2\2<=\f\3\2\2=>\5\16\b"+
+		"\2>?\b\7\1\2?A\3\2\2\2@<\3\2\2\2AD\3\2\2\2B@\3\2\2\2BC\3\2\2\2C\r\3\2"+
+		"\2\2DB\3\2\2\2EF\5\20\t\2FG\b\b\1\2G\17\3\2\2\2HI\7\6\2\2IJ\7\n\2\2JK"+
+		"\7\4\2\2KL\5\30\r\2LM\b\t\1\2MW\3\2\2\2NO\7\6\2\2OP\7\n\2\2PQ\7\5\2\2"+
+		"QR\5\22\n\2RS\7\4\2\2ST\5\30\r\2TU\b\t\1\2UW\3\2\2\2VH\3\2\2\2VN\3\2\2"+
+		"\2W\21\3\2\2\2XY\5\24\13\2YZ\b\n\1\2Z\23\3\2\2\2[\\\5\26\f\2\\]\b\13\1"+
+		"\2]d\3\2\2\2^_\5\26\f\2_`\7\3\2\2`a\5\24\13\2ab\b\13\1\2bd\3\2\2\2c[\3"+
+		"\2\2\2c^\3\2\2\2d\25\3\2\2\2ef\7\n\2\2fg\b\f\1\2g\27\3\2\2\2hi\5\32\16"+
+		"\2ij\b\r\1\2jn\3\2\2\2kl\7\n\2\2ln\b\r\1\2mh\3\2\2\2mk\3\2\2\2n\31\3\2"+
+		"\2\2op\7\13\2\2pv\b\16\1\2qr\7\t\2\2rv\b\16\1\2st\7\7\2\2tv\b\16\1\2u"+
+		"o\3\2\2\2uq\3\2\2\2us\3\2\2\2v\33\3\2\2\2\t$\61BVcmu";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

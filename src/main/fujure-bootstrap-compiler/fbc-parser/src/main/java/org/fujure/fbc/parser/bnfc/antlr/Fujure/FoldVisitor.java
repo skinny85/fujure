@@ -91,6 +91,10 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
       r = combine(p.literal_.accept(this, arg), r, arg);
       return r;
     }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr p, A arg) {
+      R r = leaf(arg);
+      return r;
+    }
 
 /* Literal */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral p, A arg) {

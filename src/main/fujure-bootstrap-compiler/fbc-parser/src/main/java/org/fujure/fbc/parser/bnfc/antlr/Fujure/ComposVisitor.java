@@ -92,6 +92,10 @@ public class ComposVisitor<A> implements
     {
       Literal literal_ = p.literal_.accept(this, arg);
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral(literal_);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr p, A arg)
+    {
+      String jid_ = p.jid_;
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr(jid_);
     }
 /* Literal */
     public Literal visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral p, A arg)

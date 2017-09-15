@@ -18,7 +18,8 @@ TypeSpecifier . TypeSpec ::= [TypeSpecFragm] ;
 separator nonempty TypeSpecFragm "." ;
 TypeSpecFragment . TypeSpecFragm ::= JID ;
 
-ExprLiteral . Expr ::= Literal ;
+VariableExpr      . Expr ::= JID ;
+ExprLiteral       . Expr ::= Literal ;
 
 IntLiteral        . Literal ::= Integer ;
 BoolTrueLiteral   . Literal ::= "true" ;

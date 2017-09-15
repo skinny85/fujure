@@ -78,7 +78,7 @@ object DefsGatherVisitor :
 
     private fun visitValueDef(id: String, declaredType: TypeReference?, expr: Expr, fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<SemanticError.DuplicateDefinition, Def.ValueDef> {
-        return if (fileSymbolTableBuilder.addSimpleValueDeclaration(id, declaredType))
+        return if (fileSymbolTableBuilder.noteSimpleValueDeclaration(id))
             Either.Right(Def.ValueDef.SimpleValueDef(id, declaredType, expr))
         else
             Either.Left(SemanticError.DuplicateDefinition(id))

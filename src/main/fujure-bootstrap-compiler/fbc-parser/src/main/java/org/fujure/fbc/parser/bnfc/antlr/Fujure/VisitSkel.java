@@ -94,6 +94,10 @@ public class VisitSkel
     { /* Code For ExprLiteral Goes Here */
       p.literal_.accept(new LiteralVisitor<R,A>(), arg);
       return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr p, A arg)
+    { /* Code For VariableExpr Goes Here */
+      //p.jid_;
+      return null;
     }
   }
   public class LiteralVisitor<R,A> implements Literal.Visitor<R,A>

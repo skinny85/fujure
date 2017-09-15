@@ -8,3 +8,4 @@ def val2: Int = 23
 def truthy = true
 
 def falsy: Bool = false
+def falsyAgain: Bool = falsy
