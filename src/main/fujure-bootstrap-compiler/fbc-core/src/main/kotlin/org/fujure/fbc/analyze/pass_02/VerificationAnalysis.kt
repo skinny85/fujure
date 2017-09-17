@@ -52,18 +52,20 @@ object VerificationAnalysis {
                 when (actualType) {
                     is Either.Left -> actualType.l
                     is Either.Right -> {
-                        symbolTable.fillInTypeFor(def.id, actualType.r)
-
                         if (def.declaredType != null) {
                             val declaredType = symbolTable.findType(def.declaredType)
                             if (declaredType == null) {
+                                symbolTable.fillInTypeFor(def.id, actualType.r)
                                 SemanticError.TypeNotFound(context, def.declaredType)
                             } else if (declaredType != actualType.r) {
+                                symbolTable.fillInTypeFor(def.id, declaredType)
                                 SemanticError.TypeMismatch(context, declaredType, actualType.r)
                             } else {
+                                symbolTable.fillInTypeFor(def.id, actualType.r)
                                 null
                             }
                         } else {
+                            symbolTable.fillInTypeFor(def.id, actualType.r)
                             null
                         }
                     }

@@ -175,7 +175,7 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
                 def x: Bool = 1
                 def y: a.B.C = true
 
-                def a: Int = x
+                def a: Bool = x
                 def b: Bool = y
             """)
 
@@ -189,9 +189,7 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
                             BuiltInTypes.Bool, BuiltInTypes.Int),
                     SemanticError.TypeNotFound(
                             TypeErrorContext.VariableDefinition("y"),
-                            TypeReference("a", "B", "C")
-                    )
-            )
+                            TypeReference("a", "B", "C")))
         }
     }
 })
