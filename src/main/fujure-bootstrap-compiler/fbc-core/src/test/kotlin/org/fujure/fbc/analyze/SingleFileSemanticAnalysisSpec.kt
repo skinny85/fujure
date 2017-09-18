@@ -1,60 +1,39 @@
 package org.fujure.fbc.analyze
 
-import org.antlr.v4.runtime.CharStreams
 import org.assertj.core.api.Assertions.assertThat
-import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.FileContents
 import org.fujure.fbc.ast.TypeReference
-import org.fujure.fbc.parse.BnfcParser
-import org.fujure.fbc.parse.ParsedFile
-import org.fujure.fbc.parse.ParsingResult
-import org.fujure.fbc.read.OpenedFile
 import org.fujure.test.utils.Assumption.Companion.assume
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 import org.specnaz.kotlin.utils.Deferred
 
-class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
-    fun parseProgram(program: String): ParsedFile {
-        val openedFile = OpenedFile("whatever.fjr", CharStreams.fromString(program))
-        val parsingResult = BnfcParser.parse(openedFile)
-        val success = assume(parsingResult).isA<ParsingResult.Success>()
-        return success.parsedFile
-    }
-
-    val analyzer: SemanticAnalyzer = SimpleSemanticAnalyzer
-
-    fun analyzeProgram(program: String): SemanticAnalysisResult {
-        return analyzer.analyze(listOf(parseProgram(program)))
-    }
-
-    fun analyzedSuccess(result: SemanticAnalysisResult): AstRoot {
-        val success = assume(result).isA<SemanticAnalysisResult.Success>()
-        assertThat(success.analyzedProgram.asts).hasSize(1)
-        return success.analyzedProgram.asts[0]
-    }
-
-    fun analyzedFailure(result: SemanticAnalysisResult): List<SemanticError> {
-        val failure = assume(result).isA<SemanticAnalysisResult.Failure>()
-        assertThat(failure.issues).hasSize(1)
-        return failure.issues[0].errors
-    }
-
-    val result = Deferred<SemanticAnalysisResult>()
-
-    // for analyzedSuccess
+class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic Analysis", {
+    // for analyzeProgramSuccessfully
     val fileContents = Deferred<FileContents>()
 
-    // for analyzedFailure
+    fun analyzeProgramSuccessfully(program: String) {
+        val analysisResult = AnalysisHelper.analyzeProgram(program)
+        val success = assume(analysisResult).isA<SemanticAnalysisResult.Success>()
+        assertThat(success.analyzedProgram.asts).hasSize(1)
+        fileContents.v = success.analyzedProgram.asts[0].fileContents
+    }
+
+    // for analyzeProgramExpectingErrors
     val errors = Deferred<List<SemanticError>>()
+
+    fun analyzeProgramExpectingErrors(program: String) {
+        val analysisResult = AnalysisHelper.analyzeProgram(program)
+        val failure = assume(analysisResult).isA<SemanticAnalysisResult.Failure>()
+        assertThat(failure.issues).hasSize(1)
+        errors.v = failure.issues[0].errors
+    }
 
     it.describes("called with an empty program") {
         it.beginsAll {
-            result.v = analyzeProgram("""
-                """)
-
-            fileContents.v = analyzedSuccess(result.v).fileContents
+            analyzeProgramSuccessfully("""
+            """)
         }
 
         it.should("parse an empty package name") {
@@ -68,11 +47,10 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
 
     it.describes("called with just a package name") {
         it.beginsAll {
-            result.v = analyzeProgram("""
+            analyzeProgramSuccessfully("""
                 package com.
                     ${'$'}example
             """)
-            fileContents.v = analyzedSuccess(result.v).fileContents
         }
 
         it.should("parse the package name") {
@@ -86,14 +64,12 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
 
     it.describes("called with values referencing previously defined variables") {
         it.beginsAll {
-            result.v = analyzeProgram("""
+            analyzeProgramSuccessfully("""
                 def x = 42
                 def y: Bool = false
                 def a: Int = x
                 def b = y
             """)
-
-            fileContents.v = analyzedSuccess(result.v).fileContents
         }
 
         it.should("parse all 4 definitions correctly") {
@@ -107,12 +83,10 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
 
     it.describes("called with duplicate value definition") {
         it.beginsAll {
-            result.v = analyzeProgram("""
+            analyzeProgramExpectingErrors("""
                 def a = true
                 def a: Int = 2
             """)
-
-            errors.v = analyzedFailure(result.v)
         }
 
         it.should("return a DuplicateDefinition error") {
@@ -121,13 +95,11 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
         }
     }
 
-    it.describes("called with a variable declared as Int but initialized as a Bool") {
+    it.describes("called with a variable declared as Int but initialized as Bool") {
         it.beginsAll {
-            result.v = analyzeProgram("""
+            analyzeProgramExpectingErrors("""
                 def a: Int = false
             """)
-
-            errors.v = analyzedFailure(result.v)
         }
 
         it.should("return a TypeMismatch error") {
@@ -140,11 +112,9 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
 
     it.describes("called with a value referencing an undefined variable") {
         it.beginsAll {
-            result.v = analyzeProgram("""
+            analyzeProgramExpectingErrors("""
                 def a = x
             """)
-
-            errors.v = analyzedFailure(result.v)
         }
 
         it.should("return a VariableNotFound error") {
@@ -155,12 +125,10 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
 
     it.describes("called with a value referencing a forward-declared variable") {
         it.beginsAll {
-            result.v = analyzeProgram("""
+            analyzeProgramExpectingErrors("""
                 def a = x
                 def x = true
             """)
-
-            errors.v = analyzedFailure(result.v)
         }
 
         it.should("return a VariableNotFound error") {
@@ -171,15 +139,13 @@ class SemanticAnalyzerSpec : SpecnazKotlinJUnit("SemanticAnalysis", {
 
     it.describes("called with values referencing previously incorrectly defined variables") {
         it.beginsAll {
-            result.v = analyzeProgram("""
+            analyzeProgramExpectingErrors("""
                 def x: Bool = 1
                 def y: a.B.C = true
 
                 def a: Bool = x
                 def b: Bool = y
             """)
-
-            errors.v = analyzedFailure(result.v)
         }
 
         it.should("take the incorrectly defined variables into account during analysis") {
