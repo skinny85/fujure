@@ -1,6 +1,7 @@
 package org.fujure.fbc.analyze.pass_01
 
 import org.fujure.fbc.analyze.QualifiedType
+import org.fujure.fbc.ast.ValueReference
 
 class FileSymbolTable(val userProvidedFilePath: String, simpleValues: Set<String>) {
     private class TypeReferenceToQualifiedTypeHolder {
@@ -21,7 +22,10 @@ class FileSymbolTable(val userProvidedFilePath: String, simpleValues: Set<String
         holder.flipTo(qualifiedType)
     }
 
-    fun lookup(id: String): QualifiedType? {
+    fun lookup(ref: ValueReference): QualifiedType? {
+        if (ref.ids.size != 1)
+            return null
+        val id = ref.ids[0]
         val holder = simpleValueTypes[id]
         return if (holder == null) {
             null

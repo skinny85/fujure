@@ -41,10 +41,10 @@ object FileContentsCodeGen {
                 variableType = java.lang.Boolean.TYPE
                 initializer = simpleValueDef.initializer == Expr.BoolLiteral.True
             }
-            is Expr.VariableExpr -> {
-                val qualifiedType = symbolTable.lookup(simpleValueDef.initializer.id)
+            is Expr.ValueReferenceExpr -> {
+                val qualifiedType = symbolTable.lookup(simpleValueDef.initializer.ref)
                 variableType = toJavaType(qualifiedType)!!
-                initializer = simpleValueDef.initializer.id
+                initializer = simpleValueDef.initializer.ref.inStringForm()
             }
         }
         return FieldSpec.builder(variableType, simpleValueDef.id,

@@ -19,8 +19,8 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
         currentContext.fillInTypeFor(id, qualifiedType)
     }
 
-    fun lookup(id: String): QualifiedType? {
-        return currentContext.lookup(id)
+    fun lookup(ref: ValueReference): QualifiedType? {
+        return currentContext.lookup(ref)
     }
 
     fun findType(typeReference: TypeReference): QualifiedType? {

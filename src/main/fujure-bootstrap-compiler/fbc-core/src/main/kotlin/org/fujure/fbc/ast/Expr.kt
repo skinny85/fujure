@@ -1,7 +1,7 @@
 package org.fujure.fbc.ast
 
 sealed class Expr {
-    data class VariableExpr(val id: String): Expr()
+    data class ValueReferenceExpr(val ref: ValueReference): Expr()
 
     data class IntLiteral(val value: Int) : Expr()
 

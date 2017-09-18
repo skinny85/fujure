@@ -102,9 +102,9 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
         is SemanticError.TypeNotFound ->
             "Error ${contextMessage(semanticFileIssue.context)}: " +
                     "Unresolved type reference ${semanticFileIssue.typeReference.inStringForm()}"
-        is SemanticError.VariableNotFound ->
+        is SemanticError.UnresolvedReference ->
             "Error ${contextMessage(semanticFileIssue.context)}: " +
-                    "Variable '${semanticFileIssue.name}' not found"
+                    "Unresolved reference '${semanticFileIssue.valueReference.inStringForm()}'"
         is SemanticError.TypeMismatch ->
             "Error ${contextMessage(semanticFileIssue.context)}: " +
                     "Type mismatch, expected: ${semanticFileIssue.expected.inStringForm()} " +

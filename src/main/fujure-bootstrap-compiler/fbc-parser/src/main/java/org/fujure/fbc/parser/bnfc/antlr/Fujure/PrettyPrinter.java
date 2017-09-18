@@ -243,6 +243,51 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListValRefFragm foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListValRefFragm foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRefFragm foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRefFragm foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
   public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal foo)
   {
     pp(foo, 0);
@@ -410,18 +455,52 @@ public class PrettyPrinter
 
   private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr foo, int _i_)
   {
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral)
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr _variableexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_variableexpr.valref_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral _exprliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral) foo;
        if (_i_ > 0) render(_L_PAREN);
        pp(_exprliteral.literal_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
-    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr)
+  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef)
     {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr _variableexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr) foo;
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef _valueref = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef) foo;
        if (_i_ > 0) render(_L_PAREN);
-       pp(_variableexpr.jid_, 0);
+       pp(_valueref.listvalreffragm_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListValRefFragm foo, int _i_)
+  {
+     for (java.util.Iterator<ValRefFragm> it = foo.iterator(); it.hasNext();)
+     {
+       pp(it.next(), _i_);
+       if (it.hasNext()) {
+         render(".");
+       } else {
+         render("");
+       }
+     }  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRefFragm foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment _valuereffragment = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_valuereffragment.jid_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -606,6 +685,14 @@ public class PrettyPrinter
 
   private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr foo)
   {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr _variableexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr) foo;
+       render("(");
+       render("VariableExpr");
+       sh(_variableexpr.valref_);
+       render(")");
+    }
     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral _exprliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral) foo;
@@ -614,12 +701,40 @@ public class PrettyPrinter
        sh(_exprliteral.literal_);
        render(")");
     }
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr)
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef foo)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef)
     {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr _variableexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr) foo;
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef _valueref = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef) foo;
        render("(");
-       render("VariableExpr");
-       sh(_variableexpr.jid_);
+       render("ValueRef");
+       render("[");
+       sh(_valueref.listvalreffragm_);
+       render("]");
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListValRefFragm foo)
+  {
+     for (java.util.Iterator<ValRefFragm> it = foo.iterator(); it.hasNext();)
+     {
+       sh(it.next());
+       if (it.hasNext())
+         render(",");
+     }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRefFragm foo)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment _valuereffragment = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment) foo;
+       render("(");
+       render("ValueRefFragment");
+       sh(_valuereffragment.jid_);
        render(")");
     }
   }

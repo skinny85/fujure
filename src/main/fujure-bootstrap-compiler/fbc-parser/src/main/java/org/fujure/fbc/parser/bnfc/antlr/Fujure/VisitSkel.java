@@ -90,12 +90,29 @@ public class VisitSkel
   }
   public class ExprVisitor<R,A> implements Expr.Visitor<R,A>
   {
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral p, A arg)
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr p, A arg)
+    { /* Code For VariableExpr Goes Here */
+      p.valref_.accept(new ValRefVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral p, A arg)
     { /* Code For ExprLiteral Goes Here */
       p.literal_.accept(new LiteralVisitor<R,A>(), arg);
       return null;
-    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr p, A arg)
-    { /* Code For VariableExpr Goes Here */
+    }
+  }
+  public class ValRefVisitor<R,A> implements ValRef.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef p, A arg)
+    { /* Code For ValueRef Goes Here */
+      for (ValRefFragm x: p.listvalreffragm_)
+      { /* ... */ }
+      return null;
+    }
+  }
+  public class ValRefFragmVisitor<R,A> implements ValRefFragm.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment p, A arg)
+    { /* Code For ValueRefFragment Goes Here */
       //p.jid_;
       return null;
     }

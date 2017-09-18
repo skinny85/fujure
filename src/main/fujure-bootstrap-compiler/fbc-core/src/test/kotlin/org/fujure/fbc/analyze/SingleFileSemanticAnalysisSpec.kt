@@ -5,6 +5,7 @@ import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.FileContents
 import org.fujure.fbc.ast.TypeReference
+import org.fujure.fbc.ast.ValueReference
 import org.fujure.test.utils.Assumption.Companion.assume
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 import org.specnaz.kotlin.utils.Deferred
@@ -76,8 +77,8 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
             assertThat(fileContents.v.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("x", null, Expr.IntLiteral(42)),
                     Def.ValueDef.SimpleValueDef("y", TypeReference("Bool"), Expr.BoolLiteral.False),
-                    Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.VariableExpr("x")),
-                    Def.ValueDef.SimpleValueDef("b", null, Expr.VariableExpr("y")))
+                    Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.ValueReferenceExpr(ValueReference("x"))),
+                    Def.ValueDef.SimpleValueDef("b", null, Expr.ValueReferenceExpr(ValueReference("y"))))
         }
     }
 
@@ -117,9 +118,11 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
             """)
         }
 
-        it.should("return a VariableNotFound error") {
+        it.should("return a UnresolvedReference error") {
             assertThat(errors.v).containsExactly(
-                    SemanticError.VariableNotFound(TypeErrorContext.VariableDefinition("a"), "x"))
+                    SemanticError.UnresolvedReference(
+                            TypeErrorContext.VariableDefinition("a"),
+                            ValueReference("x")))
         }
     }
 
@@ -131,9 +134,11 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
             """)
         }
 
-        it.should("return a VariableNotFound error") {
+        it.should("return a UnresolvedReference error") {
             assertThat(errors.v).containsExactly(
-                    SemanticError.VariableNotFound(TypeErrorContext.VariableDefinition("a"), "x"))
+                    SemanticError.UnresolvedReference(
+                            TypeErrorContext.VariableDefinition("a"),
+                            ValueReference("x")))
         }
     }
 

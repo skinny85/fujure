@@ -1,12 +1,13 @@
 package org.fujure.fbc.analyze
 
 import org.fujure.fbc.ast.TypeReference
+import org.fujure.fbc.ast.ValueReference
 
 sealed class SemanticError {
     data class DuplicateDefinition(val name: String) :
             SemanticError()
 
-    data class VariableNotFound(val context: TypeErrorContext, val name: String) :
+    data class UnresolvedReference(val context: TypeErrorContext, val valueReference: ValueReference) :
             SemanticError()
 
     data class TypeNotFound(val context: TypeErrorContext, val typeReference: TypeReference) :

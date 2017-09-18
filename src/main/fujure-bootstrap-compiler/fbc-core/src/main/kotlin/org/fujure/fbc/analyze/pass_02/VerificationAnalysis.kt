@@ -79,14 +79,14 @@ object VerificationAnalysis {
     }
 
     private fun exprType(expr: Expr, symbolTable: SymbolTable, context: TypeErrorContext):
-            Either<SemanticError.VariableNotFound, QualifiedType> {
+            Either<SemanticError.UnresolvedReference, QualifiedType> {
         return when (expr) {
             is Expr.IntLiteral -> Either.Right(BuiltInTypes.Int)
             is Expr.BoolLiteral -> Either.Right(BuiltInTypes.Bool)
-            is Expr.VariableExpr -> {
-                val qualifiedType = symbolTable.lookup(expr.id)
+            is Expr.ValueReferenceExpr -> {
+                val qualifiedType = symbolTable.lookup(expr.ref)
                 if (qualifiedType == null)
-                    Either.Left(SemanticError.VariableNotFound(context, expr.id))
+                    Either.Left(SemanticError.UnresolvedReference(context, expr.ref))
                 else
                     Either.Right(qualifiedType)
             }

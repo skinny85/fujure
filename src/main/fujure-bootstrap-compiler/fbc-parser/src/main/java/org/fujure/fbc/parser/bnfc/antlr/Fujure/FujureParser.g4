@@ -32,8 +32,15 @@ listTypeSpecFragm returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListTy
 ;
 typeSpecFragm returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm result ] : p_1_1=JID  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment($p_1_1.getText()); } # TypeSpecFragment 
 ;
-expr returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr result ] : p_1_1=literal  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral($p_1_1.result); } # ExprLiteral 
-  | p_2_1=JID  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr($p_2_1.getText()); } # VariableExpr
+expr returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr result ] : p_1_1=valRef  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr($p_1_1.result); } # VariableExpr 
+  | p_2_1=literal  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral($p_2_1.result); } # ExprLiteral
+;
+valRef returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef result ] : p_1_1=listValRefFragm  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef($p_1_1.result); } # ValueRef 
+;
+listValRefFragm returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListValRefFragm result ] : p_1_1=valRefFragm  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListValRefFragm(); $result.addLast($p_1_1.result); } # ListValRefFragm_AppendLast 
+  | p_2_1=valRefFragm Surrogate_id_SYMB_0 p_2_3=listValRefFragm  { $result = $p_2_3.result; $result.addFirst($p_2_1.result); } # ListValRefFragm_PrependFirst
+;
+valRefFragm returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRefFragm result ] : p_1_1=JID  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment($p_1_1.getText()); } # ValueRefFragment 
 ;
 literal returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal result ] : p_1_1=INTEGER  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral(Integer.parseInt($p_1_1.getText())); } # IntLiteral 
   | Surrogate_id_SYMB_6  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral(); } # BoolTrueLiteral
