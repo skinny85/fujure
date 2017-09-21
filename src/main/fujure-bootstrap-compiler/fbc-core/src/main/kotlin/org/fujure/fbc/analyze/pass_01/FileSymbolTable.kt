@@ -4,7 +4,7 @@ import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.ast.ValueReference
 
 class FileSymbolTable(val userProvidedFilePath: String, simpleValues: Set<String>) {
-    private class TypeReferenceToQualifiedTypeHolder {
+    private class QualifiedTypeHolder {
         var qualifiedType: QualifiedType? = null
 
         fun flipTo(qualifiedType: QualifiedType) {
@@ -14,8 +14,8 @@ class FileSymbolTable(val userProvidedFilePath: String, simpleValues: Set<String
         }
     }
 
-    private val simpleValueTypes: Map<String, TypeReferenceToQualifiedTypeHolder> =
-            simpleValues.associate { Pair(it, TypeReferenceToQualifiedTypeHolder()) }
+    private val simpleValueTypes: Map<String, QualifiedTypeHolder> =
+            simpleValues.associate { Pair(it, QualifiedTypeHolder()) }
 
     fun fillInTypeFor(id: String, qualifiedType: QualifiedType) {
         val holder = simpleValueTypes[id]!!
