@@ -2,6 +2,7 @@ package org.fujure.fbc.codegen
 
 import org.fujure.fbc.CompileOptions
 import org.fujure.fbc.ast.AstRoot
+import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.ast.SymbolTable
 import java.io.File
 import java.io.IOException
@@ -11,31 +12,31 @@ interface CodeGenerator {
                  astRoot: AstRoot, symbolTable: SymbolTable): CodeGenResult
 }
 
-sealed class CodeGenResult(open val userProvidedFilePath: String, open val destinationFile: File) {
-    data class Failure(override val userProvidedFilePath: String,
+sealed class CodeGenResult(open val inputPath: InputFile, open val destinationFile: File) {
+    data class Failure(override val inputPath: InputFile,
                        override val destinationFile: File,
                        val error: Throwable) :
-            CodeGenResult(userProvidedFilePath, destinationFile)
+            CodeGenResult(inputPath, destinationFile)
 
-    data class Success(override val userProvidedFilePath: String,
+    data class Success(override val inputPath: InputFile,
                        override val destinationFile: File) :
-            CodeGenResult(userProvidedFilePath, destinationFile)
+            CodeGenResult(inputPath, destinationFile)
 }
 
 object JavaPoetCodeGenerator : CodeGenerator {
     override fun generate(compileOptions: CompileOptions, astRoot: AstRoot, symbolTable: SymbolTable): CodeGenResult {
-        val file = File(astRoot.userProvidedFilePath)
-        val className = file.nameWithoutExtension
+        val inputFile = astRoot.inputFile
 
+        val className = inputFile.moduleName
         val javaFile = FileContentsCodeGen.generate(astRoot.fileContents, className, symbolTable)
 
         val destFile = File(compileOptions.outputDir, "$className.java")
 
         return try {
             javaFile.writeTo(destFile.parentFile)
-            CodeGenResult.Success(astRoot.userProvidedFilePath, destFile)
+            CodeGenResult.Success(inputFile, destFile)
         } catch (e: IOException) {
-            CodeGenResult.Failure(astRoot.userProvidedFilePath, destFile, e)
+            CodeGenResult.Failure(inputFile, destFile, e)
         }
     }
 }

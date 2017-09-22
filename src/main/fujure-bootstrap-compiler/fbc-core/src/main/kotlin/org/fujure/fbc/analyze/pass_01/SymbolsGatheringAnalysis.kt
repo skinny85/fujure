@@ -15,7 +15,7 @@ object SymbolsGatheringAnalysis {
             val fileSymbolsGatheringResult = FileSymbolsGatheringAnalysis.analyze(parsedFile)
             when (fileSymbolsGatheringResult) {
                 is FileSymbolsGatheringResult.Failure -> {
-                    issues.add(ProblematicFile.SemanticFileIssue(parsedFile.userProvidedFilePath,
+                    issues.add(ProblematicFile.SemanticFileIssue(parsedFile.inputFile.userProvidedFilePath,
                             fileSymbolsGatheringResult.errors))
                 }
                 is FileSymbolsGatheringResult.Success -> {

@@ -3,6 +3,7 @@ package org.fujure.fbc.read
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CharStreams
 import org.fujure.fbc.ProblematicFile.BasicFileIssue
+import org.fujure.fbc.ast.InputFile
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.nio.file.NoSuchFileException
@@ -17,7 +18,24 @@ sealed class FileOpenResult {
     data class Success(val openedFile: OpenedFile) : FileOpenResult()
 }
 
-data class OpenedFile(val userProvidedFilePath: String, val stream: CharStream)
+class OpenedFile(val inputFile: InputFile, val stream: CharStream) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other)
+            return true
+        if (javaClass != other?.javaClass)
+            return false
+
+        other as OpenedFile
+
+        return inputFile == other.inputFile
+    }
+
+    override fun hashCode(): Int {
+        return inputFile.hashCode()
+    }
+
+    override fun toString() = "OpenedFile('${inputFile.userProvidedFilePath}')"
+}
 
 object SimpleFileOpener : FileOpener {
     override fun open(filePath: String): FileOpenResult {
@@ -38,6 +56,6 @@ object SimpleFileOpener : FileOpener {
             return FileOpenResult.Failure(
                     BasicFileIssue.CouldNotOpenFile(filePath, e))
         }
-        return FileOpenResult.Success(OpenedFile(filePath, stream))
+        return FileOpenResult.Success(OpenedFile(InputFile(filePath), stream))
     }
 }

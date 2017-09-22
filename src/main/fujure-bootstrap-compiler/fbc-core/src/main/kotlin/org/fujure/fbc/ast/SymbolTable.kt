@@ -8,10 +8,10 @@ import kotlin.properties.Delegates
 class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
     private var currentContext: FileSymbolTable by Delegates.notNull()
 
-    fun enterContext(userProvidedFilePath: String) {
+    fun enterContext(inputFile: InputFile) {
         // ToDo this needs to be better
         // (for example, return something nullable so the clients can assert instead)
-        currentContext = fileSymbolTables.find { it.userProvidedFilePath == userProvidedFilePath }!!
+        currentContext = fileSymbolTables.find { it.inputFile == inputFile }!!
     }
 
     // ToDo this entire API is meh at best

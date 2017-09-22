@@ -2,6 +2,7 @@ package org.fujure.fbc.parse
 
 import org.antlr.v4.runtime.CommonTokenStream
 import org.fujure.fbc.ProblematicFile
+import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureLexer
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureParser
@@ -19,7 +20,7 @@ sealed class ParsingResult {
             ParsingResult()
 }
 
-data class ParsedFile(val userProvidedFilePath: String, val parseTree: FileContents)
+data class ParsedFile(val inputFile: InputFile, val parseTree: FileContents)
 
 object BnfcParser : Parser {
     override fun parse(openedFile: OpenedFile): ParsingResult {
@@ -34,10 +35,10 @@ object BnfcParser : Parser {
         return if (errorListener.hasErrors) {
             ParsingResult.Failure(
                     ProblematicFile.ParsingFileIssue(
-                            openedFile.userProvidedFilePath, errorListener.errors))
+                            openedFile.inputFile.userProvidedFilePath, errorListener.errors))
         } else {
             ParsingResult.Success(
-                    ParsedFile(openedFile.userProvidedFilePath, fileContentsContext.result))
+                    ParsedFile(openedFile.inputFile, fileContentsContext.result))
         }
     }
 }

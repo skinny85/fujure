@@ -30,7 +30,7 @@ object VerificationAnalysis {
     }
 
     private fun analyze(ast: AstRoot, symbolTable: SymbolTable): ProblematicFile.SemanticFileIssue? {
-        symbolTable.enterContext(ast.userProvidedFilePath)
+        symbolTable.enterContext(ast.inputFile)
 
         val errors = mutableListOf<SemanticError>()
         for (def in ast.fileContents.defs) {
@@ -40,7 +40,7 @@ object VerificationAnalysis {
         return if (errors.isEmpty())
             null
         else
-            ProblematicFile.SemanticFileIssue(ast.userProvidedFilePath, errors)
+            ProblematicFile.SemanticFileIssue(ast.inputFile.userProvidedFilePath, errors)
     }
 
     private fun analyze(def: Def, symbolTable: SymbolTable): List<SemanticError> {

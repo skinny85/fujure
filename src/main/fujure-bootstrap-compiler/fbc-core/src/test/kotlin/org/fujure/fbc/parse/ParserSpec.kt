@@ -2,6 +2,7 @@ package org.fujure.fbc.parse
 
 import org.antlr.v4.runtime.CharStreams
 import org.assertj.core.api.Assertions.assertThat
+import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.read.OpenedFile
 import org.fujure.test.utils.Assumption.Companion.assume
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
@@ -14,7 +15,7 @@ class ParserSpec : SpecnazKotlinJUnit("Parser", {
         val result = Deferred<ParsingResult>()
 
         it.beginsAll {
-            result.v = parser.parse(OpenedFile("whatever.fjr", CharStreams.fromString("""
+            result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
                 def xxx
                 """)))
         }
@@ -29,7 +30,7 @@ class ParserSpec : SpecnazKotlinJUnit("Parser", {
         val result = Deferred<ParsingResult>()
 
         it.beginsAll {
-            result.v = parser.parse(OpenedFile("whatever.fjr", CharStreams.fromString("""
+            result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
                 #
                 """)))
         }

@@ -9,6 +9,7 @@ import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 import org.specnaz.kotlin.utils.Deferred
 import org.fujure.fbc.Compiler
 import org.fujure.fbc.ProblematicFile
+import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.codegen.CodeGenResult
 import org.fujure.fbc.parse.SyntaxError
 import java.io.File
@@ -260,7 +261,7 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
         it.beginsAll {
             Mockito.`when`(mockCompiler.v.compile(any(), any()))
                     .thenReturn(CompilationResults.CompilationAttempted(emptyList(), listOf(
-                            CodeGenResult.Failure("../whatever.fjr", File("xxx"), IOException("could not write file 'xxx'")))))
+                            CodeGenResult.Failure(InputFile("../whatever.fjr"), File("xxx"), IOException("could not write file 'xxx'")))))
 
         }
 
