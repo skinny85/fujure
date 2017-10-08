@@ -163,4 +163,40 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
                             TypeReference("a", "B", "C")))
         }
     }
+
+    it.describes("called with value referencing a previous value qualified with the file name") {
+        it.beginsAll {
+            analyzeProgramSuccessfully("""
+                def x = 42
+                def a: Int = File1.x
+            """)
+        }
+
+        it.should("parse all definitions correctly") {
+            assertThat(fileContents.v.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("x", null, Expr.IntLiteral(42)),
+                    Def.ValueDef.SimpleValueDef(
+                            "a",
+                            TypeReference("Int"),
+                            Expr.ValueReferenceExpr(ValueReference("File1", "x"))))
+        }
+    }
+
+    it.describes("called with a value reference qualified with the file name") {
+        it.beginsAll {
+            analyzeProgramExpectingErrors("""
+                def x = 42
+                def a: Int = DoesNotExist.x
+            """)
+        }
+
+        it.should("return an UnresolvedReference error") {
+            assertThat(errors.v).containsExactly(
+                    SemanticError.UnresolvedReference(
+                            TypeErrorContext.VariableDefinition("a"),
+                            ValueReference("DoesNotExist", "x")
+                    )
+            )
+        }
+    }
 })

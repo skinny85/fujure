@@ -24,9 +24,24 @@ class FileSymbolTable(val inputFile: InputFile, simpleValues: Set<String>) {
     }
 
     fun lookup(ref: ValueReference): QualifiedType? {
-        if (ref.ids.size != 1)
-            return null
-        val id = ref.ids[0]
+        return when (ref.ids.size) {
+            1 -> {
+                lookupSimpleName(ref.ids[0])
+            }
+            2 -> {
+                val moduleName = ref.ids[0]
+                if (moduleName == inputFile.moduleName)
+                    lookupSimpleName(ref.ids[1])
+                else
+                    null
+            }
+            else -> {
+                null
+            }
+        }
+    }
+
+    private fun lookupSimpleName(id: String): QualifiedType? {
         val holder = simpleValueTypes[id]
         return if (holder == null) {
             null
