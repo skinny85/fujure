@@ -2,7 +2,6 @@ package org.fujure.fbc.analyze.pass_01
 
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.ast.InputFile
-import org.fujure.fbc.ast.ValueReference
 
 class FileSymbolTable(val inputFile: InputFile, simpleValues: Set<String>) {
     private class QualifiedTypeHolder {
@@ -23,25 +22,7 @@ class FileSymbolTable(val inputFile: InputFile, simpleValues: Set<String>) {
         holder.flipTo(qualifiedType)
     }
 
-    fun lookup(ref: ValueReference): QualifiedType? {
-        return when (ref.ids.size) {
-            1 -> {
-                lookupSimpleName(ref.ids[0])
-            }
-            2 -> {
-                val moduleName = ref.ids[0]
-                if (moduleName == inputFile.moduleName)
-                    lookupSimpleName(ref.ids[1])
-                else
-                    null
-            }
-            else -> {
-                null
-            }
-        }
-    }
-
-    private fun lookupSimpleName(id: String): QualifiedType? {
+    fun lookup(id: String): QualifiedType? {
         val holder = simpleValueTypes[id]
         return if (holder == null) {
             null

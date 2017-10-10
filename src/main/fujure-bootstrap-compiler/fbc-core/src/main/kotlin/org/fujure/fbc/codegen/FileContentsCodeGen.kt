@@ -54,9 +54,8 @@ object FileContentsCodeGen {
     }
 
     private fun toJavaType(qualifiedType: QualifiedType?): Type? {
-        if (qualifiedType == null)
-            return null
         return when (qualifiedType) {
+            null -> null
             BuiltInTypes.Int -> Integer.TYPE
             BuiltInTypes.Bool -> java.lang.Boolean.TYPE
             else -> null

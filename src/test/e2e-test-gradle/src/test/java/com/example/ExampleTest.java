@@ -29,4 +29,9 @@ public class ExampleTest {
     public void test_falsy_again() {
         assertThat(Example.falsyAgain).isFalse();
     }
+
+    @Test
+    public void test_falsy_ref() {
+        assertThat(Example.falsyRef).isTrue();
+    }
 }

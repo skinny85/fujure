@@ -1,0 +1,3 @@
+package com.example
+
+def notTruthy = true

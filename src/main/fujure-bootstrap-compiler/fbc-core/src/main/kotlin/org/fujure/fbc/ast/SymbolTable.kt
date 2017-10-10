@@ -20,7 +20,27 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
     }
 
     fun lookup(ref: ValueReference): QualifiedType? {
-        return currentContext.lookup(ref)
+        val targetContext: FileSymbolTable?
+        val simpleName: String
+
+        when (ref.ids.size) {
+            1 -> {
+                targetContext = currentContext
+                simpleName = ref.ids[0]
+            }
+            2 -> {
+                targetContext = findContextByName(ref.ids[0])
+                simpleName = ref.ids[1]
+            }
+            else -> {
+                targetContext = null
+                simpleName = "whatever"
+            }
+        }
+        return if (targetContext == null)
+            null
+        else
+            targetContext.lookup(simpleName)
     }
 
     fun findType(typeReference: TypeReference): QualifiedType? {
@@ -34,5 +54,9 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
                 else -> null
             }
         }
+    }
+
+    private fun findContextByName(moduleName: String): FileSymbolTable? {
+        return fileSymbolTables.find { it.inputFile.moduleName == moduleName }
     }
 }
