@@ -7,6 +7,9 @@ public class ComposVisitor<A> implements
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PkgName.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PkgName,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PkgFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PkgFragm,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Imports.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Imports,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Import.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Import,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragm,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef,A>,
@@ -21,12 +24,14 @@ public class ComposVisitor<A> implements
     public FileContents visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage p, A arg)
     {
       PkgName pkgname_ = p.pkgname_.accept(this, arg);
+      Imports imports_ = p.imports_.accept(this, arg);
       Defs defs_ = p.defs_.accept(this, arg);
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage(pkgname_, defs_);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage(pkgname_, imports_, defs_);
     }    public FileContents visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage p, A arg)
     {
+      Imports imports_ = p.imports_.accept(this, arg);
       Defs defs_ = p.defs_.accept(this, arg);
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage(defs_);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage(imports_, defs_);
     }
 /* PkgName */
     public PkgName visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageName p, A arg)
@@ -43,6 +48,32 @@ public class ComposVisitor<A> implements
     {
       String jid_ = p.jid_;
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment(jid_);
+    }
+/* Imports */
+    public Imports visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmts p, A arg)
+    {
+      ListImport listimport_ = new ListImport();
+      for (Import x : p.listimport_)
+      {
+        listimport_.add(x.accept(this,arg));
+      }
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmts(listimport_);
+    }
+/* Import */
+    public Import visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmt p, A arg)
+    {
+      ListImportFragm listimportfragm_ = new ListImportFragm();
+      for (ImportFragm x : p.listimportfragm_)
+      {
+        listimportfragm_.add(x.accept(this,arg));
+      }
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmt(listimportfragm_);
+    }
+/* ImportFragm */
+    public ImportFragm visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment p, A arg)
+    {
+      String jid_ = p.jid_;
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment(jid_);
     }
 /* Defs */
     public Defs visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions p, A arg)

@@ -14,11 +14,13 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage p, A arg) {
       R r = leaf(arg);
       r = combine(p.pkgname_.accept(this, arg), r, arg);
+      r = combine(p.imports_.accept(this, arg), r, arg);
       r = combine(p.defs_.accept(this, arg), r, arg);
       return r;
     }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage p, A arg) {
       R r = leaf(arg);
+      r = combine(p.imports_.accept(this, arg), r, arg);
       r = combine(p.defs_.accept(this, arg), r, arg);
       return r;
     }
@@ -35,6 +37,32 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
 
 /* PkgFragm */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment p, A arg) {
+      R r = leaf(arg);
+      return r;
+    }
+
+/* Imports */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmts p, A arg) {
+      R r = leaf(arg);
+      for (Import x : p.listimport_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
+      return r;
+    }
+
+/* Import */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmt p, A arg) {
+      R r = leaf(arg);
+      for (ImportFragm x : p.listimportfragm_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
+      return r;
+    }
+
+/* ImportFragm */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment p, A arg) {
       R r = leaf(arg);
       return r;
     }

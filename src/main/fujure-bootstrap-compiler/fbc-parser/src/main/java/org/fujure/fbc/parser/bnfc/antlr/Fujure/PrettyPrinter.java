@@ -123,6 +123,81 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Imports foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Imports foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListImport foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListImport foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Import foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Import foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListImportFragm foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListImportFragm foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragm foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragm foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
   public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs foo)
   {
     pp(foo, 0);
@@ -313,6 +388,7 @@ public class PrettyPrinter
        if (_i_ > 0) render(_L_PAREN);
        render("package");
        pp(_fileinnamedpackage.pkgname_, 0);
+       pp(_fileinnamedpackage.imports_, 0);
        pp(_fileinnamedpackage.defs_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
@@ -320,6 +396,7 @@ public class PrettyPrinter
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage _fileindefaultpackage = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage) foo;
        if (_i_ > 0) render(_L_PAREN);
+       pp(_fileindefaultpackage.imports_, 0);
        pp(_fileindefaultpackage.defs_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
@@ -355,6 +432,64 @@ public class PrettyPrinter
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment _packagefragment = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment) foo;
        if (_i_ > 0) render(_L_PAREN);
        pp(_packagefragment.jid_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Imports foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmts)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmts _importstmts = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmts) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_importstmts.listimport_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListImport foo, int _i_)
+  {
+     for (java.util.Iterator<Import> it = foo.iterator(); it.hasNext();)
+     {
+       pp(it.next(), _i_);
+       if (it.hasNext()) {
+         render("");
+       } else {
+         render("");
+       }
+     }  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Import foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmt)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmt _importstmt = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmt) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("import");
+       pp(_importstmt.listimportfragm_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListImportFragm foo, int _i_)
+  {
+     for (java.util.Iterator<ImportFragm> it = foo.iterator(); it.hasNext();)
+     {
+       pp(it.next(), _i_);
+       if (it.hasNext()) {
+         render(".");
+       } else {
+         render("");
+       }
+     }  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragm foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment _importfragment = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_importfragment.jid_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -539,6 +674,7 @@ public class PrettyPrinter
        render("(");
        render("FileInNamedPackage");
        sh(_fileinnamedpackage.pkgname_);
+       sh(_fileinnamedpackage.imports_);
        sh(_fileinnamedpackage.defs_);
        render(")");
     }
@@ -547,6 +683,7 @@ public class PrettyPrinter
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage _fileindefaultpackage = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage) foo;
        render("(");
        render("FileInDefaultPackage");
+       sh(_fileindefaultpackage.imports_);
        sh(_fileindefaultpackage.defs_);
        render(")");
     }
@@ -584,6 +721,66 @@ public class PrettyPrinter
        render("(");
        render("PackageFragment");
        sh(_packagefragment.jid_);
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Imports foo)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmts)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmts _importstmts = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmts) foo;
+       render("(");
+       render("ImportStmts");
+       render("[");
+       sh(_importstmts.listimport_);
+       render("]");
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListImport foo)
+  {
+     for (java.util.Iterator<Import> it = foo.iterator(); it.hasNext();)
+     {
+       sh(it.next());
+       if (it.hasNext())
+         render(",");
+     }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Import foo)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmt)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmt _importstmt = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmt) foo;
+       render("(");
+       render("ImportStmt");
+       render("[");
+       sh(_importstmt.listimportfragm_);
+       render("]");
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListImportFragm foo)
+  {
+     for (java.util.Iterator<ImportFragm> it = foo.iterator(); it.hasNext();)
+     {
+       sh(it.next());
+       if (it.hasNext())
+         render(",");
+     }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragm foo)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment _importfragment = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment) foo;
+       render("(");
+       render("ImportFragment");
+       sh(_importfragment.jid_);
        render(")");
     }
   }

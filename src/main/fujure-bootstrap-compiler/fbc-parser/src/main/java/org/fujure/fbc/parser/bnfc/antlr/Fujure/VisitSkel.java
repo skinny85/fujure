@@ -14,10 +14,12 @@ public class VisitSkel
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage p, A arg)
     { /* Code For FileInNamedPackage Goes Here */
       p.pkgname_.accept(new PkgNameVisitor<R,A>(), arg);
+      p.imports_.accept(new ImportsVisitor<R,A>(), arg);
       p.defs_.accept(new DefsVisitor<R,A>(), arg);
       return null;
     }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage p, A arg)
     { /* Code For FileInDefaultPackage Goes Here */
+      p.imports_.accept(new ImportsVisitor<R,A>(), arg);
       p.defs_.accept(new DefsVisitor<R,A>(), arg);
       return null;
     }
@@ -35,6 +37,32 @@ public class VisitSkel
   {
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment p, A arg)
     { /* Code For PackageFragment Goes Here */
+      //p.jid_;
+      return null;
+    }
+  }
+  public class ImportsVisitor<R,A> implements Imports.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmts p, A arg)
+    { /* Code For ImportStmts Goes Here */
+      for (Import x: p.listimport_)
+      { /* ... */ }
+      return null;
+    }
+  }
+  public class ImportVisitor<R,A> implements Import.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmt p, A arg)
+    { /* Code For ImportStmt Goes Here */
+      for (ImportFragm x: p.listimportfragm_)
+      { /* ... */ }
+      return null;
+    }
+  }
+  public class ImportFragmVisitor<R,A> implements ImportFragm.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment p, A arg)
+    { /* Code For ImportFragment Goes Here */
       //p.jid_;
       return null;
     }

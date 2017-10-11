@@ -1,11 +1,17 @@
 entrypoints FileContents ;
 
-FileInNamedPackage   . FileContents ::= "package" PkgName Defs ;
-FileInDefaultPackage . FileContents ::= Defs ;
+FileInNamedPackage   . FileContents ::= "package" PkgName Imports Defs ;
+FileInDefaultPackage . FileContents ::= Imports Defs ;
 
 PackageName . PkgName ::= [PkgFragm] ;
 separator nonempty PkgFragm "." ;
 PackageFragment . PkgFragm ::= JID ;
+
+ImportStmts . Imports ::= [Import] ;
+separator Import "" ;
+ImportStmt . Import ::= "import" [ImportFragm] ;
+separator nonempty ImportFragm "." ;
+ImportFragment . ImportFragm ::= JID ;
 
 Definitions . Defs ::= [Def] ;
 separator Def "" ;

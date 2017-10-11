@@ -80,6 +80,90 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitPackageFragment(FujureParser.PackageFragmentContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code ImportStmts}
+	 * labeled alternative in {@link FujureParser#imports}.
+	 * @param ctx the parse tree
+	 */
+	void enterImportStmts(FujureParser.ImportStmtsContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ImportStmts}
+	 * labeled alternative in {@link FujureParser#imports}.
+	 * @param ctx the parse tree
+	 */
+	void exitImportStmts(FujureParser.ImportStmtsContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListImport_Empty}
+	 * labeled alternative in {@link FujureParser#listImport}.
+	 * @param ctx the parse tree
+	 */
+	void enterListImport_Empty(FujureParser.ListImport_EmptyContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListImport_Empty}
+	 * labeled alternative in {@link FujureParser#listImport}.
+	 * @param ctx the parse tree
+	 */
+	void exitListImport_Empty(FujureParser.ListImport_EmptyContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListImport_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listImport}.
+	 * @param ctx the parse tree
+	 */
+	void enterListImport_PrependFirst(FujureParser.ListImport_PrependFirstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListImport_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listImport}.
+	 * @param ctx the parse tree
+	 */
+	void exitListImport_PrependFirst(FujureParser.ListImport_PrependFirstContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ImportStmt}
+	 * labeled alternative in {@link FujureParser#import_}.
+	 * @param ctx the parse tree
+	 */
+	void enterImportStmt(FujureParser.ImportStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ImportStmt}
+	 * labeled alternative in {@link FujureParser#import_}.
+	 * @param ctx the parse tree
+	 */
+	void exitImportStmt(FujureParser.ImportStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListImportFragm_AppendLast}
+	 * labeled alternative in {@link FujureParser#listImportFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterListImportFragm_AppendLast(FujureParser.ListImportFragm_AppendLastContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListImportFragm_AppendLast}
+	 * labeled alternative in {@link FujureParser#listImportFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitListImportFragm_AppendLast(FujureParser.ListImportFragm_AppendLastContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListImportFragm_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listImportFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterListImportFragm_PrependFirst(FujureParser.ListImportFragm_PrependFirstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListImportFragm_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listImportFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitListImportFragm_PrependFirst(FujureParser.ListImportFragm_PrependFirstContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ImportFragment}
+	 * labeled alternative in {@link FujureParser#importFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterImportFragment(FujureParser.ImportFragmentContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ImportFragment}
+	 * labeled alternative in {@link FujureParser#importFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitImportFragment(FujureParser.ImportFragmentContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code Definitions}
 	 * labeled alternative in {@link FujureParser#defs}.
 	 * @param ctx the parse tree

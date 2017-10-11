@@ -2,8 +2,9 @@ package org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn; // Java Package generated
 
 public class FileInNamedPackage extends FileContents {
   public final PkgName pkgname_;
+  public final Imports imports_;
   public final Defs defs_;
-  public FileInNamedPackage(PkgName p1, Defs p2) { pkgname_ = p1; defs_ = p2; }
+  public FileInNamedPackage(PkgName p1, Imports p2, Defs p3) { pkgname_ = p1; imports_ = p2; defs_ = p3; }
 
   public <R,A> R accept(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents.Visitor<R,A> v, A arg) { return v.visit(this, arg); }
 
@@ -11,13 +12,13 @@ public class FileInNamedPackage extends FileContents {
     if (this == o) return true;
     if (o instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage) {
       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage x = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage)o;
-      return this.pkgname_.equals(x.pkgname_) && this.defs_.equals(x.defs_);
+      return this.pkgname_.equals(x.pkgname_) && this.imports_.equals(x.imports_) && this.defs_.equals(x.defs_);
     }
     return false;
   }
 
   public int hashCode() {
-    return 37*(this.pkgname_.hashCode())+this.defs_.hashCode();
+    return 37*(37*(this.pkgname_.hashCode())+this.imports_.hashCode())+this.defs_.hashCode();
   }
 
 
