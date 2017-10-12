@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.FileContents
+import org.fujure.fbc.ast.Import
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueReference
 import org.fujure.test.utils.Assumption.Companion.assume
@@ -197,6 +198,22 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
                             ValueReference("DoesNotExist", "x")
                     )
             )
+        }
+    }
+
+    it.describes("called with an import statement") {
+        it.beginsAll {
+            analyzeProgramSuccessfully("""
+                import a.b.c
+                import d.e.
+                  f
+            """)
+        }
+
+        it.should("parse all import statements correctly") {
+            assertThat(fileContents.v.imports).containsExactly(
+                    Import("a", "b", "c"),
+                    Import("d", "e", "f"))
         }
     }
 })
