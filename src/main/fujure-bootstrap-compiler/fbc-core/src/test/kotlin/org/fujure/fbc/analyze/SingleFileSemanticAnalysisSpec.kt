@@ -201,19 +201,19 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
     }
 
-    it.describes("called with an import statement") {
+    it.describes("called with an unknown import statement") {
         it.beginsAll {
-            analyzeProgramSuccessfully("""
+            analyzeProgramExpectingErrors("""
                 import a.b.c
                 import d.e.
                   f
             """)
         }
 
-        it.should("parse all import statements correctly") {
-            assertThat(fileContents.v.imports).containsExactly(
-                    Import("a", "b", "c"),
-                    Import("d", "e", "f"))
+        it.should("return an UnresolvedImport error") {
+            assertThat(errors.v).containsExactly(
+                    SemanticError.UnresolvedImport(Import("a", "b", "c")),
+                    SemanticError.UnresolvedImport(Import("d", "e", "f")))
         }
     }
 })

@@ -24,6 +24,16 @@ class MultiFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Multi file Semantic An
         secondFileContents.v = success.analyzedProgram.asts[1].fileContents
     }
 
+    // for analyzeProgramExpectingErrors
+    val errors = Deferred<List<SemanticError>>()
+
+    fun analyzeProgramExpectingErrors(program: String) {
+        val analysisResult = AnalysisHelper.analyzeProgram(program)
+        val failure = assume(analysisResult).isA<SemanticAnalysisResult.Failure>()
+        assertThat(failure.issues).hasSize(1)
+        errors.v = failure.issues[0].errors
+    }
+
     it.describes("called with a program referencing a value from another file") {
         it.beginsAll {
             analyzeProgramsSuccessfully(
@@ -31,6 +41,34 @@ class MultiFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Multi file Semantic An
                        def a = 42
                     """,
                     """
+                        def x: Int = File1.a
+                    """
+            )
+        }
+
+        it.should("parse the first program correctly") {
+            assertThat(firstFileContents.v.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("a", null, Expr.IntLiteral(42)))
+        }
+
+        it.should("parse the second program correctly") {
+            assertThat(secondFileContents.v.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("x", TypeReference("Int"), Expr.ValueReferenceExpr(
+                            ValueReference("File1", "a"))))
+        }
+    }
+
+    it.describes("called with a program referencing a value from another package without an import") {
+        it.beginsAll {
+            analyzeProgramsSuccessfully(
+                    """
+                       package com.example
+
+                       def a = 42
+                    """,
+                    """
+                        package com.example.inner
+
                         def x: Int = File1.a
                     """
             )

@@ -97,6 +97,8 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
     }
 
     private fun semanticErrorMessage(semanticFileIssue: SemanticError): String = when (semanticFileIssue) {
+        is SemanticError.UnresolvedImport ->
+                "Unresolved import: ${semanticFileIssue.import.inStringForm()}"
         is SemanticError.DuplicateDefinition ->
             "${semanticFileIssue.name} is already defined"
         is SemanticError.TypeNotFound ->

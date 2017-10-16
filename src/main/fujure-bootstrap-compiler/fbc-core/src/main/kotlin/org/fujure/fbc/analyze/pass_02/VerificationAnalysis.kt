@@ -31,12 +31,26 @@ object VerificationAnalysis {
 
     private fun analyze(ast: AstRoot, symbolTable: SymbolTable): ProblematicFile.SemanticFileIssue? {
         symbolTable.enterContext(ast.inputFile)
-
         val errors = mutableListOf<SemanticError>()
+
+        // deal with imports
+        for (import in ast.fileContents.imports) {
+            val importQualifiedType = symbolTable.findImport(import)
+            if (importQualifiedType == null) {
+                errors.add(SemanticError.UnresolvedImport(import))
+            } else {
+                if (!symbolTable.addToCurrentContext(importQualifiedType)) {
+//                    errors.add(SemanticError.DuplicateImport(import))
+                }
+            }
+        }
+
+        // deal with definitions
         for (def in ast.fileContents.defs) {
             val defErrors = analyze(def, symbolTable)
             errors.addAll(defErrors)
         }
+
         return if (errors.isEmpty())
             null
         else
