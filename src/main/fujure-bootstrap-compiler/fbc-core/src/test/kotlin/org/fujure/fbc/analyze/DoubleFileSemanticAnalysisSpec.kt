@@ -11,7 +11,7 @@ import org.fujure.test.utils.Assumption.Companion.assume
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 import org.specnaz.kotlin.utils.Deferred
 
-class MultiFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Multi file Semantic Analysis", {
+class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic Analysis", {
     // for analyzeProgramsSuccessfully
     val firstFileContents = Deferred<FileContents>()
     val secondFileContents = Deferred<FileContents>()
@@ -22,6 +22,22 @@ class MultiFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Multi file Semantic An
         Assertions.assertThat(success.analyzedProgram.asts).hasSize(2)
         firstFileContents.v = success.analyzedProgram.asts[0].fileContents
         secondFileContents.v = success.analyzedProgram.asts[1].fileContents
+    }
+
+    // for analyzeProgramsExpectingErrors
+    val firstFileErrors = Deferred<List<SemanticError>>()
+    val secondFileErrors = Deferred<List<SemanticError>>()
+
+    fun analyzeProgramsExpectingErrors(firstProgram: String, secondProgram: String) {
+        val analysisResult = AnalysisHelper.analyzePrograms(firstProgram, secondProgram)
+        val failure = assume(analysisResult).isA<SemanticAnalysisResult.Failure>()
+
+        firstFileErrors.v = AnalysisHelper.findFileErrors(1, failure)
+        secondFileErrors.v = AnalysisHelper.findFileErrors(2, failure)
+    }
+
+    fun assertFirstProgramIsCorrect() {
+        assertThat(firstFileErrors.v).isEmpty()
     }
 
     it.describes("called with a program referencing a value from another file") {
@@ -45,6 +61,36 @@ class MultiFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Multi file Semantic An
             assertThat(secondFileContents.v.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("x", TypeReference("Int"), Expr.ValueReferenceExpr(
                             ValueReference("File1", "a"))))
+        }
+    }
+
+    it.describes("called with a program referencing a value from another package without an import") {
+        it.beginsAll {
+            analyzeProgramsExpectingErrors(
+                    """
+                       package com.example
+
+                       def a = 42
+                    """,
+                    """
+                        package com.example.inner
+
+                        def x: Int = File1.a
+                    """
+            )
+        }
+
+        it.should("parse the first program correctly") {
+            assertFirstProgramIsCorrect()
+        }
+
+        it.should("return an UnresolvedReference error for the second file") {
+            assertThat(secondFileErrors.v).containsExactly(
+                    SemanticError.UnresolvedReference(
+                            TypeErrorContext.VariableDefinition("x"),
+                            ValueReference("File1", "a")
+                    )
+            )
         }
     }
 })

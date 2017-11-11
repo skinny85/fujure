@@ -3,7 +3,8 @@ package org.fujure.fbc.analyze.pass_01
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.ast.InputFile
 
-class FileSymbolTable(val inputFile: InputFile, simpleValues: Set<String>) {
+class FileSymbolTable(val inputFile: InputFile, simpleValues: Set<String>,
+                      val packageName: String) {
     private class QualifiedTypeHolder {
         var qualifiedType: QualifiedType? = null
 
@@ -35,7 +36,7 @@ class FileSymbolTable(val inputFile: InputFile, simpleValues: Set<String>) {
     }
 }
 
-class FileSymbolTableBuilder(val inputFile: InputFile) {
+class FileSymbolTableBuilder(val inputFile: InputFile, val packageName: String) {
     private val simpleValues = mutableSetOf<String>()
 
     fun noteSimpleValueDeclaration(id: String): Boolean {
@@ -43,6 +44,6 @@ class FileSymbolTableBuilder(val inputFile: InputFile) {
     }
 
     fun build(): FileSymbolTable {
-        return FileSymbolTable(inputFile, simpleValues)
+        return FileSymbolTable(inputFile, simpleValues, packageName)
     }
 }

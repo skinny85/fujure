@@ -29,4 +29,8 @@ object AnalysisHelper {
         }
         return ret
     }
+
+    fun findFileErrors(index: Int, failure: SemanticAnalysisResult.Failure): List<SemanticError> {
+        return failure.issues.find { it.userProvidedFilePath == "File$index.fjr" }?.errors ?: emptyList()
+    }
 }

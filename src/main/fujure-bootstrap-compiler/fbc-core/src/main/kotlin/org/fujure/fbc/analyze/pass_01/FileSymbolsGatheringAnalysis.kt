@@ -12,7 +12,7 @@ object FileSymbolsGatheringAnalysis {
 
         val imports = parsedFile.parseTree.accept(ImportsExtractor, Unit)
 
-        val fileSymbolTableBuilder = FileSymbolTableBuilder(parsedFile.inputFile)
+        val fileSymbolTableBuilder = FileSymbolTableBuilder(parsedFile.inputFile, packageName)
         val eitherFailureOrListOfDefs = parsedFile.parseTree.accept(DefsGatherVisitor, fileSymbolTableBuilder)
         return when (eitherFailureOrListOfDefs) {
             is Either.Left -> eitherFailureOrListOfDefs.l

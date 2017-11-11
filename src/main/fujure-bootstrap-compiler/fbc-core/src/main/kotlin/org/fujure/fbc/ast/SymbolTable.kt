@@ -6,41 +6,41 @@ import org.fujure.fbc.analyze.pass_01.FileSymbolTable
 import kotlin.properties.Delegates
 
 class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
-    private var currentContext: FileSymbolTable by Delegates.notNull()
+    private var currentFile: FileSymbolTable by Delegates.notNull()
 
     fun enterContext(inputFile: InputFile) {
         // ToDo this needs to be better
         // (for example, return something nullable so the clients can assert instead)
-        currentContext = fileSymbolTables.find { it.inputFile == inputFile }!!
+        currentFile = fileSymbolTables.find { it.inputFile == inputFile }!!
     }
 
     // ToDo this entire API is meh at best
     fun fillInTypeFor(id: String, qualifiedType: QualifiedType) {
-        currentContext.fillInTypeFor(id, qualifiedType)
+        currentFile.fillInTypeFor(id, qualifiedType)
     }
 
     fun lookup(ref: ValueReference): QualifiedType? {
-        val targetContext: FileSymbolTable?
+        val targetFile: FileSymbolTable?
         val simpleName: String
 
         when (ref.ids.size) {
             1 -> {
-                targetContext = currentContext
+                targetFile = currentFile
                 simpleName = ref.ids[0]
             }
             2 -> {
-                targetContext = findContextByName(ref.ids[0])
+                targetFile = findFile(currentFile.packageName, ref.ids[0])
                 simpleName = ref.ids[1]
             }
             else -> {
-                targetContext = null
+                targetFile = null
                 simpleName = "whatever"
             }
         }
-        return if (targetContext == null)
+        return if (targetFile == null)
             null
         else
-            targetContext.lookup(simpleName)
+            targetFile.lookup(simpleName)
     }
 
     fun findType(typeReference: TypeReference): QualifiedType? {
@@ -56,7 +56,10 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
         }
     }
 
-    private fun findContextByName(moduleName: String): FileSymbolTable? {
-        return fileSymbolTables.find { it.inputFile.moduleName == moduleName }
+    private fun findFile(packageName: String, moduleName: String): FileSymbolTable? {
+        return fileSymbolTables.find {
+            it.packageName == packageName &&
+                    it.inputFile.moduleName == moduleName
+        }
     }
 }
