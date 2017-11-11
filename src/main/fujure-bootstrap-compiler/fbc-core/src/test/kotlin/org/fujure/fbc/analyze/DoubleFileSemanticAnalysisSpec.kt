@@ -11,7 +11,7 @@ import org.fujure.test.utils.Assumption.Companion.assume
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 import org.specnaz.kotlin.utils.Deferred
 
-class MultiFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Multi file Semantic Analysis", {
+class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic Analysis", {
     // for analyzeProgramsSuccessfully
     val firstFileContents = Deferred<FileContents>()
     val secondFileContents = Deferred<FileContents>()
@@ -24,14 +24,16 @@ class MultiFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Multi file Semantic An
         secondFileContents.v = success.analyzedProgram.asts[1].fileContents
     }
 
-    // for analyzeProgramExpectingErrors
-    val errors = Deferred<List<SemanticError>>()
+    // for analyzeProgramsExpectingErrors
+    val firstFileErrors = Deferred<List<SemanticError>>()
+    val secondFileErrors = Deferred<List<SemanticError>>()
 
-    fun analyzeProgramExpectingErrors(program: String) {
-        val analysisResult = AnalysisHelper.analyzeProgram(program)
+    fun analyzeProgramsExpectingErrors(firstProgram: String, secondProgram: String) {
+        val analysisResult = AnalysisHelper.analyzePrograms(firstProgram, secondProgram)
         val failure = assume(analysisResult).isA<SemanticAnalysisResult.Failure>()
-        assertThat(failure.issues).hasSize(1)
-        errors.v = failure.issues[0].errors
+
+        firstFileErrors.v = AnalysisHelper.findFileErrors(0, failure)
+        secondFileErrors.v = AnalysisHelper.findFileErrors(1, failure)
     }
 
     it.describes("called with a program referencing a value from another file") {
