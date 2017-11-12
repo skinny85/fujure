@@ -19,12 +19,17 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
         currentContext.fillInTypeFor(id, qualifiedType)
     }
 
-    fun addToCurrentContext(qualifiedType: QualifiedType): Boolean {
-        return true
+    fun findImport(import: Import): QualifiedType? {
+        for (fileSymbolTable in fileSymbolTables) {
+            val qualifiedType = fileSymbolTable.findImport(import)
+            if (qualifiedType != null)
+                return qualifiedType
+        }
+        return null
     }
 
-    fun findImport(import: Import): QualifiedType? {
-        return null
+    fun addToCurrentContext(qualifiedType: QualifiedType): Boolean {
+        return true
     }
 
     fun lookup(ref: ValueReference): QualifiedType? {

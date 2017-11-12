@@ -1,6 +1,7 @@
 package org.fujure.fbc.analyze.pass_01
 
 import org.fujure.fbc.analyze.QualifiedType
+import org.fujure.fbc.ast.Import
 import org.fujure.fbc.ast.InputFile
 
 class FileSymbolTable(val inputFile: InputFile, simpleValues: Set<String>) {
@@ -17,11 +18,6 @@ class FileSymbolTable(val inputFile: InputFile, simpleValues: Set<String>) {
     private val simpleValueTypes: Map<String, QualifiedTypeHolder> =
             simpleValues.associate { Pair(it, QualifiedTypeHolder()) }
 
-    fun fillInTypeFor(id: String, qualifiedType: QualifiedType) {
-        val holder = simpleValueTypes[id]!!
-        holder.flipTo(qualifiedType)
-    }
-
     fun lookup(id: String): QualifiedType? {
         val holder = simpleValueTypes[id]
         return if (holder == null) {
@@ -32,6 +28,15 @@ class FileSymbolTable(val inputFile: InputFile, simpleValues: Set<String>) {
             // from the clients of this is fine with us
             holder.qualifiedType
         }
+    }
+
+    fun fillInTypeFor(id: String, qualifiedType: QualifiedType) {
+        val holder = simpleValueTypes[id]!!
+        holder.flipTo(qualifiedType)
+    }
+
+    fun findImport(import: Import): QualifiedType? {
+        throw UnsupportedOperationException()
     }
 }
 
