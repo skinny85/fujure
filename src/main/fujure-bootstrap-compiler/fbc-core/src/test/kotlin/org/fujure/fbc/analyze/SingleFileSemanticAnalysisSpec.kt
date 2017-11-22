@@ -1,6 +1,7 @@
 package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
+import org.fujure.fbc.analyze.TypeErrorContext.VariableDefinition
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.FileContents
@@ -64,29 +65,42 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
     }
 
+    it.describes("called with a definition using type inference") {
+        it.beginsAll {
+            analyzeProgramExpectingErrors("""
+                def x = 42
+            """)
+        }
+
+        it.should("should return a TypeInferenceNotAllowed error") {
+            assertThat(errors.v).containsExactly(
+                SemanticError.TypeInferenceNotAllowed(VariableDefinition("x")))
+        }
+    }
+
     it.describes("called with values referencing previously defined variables") {
         it.beginsAll {
             analyzeProgramSuccessfully("""
-                def x = 42
+                def x: Int = 42
                 def y: Bool = false
                 def a: Int = x
-                def b = y
+                def b: Bool = y
             """)
         }
 
         it.should("parse all 4 definitions correctly") {
             assertThat(fileContents.v.defs).containsExactly(
-                    Def.ValueDef.SimpleValueDef("x", null, Expr.IntLiteral(42)),
+                    Def.ValueDef.SimpleValueDef("x", TypeReference("Int"), Expr.IntLiteral(42)),
                     Def.ValueDef.SimpleValueDef("y", TypeReference("Bool"), Expr.BoolLiteral.False),
                     Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.ValueReferenceExpr(ValueReference("x"))),
-                    Def.ValueDef.SimpleValueDef("b", null, Expr.ValueReferenceExpr(ValueReference("y"))))
+                    Def.ValueDef.SimpleValueDef("b", TypeReference("Bool"), Expr.ValueReferenceExpr(ValueReference("y"))))
         }
     }
 
     it.describes("called with duplicate value definition") {
         it.beginsAll {
             analyzeProgramExpectingErrors("""
-                def a = true
+                def a: Bool = true
                 def a: Int = 2
             """)
         }
@@ -107,7 +121,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         it.should("return a TypeMismatch error") {
             assertThat(errors.v).containsExactly(
                     SemanticError.TypeMismatch(
-                            TypeErrorContext.VariableDefinition("a"),
+                            VariableDefinition("a"),
                             BuiltInTypes.Int, BuiltInTypes.Bool))
         }
     }
@@ -115,14 +129,14 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
     it.describes("called with a value referencing an undefined variable") {
         it.beginsAll {
             analyzeProgramExpectingErrors("""
-                def a = x
+                def a: Int = x
             """)
         }
 
         it.should("return a UnresolvedReference error") {
             assertThat(errors.v).containsExactly(
                     SemanticError.UnresolvedReference(
-                            TypeErrorContext.VariableDefinition("a"),
+                            VariableDefinition("a"),
                             ValueReference("x")))
         }
     }
@@ -130,15 +144,15 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
     it.describes("called with a value referencing a forward-declared variable") {
         it.beginsAll {
             analyzeProgramExpectingErrors("""
-                def a = x
-                def x = true
+                def a: Bool = x
+                def x: Bool = true
             """)
         }
 
         it.should("return a UnresolvedReference error") {
             assertThat(errors.v).containsExactly(
                     SemanticError.UnresolvedReference(
-                            TypeErrorContext.VariableDefinition("a"),
+                            VariableDefinition("a"),
                             ValueReference("x")))
         }
     }
@@ -157,10 +171,10 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         it.should("take the incorrectly defined variables into account during analysis") {
             assertThat(errors.v).containsExactly(
                     SemanticError.TypeMismatch(
-                            TypeErrorContext.VariableDefinition("x"),
+                            VariableDefinition("x"),
                             BuiltInTypes.Bool, BuiltInTypes.Int),
                     SemanticError.TypeNotFound(
-                            TypeErrorContext.VariableDefinition("y"),
+                            VariableDefinition("y"),
                             TypeReference("a", "B", "C")))
         }
     }
@@ -168,14 +182,14 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
     it.describes("called with value referencing a previous value qualified with the file name") {
         it.beginsAll {
             analyzeProgramSuccessfully("""
-                def x = 42
+                def x: Int = 42
                 def a: Int = File1.x
             """)
         }
 
         it.should("parse all definitions correctly") {
             assertThat(fileContents.v.defs).containsExactly(
-                    Def.ValueDef.SimpleValueDef("x", null, Expr.IntLiteral(42)),
+                    Def.ValueDef.SimpleValueDef("x", TypeReference("Int"), Expr.IntLiteral(42)),
                     Def.ValueDef.SimpleValueDef(
                             "a",
                             TypeReference("Int"),
@@ -186,7 +200,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
     it.describes("called with a value reference qualified with the file name") {
         it.beginsAll {
             analyzeProgramExpectingErrors("""
-                def x = 42
+                def x: Int = 42
                 def a: Int = DoesNotExist.x
             """)
         }
@@ -194,7 +208,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         it.should("return an UnresolvedReference error") {
             assertThat(errors.v).containsExactly(
                     SemanticError.UnresolvedReference(
-                            TypeErrorContext.VariableDefinition("a"),
+                            VariableDefinition("a"),
                             ValueReference("DoesNotExist", "x")
                     )
             )

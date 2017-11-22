@@ -1,9 +1,8 @@
 package org.fujure.fbc.analyze.pass_01
 
 import org.fujure.fbc.analyze.SemanticError
+import org.fujure.fbc.analyze.TypeErrorContext
 import org.fujure.fbc.ast.Def
-import org.fujure.fbc.ast.Expr
-import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
@@ -27,7 +26,7 @@ object DefsGatherVisitor :
                 Either<SemanticError, Def>,
                 FileSymbolTableBuilder>,
         ValDef.Visitor<
-                Either<SemanticError.DuplicateDefinition, Def.ValueDef>,
+                Either<SemanticError, Def.ValueDef>,
                 FileSymbolTableBuilder> {
     override fun visit(fileContents: FileInNamedPackage, fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<FileSymbolsGatheringResult.Failure, List<Def>> {
@@ -64,23 +63,18 @@ object DefsGatherVisitor :
     }
 
     override fun visit(untypedValueDef: UntypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
-            Either<SemanticError.DuplicateDefinition, Def.ValueDef> {
-        return visitValueDef(untypedValueDef.jid_, null,
-                untypedValueDef.expr_.accept(ParseTree2AstExprVisitor, Unit), fileSymbolTableBuilder)
+            Either<SemanticError, Def.ValueDef> {
+        return Either.Left(SemanticError.TypeInferenceNotAllowed(
+                TypeErrorContext.VariableDefinition(untypedValueDef.jid_)))
     }
 
     override fun visit(typedValueDef: TypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
-            Either<SemanticError.DuplicateDefinition, Def.ValueDef> {
+            Either<SemanticError, Def.ValueDef> {
         val declaredType = typedValueDef.typespec_.accept(TypeSpec2TypeReference, Unit)
-        return visitValueDef(typedValueDef.jid_, declaredType,
-                typedValueDef.expr_.accept(ParseTree2AstExprVisitor, Unit), fileSymbolTableBuilder)
-    }
-
-    private fun visitValueDef(id: String, declaredType: TypeReference?, expr: Expr, fileSymbolTableBuilder: FileSymbolTableBuilder):
-            Either<SemanticError.DuplicateDefinition, Def.ValueDef> {
-        return if (fileSymbolTableBuilder.noteSimpleValueDeclaration(id))
-            Either.Right(Def.ValueDef.SimpleValueDef(id, declaredType, expr))
+        return if (fileSymbolTableBuilder.noteSimpleValueDeclaration(typedValueDef.jid_))
+            Either.Right(Def.ValueDef.SimpleValueDef(typedValueDef.jid_, declaredType,
+                    typedValueDef.expr_.accept(ParseTree2AstExprVisitor, Unit)))
         else
-            Either.Left(SemanticError.DuplicateDefinition(id))
+            Either.Left(SemanticError.DuplicateDefinition(typedValueDef.jid_))
     }
 }

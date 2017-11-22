@@ -44,17 +44,16 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
         it.beginsAll {
             analyzeProgramsSuccessfully(
                     """
-                       def a = 42
+                       def a: Int = 42
                     """,
                     """
                         def x: Int = File1.a
-                    """
-            )
+                    """)
         }
 
         it.should("parse the first program correctly") {
             assertThat(firstFileContents.v.defs).containsExactly(
-                    Def.ValueDef.SimpleValueDef("a", null, Expr.IntLiteral(42)))
+                    Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.IntLiteral(42)))
         }
 
         it.should("parse the second program correctly") {
@@ -70,14 +69,13 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
                     """
                        package com.example
 
-                       def a = 42
+                       def a: Int = 42
                     """,
                     """
                         package com.example.inner
 
                         def x: Int = File1.a
-                    """
-            )
+                    """)
         }
 
         it.should("parse the first program correctly") {
@@ -88,8 +86,7 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
             assertThat(secondFileErrors.v).containsExactly(
                     SemanticError.UnresolvedReference(
                             TypeErrorContext.VariableDefinition("x"),
-                            ValueReference("File1", "a")
-                    )
+                            ValueReference("File1", "a"))
             )
         }
     }

@@ -7,6 +7,9 @@ sealed class SemanticError {
     data class DuplicateDefinition(val name: String) :
             SemanticError()
 
+    data class TypeInferenceNotAllowed(val context: TypeErrorContext) :
+            SemanticError()
+
     data class UnresolvedReference(val context: TypeErrorContext, val valueReference: ValueReference) :
             SemanticError()
 
