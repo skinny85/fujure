@@ -6,7 +6,8 @@ import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticAnalysisResult
 import org.fujure.fbc.analyze.SemanticError
-import org.fujure.fbc.analyze.TypeErrorContext
+import org.fujure.fbc.analyze.ConstructContext
+import org.fujure.fbc.analyze.SemanticProblem
 import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
@@ -46,20 +47,24 @@ object VerificationAnalysis {
     private fun analyze(def: Def, symbolTable: SymbolTable): List<SemanticError> {
         val typeError: SemanticError? = when (def) {
             is Def.ValueDef.SimpleValueDef -> {
-                val context = TypeErrorContext.VariableDefinition(def.id)
-                val actualType = exprType(def.initializer, symbolTable, context)
+                val context = ConstructContext.VariableDefinition(def.id)
+                val actualType = exprType(def.initializer, symbolTable)
 
                 when (actualType) {
-                    is Either.Left -> actualType.l
+                    is Either.Left -> {
+                        SemanticError.ConstructLevelError(context, actualType.l)
+                    }
                     is Either.Right -> {
                         if (def.declaredType != null) {
                             val declaredType = symbolTable.findType(def.declaredType)
                             if (declaredType == null) {
                                 symbolTable.fillInTypeFor(def.id, actualType.r)
-                                SemanticError.TypeNotFound(context, def.declaredType)
+                                SemanticError.ConstructLevelError(context,
+                                        SemanticProblem.ConstructLevelProblem.TypeNotFound(def.declaredType))
                             } else if (declaredType != actualType.r) {
                                 symbolTable.fillInTypeFor(def.id, declaredType)
-                                SemanticError.TypeMismatch(context, declaredType, actualType.r)
+                                SemanticError.ConstructLevelError(context,
+                                        SemanticProblem.ConstructLevelProblem.TypeMismatch(declaredType, actualType.r))
                             } else {
                                 symbolTable.fillInTypeFor(def.id, actualType.r)
                                 null
@@ -78,18 +83,16 @@ object VerificationAnalysis {
             listOf(typeError)
     }
 
-    private fun exprType(expr: Expr, symbolTable: SymbolTable, context: TypeErrorContext):
-            Either<SemanticError.UnresolvedReference, QualifiedType> {
-        return when (expr) {
-            is Expr.IntLiteral -> Either.Right(BuiltInTypes.Int)
-            is Expr.BoolLiteral -> Either.Right(BuiltInTypes.Bool)
-            is Expr.ValueReferenceExpr -> {
-                val qualifiedType = symbolTable.lookup(expr.ref)
-                if (qualifiedType == null)
-                    Either.Left(SemanticError.UnresolvedReference(context, expr.ref))
-                else
-                    Either.Right(qualifiedType)
-            }
+    fun exprType(expr: Expr, symbolTable: SymbolTable):
+            Either<SemanticProblem.ConstructLevelProblem, QualifiedType> = when (expr) {
+        is Expr.IntLiteral -> Either.Right(BuiltInTypes.Int)
+        is Expr.BoolLiteral -> Either.Right(BuiltInTypes.Bool)
+        is Expr.ValueReferenceExpr -> {
+            val qualifiedType = symbolTable.lookup(expr.ref)
+            if (qualifiedType == null)
+                Either.Left(SemanticProblem.ConstructLevelProblem.UnresolvedReference(expr.ref))
+            else
+                Either.Right(qualifiedType)
         }
     }
 }

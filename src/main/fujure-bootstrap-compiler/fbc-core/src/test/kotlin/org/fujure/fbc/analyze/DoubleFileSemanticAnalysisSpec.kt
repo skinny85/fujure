@@ -2,6 +2,7 @@ package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.fujure.fbc.analyze.SemanticProblem.ConstructLevelProblem.UnresolvedReference
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.FileContents
@@ -86,11 +87,9 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
 
         it.should("return an UnresolvedReference error for the second file") {
             assertThat(secondFileErrors.v).containsExactly(
-                    SemanticError.UnresolvedReference(
-                            TypeErrorContext.VariableDefinition("x"),
-                            ValueReference("File1", "a")
-                    )
-            )
+                    SemanticError.ConstructLevelError(
+                            ConstructContext.VariableDefinition("x"),
+                            UnresolvedReference(ValueReference("File1", "a"))))
         }
     }
 

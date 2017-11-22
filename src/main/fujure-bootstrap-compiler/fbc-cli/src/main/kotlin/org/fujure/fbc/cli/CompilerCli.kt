@@ -10,7 +10,7 @@ import org.fujure.fbc.CompileOptions
 import org.fujure.fbc.Compiler
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.analyze.SemanticError
-import org.fujure.fbc.analyze.TypeErrorContext
+import org.fujure.fbc.analyze.ConstructContext
 
 /**
  * This class encapsulates invoking the (bootstrap) compiler
@@ -111,9 +111,9 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
                     "but got: ${semanticFileIssue.actual.inStringForm()}"
     }
 
-    private fun contextMessage(context: TypeErrorContext): String {
+    private fun contextMessage(context: ConstructContext): String {
         return when (context) {
-            is TypeErrorContext.VariableDefinition ->
+            is ConstructContext.VariableDefinition ->
                 "in declaration of ${context.name}"
         }
     }

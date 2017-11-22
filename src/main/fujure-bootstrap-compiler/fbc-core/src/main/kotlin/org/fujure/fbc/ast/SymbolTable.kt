@@ -40,7 +40,7 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
         return if (targetFile == null)
             null
         else
-            targetFile.lookup(simpleName)
+            targetFile.lookup(simpleName, this)
     }
 
     fun findType(typeReference: TypeReference): QualifiedType? {

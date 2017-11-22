@@ -1,6 +1,11 @@
 package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
+import org.fujure.fbc.analyze.ConstructContext.VariableDefinition
+import org.fujure.fbc.analyze.SemanticError.ConstructLevelError
+import org.fujure.fbc.analyze.SemanticError.ModuleLevelError
+import org.fujure.fbc.analyze.SemanticProblem.ConstructLevelProblem.*
+import org.fujure.fbc.analyze.SemanticProblem.ModuleLevelProblem.DuplicateDefinition
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.FileContents
@@ -93,7 +98,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
 
         it.should("return a DuplicateDefinition error") {
             assertThat(errors.v).containsExactly(
-                    SemanticError.DuplicateDefinition("a"))
+                    ModuleLevelError(DuplicateDefinition("a")))
         }
     }
 
@@ -106,9 +111,9 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
 
         it.should("return a TypeMismatch error") {
             assertThat(errors.v).containsExactly(
-                    SemanticError.TypeMismatch(
-                            TypeErrorContext.VariableDefinition("a"),
-                            BuiltInTypes.Int, BuiltInTypes.Bool))
+                    ConstructLevelError(
+                            VariableDefinition("a"),
+                            TypeMismatch(BuiltInTypes.Int, BuiltInTypes.Bool)))
         }
     }
 
@@ -119,11 +124,11 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
             """)
         }
 
-        it.should("return a UnresolvedReference error") {
+        it.should("return an UnresolvedReference error") {
             assertThat(errors.v).containsExactly(
-                    SemanticError.UnresolvedReference(
-                            TypeErrorContext.VariableDefinition("a"),
-                            ValueReference("x")))
+                    ConstructLevelError(
+                            VariableDefinition("a"),
+                            UnresolvedReference(ValueReference("x"))))
         }
     }
 
@@ -135,11 +140,11 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
             """)
         }
 
-        it.should("return a UnresolvedReference error") {
+        it.should("return an UnresolvedReference error") {
             assertThat(errors.v).containsExactly(
-                    SemanticError.UnresolvedReference(
-                            TypeErrorContext.VariableDefinition("a"),
-                            ValueReference("x")))
+                    ConstructLevelError(
+                            VariableDefinition("a"),
+                            UnresolvedReference(ValueReference("x"))))
         }
     }
 
@@ -156,12 +161,12 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
 
         it.should("take the incorrectly defined variables into account during analysis") {
             assertThat(errors.v).containsExactly(
-                    SemanticError.TypeMismatch(
-                            TypeErrorContext.VariableDefinition("x"),
-                            BuiltInTypes.Bool, BuiltInTypes.Int),
-                    SemanticError.TypeNotFound(
-                            TypeErrorContext.VariableDefinition("y"),
-                            TypeReference("a", "B", "C")))
+                    ConstructLevelError(
+                            VariableDefinition("x"),
+                            TypeMismatch(BuiltInTypes.Bool, BuiltInTypes.Int)),
+                    ConstructLevelError(
+                            VariableDefinition("y"),
+                            TypeNotFound(TypeReference("a", "B", "C"))))
         }
     }
 
@@ -193,11 +198,9 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
 
         it.should("return an UnresolvedReference error") {
             assertThat(errors.v).containsExactly(
-                    SemanticError.UnresolvedReference(
-                            TypeErrorContext.VariableDefinition("a"),
-                            ValueReference("DoesNotExist", "x")
-                    )
-            )
+                    SemanticError.ConstructLevelError(
+                            VariableDefinition("a"),
+                            UnresolvedReference(ValueReference("DoesNotExist", "x"))))
         }
     }
 
