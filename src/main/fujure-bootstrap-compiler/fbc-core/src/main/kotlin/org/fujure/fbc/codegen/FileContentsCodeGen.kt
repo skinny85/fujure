@@ -43,7 +43,7 @@ object FileContentsCodeGen {
             }
             is Expr.ValueReferenceExpr -> {
                 val qualifiedType = symbolTable.lookup(simpleValueDef.initializer.ref)
-                variableType = toJavaType(qualifiedType)!!
+                variableType = toJavaType(qualifiedType.get())!!
                 initializer = simpleValueDef.initializer.ref.inStringForm()
             }
         }

@@ -71,7 +71,7 @@ object DefsGatherVisitor :
     override fun visit(typedValueDef: TypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<SemanticError, Def.ValueDef> {
         val declaredType = typedValueDef.typespec_.accept(TypeSpec2TypeReference, Unit)
-        return if (fileSymbolTableBuilder.noteSimpleValueDeclaration(typedValueDef.jid_))
+        return if (fileSymbolTableBuilder.noteSimpleValueDeclaration(typedValueDef.jid_, declaredType))
             Either.Right(Def.ValueDef.SimpleValueDef(typedValueDef.jid_, declaredType,
                     typedValueDef.expr_.accept(ParseTree2AstExprVisitor, Unit)))
         else

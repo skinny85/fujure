@@ -141,6 +141,24 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
     }
 
+    it.describes("called with a value declared with a non-existent type and referencing a non-existent variable") {
+        it.beginsAll {
+            analyzeProgramExpectingErrors("""
+                def a: DoesNotExist = x
+            """)
+        }
+
+        it.should("return both a UnresolvedReference and a TypeNotFound errors") {
+            assertThat(errors.v).containsOnly(
+                    SemanticError.UnresolvedReference(
+                            VariableDefinition("a"),
+                            ValueReference("x")),
+                    SemanticError.TypeNotFound(
+                            VariableDefinition("a"),
+                            TypeReference("DoesNotExist")))
+        }
+    }
+
     it.describes("called with a value referencing a forward-declared variable") {
         it.beginsAll {
             analyzeProgramExpectingErrors("""
@@ -197,7 +215,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
     }
 
-    it.describes("called with a value reference qualified with the file name") {
+    it.describes("called with a value reference qualified with a file name that doesn't exist") {
         it.beginsAll {
             analyzeProgramExpectingErrors("""
                 def x: Int = 42

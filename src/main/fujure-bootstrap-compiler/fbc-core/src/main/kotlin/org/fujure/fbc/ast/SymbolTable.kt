@@ -3,6 +3,7 @@ package org.fujure.fbc.ast
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.pass_01.FileSymbolTable
+import org.funktionale.option.Option
 import kotlin.properties.Delegates
 
 class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
@@ -14,12 +15,7 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
         currentFile = fileSymbolTables.find { it.inputFile == inputFile }!!
     }
 
-    // ToDo this entire API is meh at best
-    fun fillInTypeFor(id: String, qualifiedType: QualifiedType) {
-        currentFile.fillInTypeFor(id, qualifiedType)
-    }
-
-    fun lookup(ref: ValueReference): QualifiedType? {
+    fun lookup(ref: ValueReference): Option<QualifiedType?> {
         val targetFile: FileSymbolTable?
         val simpleName: String
 
@@ -34,13 +30,15 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
             }
             else -> {
                 targetFile = null
-                simpleName = "whatever"
+                simpleName = "not used"
             }
         }
         return if (targetFile == null)
-            null
-        else
-            targetFile.lookup(simpleName)
+            Option.None
+        else {
+            val typeReference = targetFile.lookup(simpleName)
+            if (typeReference == null) Option.None else Option.Some(findType(typeReference))
+        }
     }
 
     fun findType(typeReference: TypeReference): QualifiedType? {

@@ -1,46 +1,20 @@
 package org.fujure.fbc.analyze.pass_01
 
-import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.ast.InputFile
+import org.fujure.fbc.ast.TypeReference
 
-class FileSymbolTable(val inputFile: InputFile, simpleValues: Set<String>,
+class FileSymbolTable(val inputFile: InputFile, val simpleValues: Map<String, TypeReference>,
                       val packageName: String) {
-    private class QualifiedTypeHolder {
-        var qualifiedType: QualifiedType? = null
-
-        fun flipTo(qualifiedType: QualifiedType) {
-            if (this.qualifiedType != null)
-                throw IllegalStateException("already given a type: ${this.qualifiedType}")
-            this.qualifiedType = qualifiedType
-        }
-    }
-
-    private val simpleValueTypes: Map<String, QualifiedTypeHolder> =
-            simpleValues.associate { Pair(it, QualifiedTypeHolder()) }
-
-    fun fillInTypeFor(id: String, qualifiedType: QualifiedType) {
-        val holder = simpleValueTypes[id]!!
-        holder.flipTo(qualifiedType)
-    }
-
-    fun lookup(id: String): QualifiedType? {
-        val holder = simpleValueTypes[id]
-        return if (holder == null) {
-            null
-        } else {
-            // if qualifiedType is null, this means a forward-reference,
-            // which we don't allow, so a not-found error
-            // from the clients of this is fine with us
-            holder.qualifiedType
-        }
+    fun lookup(id: String): TypeReference? {
+        return simpleValues[id]
     }
 }
 
 class FileSymbolTableBuilder(val inputFile: InputFile, val packageName: String) {
-    private val simpleValues = mutableSetOf<String>()
+    private val simpleValues = mutableMapOf<String, TypeReference>()
 
-    fun noteSimpleValueDeclaration(id: String): Boolean {
-        return simpleValues.add(id)
+    fun noteSimpleValueDeclaration(id: String, declaredType: TypeReference): Boolean {
+        return simpleValues.putIfAbsent(id, declaredType) == null
     }
 
     fun build(): FileSymbolTable {
