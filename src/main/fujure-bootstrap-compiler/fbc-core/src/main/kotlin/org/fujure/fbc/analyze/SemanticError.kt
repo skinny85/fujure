@@ -13,6 +13,9 @@ sealed class SemanticError {
     data class UnresolvedReference(val context: TypeErrorContext, val valueReference: ValueReference) :
             SemanticError()
 
+    data class IllegalForwardReference(val context: TypeErrorContext, val name: String) :
+            SemanticError()
+
     data class TypeNotFound(val context: TypeErrorContext, val typeReference: TypeReference) :
             SemanticError()
 

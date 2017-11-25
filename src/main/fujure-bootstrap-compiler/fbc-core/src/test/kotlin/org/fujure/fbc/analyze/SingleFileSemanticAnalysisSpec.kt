@@ -167,11 +167,10 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
             """)
         }
 
-        it.should("return a UnresolvedReference error") {
+        it.should("return an IllegalForwardReference error") {
             assertThat(errors.v).containsExactly(
-                    SemanticError.UnresolvedReference(
-                            VariableDefinition("a"),
-                            ValueReference("x")))
+                    SemanticError.IllegalForwardReference(
+                            VariableDefinition("a"), "x"))
         }
     }
 

@@ -69,15 +69,19 @@ object VerificationAnalysis {
         return ret
     }
 
-    private fun exprType(expr: Expr, symbolTable: SymbolTable, context: TypeErrorContext):
-            Either<SemanticError.UnresolvedReference, QualifiedType?> = when (expr) {
+    private fun exprType(expr: Expr, symbolTable: SymbolTable, valDef: TypeErrorContext.VariableDefinition):
+            Either<SemanticError, QualifiedType?> = when (expr) {
         is Expr.IntLiteral -> Either.Right(BuiltInTypes.Int)
         is Expr.BoolLiteral -> Either.Right(BuiltInTypes.Bool)
         is Expr.ValueReferenceExpr -> {
-            val qualifiedType = symbolTable.lookup(expr.ref)
-            when (qualifiedType) {
-                is Option.None -> Either.Left(SemanticError.UnresolvedReference(context, expr.ref))
-                is Option.Some -> Either.Right(qualifiedType.t)
+            val lookupResult = symbolTable.lookup(expr.ref, valDef.name)
+            when (lookupResult) {
+                is SymbolTable.LookupResult.RefNotFound ->
+                    Either.Left(SemanticError.UnresolvedReference(valDef, expr.ref))
+                is SymbolTable.LookupResult.ForwardReference ->
+                    Either.Left(SemanticError.IllegalForwardReference(valDef, lookupResult.name))
+                is SymbolTable.LookupResult.RefFound ->
+                    Either.Right(lookupResult.qualifiedType)
             }
         }
     }

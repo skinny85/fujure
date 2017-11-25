@@ -86,8 +86,7 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
             assertThat(secondFileErrors.v).containsExactly(
                     SemanticError.UnresolvedReference(
                             TypeErrorContext.VariableDefinition("x"),
-                            ValueReference("File1", "a"))
-            )
+                            ValueReference("File1", "a")))
         }
     }
 

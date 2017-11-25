@@ -15,29 +15,42 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
         currentFile = fileSymbolTables.find { it.inputFile == inputFile }!!
     }
 
-    fun lookup(ref: ValueReference): Option<QualifiedType?> {
+    fun lookup(ref: ValueReference, anchorVariable: String): LookupResult {
         val targetFile: FileSymbolTable?
         val simpleName: String
+        val anchor: String?
 
         when (ref.ids.size) {
             1 -> {
                 targetFile = currentFile
                 simpleName = ref.ids[0]
+                anchor = anchorVariable
             }
             2 -> {
                 targetFile = findFile(currentFile.packageName, ref.ids[0])
                 simpleName = ref.ids[1]
+                anchor = if (targetFile == currentFile) anchorVariable else null
             }
             else -> {
                 targetFile = null
                 simpleName = "not used"
+                anchor = null
             }
         }
-        return if (targetFile == null)
-            Option.None
-        else {
-            val typeReference = targetFile.lookup(simpleName)
-            if (typeReference == null) Option.None else Option.Some(findType(typeReference))
+        return if (targetFile == null) {
+            LookupResult.RefNotFound
+        } else {
+            val optTypeRef = targetFile.lookup(simpleName, anchor)
+            when (optTypeRef) {
+                is Option.None -> LookupResult.RefNotFound
+                is Option.Some -> {
+                    val typeRef = optTypeRef.t
+                    if (typeRef == null)
+                        LookupResult.ForwardReference(simpleName)
+                    else
+                        LookupResult.RefFound(findType(typeRef))
+                }
+            }
         }
     }
 
@@ -59,5 +72,11 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
             it.packageName == packageName &&
                     it.inputFile.moduleName == moduleName
         }
+    }
+
+    sealed class LookupResult {
+        object RefNotFound : LookupResult()
+        data class ForwardReference(val name: String) : LookupResult()
+        data class RefFound(val qualifiedType: QualifiedType?) : LookupResult()
     }
 }
