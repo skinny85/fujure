@@ -2,12 +2,14 @@ package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.FileContents
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueReference
 import org.fujure.test.utils.Assumption.Companion.assume
+import org.funktionale.either.Disjunction
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 import org.specnaz.kotlin.utils.Deferred
 
@@ -18,10 +20,10 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
 
     fun analyzeProgramsSuccessfully(firstProgram: String, secondProgram: String) {
         val analysisResult = AnalysisHelper.analyzePrograms(firstProgram, secondProgram)
-        val success = assume(analysisResult).isA<SemanticAnalysisResult.Success>()
-        Assertions.assertThat(success.analyzedProgram.asts).hasSize(2)
-        firstFileContents.v = success.analyzedProgram.asts[0].fileContents
-        secondFileContents.v = success.analyzedProgram.asts[1].fileContents
+        val success = assume(analysisResult).isA<Disjunction.Right<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram>>()
+        Assertions.assertThat(success.value.asts).hasSize(2)
+        firstFileContents.v = success.value.asts[0].fileContents
+        secondFileContents.v = success.value.asts[1].fileContents
     }
 
     // for analyzeProgramsExpectingErrors
@@ -30,7 +32,7 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
 
     fun analyzeProgramsExpectingErrors(firstProgram: String, secondProgram: String) {
         val analysisResult = AnalysisHelper.analyzePrograms(firstProgram, secondProgram)
-        val failure = assume(analysisResult).isA<SemanticAnalysisResult.Failure>()
+        val failure = assume(analysisResult).isA<Disjunction.Left<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram>>()
 
         firstFileErrors.v = AnalysisHelper.findFileErrors(1, failure)
         secondFileErrors.v = AnalysisHelper.findFileErrors(2, failure)

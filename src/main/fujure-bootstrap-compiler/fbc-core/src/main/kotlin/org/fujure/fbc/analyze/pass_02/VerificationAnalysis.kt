@@ -4,29 +4,30 @@ import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.analyze.AnalyzedProgram
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
-import org.fujure.fbc.analyze.SemanticAnalysisResult
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.analyze.TypeErrorContext
 import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.SymbolTable
+import org.funktionale.either.Disjunction
 import org.funktionale.either.Either
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def as AbsynDef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents as AbsynFileContents
 
 object VerificationAnalysis {
-    fun analyze(asts: List<AstRoot>, symbolTable: SymbolTable): SemanticAnalysisResult {
+    fun analyze(analyzedProgram: AnalyzedProgram):
+            Disjunction<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram> {
         val problematicFiles = mutableListOf<ProblematicFile.SemanticFileIssue>()
-        for (ast in asts) {
-            val problematicFile = analyze(ast, symbolTable)
+        for (ast in analyzedProgram.asts) {
+            val problematicFile = analyze(ast, analyzedProgram.symbolTable)
             if (problematicFile != null)
                 problematicFiles.add(problematicFile)
         }
         return if (problematicFiles.isEmpty())
-            SemanticAnalysisResult.Success(AnalyzedProgram(asts, symbolTable))
+            Disjunction.Right(analyzedProgram)
         else
-            SemanticAnalysisResult.Failure(problematicFiles)
+            Disjunction.Left(problematicFiles)
     }
 
     private fun analyze(ast: AstRoot, symbolTable: SymbolTable): ProblematicFile.SemanticFileIssue? {

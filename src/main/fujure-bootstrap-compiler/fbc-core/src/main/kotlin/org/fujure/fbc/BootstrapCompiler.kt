@@ -2,7 +2,6 @@ package org.fujure.fbc
 
 import org.fujure.fbc.CompilationResults.CompilationAttempted
 import org.fujure.fbc.analyze.AnalyzedProgram
-import org.fujure.fbc.analyze.SemanticAnalysisResult
 import org.fujure.fbc.analyze.SemanticAnalyzer
 import org.fujure.fbc.codegen.CodeGenerator
 import org.fujure.fbc.parse.ParsedFile
@@ -11,6 +10,7 @@ import org.fujure.fbc.parse.ParsingResult
 import org.fujure.fbc.read.FileOpenResult
 import org.fujure.fbc.read.FileOpener
 import org.fujure.fbc.read.OpenedFile
+import org.funktionale.either.Disjunction
 
 class BootstrapCompiler(private val fileOpener: FileOpener,
                         private val parser: Parser,
@@ -69,10 +69,10 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
     fun compileParsedFiles(compileOptions: CompileOptions, parsedFiles: List<ParsedFile>): CompilationResults {
         val semanticAnalysisResult = semanticAnalyzer.analyze(parsedFiles)
         return when (semanticAnalysisResult) {
-            is SemanticAnalysisResult.Failure ->
-                    CompilationResults.CompilationNotAttempted(semanticAnalysisResult.issues)
-            is SemanticAnalysisResult.Success ->
-                    generateCode(compileOptions, semanticAnalysisResult.analyzedProgram)
+            is Disjunction.Left ->
+                    CompilationResults.CompilationNotAttempted(semanticAnalysisResult.value)
+            is Disjunction.Right ->
+                    generateCode(compileOptions, semanticAnalysisResult.value)
         }
     }
 

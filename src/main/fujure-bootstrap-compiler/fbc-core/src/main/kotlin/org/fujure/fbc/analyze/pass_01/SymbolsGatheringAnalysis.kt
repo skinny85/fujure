@@ -1,12 +1,15 @@
 package org.fujure.fbc.analyze.pass_01
 
 import org.fujure.fbc.ProblematicFile
+import org.fujure.fbc.analyze.AnalyzedProgram
 import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.parse.ParsedFile
+import org.funktionale.either.Disjunction
 
 object SymbolsGatheringAnalysis {
-    fun analyze(parsedFiles: List<ParsedFile>): SymbolsGatheringResult {
+    fun analyze(parsedFiles: List<ParsedFile>):
+            Disjunction<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram> {
         val asts = mutableListOf<AstRoot>()
         val symbolTableBuilder = SymbolTableBuilder()
         val issues = mutableListOf<ProblematicFile.SemanticFileIssue>()
@@ -26,9 +29,9 @@ object SymbolsGatheringAnalysis {
         }
 
         return if (issues.isEmpty())
-            SymbolsGatheringResult.Success(asts, symbolTableBuilder.build())
+            Disjunction.Right(AnalyzedProgram(asts, symbolTableBuilder.build()))
         else
-            SymbolsGatheringResult.Failure(issues)
+            Disjunction.Left(issues)
     }
 }
 

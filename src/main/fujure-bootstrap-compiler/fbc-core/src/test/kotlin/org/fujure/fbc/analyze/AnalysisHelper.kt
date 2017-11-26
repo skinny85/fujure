@@ -1,20 +1,23 @@
 package org.fujure.fbc.analyze
 
 import org.antlr.v4.runtime.CharStreams
+import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.parse.ParsingResult
 import org.fujure.fbc.read.OpenedFile
 import org.fujure.test.utils.Assumption.Companion.assume
+import org.funktionale.either.Disjunction
 
 object AnalysisHelper {
-    fun analyzeProgram(program: String): SemanticAnalysisResult {
+    fun analyzeProgram(program: String):
+            Disjunction<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram> {
         return analyzePrograms(program)
     }
 
     fun analyzePrograms(firstProgram: String, vararg remainingPrograms: String):
-            SemanticAnalysisResult {
+            Disjunction<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram> {
         return SimpleSemanticAnalyzer.analyze(parsePrograms(firstProgram, *remainingPrograms))
     }
 
@@ -30,7 +33,8 @@ object AnalysisHelper {
         return ret
     }
 
-    fun findFileErrors(index: Int, failure: SemanticAnalysisResult.Failure): List<SemanticError> {
-        return failure.issues.find { it.userProvidedFilePath == "File$index.fjr" }?.errors ?: emptyList()
+    fun findFileErrors(index: Int, failure: Disjunction.Left<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram>):
+            List<SemanticError> {
+        return failure.value.find { it.userProvidedFilePath == "File$index.fjr" }?.errors ?: emptyList()
     }
 }

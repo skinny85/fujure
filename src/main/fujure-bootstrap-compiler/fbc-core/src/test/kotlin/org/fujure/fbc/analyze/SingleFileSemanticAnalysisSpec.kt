@@ -1,6 +1,7 @@
 package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
+import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.analyze.TypeErrorContext.VariableDefinition
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
@@ -9,6 +10,7 @@ import org.fujure.fbc.ast.Import
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueReference
 import org.fujure.test.utils.Assumption.Companion.assume
+import org.funktionale.either.Disjunction
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 import org.specnaz.kotlin.utils.Deferred
 
@@ -18,9 +20,9 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
 
     fun analyzeProgramSuccessfully(program: String) {
         val analysisResult = AnalysisHelper.analyzeProgram(program)
-        val success = assume(analysisResult).isA<SemanticAnalysisResult.Success>()
-        assertThat(success.analyzedProgram.asts).hasSize(1)
-        fileContents.v = success.analyzedProgram.asts[0].fileContents
+        val success = assume(analysisResult).isA<Disjunction.Right<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram>>()
+        assertThat(success.value.asts).hasSize(1)
+        fileContents.v = success.value.asts[0].fileContents
     }
 
     // for analyzeProgramExpectingErrors
@@ -28,9 +30,9 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
 
     fun analyzeProgramExpectingErrors(program: String) {
         val analysisResult = AnalysisHelper.analyzeProgram(program)
-        val failure = assume(analysisResult).isA<SemanticAnalysisResult.Failure>()
-        assertThat(failure.issues).hasSize(1)
-        errors.v = failure.issues[0].errors
+        val failure = assume(analysisResult).isA<Disjunction.Left<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram>>()
+        assertThat(failure.value).hasSize(1)
+        errors.v = failure.value[0].errors
     }
 
     it.describes("called with an empty program") {
