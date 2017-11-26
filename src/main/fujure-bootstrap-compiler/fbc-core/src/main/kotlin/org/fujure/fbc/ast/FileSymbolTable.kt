@@ -1,7 +1,4 @@
-package org.fujure.fbc.analyze.pass_01
-
-import org.fujure.fbc.ast.InputFile
-import org.fujure.fbc.ast.TypeReference
+package org.fujure.fbc.ast
 
 class FileSymbolTable(val inputFile: InputFile, private val simpleValues: LinkedHashMap<String, TypeReference>,
                       val packageName: String) {
@@ -32,17 +29,5 @@ class FileSymbolTable(val inputFile: InputFile, private val simpleValues: Linked
         object ForwardReference : LookupResult()
         object SelfReference : LookupResult()
         data class RefFound(val typeReference: TypeReference) : LookupResult()
-    }
-}
-
-class FileSymbolTableBuilder(val inputFile: InputFile, val packageName: String) {
-    private val simpleValues = linkedMapOf<String, TypeReference>()
-
-    fun noteSimpleValueDeclaration(id: String, declaredType: TypeReference): Boolean {
-        return simpleValues.putIfAbsent(id, declaredType) == null
-    }
-
-    fun build(): FileSymbolTable {
-        return FileSymbolTable(inputFile, simpleValues, packageName)
     }
 }

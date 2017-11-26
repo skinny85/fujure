@@ -2,7 +2,6 @@ package org.fujure.fbc.ast
 
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
-import org.fujure.fbc.analyze.pass_01.FileSymbolTable
 import kotlin.properties.Delegates
 
 class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {

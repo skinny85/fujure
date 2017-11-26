@@ -1,5 +1,6 @@
 package org.fujure.fbc.analyze.pass_01
 
+import org.fujure.fbc.ast.FileSymbolTable
 import org.fujure.fbc.ast.SymbolTable
 
 class SymbolTableBuilder {
