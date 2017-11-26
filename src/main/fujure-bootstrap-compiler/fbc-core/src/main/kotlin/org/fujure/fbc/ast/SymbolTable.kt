@@ -3,7 +3,6 @@ package org.fujure.fbc.ast
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.pass_01.FileSymbolTable
-import org.funktionale.option.Option
 import kotlin.properties.Delegates
 
 class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
@@ -40,16 +39,16 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
         return if (targetFile == null) {
             LookupResult.RefNotFound
         } else {
-            val optTypeRef = targetFile.lookup(simpleName, anchor)
-            when (optTypeRef) {
-                is Option.None -> LookupResult.RefNotFound
-                is Option.Some -> {
-                    val typeRef = optTypeRef.t
-                    if (typeRef == null)
-                        LookupResult.ForwardReference(simpleName)
-                    else
-                        LookupResult.RefFound(findType(typeRef))
-                }
+            val lookupResult = targetFile.lookup(simpleName, anchor)
+            when (lookupResult) {
+                is FileSymbolTable.LookupResult.RefNotFound ->
+                    LookupResult.RefNotFound
+                is FileSymbolTable.LookupResult.ForwardReference ->
+                    LookupResult.ForwardReference(simpleName)
+                is FileSymbolTable.LookupResult.SelfReference ->
+                    LookupResult.SelfReference(simpleName)
+                is FileSymbolTable.LookupResult.RefFound ->
+                    LookupResult.RefFound(findType(lookupResult.typeReference))
             }
         }
     }
@@ -77,6 +76,7 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
     sealed class LookupResult {
         object RefNotFound : LookupResult()
         data class ForwardReference(val name: String) : LookupResult()
+        data class SelfReference(val name: String) : LookupResult()
         data class RefFound(val qualifiedType: QualifiedType?) : LookupResult()
     }
 }

@@ -74,7 +74,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
 
         it.should("should return a TypeInferenceNotAllowed error") {
             assertThat(errors.v).containsExactly(
-                SemanticError.TypeInferenceNotAllowed(VariableDefinition("x")))
+                    SemanticError.TypeInferenceNotAllowed(VariableDefinition("x")))
         }
     }
 
@@ -171,6 +171,32 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
             assertThat(errors.v).containsExactly(
                     SemanticError.IllegalForwardReference(
                             VariableDefinition("a"), "x"))
+        }
+    }
+
+    it.describes("called with a value referencing itself in its initializer") {
+        it.beginsAll {
+            analyzeProgramExpectingErrors("""
+                def a: Bool = a
+            """)
+        }
+
+        it.should("return an IllegalSelfReference error") {
+            assertThat(errors.v).containsExactly(
+                    SemanticError.IllegalSelfReference(VariableDefinition("a")))
+        }
+    }
+
+    it.describes("called with a value referencing itself qualified with the module name in its initializer") {
+        it.beginsAll {
+            analyzeProgramExpectingErrors("""
+                def a: Bool = File1.a
+            """)
+        }
+
+        it.should("return an IllegalSelfReference error") {
+            assertThat(errors.v).containsExactly(
+                    SemanticError.IllegalSelfReference(VariableDefinition("a")))
         }
     }
 

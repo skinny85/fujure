@@ -12,7 +12,6 @@ import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.SymbolTable
 import org.funktionale.either.Either
-import org.funktionale.option.Option
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def as AbsynDef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents as AbsynFileContents
 
@@ -80,6 +79,8 @@ object VerificationAnalysis {
                     Either.Left(SemanticError.UnresolvedReference(valDef, expr.ref))
                 is SymbolTable.LookupResult.ForwardReference ->
                     Either.Left(SemanticError.IllegalForwardReference(valDef, lookupResult.name))
+                is SymbolTable.LookupResult.SelfReference ->
+                    Either.Left(SemanticError.IllegalSelfReference(valDef))
                 is SymbolTable.LookupResult.RefFound ->
                     Either.Right(lookupResult.qualifiedType)
             }

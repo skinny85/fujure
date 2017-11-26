@@ -111,6 +111,9 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
         is SemanticError.IllegalForwardReference ->
             "Error ${contextMessage(semanticFileIssue.context)}: " +
                     "Illegal forward reference to '${semanticFileIssue.name}'"
+        is SemanticError.IllegalSelfReference ->
+            "Error ${contextMessage(semanticFileIssue.context)}: " +
+                    "Illegal self reference"
         is SemanticError.TypeMismatch ->
             "Error ${contextMessage(semanticFileIssue.context)}: " +
                     "Type mismatch, expected: ${semanticFileIssue.expected.inStringForm()} " +
