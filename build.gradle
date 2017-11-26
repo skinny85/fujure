@@ -52,7 +52,7 @@ configure(subprojects.findAll { subproject ->
         compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 
         testCompile 'junit:junit:4.12'
-        testCompile 'org.specnaz:specnaz-kotlin-junit:1.1'
+        testCompile 'org.specnaz:specnaz-kotlin-junit:1.2-alpha1'
         testCompile group: 'org.assertj', name: 'assertj-core', version: '3.8.0'
         testCompile group: 'org.mockito', name: 'mockito-core', version: '2.8.47'
         testCompile "com.nhaarman:mockito-kotlin-kt1.1:1.5.0"
