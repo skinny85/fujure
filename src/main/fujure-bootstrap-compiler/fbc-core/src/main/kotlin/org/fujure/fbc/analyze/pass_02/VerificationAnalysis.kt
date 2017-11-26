@@ -50,18 +50,24 @@ object VerificationAnalysis {
                 val context = TypeErrorContext.VariableDefinition(def.id)
 
                 val initializerTypeOrError = exprType(def.initializer, symbolTable, context)
-                val declaredType = symbolTable.findType(def.declaredType)
+                val declaredQualifiedType: QualifiedType? = if (def.declaredType == null)
+                    null
+                else
+                    symbolTable.findType(def.declaredType)
 
                 when (initializerTypeOrError) {
                     is Either.Left -> ret.add(initializerTypeOrError.l)
                     is Either.Right -> {
-                        val initializerType = initializerTypeOrError.r
-                        if (declaredType != null && initializerType != null && declaredType != initializerType)
-                            ret.add(SemanticError.TypeMismatch(context, declaredType, initializerType))
+                        val initializerQualifiedType = initializerTypeOrError.r
+                        if (declaredQualifiedType != null &&
+                                initializerQualifiedType != null &&
+                                declaredQualifiedType != initializerQualifiedType)
+                            ret.add(SemanticError.TypeMismatch(context, declaredQualifiedType,
+                                    initializerQualifiedType))
                     }
                 }
 
-                if (declaredType == null)
+                if (def.declaredType != null && declaredQualifiedType == null)
                     ret.add(SemanticError.TypeNotFound(context, def.declaredType))
             }
         }

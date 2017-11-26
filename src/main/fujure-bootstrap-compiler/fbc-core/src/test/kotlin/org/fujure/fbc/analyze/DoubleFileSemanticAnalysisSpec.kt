@@ -112,4 +112,27 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
                     Def.ValueDef.SimpleValueDef("x", TypeReference("Int"), Expr.IntLiteral(42)))
         }
     }
+
+    it.xdescribes("called with a program referencing a value from a forward file with an inferred type") {
+        it.beginsAll {
+            analyzeProgramsSuccessfully(
+                    """
+                       def a: Int = File2.x
+                    """,
+                    """
+                        def x = 42
+                    """)
+        }
+
+        it.should("parse the first program correctly") {
+            assertThat(firstFileContents.v.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.ValueReferenceExpr(
+                            ValueReference("File2", "x"))))
+        }
+
+        it.should("parse the second program correctly") {
+            assertThat(secondFileContents.v.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("x", null, Expr.IntLiteral(42)))
+        }
+    }
 })
