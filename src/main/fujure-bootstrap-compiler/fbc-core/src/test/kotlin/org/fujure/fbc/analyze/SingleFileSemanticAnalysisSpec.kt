@@ -222,6 +222,26 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
     }
 
+    it.xdescribes("called with both a duplicate definition and a type error") {
+        it.beginsAll {
+            analyzeProgramExpectingErrors("""
+                def x: Int = 42
+                def x: Bool = true
+
+                def a: Int = x
+                def b: Bool = 42
+            """)
+        }
+
+        it.should("not stop analysis on encountering a duplicate definition") {
+            assertThat(errors.v).containsExactly(
+                    SemanticError.DuplicateDefinition("x"),
+                    SemanticError.TypeMismatch(
+                            VariableDefinition("b"),
+                            BuiltInTypes.Bool, BuiltInTypes.Int))
+        }
+    }
+
     it.describes("called with value referencing a previous value qualified with the file name") {
         it.beginsAll {
             analyzeProgramSuccessfully("""
@@ -252,9 +272,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
             assertThat(errors.v).containsExactly(
                     SemanticError.UnresolvedReference(
                             VariableDefinition("a"),
-                            ValueReference("DoesNotExist", "x")
-                    )
-            )
+                            ValueReference("DoesNotExist", "x")))
         }
     }
 
