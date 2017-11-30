@@ -102,9 +102,6 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
         is SemanticError.TypeNotFound ->
             "Error ${contextMessage(semanticFileIssue.context)}: " +
                     "Unresolved type reference ${semanticFileIssue.typeReference.inStringForm()}"
-        is SemanticError.TypeInferenceNotAllowed ->
-            "Error ${contextMessage(semanticFileIssue.context)}: " +
-                    "Type inference is not supported for global definitions. Please provide an explicit type"
         is SemanticError.UnresolvedReference ->
             "Error ${contextMessage(semanticFileIssue.context)}: " +
                     "Unresolved reference '${semanticFileIssue.valueReference.inStringForm()}'"

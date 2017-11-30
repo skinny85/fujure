@@ -70,13 +70,15 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
     it.describes("called with a definition using type inference") {
         it.beginsAll {
             analyzeProgramExpectingErrors("""
-                def x = 42
+                def a = 42
+                def x = a
             """)
         }
 
-        it.should("should return a TypeInferenceNotAllowed error") {
+        it.should("should return an UnresolvedReference error") {
             assertThat(errors.v).containsExactly(
-                    SemanticError.TypeInferenceNotAllowed(VariableDefinition("x")))
+                    SemanticError.UnresolvedReference(VariableDefinition("x"),
+                            ValueReference("a")))
         }
     }
 

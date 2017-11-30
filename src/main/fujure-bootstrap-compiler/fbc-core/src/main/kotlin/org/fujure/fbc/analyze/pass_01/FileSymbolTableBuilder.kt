@@ -5,9 +5,9 @@ import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.ast.TypeReference
 
 class FileSymbolTableBuilder(val inputFile: InputFile, val packageName: String) {
-    private val simpleValues = linkedMapOf<String, TypeReference>()
+    private val simpleValues = linkedMapOf<String, TypeReference?>()
 
-    fun noteSimpleValueDeclaration(id: String, declaredType: TypeReference): Boolean {
+    fun noteSimpleValueDeclaration(id: String, declaredType: TypeReference?): Boolean {
         return simpleValues.putIfAbsent(id, declaredType) == null
     }
 

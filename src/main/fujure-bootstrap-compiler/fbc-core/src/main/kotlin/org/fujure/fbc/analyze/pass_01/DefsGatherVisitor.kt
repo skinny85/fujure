@@ -1,10 +1,11 @@
 package org.fujure.fbc.analyze.pass_01
 
 import org.fujure.fbc.analyze.SemanticError
-import org.fujure.fbc.analyze.TypeErrorContext
 import org.fujure.fbc.ast.Def
+import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage
@@ -64,17 +65,22 @@ object DefsGatherVisitor :
 
     override fun visit(untypedValueDef: UntypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<SemanticError, Def.ValueDef> {
-        return Either.Left(SemanticError.TypeInferenceNotAllowed(
-                TypeErrorContext.VariableDefinition(untypedValueDef.jid_)))
+        return visitValueDef(untypedValueDef.jid_, null, untypedValueDef.expr_, fileSymbolTableBuilder)
     }
 
     override fun visit(typedValueDef: TypedValueDef, fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<SemanticError, Def.ValueDef> {
         val declaredType = typedValueDef.typespec_.accept(TypeSpec2TypeReference, Unit)
-        return if (fileSymbolTableBuilder.noteSimpleValueDeclaration(typedValueDef.jid_, declaredType))
-            Either.Right(Def.ValueDef.SimpleValueDef(typedValueDef.jid_, declaredType,
-                    typedValueDef.expr_.accept(ParseTree2AstExprVisitor, Unit)))
+        return visitValueDef(typedValueDef.jid_, declaredType, typedValueDef.expr_, fileSymbolTableBuilder)
+    }
+
+    private fun visitValueDef(id: String, declaredType: TypeReference?, initializer: Expr,
+                              fileSymbolTableBuilder: FileSymbolTableBuilder):
+            Either<SemanticError, Def.ValueDef> {
+        val astInitializer = initializer.accept(ParseTree2AstExprVisitor, Unit)
+        return if (fileSymbolTableBuilder.noteSimpleValueDeclaration(id, declaredType))
+            Either.Right(Def.ValueDef.SimpleValueDef(id, declaredType, astInitializer))
         else
-            Either.Left(SemanticError.DuplicateDefinition(typedValueDef.jid_))
+            Either.Left(SemanticError.DuplicateDefinition(id))
     }
 }
