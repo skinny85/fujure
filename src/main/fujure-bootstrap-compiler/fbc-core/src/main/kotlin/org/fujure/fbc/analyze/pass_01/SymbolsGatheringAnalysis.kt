@@ -3,6 +3,7 @@ package org.fujure.fbc.analyze.pass_01
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.analyze.AnalyzedProgram
 import org.fujure.fbc.ast.AstRoot
+import org.fujure.fbc.ast.FileSymbolTable
 import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.parse.ParsedFile
 import org.funktionale.either.Disjunction
@@ -11,7 +12,7 @@ object SymbolsGatheringAnalysis {
     fun analyze(parsedFiles: List<ParsedFile>):
             Disjunction<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram> {
         val asts = mutableListOf<AstRoot>()
-        val symbolTableBuilder = SymbolTableBuilder()
+        val fileSymbolTables = mutableListOf<FileSymbolTable>()
         val issues = mutableListOf<ProblematicFile.SemanticFileIssue>()
 
         for (parsedFile in parsedFiles) {
@@ -23,13 +24,13 @@ object SymbolsGatheringAnalysis {
                 }
                 is FileSymbolsGatheringResult.Success -> {
                     asts.add(fileSymbolsGatheringResult.astRoot)
-                    symbolTableBuilder.add(fileSymbolsGatheringResult.fileSymbolTable)
+                    fileSymbolTables.add(fileSymbolsGatheringResult.fileSymbolTable)
                 }
             }
         }
 
         return if (issues.isEmpty())
-            Disjunction.Right(AnalyzedProgram(asts, symbolTableBuilder.build()))
+            Disjunction.Right(AnalyzedProgram(asts, SymbolTable(fileSymbolTables)))
         else
             Disjunction.Left(issues)
     }
