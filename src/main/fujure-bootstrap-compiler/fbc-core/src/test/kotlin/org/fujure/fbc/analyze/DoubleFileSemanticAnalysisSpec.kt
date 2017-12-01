@@ -115,7 +115,7 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
         }
     }
 
-    it.xdescribes("called with a program referencing a value from a forward file with an inferred type") {
+    it.describes("called with a program referencing a value from a forward file with an inferred type") {
         it.beginsAll {
             analyzeProgramsSuccessfully(
                     """

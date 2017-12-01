@@ -69,16 +69,16 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
 
     it.describes("called with a definition using type inference") {
         it.beginsAll {
-            analyzeProgramExpectingErrors("""
+            analyzeProgramSuccessfully("""
                 def a = 42
                 def x = a
             """)
         }
 
-        it.should("should return an UnresolvedReference error") {
-            assertThat(errors.v).containsExactly(
-                    SemanticError.UnresolvedReference(VariableDefinition("x"),
-                            ValueReference("a")))
+        it.should("should analyze all definitions correctly") {
+            assertThat(fileContents.v.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("a", null, Expr.IntLiteral(42)),
+                    Def.ValueDef.SimpleValueDef("x", null, Expr.ValueReferenceExpr(ValueReference("a"))))
         }
     }
 
@@ -126,6 +126,22 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
             assertThat(errors.v).containsExactly(
                     SemanticError.TypeMismatch(
                             VariableDefinition("a"),
+                            BuiltInTypes.Int, BuiltInTypes.Bool))
+        }
+    }
+
+    it.describes("called with a variable declared as Int but initialized as Bool with a type-inferred value") {
+        it.beginsAll {
+            analyzeProgramExpectingErrors("""
+                def a = true
+                def x: Int = a
+            """)
+        }
+
+        it.should("return a TypeMismatch error") {
+            assertThat(errors.v).containsExactly(
+                    SemanticError.TypeMismatch(
+                            VariableDefinition("x"),
                             BuiltInTypes.Int, BuiltInTypes.Bool))
         }
     }

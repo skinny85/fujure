@@ -38,7 +38,7 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
         return if (targetFile == null) {
             LookupResult.RefNotFound
         } else {
-            val lookupResult = targetFile.lookup(simpleName, anchor)
+            val lookupResult = targetFile.lookup(simpleName, anchor, this)
             when (lookupResult) {
                 is FileSymbolTable.LookupResult.RefNotFound ->
                     LookupResult.RefNotFound
@@ -47,7 +47,7 @@ class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
                 is FileSymbolTable.LookupResult.SelfReference ->
                     LookupResult.SelfReference(simpleName)
                 is FileSymbolTable.LookupResult.RefFound ->
-                    LookupResult.RefFound(findType(lookupResult.typeReference))
+                    LookupResult.RefFound(lookupResult.qualifiedType)
             }
         }
     }

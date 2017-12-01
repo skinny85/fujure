@@ -75,7 +75,7 @@ object VerificationAnalysis {
         return ret
     }
 
-    private fun exprType(expr: Expr, symbolTable: SymbolTable, valDef: TypeErrorContext.VariableDefinition):
+    fun exprType(expr: Expr, symbolTable: SymbolTable, valDef: TypeErrorContext.VariableDefinition):
             Either<SemanticError, QualifiedType?> = when (expr) {
         is Expr.IntLiteral -> Either.Right(BuiltInTypes.Int)
         is Expr.BoolLiteral -> Either.Right(BuiltInTypes.Bool)

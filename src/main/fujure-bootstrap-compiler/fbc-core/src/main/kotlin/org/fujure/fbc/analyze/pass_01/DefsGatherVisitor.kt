@@ -78,7 +78,7 @@ object DefsGatherVisitor :
                               fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<SemanticError, Def.ValueDef> {
         val astInitializer = initializer.accept(ParseTree2AstExprVisitor, Unit)
-        return if (fileSymbolTableBuilder.noteSimpleValueDeclaration(id, declaredType))
+        return if (fileSymbolTableBuilder.noteSimpleValueDeclaration(id, declaredType, astInitializer))
             Either.Right(Def.ValueDef.SimpleValueDef(id, declaredType, astInitializer))
         else
             Either.Left(SemanticError.DuplicateDefinition(id))
