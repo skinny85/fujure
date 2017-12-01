@@ -1,3 +1,3 @@
 package com.example
 
-def notTruthy: Bool = true
+def notTruthy = true

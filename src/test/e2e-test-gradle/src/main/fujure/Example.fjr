@@ -1,12 +1,12 @@
 package com.
           example
 
-def val1: Int = 342
+def val1 = 342
 
 def val2: Int = 23
 
-def truthy: Bool = true
+def truthy = true
 
 def falsy: Bool = false
-def falsyAgain: Bool = falsy
-def falsyRef: Bool = Ref.notTruthy
+def falsyAgain = falsy
+def falsyRef = Ref.notTruthy

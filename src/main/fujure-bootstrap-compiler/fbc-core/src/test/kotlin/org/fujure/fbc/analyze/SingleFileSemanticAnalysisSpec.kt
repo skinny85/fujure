@@ -272,9 +272,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
             assertThat(errors.v).containsExactly(
                     SemanticError.UnresolvedReference(
                             VariableDefinition("a"),
-                            ValueReference("DoesNotExist", "x")
-                    )
-            )
+                            ValueReference("DoesNotExist", "x")))
         }
     }
 
