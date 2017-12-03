@@ -76,8 +76,7 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
             return when (this) {
                 is FromDeclaredType -> symbolTable.findType(this.declaredType)
                 is FromInitializer -> {
-                    val qualifiedTypeOrError = VerificationAnalysis.exprType(this.initializer, symbolTable,
-                            TypeErrorContext.VariableDefinition(valName))
+                    val qualifiedTypeOrError = VerificationAnalysis.exprType(this.initializer, symbolTable, valName)
                     when (qualifiedTypeOrError) {
                         is Either.Left -> null
                         is Either.Right -> qualifiedTypeOrError.r

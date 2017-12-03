@@ -50,7 +50,7 @@ object VerificationAnalysis {
             is Def.ValueDef.SimpleValueDef -> {
                 val context = TypeErrorContext.VariableDefinition(def.id)
 
-                val initializerTypeOrError = exprType(def.initializer, symbolTable, context)
+                val initializerTypeOrError = exprType(def.initializer, symbolTable, def.id)
                 val declaredQualifiedType: QualifiedType? = if (def.declaredType == null)
                     null
                 else
@@ -75,19 +75,20 @@ object VerificationAnalysis {
         return ret
     }
 
-    fun exprType(expr: Expr, symbolTable: SymbolTable, valDef: TypeErrorContext.VariableDefinition):
+    fun exprType(expr: Expr, symbolTable: SymbolTable, valName: String):
             Either<SemanticError, QualifiedType?> = when (expr) {
         is Expr.IntLiteral -> Either.Right(BuiltInTypes.Int)
         is Expr.BoolLiteral -> Either.Right(BuiltInTypes.Bool)
         is Expr.ValueReferenceExpr -> {
-            val lookupResult = symbolTable.lookup(expr.ref, valDef.name)
+            val context = TypeErrorContext.VariableDefinition(valName)
+            val lookupResult = symbolTable.lookup(expr.ref, valName)
             when (lookupResult) {
                 is SymbolTable.LookupResult.RefNotFound ->
-                    Either.Left(SemanticError.UnresolvedReference(valDef, expr.ref))
+                    Either.Left(SemanticError.UnresolvedReference(context, expr.ref))
                 is SymbolTable.LookupResult.ForwardReference ->
-                    Either.Left(SemanticError.IllegalForwardReference(valDef, lookupResult.name))
+                    Either.Left(SemanticError.IllegalForwardReference(context, lookupResult.name))
                 is SymbolTable.LookupResult.SelfReference ->
-                    Either.Left(SemanticError.IllegalSelfReference(valDef))
+                    Either.Left(SemanticError.IllegalSelfReference(context))
                 is SymbolTable.LookupResult.RefFound ->
                     Either.Right(lookupResult.qualifiedType)
             }
