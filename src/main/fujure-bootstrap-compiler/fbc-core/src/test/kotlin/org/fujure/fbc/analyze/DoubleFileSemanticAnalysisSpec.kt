@@ -139,7 +139,7 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
         }
     }
 
-    it.describes("called with a cycle of values without declared types") {
+    it.describes("called with a cycle of 2 values without declared types") {
         it.beginsAll {
             analyzeProgramsExpectingErrors(
                     """
@@ -168,6 +168,29 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
                                     ValueCoordinates("", "File2", "x"),
                                     ValueCoordinates("", "File1", "a"),
                                     ValueCoordinates("", "File2", "x"))))
+        }
+    }
+
+    it.describes("called with a cycle of 2 values in which one has a declared type") {
+        it.beginsAll {
+            analyzeProgramsSuccessfully(
+                    """
+                       def a: Int = File2.x
+                    """,
+                    """
+                       def x = File1.a
+                    """)
+        }
+
+        it.should("parse the value with the declared type correctly") {
+            assertThat(firstFileContents.v.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.ValueReferenceExpr(
+                            ValueReference("File2", "x"))))
+        }
+
+        it.should("parse the value without the declared type correctly") {
+            assertThat(secondFileContents.v.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("x", null, Expr.ValueReferenceExpr(ValueReference("File1", "a"))))
         }
     }
 })

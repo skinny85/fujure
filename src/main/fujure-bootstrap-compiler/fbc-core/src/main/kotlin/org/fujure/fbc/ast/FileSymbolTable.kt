@@ -15,11 +15,6 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
         if (id == anchor)
             return LookupResult.SelfReference
 
-        val valueCoordinates = ValueCoordinates(packageName, inputFile.moduleName, id)
-        val newChain = chain + valueCoordinates
-        if (chain.contains(valueCoordinates))
-            return LookupResult.CyclicReference(newChain)
-
         var seenAnchor = false
         var ret: LookupResult = LookupResult.RefNotFound
 
@@ -32,7 +27,8 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
                     LookupResult.ForwardReference
                 } else {
                     try {
-                        val qualifiedType = valHolder.resolvedType(symbolTable, id, newChain)
+                        val valueCoordinates = ValueCoordinates(packageName, inputFile.moduleName, id)
+                        val qualifiedType = valHolder.resolvedType(symbolTable, id, chain + valueCoordinates)
                         LookupResult.RefFound(qualifiedType)
                     } catch (e: CyclicReference) {
                         LookupResult.CyclicReference(e.cycle)
@@ -88,6 +84,14 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
             return when (this) {
                 is FromDeclaredType -> symbolTable.findType(this.declaredType)
                 is FromInitializer -> {
+                    // first, check if we don't have a cycle already
+                    if (chain.size > 1) {
+                        val chainAsSet = chain.toSet()
+                        if (chainAsSet.size < chain.size)
+                            throw CyclicReference(chain)
+                    }
+
+                    // if not, infer the type from the initializer, failing if that contains a cycle
                     val qualifiedTypeOrError = VerificationAnalysis.exprType(this.initializer, symbolTable, valName, chain)
                     when (qualifiedTypeOrError) {
                         is Either.Left -> {
