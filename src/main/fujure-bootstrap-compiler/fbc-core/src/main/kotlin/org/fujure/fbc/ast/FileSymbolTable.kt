@@ -1,7 +1,7 @@
 package org.fujure.fbc.ast
 
 import org.fujure.fbc.analyze.QualifiedType
-import org.fujure.fbc.analyze.TypeErrorContext
+import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.analyze.pass_02.VerificationAnalysis
 import org.funktionale.either.Either
 
@@ -11,9 +11,14 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
         ValueTypeHolder(pair.first, pair.second)
     }
 
-    fun lookup(id: String, anchor: String?, symbolTable: SymbolTable): LookupResult {
+    fun lookup(id: String, anchor: String?, symbolTable: SymbolTable, chain: List<ValueCoordinates>): LookupResult {
         if (id == anchor)
             return LookupResult.SelfReference
+
+        val valueCoordinates = ValueCoordinates(packageName, inputFile.moduleName, id)
+        val newChain = chain + valueCoordinates
+        if (chain.contains(valueCoordinates))
+            return LookupResult.CyclicReference(newChain)
 
         var seenAnchor = false
         var ret: LookupResult = LookupResult.RefNotFound
@@ -23,10 +28,16 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
                 seenAnchor = true
             }
             if (valName == id) {
-                ret = if (seenAnchor)
+                ret = if (seenAnchor) {
                     LookupResult.ForwardReference
-                else
-                    LookupResult.RefFound(valHolder.resolvedType(symbolTable, id))
+                } else {
+                    try {
+                        val qualifiedType = valHolder.resolvedType(symbolTable, id, newChain)
+                        LookupResult.RefFound(qualifiedType)
+                    } catch (e: CyclicReference) {
+                        LookupResult.CyclicReference(e.cycle)
+                    }
+                }
             }
         }
 
@@ -37,6 +48,7 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
         object RefNotFound : LookupResult()
         object ForwardReference : LookupResult()
         object SelfReference : LookupResult()
+        data class CyclicReference(val cycle: List<ValueCoordinates>) : LookupResult()
         data class RefFound(val qualifiedType: QualifiedType?) : LookupResult()
     }
 
@@ -45,15 +57,15 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
         private var resolved = false
         private var resolvedType: QualifiedType? = null
 
-        fun resolvedType(symbolTable: SymbolTable, valName: String): QualifiedType? {
+        fun resolvedType(symbolTable: SymbolTable, valName: String, chain: List<ValueCoordinates>): QualifiedType? {
             if (!resolved)
-                resolve(symbolTable, valName)
+                resolve(symbolTable, valName, chain)
 
             return resolvedType
         }
 
-        private fun resolve(symbolTable: SymbolTable, valName: String) {
-            resolvedType = valResolution.resolve(symbolTable, valName)
+        private fun resolve(symbolTable: SymbolTable, valName: String, chain: List<ValueCoordinates>) {
+            resolvedType = valResolution.resolve(symbolTable, valName, chain)
             resolved = true
         }
     }
@@ -72,17 +84,25 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
             }
         }
 
-        fun resolve(symbolTable: SymbolTable, valName: String): QualifiedType? {
+        fun resolve(symbolTable: SymbolTable, valName: String, chain: List<ValueCoordinates>): QualifiedType? {
             return when (this) {
                 is FromDeclaredType -> symbolTable.findType(this.declaredType)
                 is FromInitializer -> {
-                    val qualifiedTypeOrError = VerificationAnalysis.exprType(this.initializer, symbolTable, valName)
+                    val qualifiedTypeOrError = VerificationAnalysis.exprType(this.initializer, symbolTable, valName, chain)
                     when (qualifiedTypeOrError) {
-                        is Either.Left -> null
+                        is Either.Left -> {
+                            val semanticError = qualifiedTypeOrError.l
+                            when (semanticError) {
+                                is SemanticError.CyclicDefinition -> throw CyclicReference(semanticError.cycle)
+                                else -> null
+                            }
+                        }
                         is Either.Right -> qualifiedTypeOrError.r
                     }
                 }
             }
         }
     }
+
+    private class CyclicReference(val cycle: List<ValueCoordinates>) : Exception()
 }

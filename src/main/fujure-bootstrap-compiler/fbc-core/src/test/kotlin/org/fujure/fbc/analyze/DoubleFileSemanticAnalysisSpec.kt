@@ -7,6 +7,7 @@ import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.FileContents
 import org.fujure.fbc.ast.TypeReference
+import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
 import org.fujure.test.utils.Assumption.Companion.assume
 import org.funktionale.either.Disjunction
@@ -135,6 +136,38 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
         it.should("parse the second program correctly") {
             assertThat(secondFileContents.v.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("x", null, Expr.IntLiteral(42)))
+        }
+    }
+
+    it.describes("called with a cycle of values without declared types") {
+        it.beginsAll {
+            analyzeProgramsExpectingErrors(
+                    """
+                       def a = File2.x
+                    """,
+                    """
+                       def x = File1.a
+                    """)
+        }
+
+        it.should("detect the cycle in the first file") {
+            assertThat(firstFileErrors.v).containsExactly(
+                    SemanticError.CyclicDefinition(
+                            TypeErrorContext.VariableDefinition("a"),
+                            listOf(
+                                    ValueCoordinates("", "File1", "a"),
+                                    ValueCoordinates("", "File2", "x"),
+                                    ValueCoordinates("", "File1", "a"))))
+        }
+
+        it.should("detect the cycle in the second file") {
+            assertThat(secondFileErrors.v).containsExactly(
+                    SemanticError.CyclicDefinition(
+                            TypeErrorContext.VariableDefinition("x"),
+                            listOf(
+                                    ValueCoordinates("", "File2", "x"),
+                                    ValueCoordinates("", "File1", "a"),
+                                    ValueCoordinates("", "File2", "x"))))
         }
     }
 })

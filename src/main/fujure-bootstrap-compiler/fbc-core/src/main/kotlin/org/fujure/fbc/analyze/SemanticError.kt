@@ -1,6 +1,7 @@
 package org.fujure.fbc.analyze
 
 import org.fujure.fbc.ast.TypeReference
+import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
 
 sealed class SemanticError {
@@ -14,6 +15,9 @@ sealed class SemanticError {
             SemanticError()
 
     data class IllegalSelfReference(val context: TypeErrorContext) :
+            SemanticError()
+
+    data class CyclicDefinition(val context: TypeErrorContext, val cycle: List<ValueCoordinates>) :
             SemanticError()
 
     data class TypeNotFound(val context: TypeErrorContext, val typeReference: TypeReference) :

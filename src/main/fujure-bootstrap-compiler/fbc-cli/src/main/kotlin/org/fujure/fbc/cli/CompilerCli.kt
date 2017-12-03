@@ -111,6 +111,9 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
         is SemanticError.IllegalSelfReference ->
             "Error ${contextMessage(semanticFileIssue.context)}: " +
                     "Illegal self reference"
+        is SemanticError.CyclicDefinition ->
+            "Error ${contextMessage(semanticFileIssue.context)}: " +
+                    "Cycle detected, ${semanticFileIssue.cycle.map { it.inStringForm() }.joinToString(" -> ")}"
         is SemanticError.TypeMismatch ->
             "Error ${contextMessage(semanticFileIssue.context)}: " +
                     "Type mismatch, expected: ${semanticFileIssue.expected.inStringForm()} " +

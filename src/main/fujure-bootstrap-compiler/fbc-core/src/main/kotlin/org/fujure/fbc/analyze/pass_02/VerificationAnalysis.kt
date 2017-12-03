@@ -10,6 +10,7 @@ import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.SymbolTable
+import org.fujure.fbc.ast.ValueCoordinates
 import org.funktionale.either.Disjunction
 import org.funktionale.either.Either
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def as AbsynDef
@@ -35,7 +36,7 @@ object VerificationAnalysis {
 
         val errors = mutableListOf<SemanticError>()
         for (def in ast.fileContents.defs) {
-            val defErrors = analyze(def, symbolTable)
+            val defErrors = analyze(def, symbolTable, ast.fileContents.packageName, ast.inputFile.moduleName)
             errors.addAll(defErrors)
         }
         return if (errors.isEmpty())
@@ -44,13 +45,14 @@ object VerificationAnalysis {
             ProblematicFile.SemanticFileIssue(ast.inputFile.userProvidedFilePath, errors)
     }
 
-    private fun analyze(def: Def, symbolTable: SymbolTable): List<SemanticError> {
+    private fun analyze(def: Def, symbolTable: SymbolTable, packageName: String, moduleName: String):
+            List<SemanticError> {
         val ret = mutableListOf<SemanticError>()
         when (def) {
             is Def.ValueDef.SimpleValueDef -> {
                 val context = TypeErrorContext.VariableDefinition(def.id)
 
-                val initializerTypeOrError = exprType(def.initializer, symbolTable, def.id)
+                val initializerTypeOrError = exprType(def.initializer, symbolTable, def.id, packageName, moduleName)
                 val declaredQualifiedType: QualifiedType? = if (def.declaredType == null)
                     null
                 else
@@ -75,13 +77,17 @@ object VerificationAnalysis {
         return ret
     }
 
-    fun exprType(expr: Expr, symbolTable: SymbolTable, valName: String):
+    private fun exprType(expr: Expr, symbolTable: SymbolTable, valName: String,
+                         packageName: String, moduleName: String): Either<SemanticError, QualifiedType?> =
+            exprType(expr, symbolTable, valName, listOf(ValueCoordinates(packageName, moduleName, valName)))
+
+    fun exprType(expr: Expr, symbolTable: SymbolTable, valName: String, chain: List<ValueCoordinates>):
             Either<SemanticError, QualifiedType?> = when (expr) {
         is Expr.IntLiteral -> Either.Right(BuiltInTypes.Int)
         is Expr.BoolLiteral -> Either.Right(BuiltInTypes.Bool)
         is Expr.ValueReferenceExpr -> {
             val context = TypeErrorContext.VariableDefinition(valName)
-            val lookupResult = symbolTable.lookup(expr.ref, valName)
+            val lookupResult = symbolTable.lookup(expr.ref, valName, chain)
             when (lookupResult) {
                 is SymbolTable.LookupResult.RefNotFound ->
                     Either.Left(SemanticError.UnresolvedReference(context, expr.ref))
@@ -89,6 +95,8 @@ object VerificationAnalysis {
                     Either.Left(SemanticError.IllegalForwardReference(context, lookupResult.name))
                 is SymbolTable.LookupResult.SelfReference ->
                     Either.Left(SemanticError.IllegalSelfReference(context))
+                is SymbolTable.LookupResult.CyclicReference ->
+                    Either.Left(SemanticError.CyclicDefinition(context, lookupResult.cycle))
                 is SymbolTable.LookupResult.RefFound ->
                     Either.Right(lookupResult.qualifiedType)
             }
