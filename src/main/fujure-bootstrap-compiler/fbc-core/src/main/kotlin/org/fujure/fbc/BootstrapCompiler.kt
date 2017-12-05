@@ -18,7 +18,7 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
                         private val codeGenerator: CodeGenerator) : Compiler {
     override fun compile(compileOptions: CompileOptions, files: List<String>): CompilationResults {
         val unparsableFiles = mutableListOf<ProblematicFile.BasicFileIssue>()
-        val parsableFiles = mutableListOf<OpenedFile>()
+        val parsableFiles = mutableSetOf<OpenedFile>()
 
         for (file in files) {
             val fileOpenResult = fileOpener.open(file)
@@ -40,7 +40,7 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
             CompilationResults.CompilationNotAttempted(unparsableFiles)
     }
 
-    fun compileOpenedFiles(compileOptions: CompileOptions, openedFiles: List<OpenedFile>): CompilationResults {
+    fun compileOpenedFiles(compileOptions: CompileOptions, openedFiles: Set<OpenedFile>): CompilationResults {
         val failedParsingFiles = mutableListOf<ProblematicFile.ParsingFileIssue>()
         val parsedFiles = mutableListOf<ParsedFile>()
 
