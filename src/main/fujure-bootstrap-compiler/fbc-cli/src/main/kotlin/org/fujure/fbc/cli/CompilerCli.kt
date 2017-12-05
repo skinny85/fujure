@@ -58,6 +58,12 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
                             log.error("Invalid file name: '${problematicFile.userProvidedFilePath}'. Fujure source files must have the .fjr extension")
                             1
                         }
+                        is ProblematicFile.BasicFileIssue.InvalidFileName -> {
+                            log.error("Invalid file name: '${problematicFile.userProvidedFilePath}'. " +
+                                    "Fujure files names must be non-empty sequences of underscores, letter and digits, " +
+                                    "starting with a letter. A single underscore name is also forbidden, as are some keywords")
+                            1
+                        }
                         is ProblematicFile.BasicFileIssue.FileNotFound -> {
                             log.error("Error opening ${problematicFile.userProvidedFilePath}: file not found")
                             1

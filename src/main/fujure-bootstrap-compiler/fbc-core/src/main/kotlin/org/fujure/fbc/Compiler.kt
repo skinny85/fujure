@@ -39,6 +39,9 @@ sealed class ProblematicFile(open val userProvidedFilePath: String) {
         data class InvalidFileExtension(override val userProvidedFilePath: String) :
                 BasicFileIssue(userProvidedFilePath)
 
+        data class InvalidFileName(override val userProvidedFilePath: String) :
+                BasicFileIssue(userProvidedFilePath)
+
         data class FileNotFound(override val userProvidedFilePath: String) :
                 BasicFileIssue(userProvidedFilePath)
 
