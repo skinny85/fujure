@@ -21,8 +21,8 @@ object AnalysisHelper {
         return SimpleSemanticAnalyzer.analyze(parsePrograms(firstProgram, *remainingPrograms))
     }
 
-    private fun parsePrograms(firstProgram: String, vararg remainingPrograms: String): List<ParsedFile> {
-        val ret = mutableListOf<ParsedFile>()
+    private fun parsePrograms(firstProgram: String, vararg remainingPrograms: String): Set<ParsedFile> {
+        val ret = linkedSetOf<ParsedFile>()
         for (i in 1.until(remainingPrograms.size + 2)) {
             val openedFile = OpenedFile(InputFile("File$i.fjr"), CharStreams.fromString(
                     if (i == 1) firstProgram else remainingPrograms[i - 2]))

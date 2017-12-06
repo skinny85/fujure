@@ -20,7 +20,22 @@ sealed class ParsingResult {
             ParsingResult()
 }
 
-data class ParsedFile(val inputFile: InputFile, val parseTree: FileContents)
+class ParsedFile(val inputFile: InputFile, val parseTree: FileContents) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other)
+            return true
+        if (javaClass != other?.javaClass)
+            return false
+
+        other as ParsedFile
+
+        return inputFile == other.inputFile
+    }
+
+    override fun hashCode(): Int {
+        return inputFile.hashCode()
+    }
+}
 
 object BnfcParser : Parser {
     override fun parse(openedFile: OpenedFile): ParsingResult {

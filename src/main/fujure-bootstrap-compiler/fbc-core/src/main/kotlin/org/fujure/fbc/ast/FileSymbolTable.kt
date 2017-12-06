@@ -109,4 +109,20 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
     }
 
     private class CyclicReference(val cycle: List<ValueCoordinates>) : Exception()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other)
+            return true
+        if (javaClass != other?.javaClass)
+            return false
+
+        other as FileSymbolTable
+
+        return inputFile.moduleName == other.inputFile.moduleName &&
+                packageName == other.packageName
+    }
+
+    override fun hashCode(): Int {
+        return 31 * inputFile.moduleName.hashCode() + packageName.hashCode()
+    }
 }

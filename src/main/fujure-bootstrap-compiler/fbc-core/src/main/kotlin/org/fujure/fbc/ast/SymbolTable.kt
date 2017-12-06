@@ -4,7 +4,7 @@ import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
 import kotlin.properties.Delegates
 
-class SymbolTable(private val fileSymbolTables: List<FileSymbolTable>) {
+class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
     private var currentFile: FileSymbolTable by Delegates.notNull()
 
     fun enterContext(inputFile: InputFile) {

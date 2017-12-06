@@ -42,7 +42,7 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
 
     fun compileOpenedFiles(compileOptions: CompileOptions, openedFiles: Set<OpenedFile>): CompilationResults {
         val failedParsingFiles = mutableListOf<ProblematicFile.ParsingFileIssue>()
-        val parsedFiles = mutableListOf<ParsedFile>()
+        val parsedFiles = mutableSetOf<ParsedFile>()
 
         for (openedFile in openedFiles) {
             val parsingResult = parser.parse(openedFile)
@@ -66,7 +66,7 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
             CompilationResults.CompilationNotAttempted(failedParsingFiles)
     }
 
-    fun compileParsedFiles(compileOptions: CompileOptions, parsedFiles: List<ParsedFile>): CompilationResults {
+    fun compileParsedFiles(compileOptions: CompileOptions, parsedFiles: Set<ParsedFile>): CompilationResults {
         val semanticAnalysisResult = semanticAnalyzer.analyze(parsedFiles)
         return when (semanticAnalysisResult) {
             is Disjunction.Left ->

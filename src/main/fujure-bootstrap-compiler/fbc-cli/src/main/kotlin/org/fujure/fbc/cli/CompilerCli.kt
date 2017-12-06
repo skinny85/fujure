@@ -103,6 +103,12 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
     }
 
     private fun semanticErrorMessage(semanticFileIssue: SemanticError): String = when (semanticFileIssue) {
+        is SemanticError.DuplicateModule -> {
+            val prefix = if (semanticFileIssue.packageName.isEmpty()) "" else "${semanticFileIssue.packageName}."
+            "Error: module ${prefix}${semanticFileIssue.moduleName} is defined twice, in " +
+                    "${semanticFileIssue.firstOccurence.userProvidedFilePath} and " +
+                    semanticFileIssue.secondOccurance.userProvidedFilePath
+        }
         is SemanticError.DuplicateDefinition ->
             "${semanticFileIssue.name} is already defined"
         is SemanticError.TypeNotFound ->

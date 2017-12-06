@@ -1,10 +1,15 @@
 package org.fujure.fbc.analyze
 
+import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
 
 sealed class SemanticError {
+    data class DuplicateModule(val packageName: String, val moduleName: String, val firstOccurence: InputFile,
+                               val secondOccurance: InputFile) :
+            SemanticError()
+
     data class DuplicateDefinition(val name: String) :
             SemanticError()
 
