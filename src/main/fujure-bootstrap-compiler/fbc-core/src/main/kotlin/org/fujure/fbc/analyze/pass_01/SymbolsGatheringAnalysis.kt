@@ -35,11 +35,3 @@ object SymbolsGatheringAnalysis {
             Disjunction.Left(issues)
     }
 }
-
-sealed class SymbolsGatheringResult {
-    data class Failure(val issues: List<ProblematicFile.SemanticFileIssue>) :
-            SymbolsGatheringResult()
-
-    data class Success(val asts: List<AstRoot>, val symbolTable: SymbolTable) :
-            SymbolsGatheringResult()
-}
