@@ -10,6 +10,9 @@ sealed class SemanticError {
                                val secondOccurance: InputFile) :
             SemanticError()
 
+    data class InvalidName(val name: String) :
+            SemanticError()
+
     data class DuplicateDefinition(val name: String) :
             SemanticError()
 

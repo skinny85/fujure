@@ -10,10 +10,9 @@ import org.specnaz.kotlin.utils.Deferred
 
 class ParserSpec : SpecnazKotlinJUnit("Parser", {
     val parser: Parser = BnfcParser
+    val result = Deferred<ParsingResult>()
 
     it.describes("called with a file containing 'def xxx'") {
-        val result = Deferred<ParsingResult>()
-
         it.beginsAll {
             result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
                 def xxx
@@ -27,8 +26,6 @@ class ParserSpec : SpecnazKotlinJUnit("Parser", {
     }
 
     it.describes("called with a file containing just a hash") {
-        val result = Deferred<ParsingResult>()
-
         it.beginsAll {
             result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
                 #
@@ -37,6 +34,19 @@ class ParserSpec : SpecnazKotlinJUnit("Parser", {
 
         it.should("return a ParsingResult\$Success") {
             assume(result.v).isA<ParsingResult.Success>()
+        }
+    }
+
+    it.describes("called with a value with the name 'package'") {
+        it.beginsAll {
+            result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
+                def package = 1
+                """)))
+        }
+
+        it.should("fail parsing") {
+            val parsingFailure = assume(result.v).isA<ParsingResult.Failure>()
+            assertThat(parsingFailure.cause.errors).isNotEmpty()
         }
     }
 })

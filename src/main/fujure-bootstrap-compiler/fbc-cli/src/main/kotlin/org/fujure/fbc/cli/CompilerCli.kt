@@ -109,6 +109,9 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
                     "${semanticFileIssue.firstOccurence.userProvidedFilePath} and " +
                     semanticFileIssue.secondOccurance.userProvidedFilePath
         }
+        is SemanticError.InvalidName ->
+            "Invalid name: '${semanticFileIssue.name}'. Fujure names cannot contain '$' characters, " +
+                    "can't be a single underscore, nor one of the reserved keywords"
         is SemanticError.DuplicateDefinition ->
             "${semanticFileIssue.name} is already defined"
         is SemanticError.TypeNotFound ->

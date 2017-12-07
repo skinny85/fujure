@@ -4,11 +4,11 @@ import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CharStreams
 import org.fujure.fbc.ProblematicFile.BasicFileIssue
 import org.fujure.fbc.ast.InputFile
+import org.fujure.fbc.common.NameValidator
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.nio.file.NoSuchFileException
-import javax.lang.model.SourceVersion
 
 interface FileOpener {
     fun open(filePath: String): FileOpenResult
@@ -46,7 +46,7 @@ object SimpleFileOpener : FileOpener {
                     BasicFileIssue.InvalidFileExtension(filePath))
 
         val moduleName = File(filePath).nameWithoutExtension
-        if (!validModuleName(moduleName))
+        if (!NameValidator.validModuleName(moduleName))
             return FileOpenResult.Failure(
                     BasicFileIssue.InvalidFileName(filePath))
 
@@ -64,19 +64,5 @@ object SimpleFileOpener : FileOpener {
                     BasicFileIssue.CouldNotOpenFile(filePath, e))
         }
         return FileOpenResult.Success(OpenedFile(InputFile(filePath), stream))
-    }
-
-    private fun validModuleName(moduleName: String): Boolean {
-        return SourceVersion.isIdentifier(moduleName) &&
-                SourceVersion.isName(moduleName) &&
-                !moduleName.contains("$") &&
-                "_" != moduleName &&
-                !isFujureKeyword(moduleName)
-    }
-
-    private val fujureOnlyKeywords = setOf("def")
-
-    private fun isFujureKeyword(moduleName: String): Boolean {
-        return fujureOnlyKeywords.contains(moduleName)
     }
 }

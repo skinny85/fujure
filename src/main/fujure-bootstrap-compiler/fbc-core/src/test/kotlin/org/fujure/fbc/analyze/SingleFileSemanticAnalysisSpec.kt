@@ -82,6 +82,23 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
     }
 
+    it.describes("called with invalid value names") {
+        it.beginsAll {
+            analyzeProgramExpectingErrors("""
+                def _: Bool = true
+                def ${'$'}a: Int = 2
+                def class = 3
+            """)
+        }
+
+        it.should("return an InvalidName error for each of them") {
+            assertThat(errors.v).containsExactly(
+                    SemanticError.InvalidName("_"),
+                    SemanticError.InvalidName("\$a"),
+                    SemanticError.InvalidName("class"))
+        }
+    }
+
     it.describes("called with values referencing previously defined variables") {
         it.beginsAll {
             analyzeProgramSuccessfully("""

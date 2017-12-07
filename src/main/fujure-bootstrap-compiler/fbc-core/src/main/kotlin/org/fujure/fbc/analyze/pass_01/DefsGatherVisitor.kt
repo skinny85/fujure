@@ -3,6 +3,7 @@ package org.fujure.fbc.analyze.pass_01
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.TypeReference
+import org.fujure.fbc.common.NameValidator
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr
@@ -77,6 +78,8 @@ object DefsGatherVisitor :
     private fun visitValueDef(id: String, declaredType: TypeReference?, initializer: Expr,
                               fileSymbolTableBuilder: FileSymbolTableBuilder):
             Either<SemanticError, Def.ValueDef> {
+        if (!NameValidator.validValueName(id))
+            return Either.Left(SemanticError.InvalidName(id))
         val astInitializer = initializer.accept(ParseTree2AstExprVisitor, Unit)
         return if (fileSymbolTableBuilder.noteSimpleValueDeclaration(id, declaredType, astInitializer))
             Either.Right(Def.ValueDef.SimpleValueDef(id, declaredType, astInitializer))
