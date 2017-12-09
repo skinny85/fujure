@@ -13,6 +13,7 @@ Surrogate_id_SYMB_4 : 'false' ;
 Surrogate_id_SYMB_5 : 'import' ;
 Surrogate_id_SYMB_6 : 'package' ;
 Surrogate_id_SYMB_7 : 'true' ;
+Surrogate_id_SYMB_8 : 'unit' ;
 
 
 JID : ('_'|'$'|LETTER)('_'|'$'|LETTER|DIGIT)*;

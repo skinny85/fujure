@@ -77,6 +77,7 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
     }
 /* Literal */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral p, A arg) { return visitDefault(p, arg); }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral p, A arg) { return visitDefault(p, arg); }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal p, A arg) {

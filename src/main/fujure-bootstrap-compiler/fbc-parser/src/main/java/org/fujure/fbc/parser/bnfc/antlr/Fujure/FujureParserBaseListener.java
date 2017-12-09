@@ -376,6 +376,18 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterUnitLiteral(FujureParser.UnitLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUnitLiteral(FujureParser.UnitLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterBoolTrueLiteral(FujureParser.BoolTrueLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}

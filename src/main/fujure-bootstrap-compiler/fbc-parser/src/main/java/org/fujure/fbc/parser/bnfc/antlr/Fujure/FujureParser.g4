@@ -55,6 +55,7 @@ listValRefFragm returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListValR
 valRefFragm returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRefFragm result ] : p_1_1=JID  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment($p_1_1.getText()); } # ValueRefFragment 
 ;
 literal returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal result ] : p_1_1=INTEGER  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral(Integer.parseInt($p_1_1.getText())); } # IntLiteral 
+  | Surrogate_id_SYMB_8  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral(); } # UnitLiteral
   | Surrogate_id_SYMB_7  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral(); } # BoolTrueLiteral
   | Surrogate_id_SYMB_4  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral(); } # BoolFalseLiteral
 ;

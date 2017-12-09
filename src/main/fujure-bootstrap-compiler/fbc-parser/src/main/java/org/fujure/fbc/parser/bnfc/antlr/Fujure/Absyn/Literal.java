@@ -4,6 +4,7 @@ public abstract class Literal implements java.io.Serializable {
   public abstract <R,A> R accept(Literal.Visitor<R,A> v, A arg);
   public interface Visitor <R,A> {
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral p, A arg);
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral p, A arg);
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral p, A arg);
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral p, A arg);
 

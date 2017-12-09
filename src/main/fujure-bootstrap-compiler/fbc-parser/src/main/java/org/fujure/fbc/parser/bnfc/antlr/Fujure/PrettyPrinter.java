@@ -649,6 +649,13 @@ public class PrettyPrinter
        pp(_intliteral.integer_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral _unitliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("unit");
+       if (_i_ > 0) render(_R_PAREN);
+    }
     else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral _booltrueliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral) foo;
@@ -945,6 +952,11 @@ public class PrettyPrinter
        render("IntLiteral");
        sh(_intliteral.integer_);
        render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral _unitliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral) foo;
+       render("UnitLiteral");
     }
     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral)
     {

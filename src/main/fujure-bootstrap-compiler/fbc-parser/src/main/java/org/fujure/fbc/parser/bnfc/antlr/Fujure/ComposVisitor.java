@@ -151,6 +151,9 @@ public class ComposVisitor<A> implements
     {
       Integer integer_ = p.integer_;
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral(integer_);
+    }    public Literal visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral p, A arg)
+    {
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral();
     }    public Literal visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral p, A arg)
     {
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral();

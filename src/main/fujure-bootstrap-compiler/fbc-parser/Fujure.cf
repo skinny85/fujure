@@ -32,6 +32,7 @@ separator nonempty ValRefFragm "." ;
 ValueRefFragment . ValRefFragm ::= JID ;
 
 IntLiteral        . Literal ::= Integer ;
+UnitLiteral       . Literal ::= "unit" ;
 BoolTrueLiteral   . Literal ::= "true" ;
 BoolFalseLiteral  . Literal ::= "false" ;
 

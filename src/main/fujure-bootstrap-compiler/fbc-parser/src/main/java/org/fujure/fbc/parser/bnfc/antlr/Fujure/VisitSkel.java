@@ -151,6 +151,9 @@ public class VisitSkel
     { /* Code For IntLiteral Goes Here */
       //p.integer_;
       return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral p, A arg)
+    { /* Code For UnitLiteral Goes Here */
+      return null;
     }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral p, A arg)
     { /* Code For BoolTrueLiteral Goes Here */
       return null;
