@@ -61,6 +61,7 @@ class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
             val id = typeReference.ids[0]
             return when (id) {
                 "Int" -> BuiltInTypes.Int
+                "Unit" -> BuiltInTypes.Unit
                 "Bool" -> BuiltInTypes.Bool
                 else -> null
             }

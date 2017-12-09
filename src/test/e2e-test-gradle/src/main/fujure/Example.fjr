@@ -10,3 +10,4 @@ def truthy = true
 def falsy: Bool = false
 def falsyAgain = falsy
 def falsyRef = Ref.notTruthy
+def u = unit

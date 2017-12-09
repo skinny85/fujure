@@ -5,6 +5,8 @@ sealed class Expr {
 
     data class IntLiteral(val value: Int) : Expr()
 
+    object UnitLiteral : Expr()
+
     sealed class BoolLiteral : Expr() {
         object True : BoolLiteral()
         object False : BoolLiteral()

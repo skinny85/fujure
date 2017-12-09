@@ -84,6 +84,7 @@ object VerificationAnalysis {
     fun exprType(expr: Expr, symbolTable: SymbolTable, valName: String, chain: List<ValueCoordinates>):
             Either<SemanticError, QualifiedType?> = when (expr) {
         is Expr.IntLiteral -> Either.Right(BuiltInTypes.Int)
+        is Expr.UnitLiteral -> Either.Right(BuiltInTypes.Unit)
         is Expr.BoolLiteral -> Either.Right(BuiltInTypes.Bool)
         is Expr.ValueReferenceExpr -> {
             val context = TypeErrorContext.VariableDefinition(valName)

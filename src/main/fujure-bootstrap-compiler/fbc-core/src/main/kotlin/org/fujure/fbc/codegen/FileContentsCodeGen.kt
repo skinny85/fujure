@@ -37,6 +37,10 @@ object FileContentsCodeGen {
                 variableType = Integer.TYPE
                 initializer = simpleValueDef.initializer.value
             }
+            is Expr.UnitLiteral -> {
+                variableType = Void::class.java
+                initializer = "null"
+            }
             is Expr.BoolLiteral -> {
                 variableType = java.lang.Boolean.TYPE
                 initializer = simpleValueDef.initializer == Expr.BoolLiteral.True
@@ -57,6 +61,7 @@ object FileContentsCodeGen {
         return when (qualifiedType) {
             null -> null
             BuiltInTypes.Int -> Integer.TYPE
+            BuiltInTypes.Unit -> Void::class.java
             BuiltInTypes.Bool -> java.lang.Boolean.TYPE
             else -> null
         }

@@ -15,11 +15,11 @@ object NameValidator {
         return SourceVersion.isIdentifier(name) &&
                 SourceVersion.isName(name) &&
                 !name.contains("$") &&
-                "_" != name &&
+                name != "_" &&
                 !isFujureKeyword(name)
     }
 
-    private val fujureOnlyKeywords = setOf("def")
+    private val fujureOnlyKeywords = setOf("def", "unit")
 
     private fun isFujureKeyword(moduleName: String): Boolean {
         return fujureOnlyKeywords.contains(moduleName)

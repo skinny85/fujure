@@ -34,4 +34,9 @@ public class ExampleTest {
     public void test_falsy_ref() {
         assertThat(Example.falsyRef).isTrue();
     }
+
+    @Test
+    public void test_unit_value() {
+        assertThat(Example.u).isNull();
+    }
 }
