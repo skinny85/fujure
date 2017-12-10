@@ -19,7 +19,7 @@ public class FujureParser extends Parser {
 	public static final int
 		Surrogate_id_SYMB_0=1, Surrogate_id_SYMB_1=2, Surrogate_id_SYMB_2=3, Surrogate_id_SYMB_3=4, 
 		Surrogate_id_SYMB_4=5, Surrogate_id_SYMB_5=6, Surrogate_id_SYMB_6=7, Surrogate_id_SYMB_7=8, 
-		Surrogate_id_SYMB_8=9, JID=10, INTEGER=11, WS=12, ErrorToken=13, CHAR=14;
+		Surrogate_id_SYMB_8=9, JID=10, JCHAR=11, INTEGER=12, WS=13, ErrorToken=14;
 	public static final int
 		RULE_fileContents = 0, RULE_pkgName = 1, RULE_listPkgFragm = 2, RULE_pkgFragm = 3, 
 		RULE_imports = 4, RULE_listImport = 5, RULE_import_ = 6, RULE_listImportFragm = 7, 
@@ -36,13 +36,13 @@ public class FujureParser extends Parser {
 
 	private static final String[] _LITERAL_NAMES = {
 		null, "'.'", "'='", "':'", "'def'", "'false'", "'import'", "'package'", 
-		"'true'", "'unit'", null, null, null, null, "'''"
+		"'true'", "'unit'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "Surrogate_id_SYMB_0", "Surrogate_id_SYMB_1", "Surrogate_id_SYMB_2", 
 		"Surrogate_id_SYMB_3", "Surrogate_id_SYMB_4", "Surrogate_id_SYMB_5", "Surrogate_id_SYMB_6", 
-		"Surrogate_id_SYMB_7", "Surrogate_id_SYMB_8", "JID", "INTEGER", "WS", 
-		"ErrorToken", "CHAR"
+		"Surrogate_id_SYMB_7", "Surrogate_id_SYMB_8", "JID", "JCHAR", "INTEGER", 
+		"WS", "ErrorToken"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -1316,8 +1316,8 @@ public class FujureParser extends Parser {
 			case Surrogate_id_SYMB_4:
 			case Surrogate_id_SYMB_7:
 			case Surrogate_id_SYMB_8:
+			case JCHAR:
 			case INTEGER:
-			case CHAR:
 				_localctx = new ExprLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
@@ -1549,7 +1549,7 @@ public class FujureParser extends Parser {
 	}
 	public static class CharLiteralContext extends LiteralContext {
 		public Token p_5_1;
-		public TerminalNode CHAR() { return getToken(FujureParser.CHAR, 0); }
+		public TerminalNode JCHAR() { return getToken(FujureParser.JCHAR, 0); }
 		public CharLiteralContext(LiteralContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1653,13 +1653,13 @@ public class FujureParser extends Parser {
 				 ((BoolFalseLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral(); 
 				}
 				break;
-			case CHAR:
+			case JCHAR:
 				_localctx = new CharLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(184);
-				((CharLiteralContext)_localctx).p_5_1 = match(CHAR);
-				 ((CharLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral(((CharLiteralContext)_localctx).p_5_1.getText().charAt(1)); 
+				((CharLiteralContext)_localctx).p_5_1 = match(JCHAR);
+				 ((CharLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral(((CharLiteralContext)_localctx).p_5_1.getText()); 
 				}
 				break;
 			default:
@@ -1749,10 +1749,10 @@ public class FujureParser extends Parser {
 		"(\25\2\u00a6\u00a7\b\24\1\2\u00a7\u00ae\3\2\2\2\u00a8\u00a9\5(\25\2\u00a9"+
 		"\u00aa\7\3\2\2\u00aa\u00ab\5&\24\2\u00ab\u00ac\b\24\1\2\u00ac\u00ae\3"+
 		"\2\2\2\u00ad\u00a5\3\2\2\2\u00ad\u00a8\3\2\2\2\u00ae\'\3\2\2\2\u00af\u00b0"+
-		"\7\f\2\2\u00b0\u00b1\b\25\1\2\u00b1)\3\2\2\2\u00b2\u00b3\7\r\2\2\u00b3"+
+		"\7\f\2\2\u00b0\u00b1\b\25\1\2\u00b1)\3\2\2\2\u00b2\u00b3\7\16\2\2\u00b3"+
 		"\u00bd\b\26\1\2\u00b4\u00b5\7\13\2\2\u00b5\u00bd\b\26\1\2\u00b6\u00b7"+
 		"\7\n\2\2\u00b7\u00bd\b\26\1\2\u00b8\u00b9\7\7\2\2\u00b9\u00bd\b\26\1\2"+
-		"\u00ba\u00bb\7\20\2\2\u00bb\u00bd\b\26\1\2\u00bc\u00b2\3\2\2\2\u00bc\u00b4"+
+		"\u00ba\u00bb\7\r\2\2\u00bb\u00bd\b\26\1\2\u00bc\u00b2\3\2\2\2\u00bc\u00b4"+
 		"\3\2\2\2\u00bc\u00b6\3\2\2\2\u00bc\u00b8\3\2\2\2\u00bc\u00ba\3\2\2\2\u00bd"+
 		"+\3\2\2\2\f\66CTct\u0088\u0095\u00a0\u00ad\u00bc";
 	public static final ATN _ATN =

@@ -674,7 +674,7 @@ public class PrettyPrinter
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral _charliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral) foo;
        if (_i_ > 0) render(_L_PAREN);
-       pp(_charliteral.char_, 0);
+       pp(_charliteral.jchar_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -980,7 +980,7 @@ public class PrettyPrinter
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral _charliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral) foo;
        render("(");
        render("CharLiteral");
-       sh(_charliteral.char_);
+       sh(_charliteral.jchar_);
        render(")");
     }
   }

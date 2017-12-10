@@ -51,6 +51,6 @@ object ParseTree2AstExprVisitor :
     }
 
     override fun visit(charLiteral: CharLiteral, arg: Unit): Expr {
-        return Expr.CharLiteral(charLiteral.char_)
+        return Expr.CharLiteral(charLiteral.jchar_)
     }
 }

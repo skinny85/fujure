@@ -82,8 +82,8 @@ class ParserSpec : SpecnazKotlinJUnit("Parser", {
                 """)))
         }
 
-        it.should("return a ParsingResult\$Failure") {
-            assume(result.v).isA<ParsingResult.Failure>()
+        it.should("return a ParsingResult\$Success") {
+            assume(result.v).isA<ParsingResult.Success>()
         }
     }
 
@@ -94,8 +94,8 @@ class ParserSpec : SpecnazKotlinJUnit("Parser", {
                 """)))
         }
 
-        it.should("return a ParsingResult\$Failure") {
-            assume(result.v).isA<ParsingResult.Failure>()
+        it.should("return a ParsingResult\$Success") {
+            assume(result.v).isA<ParsingResult.Success>()
         }
     }
 
@@ -106,8 +106,8 @@ class ParserSpec : SpecnazKotlinJUnit("Parser", {
                 """)))
         }
 
-        it.should("return a ParsingResult\$Failure") {
-            assume(result.v).isA<ParsingResult.Failure>()
+        it.should("return a ParsingResult\$Success") {
+            assume(result.v).isA<ParsingResult.Success>()
         }
     }
 })

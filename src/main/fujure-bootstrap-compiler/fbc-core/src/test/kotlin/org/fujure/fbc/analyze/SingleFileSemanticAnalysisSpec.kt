@@ -121,7 +121,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
                     Def.ValueDef.SimpleValueDef("b", TypeReference("Bool"), Expr.ValueReferenceExpr(ValueReference("y"))),
                     Def.ValueDef.SimpleValueDef("u", null, Expr.UnitLiteral),
                     Def.ValueDef.SimpleValueDef("v", TypeReference("Unit"), Expr.ValueReferenceExpr(ValueReference("u"))),
-                    Def.ValueDef.SimpleValueDef("c", TypeReference("Char"), Expr.CharLiteral('\\')),
+                    Def.ValueDef.SimpleValueDef("c", TypeReference("Char"), Expr.CharLiteral("'\\n'")),
                     Def.ValueDef.SimpleValueDef("d", null, Expr.ValueReferenceExpr(ValueReference("c"))))
         }
     }

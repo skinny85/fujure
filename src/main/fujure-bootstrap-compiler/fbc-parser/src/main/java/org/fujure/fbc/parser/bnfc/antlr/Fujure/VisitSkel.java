@@ -162,7 +162,7 @@ public class VisitSkel
       return null;
     }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral p, A arg)
     { /* Code For CharLiteral Goes Here */
-      //p.char_;
+      //p.jchar_;
       return null;
     }
   }

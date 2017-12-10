@@ -47,7 +47,7 @@ object FileContentsCodeGen {
             }
             is Expr.CharLiteral -> {
                 variableType = Character.TYPE
-                initializer = escapedChar(simpleValueDef.initializer.value)
+                initializer = simpleValueDef.initializer.value
             }
             is Expr.ValueReferenceExpr -> {
                 val lookupResult = symbolTable.lookup(simpleValueDef.initializer.ref, simpleValueDef.id)
@@ -70,20 +70,5 @@ object FileContentsCodeGen {
             BuiltInTypes.Char -> Character.TYPE
             else -> null
         }
-    }
-
-    private fun escapedChar(c: Char): String {
-        val inside = when (c) {
-            '\b' -> "\\b"
-//            '\f' -> "\\f"
-            '\n' -> "\\n"
-            '\r' -> "\\r"
-            '\t' -> "\\t"
-            '\'' -> "\\'"
-            '\"' -> "\\\""
-            '\\' -> "\\\\"
-            else -> c.toString()
-        }
-        return "'$inside'"
     }
 }

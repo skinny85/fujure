@@ -19,14 +19,14 @@ follow this procedure (while in the same directory this `Readme` is in):
 3. There is a bug in BNFC that makes it fail for Char-based productions.
 
     To fix it, you need to edit the `src/main/java/org/fujure/fbc/parser/bnfc/antlr/Fujure/FujureLexer.g4` file,
-    line 21, to change the incorrect escape sequence.
+    line 20, to change the incorrect escape sequence.
     So, from this:
     
-        CHARANY     :  ~[\'\\] -> more, mode(CHAREND);
+        JCHAR : '\''~['\'']*'\'';
     
     to:
     
-        CHARANY     :  ~['\\] -> more, mode(CHAREND);
+        JCHAR : '\''~[']*'\'';
 
 4. Invoke the auto-generated `Makefile`:
 
