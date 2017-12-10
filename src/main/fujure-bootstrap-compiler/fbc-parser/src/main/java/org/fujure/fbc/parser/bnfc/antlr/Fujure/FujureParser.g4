@@ -59,5 +59,6 @@ literal returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal result ]
   | Surrogate_id_SYMB_7  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral(); } # BoolTrueLiteral
   | Surrogate_id_SYMB_4  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral(); } # BoolFalseLiteral
   | p_5_1=JCHAR  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral($p_5_1.getText()); } # CharLiteral
+  | p_6_1=STRING  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral($p_6_1.getText().substring(1, $p_6_1.getText().length()-1)); } # StringLiteral
 ;
 

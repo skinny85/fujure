@@ -18,7 +18,8 @@ Surrogate_id_SYMB_8 : 'unit' ;
 
 JID : ('_'|'$'|LETTER)('_'|'$'|LETTER|DIGIT)*;
 JCHAR : '\''~[']*'\'';
-
+// String token type
+STRING : '"' -> more, mode(STRINGMODE);
 
 
 //Integer predefined token type
@@ -30,4 +31,9 @@ WS : (' ' | '\r' | '\t' | '\n')+ ->  skip;
 fragment
 Escapable : ('"' | '\\' | 'n' | 't' | 'r');
 ErrorToken : . ;
-
+mode STRESCAPE;
+STRESCAPED : Escapable  -> more, popMode ;
+mode STRINGMODE;
+STRINGESC : '\\' -> more , pushMode(STRESCAPE);
+STRINGEND : '"' ->  type(STRING), mode(DEFAULT_MODE);
+STRINGTEXT : ~["\\] -> more;

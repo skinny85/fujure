@@ -19,7 +19,8 @@ public class FujureParser extends Parser {
 	public static final int
 		Surrogate_id_SYMB_0=1, Surrogate_id_SYMB_1=2, Surrogate_id_SYMB_2=3, Surrogate_id_SYMB_3=4, 
 		Surrogate_id_SYMB_4=5, Surrogate_id_SYMB_5=6, Surrogate_id_SYMB_6=7, Surrogate_id_SYMB_7=8, 
-		Surrogate_id_SYMB_8=9, JID=10, JCHAR=11, INTEGER=12, WS=13, ErrorToken=14;
+		Surrogate_id_SYMB_8=9, JID=10, JCHAR=11, INTEGER=12, WS=13, ErrorToken=14, 
+		STRING=15, STRINGESC=16;
 	public static final int
 		RULE_fileContents = 0, RULE_pkgName = 1, RULE_listPkgFragm = 2, RULE_pkgFragm = 3, 
 		RULE_imports = 4, RULE_listImport = 5, RULE_import_ = 6, RULE_listImportFragm = 7, 
@@ -36,13 +37,13 @@ public class FujureParser extends Parser {
 
 	private static final String[] _LITERAL_NAMES = {
 		null, "'.'", "'='", "':'", "'def'", "'false'", "'import'", "'package'", 
-		"'true'", "'unit'"
+		"'true'", "'unit'", null, null, null, null, null, "'\"'", "'\\'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "Surrogate_id_SYMB_0", "Surrogate_id_SYMB_1", "Surrogate_id_SYMB_2", 
 		"Surrogate_id_SYMB_3", "Surrogate_id_SYMB_4", "Surrogate_id_SYMB_5", "Surrogate_id_SYMB_6", 
 		"Surrogate_id_SYMB_7", "Surrogate_id_SYMB_8", "JID", "JCHAR", "INTEGER", 
-		"WS", "ErrorToken"
+		"WS", "ErrorToken", "STRING", "STRINGESC"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -1318,6 +1319,7 @@ public class FujureParser extends Parser {
 			case Surrogate_id_SYMB_8:
 			case JCHAR:
 			case INTEGER:
+			case STRING:
 				_localctx = new ExprLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
@@ -1560,6 +1562,19 @@ public class FujureParser extends Parser {
 			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitCharLiteral(this);
 		}
 	}
+	public static class StringLiteralContext extends LiteralContext {
+		public Token p_6_1;
+		public TerminalNode STRING() { return getToken(FujureParser.STRING, 0); }
+		public StringLiteralContext(LiteralContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterStringLiteral(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitStringLiteral(this);
+		}
+	}
 	public static class BoolTrueLiteralContext extends LiteralContext {
 		public TerminalNode Surrogate_id_SYMB_7() { return getToken(FujureParser.Surrogate_id_SYMB_7, 0); }
 		public BoolTrueLiteralContext(LiteralContext ctx) { copyFrom(ctx); }
@@ -1614,7 +1629,7 @@ public class FujureParser extends Parser {
 		LiteralContext _localctx = new LiteralContext(_ctx, getState());
 		enterRule(_localctx, 40, RULE_literal);
 		try {
-			setState(186);
+			setState(188);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INTEGER:
@@ -1662,6 +1677,15 @@ public class FujureParser extends Parser {
 				 ((CharLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral(((CharLiteralContext)_localctx).p_5_1.getText()); 
 				}
 				break;
+			case STRING:
+				_localctx = new StringLiteralContext(_localctx);
+				enterOuterAlt(_localctx, 6);
+				{
+				setState(186);
+				((StringLiteralContext)_localctx).p_6_1 = match(STRING);
+				 ((StringLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral(((StringLiteralContext)_localctx).p_6_1.getText().substring(1, ((StringLiteralContext)_localctx).p_6_1.getText().length()-1)); 
+				}
+				break;
 			default:
 				throw new NoViableAltException(this);
 			}
@@ -1702,7 +1726,7 @@ public class FujureParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\20\u00bf\4\2\t\2"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\22\u00c1\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3"+
@@ -1715,46 +1739,47 @@ public class FujureParser extends Parser {
 		"\3\20\3\20\3\20\3\20\5\20\u0096\n\20\3\21\3\21\3\21\3\22\3\22\3\22\3\22"+
 		"\3\22\3\22\5\22\u00a1\n\22\3\23\3\23\3\23\3\24\3\24\3\24\3\24\3\24\3\24"+
 		"\3\24\3\24\5\24\u00ae\n\24\3\25\3\25\3\25\3\26\3\26\3\26\3\26\3\26\3\26"+
-		"\3\26\3\26\3\26\3\26\5\26\u00bd\n\26\3\26\2\4\f\26\27\2\4\6\b\n\f\16\20"+
-		"\22\24\26\30\32\34\36 \"$&(*\2\2\2\u00b6\2\66\3\2\2\2\48\3\2\2\2\6C\3"+
-		"\2\2\2\bE\3\2\2\2\nH\3\2\2\2\fK\3\2\2\2\16W\3\2\2\2\20c\3\2\2\2\22e\3"+
-		"\2\2\2\24h\3\2\2\2\26k\3\2\2\2\30w\3\2\2\2\32\u0088\3\2\2\2\34\u008a\3"+
-		"\2\2\2\36\u0095\3\2\2\2 \u0097\3\2\2\2\"\u00a0\3\2\2\2$\u00a2\3\2\2\2"+
-		"&\u00ad\3\2\2\2(\u00af\3\2\2\2*\u00bc\3\2\2\2,-\7\t\2\2-.\5\4\3\2./\5"+
-		"\n\6\2/\60\5\24\13\2\60\61\b\2\1\2\61\67\3\2\2\2\62\63\5\n\6\2\63\64\5"+
-		"\24\13\2\64\65\b\2\1\2\65\67\3\2\2\2\66,\3\2\2\2\66\62\3\2\2\2\67\3\3"+
-		"\2\2\289\5\6\4\29:\b\3\1\2:\5\3\2\2\2;<\5\b\5\2<=\b\4\1\2=D\3\2\2\2>?"+
-		"\5\b\5\2?@\7\3\2\2@A\5\6\4\2AB\b\4\1\2BD\3\2\2\2C;\3\2\2\2C>\3\2\2\2D"+
-		"\7\3\2\2\2EF\7\f\2\2FG\b\5\1\2G\t\3\2\2\2HI\5\f\7\2IJ\b\6\1\2J\13\3\2"+
-		"\2\2KL\b\7\1\2LM\b\7\1\2MT\3\2\2\2NO\f\3\2\2OP\5\16\b\2PQ\b\7\1\2QS\3"+
-		"\2\2\2RN\3\2\2\2SV\3\2\2\2TR\3\2\2\2TU\3\2\2\2U\r\3\2\2\2VT\3\2\2\2WX"+
-		"\7\b\2\2XY\5\20\t\2YZ\b\b\1\2Z\17\3\2\2\2[\\\5\22\n\2\\]\b\t\1\2]d\3\2"+
-		"\2\2^_\5\22\n\2_`\7\3\2\2`a\5\20\t\2ab\b\t\1\2bd\3\2\2\2c[\3\2\2\2c^\3"+
-		"\2\2\2d\21\3\2\2\2ef\7\f\2\2fg\b\n\1\2g\23\3\2\2\2hi\5\26\f\2ij\b\13\1"+
-		"\2j\25\3\2\2\2kl\b\f\1\2lm\b\f\1\2mt\3\2\2\2no\f\3\2\2op\5\30\r\2pq\b"+
-		"\f\1\2qs\3\2\2\2rn\3\2\2\2sv\3\2\2\2tr\3\2\2\2tu\3\2\2\2u\27\3\2\2\2v"+
-		"t\3\2\2\2wx\5\32\16\2xy\b\r\1\2y\31\3\2\2\2z{\7\6\2\2{|\7\f\2\2|}\7\4"+
-		"\2\2}~\5\"\22\2~\177\b\16\1\2\177\u0089\3\2\2\2\u0080\u0081\7\6\2\2\u0081"+
-		"\u0082\7\f\2\2\u0082\u0083\7\5\2\2\u0083\u0084\5\34\17\2\u0084\u0085\7"+
-		"\4\2\2\u0085\u0086\5\"\22\2\u0086\u0087\b\16\1\2\u0087\u0089\3\2\2\2\u0088"+
-		"z\3\2\2\2\u0088\u0080\3\2\2\2\u0089\33\3\2\2\2\u008a\u008b\5\36\20\2\u008b"+
-		"\u008c\b\17\1\2\u008c\35\3\2\2\2\u008d\u008e\5 \21\2\u008e\u008f\b\20"+
-		"\1\2\u008f\u0096\3\2\2\2\u0090\u0091\5 \21\2\u0091\u0092\7\3\2\2\u0092"+
-		"\u0093\5\36\20\2\u0093\u0094\b\20\1\2\u0094\u0096\3\2\2\2\u0095\u008d"+
-		"\3\2\2\2\u0095\u0090\3\2\2\2\u0096\37\3\2\2\2\u0097\u0098\7\f\2\2\u0098"+
-		"\u0099\b\21\1\2\u0099!\3\2\2\2\u009a\u009b\5$\23\2\u009b\u009c\b\22\1"+
-		"\2\u009c\u00a1\3\2\2\2\u009d\u009e\5*\26\2\u009e\u009f\b\22\1\2\u009f"+
-		"\u00a1\3\2\2\2\u00a0\u009a\3\2\2\2\u00a0\u009d\3\2\2\2\u00a1#\3\2\2\2"+
-		"\u00a2\u00a3\5&\24\2\u00a3\u00a4\b\23\1\2\u00a4%\3\2\2\2\u00a5\u00a6\5"+
-		"(\25\2\u00a6\u00a7\b\24\1\2\u00a7\u00ae\3\2\2\2\u00a8\u00a9\5(\25\2\u00a9"+
-		"\u00aa\7\3\2\2\u00aa\u00ab\5&\24\2\u00ab\u00ac\b\24\1\2\u00ac\u00ae\3"+
-		"\2\2\2\u00ad\u00a5\3\2\2\2\u00ad\u00a8\3\2\2\2\u00ae\'\3\2\2\2\u00af\u00b0"+
-		"\7\f\2\2\u00b0\u00b1\b\25\1\2\u00b1)\3\2\2\2\u00b2\u00b3\7\16\2\2\u00b3"+
-		"\u00bd\b\26\1\2\u00b4\u00b5\7\13\2\2\u00b5\u00bd\b\26\1\2\u00b6\u00b7"+
-		"\7\n\2\2\u00b7\u00bd\b\26\1\2\u00b8\u00b9\7\7\2\2\u00b9\u00bd\b\26\1\2"+
-		"\u00ba\u00bb\7\r\2\2\u00bb\u00bd\b\26\1\2\u00bc\u00b2\3\2\2\2\u00bc\u00b4"+
-		"\3\2\2\2\u00bc\u00b6\3\2\2\2\u00bc\u00b8\3\2\2\2\u00bc\u00ba\3\2\2\2\u00bd"+
-		"+\3\2\2\2\f\66CTct\u0088\u0095\u00a0\u00ad\u00bc";
+		"\3\26\3\26\3\26\3\26\3\26\3\26\5\26\u00bf\n\26\3\26\2\4\f\26\27\2\4\6"+
+		"\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*\2\2\2\u00b9\2\66\3\2\2\2\48\3"+
+		"\2\2\2\6C\3\2\2\2\bE\3\2\2\2\nH\3\2\2\2\fK\3\2\2\2\16W\3\2\2\2\20c\3\2"+
+		"\2\2\22e\3\2\2\2\24h\3\2\2\2\26k\3\2\2\2\30w\3\2\2\2\32\u0088\3\2\2\2"+
+		"\34\u008a\3\2\2\2\36\u0095\3\2\2\2 \u0097\3\2\2\2\"\u00a0\3\2\2\2$\u00a2"+
+		"\3\2\2\2&\u00ad\3\2\2\2(\u00af\3\2\2\2*\u00be\3\2\2\2,-\7\t\2\2-.\5\4"+
+		"\3\2./\5\n\6\2/\60\5\24\13\2\60\61\b\2\1\2\61\67\3\2\2\2\62\63\5\n\6\2"+
+		"\63\64\5\24\13\2\64\65\b\2\1\2\65\67\3\2\2\2\66,\3\2\2\2\66\62\3\2\2\2"+
+		"\67\3\3\2\2\289\5\6\4\29:\b\3\1\2:\5\3\2\2\2;<\5\b\5\2<=\b\4\1\2=D\3\2"+
+		"\2\2>?\5\b\5\2?@\7\3\2\2@A\5\6\4\2AB\b\4\1\2BD\3\2\2\2C;\3\2\2\2C>\3\2"+
+		"\2\2D\7\3\2\2\2EF\7\f\2\2FG\b\5\1\2G\t\3\2\2\2HI\5\f\7\2IJ\b\6\1\2J\13"+
+		"\3\2\2\2KL\b\7\1\2LM\b\7\1\2MT\3\2\2\2NO\f\3\2\2OP\5\16\b\2PQ\b\7\1\2"+
+		"QS\3\2\2\2RN\3\2\2\2SV\3\2\2\2TR\3\2\2\2TU\3\2\2\2U\r\3\2\2\2VT\3\2\2"+
+		"\2WX\7\b\2\2XY\5\20\t\2YZ\b\b\1\2Z\17\3\2\2\2[\\\5\22\n\2\\]\b\t\1\2]"+
+		"d\3\2\2\2^_\5\22\n\2_`\7\3\2\2`a\5\20\t\2ab\b\t\1\2bd\3\2\2\2c[\3\2\2"+
+		"\2c^\3\2\2\2d\21\3\2\2\2ef\7\f\2\2fg\b\n\1\2g\23\3\2\2\2hi\5\26\f\2ij"+
+		"\b\13\1\2j\25\3\2\2\2kl\b\f\1\2lm\b\f\1\2mt\3\2\2\2no\f\3\2\2op\5\30\r"+
+		"\2pq\b\f\1\2qs\3\2\2\2rn\3\2\2\2sv\3\2\2\2tr\3\2\2\2tu\3\2\2\2u\27\3\2"+
+		"\2\2vt\3\2\2\2wx\5\32\16\2xy\b\r\1\2y\31\3\2\2\2z{\7\6\2\2{|\7\f\2\2|"+
+		"}\7\4\2\2}~\5\"\22\2~\177\b\16\1\2\177\u0089\3\2\2\2\u0080\u0081\7\6\2"+
+		"\2\u0081\u0082\7\f\2\2\u0082\u0083\7\5\2\2\u0083\u0084\5\34\17\2\u0084"+
+		"\u0085\7\4\2\2\u0085\u0086\5\"\22\2\u0086\u0087\b\16\1\2\u0087\u0089\3"+
+		"\2\2\2\u0088z\3\2\2\2\u0088\u0080\3\2\2\2\u0089\33\3\2\2\2\u008a\u008b"+
+		"\5\36\20\2\u008b\u008c\b\17\1\2\u008c\35\3\2\2\2\u008d\u008e\5 \21\2\u008e"+
+		"\u008f\b\20\1\2\u008f\u0096\3\2\2\2\u0090\u0091\5 \21\2\u0091\u0092\7"+
+		"\3\2\2\u0092\u0093\5\36\20\2\u0093\u0094\b\20\1\2\u0094\u0096\3\2\2\2"+
+		"\u0095\u008d\3\2\2\2\u0095\u0090\3\2\2\2\u0096\37\3\2\2\2\u0097\u0098"+
+		"\7\f\2\2\u0098\u0099\b\21\1\2\u0099!\3\2\2\2\u009a\u009b\5$\23\2\u009b"+
+		"\u009c\b\22\1\2\u009c\u00a1\3\2\2\2\u009d\u009e\5*\26\2\u009e\u009f\b"+
+		"\22\1\2\u009f\u00a1\3\2\2\2\u00a0\u009a\3\2\2\2\u00a0\u009d\3\2\2\2\u00a1"+
+		"#\3\2\2\2\u00a2\u00a3\5&\24\2\u00a3\u00a4\b\23\1\2\u00a4%\3\2\2\2\u00a5"+
+		"\u00a6\5(\25\2\u00a6\u00a7\b\24\1\2\u00a7\u00ae\3\2\2\2\u00a8\u00a9\5"+
+		"(\25\2\u00a9\u00aa\7\3\2\2\u00aa\u00ab\5&\24\2\u00ab\u00ac\b\24\1\2\u00ac"+
+		"\u00ae\3\2\2\2\u00ad\u00a5\3\2\2\2\u00ad\u00a8\3\2\2\2\u00ae\'\3\2\2\2"+
+		"\u00af\u00b0\7\f\2\2\u00b0\u00b1\b\25\1\2\u00b1)\3\2\2\2\u00b2\u00b3\7"+
+		"\16\2\2\u00b3\u00bf\b\26\1\2\u00b4\u00b5\7\13\2\2\u00b5\u00bf\b\26\1\2"+
+		"\u00b6\u00b7\7\n\2\2\u00b7\u00bf\b\26\1\2\u00b8\u00b9\7\7\2\2\u00b9\u00bf"+
+		"\b\26\1\2\u00ba\u00bb\7\r\2\2\u00bb\u00bf\b\26\1\2\u00bc\u00bd\7\21\2"+
+		"\2\u00bd\u00bf\b\26\1\2\u00be\u00b2\3\2\2\2\u00be\u00b4\3\2\2\2\u00be"+
+		"\u00b6\3\2\2\2\u00be\u00b8\3\2\2\2\u00be\u00ba\3\2\2\2\u00be\u00bc\3\2"+
+		"\2\2\u00bf+\3\2\2\2\f\66CTct\u0088\u0095\u00a0\u00ad\u00be";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

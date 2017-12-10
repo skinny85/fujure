@@ -164,6 +164,10 @@ public class VisitSkel
     { /* Code For CharLiteral Goes Here */
       //p.jchar_;
       return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral p, A arg)
+    { /* Code For StringLiteral Goes Here */
+      //p.string_;
+      return null;
     }
   }
 }

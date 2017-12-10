@@ -16,17 +16,25 @@ follow this procedure (while in the same directory this `Readme` is in):
 
         bnfc --java --antlr4 -m -o src/main/java -p org.fujure.fbc.parser.bnfc.antlr Fujure.cf
 
-3. There is a bug in BNFC that makes it fail for Char-based productions.
+3. There is a bug in BNFC that makes it fail for Char and String-based productions.
 
     To fix it, you need to edit the `src/main/java/org/fujure/fbc/parser/bnfc/antlr/Fujure/FujureLexer.g4` file,
-    line 20, to change the incorrect escape sequence.
-    So, from this:
+    to change the incorrect escape sequences.
+    So, from this on line 20:
     
         JCHAR : '\''~['\'']*'\'';
     
-    to:
+    to this:
     
         JCHAR : '\''~[']*'\'';
+    
+    and this on line 39:
+    
+        STRINGTEXT : ~[\"\\] -> more;
+    
+    to this:
+    
+        STRINGTEXT : ~["\\] -> more;
 
 4. Invoke the auto-generated `Makefile`:
 

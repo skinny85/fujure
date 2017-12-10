@@ -415,4 +415,16 @@ public interface FujureParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCharLiteral(FujureParser.CharLiteralContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code StringLiteral}
+	 * labeled alternative in {@link FujureParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void enterStringLiteral(FujureParser.StringLiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code StringLiteral}
+	 * labeled alternative in {@link FujureParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void exitStringLiteral(FujureParser.StringLiteralContext ctx);
 }

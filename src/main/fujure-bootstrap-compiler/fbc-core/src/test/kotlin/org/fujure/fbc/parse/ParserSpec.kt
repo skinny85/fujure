@@ -110,4 +110,28 @@ class ParserSpec : SpecnazKotlinJUnit("Parser", {
             assume(result.v).isA<ParsingResult.Success>()
         }
     }
+
+    it.describes("called with a String value") {
+        it.beginsAll {
+            result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
+                def c = "a"
+                """)))
+        }
+
+        it.should("return a ParsingResult\$Success") {
+            assume(result.v).isA<ParsingResult.Success>()
+        }
+    }
+
+    it.describes("called with a String value containing some escaped characters") {
+        it.beginsAll {
+            result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
+                def c = "\n\\"
+                """)))
+        }
+
+        it.should("return a ParsingResult\$Success") {
+            assume(result.v).isA<ParsingResult.Success>()
+        }
+    }
 })
