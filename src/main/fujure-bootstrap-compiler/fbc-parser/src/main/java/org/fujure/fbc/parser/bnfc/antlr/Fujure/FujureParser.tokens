@@ -11,6 +11,7 @@ JID=10
 INTEGER=11
 WS=12
 ErrorToken=13
+CHAR=14
 '.'=1
 '='=2
 ':'=3
@@ -20,3 +21,4 @@ ErrorToken=13
 'package'=7
 'true'=8
 'unit'=9
+'\''=14

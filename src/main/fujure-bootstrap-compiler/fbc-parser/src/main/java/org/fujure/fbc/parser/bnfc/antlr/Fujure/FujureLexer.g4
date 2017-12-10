@@ -18,7 +18,7 @@ Surrogate_id_SYMB_8 : 'unit' ;
 
 JID : ('_'|'$'|LETTER)('_'|'$'|LETTER|DIGIT)*;
 
-
+CHAR : '\''   -> more, mode(CHARMODE);
 
 //Integer predefined token type
 INTEGER : DIGIT+;
@@ -30,3 +30,10 @@ fragment
 Escapable : ('"' | '\\' | 'n' | 't' | 'r');
 ErrorToken : . ;
 
+mode CHARMODE;
+CHARANY     :  ~['\\] -> more, mode(CHAREND);
+CHARESC     :  '\\'  -> more, pushMode(CHAREND),pushMode(ESCAPE);
+mode ESCAPE;
+ESCAPED : (Escapable | '\'')  -> more, popMode ;
+mode CHAREND;
+CHARENDC     :  '\''  -> type(CHAR), mode(DEFAULT_MODE);

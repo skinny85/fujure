@@ -160,6 +160,10 @@ public class VisitSkel
     }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral p, A arg)
     { /* Code For BoolFalseLiteral Goes Here */
       return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral p, A arg)
+    { /* Code For CharLiteral Goes Here */
+      //p.char_;
+      return null;
     }
   }
 }

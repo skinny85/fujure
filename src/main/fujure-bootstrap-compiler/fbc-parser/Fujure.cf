@@ -35,5 +35,6 @@ IntLiteral        . Literal ::= Integer ;
 UnitLiteral       . Literal ::= "unit" ;
 BoolTrueLiteral   . Literal ::= "true" ;
 BoolFalseLiteral  . Literal ::= "false" ;
+CharLiteral       . Literal ::= Char ;
 
-token JID ('_' | '$' | letter) ('_' | '$' | letter | digit)*
+token JID ('_' | '$' | letter) ('_' | '$' | letter | digit)* ;

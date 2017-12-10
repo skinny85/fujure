@@ -670,6 +670,13 @@ public class PrettyPrinter
        render("false");
        if (_i_ > 0) render(_R_PAREN);
     }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral _charliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_charliteral.char_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
   }
 
 
@@ -967,6 +974,14 @@ public class PrettyPrinter
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral _boolfalseliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral) foo;
        render("BoolFalseLiteral");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral _charliteral = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral) foo;
+       render("(");
+       render("CharLiteral");
+       sh(_charliteral.char_);
+       render(")");
     }
   }
 

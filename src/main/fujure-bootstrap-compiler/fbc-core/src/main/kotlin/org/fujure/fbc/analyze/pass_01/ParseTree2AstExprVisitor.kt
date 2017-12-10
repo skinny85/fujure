@@ -4,6 +4,7 @@ import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.ValueReference
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal
@@ -47,5 +48,9 @@ object ParseTree2AstExprVisitor :
 
     override fun visit(falseLiteral: BoolFalseLiteral, arg: Unit): Expr {
         return Expr.BoolLiteral.False
+    }
+
+    override fun visit(charLiteral: CharLiteral, arg: Unit): Expr {
+        throw UnsupportedOperationException()
     }
 }

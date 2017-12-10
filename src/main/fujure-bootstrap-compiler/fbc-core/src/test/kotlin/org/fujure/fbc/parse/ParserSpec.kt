@@ -49,4 +49,65 @@ class ParserSpec : SpecnazKotlinJUnit("Parser", {
             assertThat(parsingFailure.cause.errors).isNotEmpty()
         }
     }
+
+    it.describes("called with a Char value") {
+        it.beginsAll {
+            result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
+                def c = 'a'
+                """)))
+        }
+
+        it.should("return a ParsingResult\$Success") {
+            assume(result.v).isA<ParsingResult.Success>()
+        }
+    }
+
+    it.describes("called with correctly escaped Char values") {
+        it.beginsAll {
+            result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
+                def c1 = '\''
+                def c2 = '\\'
+                """)))
+        }
+
+        it.should("return a ParsingResult\$Success") {
+            assume(result.v).isA<ParsingResult.Success>()
+        }
+    }
+
+    it.describes("called with an unescaped backslash in a Char value") {
+        it.beginsAll {
+            result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
+                def c = '\'
+                """)))
+        }
+
+        it.should("return a ParsingResult\$Failure") {
+            assume(result.v).isA<ParsingResult.Failure>()
+        }
+    }
+
+    it.describes("called with an unescaped quote in a Char value") {
+        it.beginsAll {
+            result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
+                def c = '''
+                """)))
+        }
+
+        it.should("return a ParsingResult\$Failure") {
+            assume(result.v).isA<ParsingResult.Failure>()
+        }
+    }
+
+    it.describes("called with an empty Char literal value") {
+        it.beginsAll {
+            result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
+                def c = ''
+                """)))
+        }
+
+        it.should("return a ParsingResult\$Failure") {
+            assume(result.v).isA<ParsingResult.Failure>()
+        }
+    }
 })
