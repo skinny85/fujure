@@ -45,6 +45,10 @@ object FileContentsCodeGen {
                 variableType = java.lang.Boolean.TYPE
                 initializer = simpleValueDef.initializer == Expr.BoolLiteral.True
             }
+            is Expr.CharLiteral -> {
+                variableType = Character.TYPE
+                initializer = escapedChar(simpleValueDef.initializer.value)
+            }
             is Expr.ValueReferenceExpr -> {
                 val lookupResult = symbolTable.lookup(simpleValueDef.initializer.ref, simpleValueDef.id)
                 variableType = toJavaType((lookupResult as SymbolTable.LookupResult.RefFound).qualifiedType)!!
@@ -63,7 +67,23 @@ object FileContentsCodeGen {
             BuiltInTypes.Int -> Integer.TYPE
             BuiltInTypes.Unit -> Void::class.java
             BuiltInTypes.Bool -> java.lang.Boolean.TYPE
+            BuiltInTypes.Char -> Character.TYPE
             else -> null
         }
+    }
+
+    private fun escapedChar(c: Char): String {
+        val inside = when (c) {
+            '\b' -> "\\b"
+//            '\f' -> "\\f"
+            '\n' -> "\\n"
+            '\r' -> "\\r"
+            '\t' -> "\\t"
+            '\'' -> "\\'"
+            '\"' -> "\\\""
+            '\\' -> "\\\\"
+            else -> c.toString()
+        }
+        return "'$inside'"
     }
 }

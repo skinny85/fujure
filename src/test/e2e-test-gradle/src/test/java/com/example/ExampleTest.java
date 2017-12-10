@@ -39,4 +39,9 @@ public class ExampleTest {
     public void test_unit_value() {
         assertThat(Example.u).isNull();
     }
+
+    @Test
+    public void test_char_value() {
+        assertThat(Example.c).isEqualTo('\n');
+    }
 }

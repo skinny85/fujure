@@ -11,4 +11,6 @@ sealed class Expr {
         object True : BoolLiteral()
         object False : BoolLiteral()
     }
+
+    data class CharLiteral(val value: Char) : Expr()
 }

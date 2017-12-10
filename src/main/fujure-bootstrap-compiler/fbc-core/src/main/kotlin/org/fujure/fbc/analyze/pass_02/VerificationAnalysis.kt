@@ -86,6 +86,7 @@ object VerificationAnalysis {
         is Expr.IntLiteral -> Either.Right(BuiltInTypes.Int)
         is Expr.UnitLiteral -> Either.Right(BuiltInTypes.Unit)
         is Expr.BoolLiteral -> Either.Right(BuiltInTypes.Bool)
+        is Expr.CharLiteral -> Either.Right(BuiltInTypes.Char)
         is Expr.ValueReferenceExpr -> {
             val context = TypeErrorContext.VariableDefinition(valName)
             val lookupResult = symbolTable.lookup(expr.ref, valName, chain)
