@@ -26,6 +26,11 @@ public class ExampleTest {
     }
 
     @Test
+    public void test_char_value() {
+        assertThat(Example.c).isEqualTo('\n');
+    }
+
+    @Test
     public void test_falsy_again() {
         assertThat(Example.falsyAgain).isFalse();
     }
@@ -41,7 +46,7 @@ public class ExampleTest {
     }
 
     @Test
-    public void test_char_value() {
-        assertThat(Example.c).isEqualTo('\n');
+    public void test_string_value() {
+        assertThat(Example.s).isEqualTo("Hello, \nWorld!");
     }
 }

@@ -134,4 +134,27 @@ class ParserSpec : SpecnazKotlinJUnit("Parser", {
             assume(result.v).isA<ParsingResult.Success>()
         }
     }
+
+    it.describes("called with a String value containing only a backslash") {
+        it.beginsAll {
+            result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"), CharStreams.fromString("""
+                def s = "\"
+                """)))
+        }
+
+        it.should("return a ParsingResult\$Failure") {
+            assume(result.v).isA<ParsingResult.Failure>()
+        }
+    }
+
+    it.describes("called with a String value containing only a double quote") {
+        it.beginsAll {
+            result.v = parser.parse(OpenedFile(InputFile("whatever.fjr"),
+                    CharStreams.fromString("def s = \"\"\"")))
+        }
+
+        it.should("return a ParsingResult\$Success") {
+            assume(result.v).isA<ParsingResult.Success>()
+        }
+    }
 })

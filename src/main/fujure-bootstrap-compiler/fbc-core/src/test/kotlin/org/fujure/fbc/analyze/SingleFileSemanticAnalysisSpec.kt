@@ -110,10 +110,11 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
                 def v: Unit = u
                 def c: Char = '\n'
                 def d = c
+                def s = "string\t\""
             """)
         }
 
-        it.should("parse all 8 definitions correctly") {
+        it.should("parse all 9 definitions correctly") {
             assertThat(fileContents.v.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("x", TypeReference("Int"), Expr.IntLiteral(42)),
                     Def.ValueDef.SimpleValueDef("y", TypeReference("Bool"), Expr.BoolLiteral.False),
@@ -122,7 +123,8 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
                     Def.ValueDef.SimpleValueDef("u", null, Expr.UnitLiteral),
                     Def.ValueDef.SimpleValueDef("v", TypeReference("Unit"), Expr.ValueReferenceExpr(ValueReference("u"))),
                     Def.ValueDef.SimpleValueDef("c", TypeReference("Char"), Expr.CharLiteral("'\\n'")),
-                    Def.ValueDef.SimpleValueDef("d", null, Expr.ValueReferenceExpr(ValueReference("c"))))
+                    Def.ValueDef.SimpleValueDef("d", null, Expr.ValueReferenceExpr(ValueReference("c"))),
+                    Def.ValueDef.SimpleValueDef("s", null, Expr.StringLiteral("string\\t\\\"")))
         }
     }
 

@@ -13,4 +13,5 @@ sealed class Expr {
     }
 
     data class CharLiteral(val value: String) : Expr()
+    data class StringLiteral(val value: String) : Expr()
 }

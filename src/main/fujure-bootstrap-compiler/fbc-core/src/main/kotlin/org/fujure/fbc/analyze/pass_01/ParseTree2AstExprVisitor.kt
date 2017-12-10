@@ -56,6 +56,6 @@ object ParseTree2AstExprVisitor :
     }
 
     override fun visit(stringLiteral: StringLiteral, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.StringLiteral(stringLiteral.string_)
     }
 }

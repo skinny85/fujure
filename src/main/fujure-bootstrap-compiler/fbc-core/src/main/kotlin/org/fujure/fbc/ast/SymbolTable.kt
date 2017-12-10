@@ -64,6 +64,7 @@ class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
                 "Unit" -> BuiltInTypes.Unit
                 "Bool" -> BuiltInTypes.Bool
                 "Char" -> BuiltInTypes.Char
+                "String" -> BuiltInTypes.String
                 else -> null
             }
         }

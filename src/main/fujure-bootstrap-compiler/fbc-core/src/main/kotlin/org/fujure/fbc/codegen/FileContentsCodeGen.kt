@@ -49,6 +49,10 @@ object FileContentsCodeGen {
                 variableType = Character.TYPE
                 initializer = simpleValueDef.initializer.value
             }
+            is Expr.StringLiteral -> {
+                variableType = java.lang.String::class.java
+                initializer = """"${simpleValueDef.initializer.value}""""
+            }
             is Expr.ValueReferenceExpr -> {
                 val lookupResult = symbolTable.lookup(simpleValueDef.initializer.ref, simpleValueDef.id)
                 variableType = toJavaType((lookupResult as SymbolTable.LookupResult.RefFound).qualifiedType)!!
@@ -68,6 +72,7 @@ object FileContentsCodeGen {
             BuiltInTypes.Unit -> Void::class.java
             BuiltInTypes.Bool -> java.lang.Boolean.TYPE
             BuiltInTypes.Char -> Character.TYPE
+            BuiltInTypes.String -> java.lang.String::class.java
             else -> null
         }
     }

@@ -9,4 +9,5 @@ object BuiltInTypes {
     val Unit = QualifiedType("fujure", "Unit")
     val Bool = QualifiedType("fujure", "Bool")
     val Char = QualifiedType("fujure", "Char")
+    val String = QualifiedType("fujure", "String")
 }
