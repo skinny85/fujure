@@ -12,35 +12,34 @@ import org.fujure.fbc.ast.ValueReference
 import org.fujure.test.utils.Assumption.Companion.assume
 import org.funktionale.either.Disjunction
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
-import org.specnaz.kotlin.utils.Deferred
 
 class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic Analysis", {
     // for analyzeProgramsSuccessfully
-    val firstFileContents = Deferred<FileContents>()
-    val secondFileContents = Deferred<FileContents>()
+    lateinit var firstFileContents: FileContents
+    lateinit var secondFileContents: FileContents
 
     fun analyzeProgramsSuccessfully(firstProgram: String, secondProgram: String) {
         val analysisResult = AnalysisHelper.analyzePrograms(firstProgram, secondProgram)
         val success = assume(analysisResult).isA<Disjunction.Right<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram>>()
         Assertions.assertThat(success.value.asts).hasSize(2)
-        firstFileContents.v = success.value.asts[0].fileContents
-        secondFileContents.v = success.value.asts[1].fileContents
+        firstFileContents = success.value.asts[0].fileContents
+        secondFileContents = success.value.asts[1].fileContents
     }
 
     // for analyzeProgramsExpectingErrors
-    val firstFileErrors = Deferred<List<SemanticError>>()
-    val secondFileErrors = Deferred<List<SemanticError>>()
+    lateinit var firstFileErrors: List<SemanticError>
+    lateinit var secondFileErrors: List<SemanticError>
 
     fun analyzeProgramsExpectingErrors(firstProgram: String, secondProgram: String) {
         val analysisResult = AnalysisHelper.analyzePrograms(firstProgram, secondProgram)
         val failure = assume(analysisResult).isA<Disjunction.Left<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram>>()
 
-        firstFileErrors.v = AnalysisHelper.findFileErrors(1, failure)
-        secondFileErrors.v = AnalysisHelper.findFileErrors(2, failure)
+        firstFileErrors = AnalysisHelper.findFileErrors(1, failure)
+        secondFileErrors = AnalysisHelper.findFileErrors(2, failure)
     }
 
     fun assertFirstProgramIsCorrect() {
-        assertThat(firstFileErrors.v).isEmpty()
+        assertThat(firstFileErrors).isEmpty()
     }
 
     it.describes("called with a program referencing a value from another file") {
@@ -55,12 +54,12 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
         }
 
         it.should("parse the first program correctly") {
-            assertThat(firstFileContents.v.defs).containsExactly(
+            assertThat(firstFileContents.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.IntLiteral(42)))
         }
 
         it.should("parse the second program correctly") {
-            assertThat(secondFileContents.v.defs).containsExactly(
+            assertThat(secondFileContents.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("x", TypeReference("Int"), Expr.ValueReferenceExpr(
                             ValueReference("File1", "a"))))
         }
@@ -86,7 +85,7 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
         }
 
         it.should("return an UnresolvedReference error for the second file") {
-            assertThat(secondFileErrors.v).containsExactly(
+            assertThat(secondFileErrors).containsExactly(
                     SemanticError.UnresolvedReference(
                             TypeErrorContext.VariableDefinition("x"),
                             ValueReference("File1", "a")))
@@ -105,13 +104,13 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
         }
 
         it.should("parse the first program correctly") {
-            assertThat(firstFileContents.v.defs).containsExactly(
+            assertThat(firstFileContents.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.ValueReferenceExpr(
                             ValueReference("File2", "x"))))
         }
 
         it.should("parse the second program correctly") {
-            assertThat(secondFileContents.v.defs).containsExactly(
+            assertThat(secondFileContents.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("x", TypeReference("Int"), Expr.IntLiteral(42)))
         }
     }
@@ -128,13 +127,13 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
         }
 
         it.should("parse the first program correctly") {
-            assertThat(firstFileContents.v.defs).containsExactly(
+            assertThat(firstFileContents.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.ValueReferenceExpr(
                             ValueReference("File2", "x"))))
         }
 
         it.should("parse the second program correctly") {
-            assertThat(secondFileContents.v.defs).containsExactly(
+            assertThat(secondFileContents.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("x", null, Expr.IntLiteral(42)))
         }
     }
@@ -151,7 +150,7 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
         }
 
         it.should("detect the cycle in the first file") {
-            assertThat(firstFileErrors.v).containsExactly(
+            assertThat(firstFileErrors).containsExactly(
                     SemanticError.CyclicDefinition(
                             TypeErrorContext.VariableDefinition("a"),
                             listOf(
@@ -161,7 +160,7 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
         }
 
         it.should("detect the cycle in the second file") {
-            assertThat(secondFileErrors.v).containsExactly(
+            assertThat(secondFileErrors).containsExactly(
                     SemanticError.CyclicDefinition(
                             TypeErrorContext.VariableDefinition("x"),
                             listOf(
@@ -183,13 +182,13 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
         }
 
         it.should("parse the value with the declared type correctly") {
-            assertThat(firstFileContents.v.defs).containsExactly(
+            assertThat(firstFileContents.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.ValueReferenceExpr(
                             ValueReference("File2", "x"))))
         }
 
         it.should("parse the value without the declared type correctly") {
-            assertThat(secondFileContents.v.defs).containsExactly(
+            assertThat(secondFileContents.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("x", null, Expr.ValueReferenceExpr(ValueReference("File1", "a"))))
         }
     }

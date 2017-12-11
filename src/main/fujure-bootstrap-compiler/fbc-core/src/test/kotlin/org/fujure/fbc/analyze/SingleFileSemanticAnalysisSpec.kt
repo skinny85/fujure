@@ -12,27 +12,26 @@ import org.fujure.fbc.ast.ValueReference
 import org.fujure.test.utils.Assumption.Companion.assume
 import org.funktionale.either.Disjunction
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
-import org.specnaz.kotlin.utils.Deferred
 
 class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic Analysis", {
     // for analyzeProgramSuccessfully
-    val fileContents = Deferred<FileContents>()
+    lateinit var fileContents: FileContents
 
     fun analyzeProgramSuccessfully(program: String) {
         val analysisResult = AnalysisHelper.analyzeProgram(program)
         val success = assume(analysisResult).isA<Disjunction.Right<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram>>()
         assertThat(success.value.asts).hasSize(1)
-        fileContents.v = success.value.asts[0].fileContents
+        fileContents = success.value.asts[0].fileContents
     }
 
     // for analyzeProgramExpectingErrors
-    val errors = Deferred<List<SemanticError>>()
+    lateinit var errors: List<SemanticError>
 
     fun analyzeProgramExpectingErrors(program: String) {
         val analysisResult = AnalysisHelper.analyzeProgram(program)
         val failure = assume(analysisResult).isA<Disjunction.Left<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram>>()
         assertThat(failure.value).hasSize(1)
-        errors.v = failure.value[0].errors
+        errors = failure.value[0].errors
     }
 
     it.describes("called with an empty program") {
@@ -42,11 +41,11 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("parse an empty package name") {
-            assertThat(fileContents.v.packageName).isEmpty()
+            assertThat(fileContents.packageName).isEmpty()
         }
 
         it.should("parse an empty list of definitions") {
-            assertThat(fileContents.v.defs).isEmpty()
+            assertThat(fileContents.defs).isEmpty()
         }
     }
 
@@ -59,11 +58,11 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("parse the package name") {
-            assertThat(fileContents.v.packageName).isEqualTo("com.\$example")
+            assertThat(fileContents.packageName).isEqualTo("com.\$example")
         }
 
         it.should("parse an empty list of definitions") {
-            assertThat(fileContents.v.defs).isEmpty()
+            assertThat(fileContents.defs).isEmpty()
         }
     }
 
@@ -76,7 +75,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("should analyze all definitions correctly") {
-            assertThat(fileContents.v.defs).containsExactly(
+            assertThat(fileContents.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("a", null, Expr.IntLiteral(42)),
                     Def.ValueDef.SimpleValueDef("x", null, Expr.ValueReferenceExpr(ValueReference("a"))))
         }
@@ -92,7 +91,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("return an InvalidName error for each of them") {
-            assertThat(errors.v).containsExactly(
+            assertThat(errors).containsExactly(
                     SemanticError.InvalidName("_"),
                     SemanticError.InvalidName("\$a"),
                     SemanticError.InvalidName("class"))
@@ -115,7 +114,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("parse all 9 definitions correctly") {
-            assertThat(fileContents.v.defs).containsExactly(
+            assertThat(fileContents.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("x", TypeReference("Int"), Expr.IntLiteral(42)),
                     Def.ValueDef.SimpleValueDef("y", TypeReference("Bool"), Expr.BoolLiteral.False),
                     Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.ValueReferenceExpr(ValueReference("x"))),
@@ -137,7 +136,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("return a DuplicateDefinition error") {
-            assertThat(errors.v).containsExactly(
+            assertThat(errors).containsExactly(
                     SemanticError.DuplicateDefinition("a"))
         }
     }
@@ -150,7 +149,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("return a TypeMismatch error") {
-            assertThat(errors.v).containsExactly(
+            assertThat(errors).containsExactly(
                     SemanticError.TypeMismatch(
                             VariableDefinition("a"),
                             BuiltInTypes.Int, BuiltInTypes.Bool))
@@ -166,7 +165,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("return a TypeMismatch error") {
-            assertThat(errors.v).containsExactly(
+            assertThat(errors).containsExactly(
                     SemanticError.TypeMismatch(
                             VariableDefinition("x"),
                             BuiltInTypes.Int, BuiltInTypes.Bool))
@@ -181,7 +180,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("return a UnresolvedReference error") {
-            assertThat(errors.v).containsExactly(
+            assertThat(errors).containsExactly(
                     SemanticError.UnresolvedReference(
                             VariableDefinition("a"),
                             ValueReference("x")))
@@ -196,7 +195,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("return both a UnresolvedReference and a TypeNotFound errors") {
-            assertThat(errors.v).containsOnly(
+            assertThat(errors).containsOnly(
                     SemanticError.UnresolvedReference(
                             VariableDefinition("a"),
                             ValueReference("x")),
@@ -215,7 +214,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("return an IllegalForwardReference error") {
-            assertThat(errors.v).containsExactly(
+            assertThat(errors).containsExactly(
                     SemanticError.IllegalForwardReference(
                             VariableDefinition("a"), "x"))
         }
@@ -229,7 +228,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("return an IllegalSelfReference error") {
-            assertThat(errors.v).containsExactly(
+            assertThat(errors).containsExactly(
                     SemanticError.IllegalSelfReference(VariableDefinition("a")))
         }
     }
@@ -242,7 +241,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("return an IllegalSelfReference error") {
-            assertThat(errors.v).containsExactly(
+            assertThat(errors).containsExactly(
                     SemanticError.IllegalSelfReference(VariableDefinition("a")))
         }
     }
@@ -259,7 +258,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("take the incorrectly defined variables into account during analysis") {
-            assertThat(errors.v).containsExactly(
+            assertThat(errors).containsExactly(
                     SemanticError.TypeMismatch(
                             VariableDefinition("x"),
                             BuiltInTypes.Bool, BuiltInTypes.Int),
@@ -278,7 +277,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("parse all definitions correctly") {
-            assertThat(fileContents.v.defs).containsExactly(
+            assertThat(fileContents.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("x", TypeReference("Int"), Expr.IntLiteral(42)),
                     Def.ValueDef.SimpleValueDef(
                             "a",
@@ -296,7 +295,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("return an UnresolvedReference error") {
-            assertThat(errors.v).containsExactly(
+            assertThat(errors).containsExactly(
                     SemanticError.UnresolvedReference(
                             VariableDefinition("a"),
                             ValueReference("DoesNotExist", "x")))
@@ -313,7 +312,7 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
 
         it.should("parse all import statements correctly") {
-            assertThat(fileContents.v.imports).containsExactly(
+            assertThat(fileContents.imports).containsExactly(
                     Import("a", "b", "c"),
                     Import("d", "e", "f"))
         }

@@ -4,32 +4,25 @@ import com.nhaarman.mockito_kotlin.any
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.CompilationResults
 import org.fujure.fbc.CompileOptions
-import org.mockito.Mockito
-import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
-import org.specnaz.kotlin.utils.Deferred
 import org.fujure.fbc.Compiler
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.codegen.CodeGenResult
 import org.fujure.fbc.parse.SyntaxError
+import org.mockito.Mockito
+import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 import java.io.File
 import java.io.IOException
 
 class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
-    val appendingLogger = object : Deferred<AppendingLogger>() {
-        fun verifyLogged(msgFragment: String) {
-            v.verifyLogged(msgFragment)
-        }
-    }
-    val compilerCli = object : Deferred<CompilerCli>() {
-        fun invokeCompiler(args: Array<String>): Int = v.invokeCompiler(args)
-    }
-    val mockCompiler = Deferred<Compiler>()
+    lateinit var appendingLogger: AppendingLogger
+    lateinit var compilerCli: CompilerCli
+    lateinit var mockCompiler: Compiler
 
     it.beginsAll {
-        appendingLogger.v = AppendingLogger()
-        mockCompiler.v = Mockito.mock(Compiler::class.java)
-        compilerCli.v = CompilerCli(appendingLogger.v, mockCompiler.v)
+        appendingLogger = AppendingLogger()
+        mockCompiler = Mockito.mock(Compiler::class.java)
+        compilerCli = CompilerCli(appendingLogger, mockCompiler)
     }
 
     it.describes("called with no arguments") {
@@ -44,7 +37,7 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
         }
 
         it.should("display the help info") {
-            appendingLogger.v.verifyHelpInfoLogged()
+            appendingLogger.verifyHelpInfoLogged()
         }
     }
 
@@ -60,7 +53,7 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
         }
 
         it.should("display the help info") {
-            appendingLogger.v.verifyHelpInfoLogged()
+            appendingLogger.verifyHelpInfoLogged()
         }
     }
 
@@ -80,11 +73,11 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
         }
 
         it.should("display the usage string") {
-            appendingLogger.v.verifyUsageStringLogged()
+            appendingLogger.verifyUsageStringLogged()
         }
 
         it.should("display the help tip") {
-            appendingLogger.v.verifyHelpTipLogged()
+            appendingLogger.verifyHelpTipLogged()
         }
     }
 
@@ -100,7 +93,7 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
         }
 
         it.should("display the usage and help tip") {
-            appendingLogger.v.verifyUsageAndHelpTipLogged()
+            appendingLogger.verifyUsageAndHelpTipLogged()
         }
     }
 
@@ -116,7 +109,7 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
         }
 
         it.should("display the usage and help tip") {
-            appendingLogger.v.verifyUsageAndHelpTipLogged()
+            appendingLogger.verifyUsageAndHelpTipLogged()
         }
 
         it.should("display the name of the unrecognized option") {
@@ -126,7 +119,7 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
 
     it.describes("called with correct arguments") {
         it.beginsAll {
-            Mockito.`when`(mockCompiler.v.compile(any(), any()))
+            Mockito.`when`(mockCompiler.compile(any(), any()))
                     .thenReturn(CompilationResults.CompilationAttempted(
                             emptyList(), emptyList()))
         }
@@ -142,7 +135,7 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
         }
 
         it.should("call the compiler passing the parsed arguments") {
-            Mockito.verify(mockCompiler.v).compile(
+            Mockito.verify(mockCompiler).compile(
                     CompileOptions("dest"),
                     listOf("whatever.fjr"))
         }
@@ -150,7 +143,7 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
 
     it.describes("receiving an InvalidFileExtension response from the compiler") {
         it.beginsAll {
-            Mockito.`when`(mockCompiler.v.compile(any(), any()))
+            Mockito.`when`(mockCompiler.compile(any(), any()))
                     .thenReturn(CompilationResults.CompilationNotAttempted(listOf(
                             ProblematicFile.BasicFileIssue.InvalidFileExtension("../whatever.java"))))
         }
@@ -176,7 +169,7 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
 
     it.describes("receiving a FileNotFound response from the compiler") {
         it.beginsAll {
-            Mockito.`when`(mockCompiler.v.compile(any(), any()))
+            Mockito.`when`(mockCompiler.compile(any(), any()))
                     .thenReturn(CompilationResults.CompilationNotAttempted(listOf(
                             ProblematicFile.BasicFileIssue.FileNotFound("../whatever.fjr"))))
         }
@@ -202,7 +195,7 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
 
     it.describes("receiving a CouldNotOpenFile response from the compiler") {
         it.beginsAll {
-            Mockito.`when`(mockCompiler.v.compile(any(), any()))
+            Mockito.`when`(mockCompiler.compile(any(), any()))
                     .thenReturn(CompilationResults.CompilationNotAttempted(listOf(
                             ProblematicFile.BasicFileIssue.CouldNotOpenFile("../whatever.fjr",
                                     IOException("test exception message")))))
@@ -229,7 +222,7 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
 
     it.describes("receiving a ParsingFileIssue response from the compiler") {
         it.beginsAll {
-            Mockito.`when`(mockCompiler.v.compile(any(), any()))
+            Mockito.`when`(mockCompiler.compile(any(), any()))
                     .thenReturn(CompilationResults.CompilationNotAttempted(listOf(
                             ProblematicFile.ParsingFileIssue("../whatever.fjr", listOf(
                                     SyntaxError(1, 2, "expected 'def'"),
@@ -259,7 +252,7 @@ class CompilerCliSpec : SpecnazKotlinJUnit("CompilerCli#compile", {
 
     it.describes("receiving a CompilationAttempted with errors response from the compiler") {
         it.beginsAll {
-            Mockito.`when`(mockCompiler.v.compile(any(), any()))
+            Mockito.`when`(mockCompiler.compile(any(), any()))
                     .thenReturn(CompilationResults.CompilationAttempted(emptyList(), listOf(
                             CodeGenResult.Failure(InputFile("../whatever.fjr"), File("xxx"), IOException("could not write file 'xxx'")))))
 

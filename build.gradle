@@ -35,7 +35,7 @@ def kotlin_subprojects = ['fbc-core', 'fbc-cli']
 configure(subprojects.findAll { subproject ->
         kotlin_subprojects.any { subproject.name.contains(it) }}) {
     buildscript {
-        ext.kotlin_version = '1.1.4-3'
+        ext.kotlin_version = '1.2.0'
 
         repositories {
             mavenCentral()
@@ -50,6 +50,7 @@ configure(subprojects.findAll { subproject ->
 
     dependencies {
         compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+        compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
         testCompile 'junit:junit:4.12'
         testCompile 'org.specnaz:specnaz-kotlin-junit:1.2-alpha2'
@@ -60,7 +61,7 @@ configure(subprojects.findAll { subproject ->
 }
 
 buildscript {
-    ext.kotlin_version = '1.1.4-3'
+    ext.kotlin_version = '1.2.0'
 
     repositories {
         mavenCentral()
