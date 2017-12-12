@@ -1267,6 +1267,21 @@ public class FujureParser extends Parser {
 			this.result = ctx.result;
 		}
 	}
+	public static class LiteralExprContext extends ExprContext {
+		public LiteralContext p_2_1;
+		public LiteralContext literal() {
+			return getRuleContext(LiteralContext.class,0);
+		}
+		public LiteralExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterLiteralExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitLiteralExpr(this);
+		}
+	}
 	public static class VariableExprContext extends ExprContext {
 		public ValRefContext p_1_1;
 		public ValRefContext valRef() {
@@ -1280,21 +1295,6 @@ public class FujureParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitVariableExpr(this);
-		}
-	}
-	public static class ExprLiteralContext extends ExprContext {
-		public LiteralContext p_2_1;
-		public LiteralContext literal() {
-			return getRuleContext(LiteralContext.class,0);
-		}
-		public ExprLiteralContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterExprLiteral(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitExprLiteral(this);
 		}
 	}
 
@@ -1320,12 +1320,12 @@ public class FujureParser extends Parser {
 			case JCHAR:
 			case INTEGER:
 			case STRING:
-				_localctx = new ExprLiteralContext(_localctx);
+				_localctx = new LiteralExprContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(155);
-				((ExprLiteralContext)_localctx).p_2_1 = literal();
-				 ((ExprLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral(((ExprLiteralContext)_localctx).p_2_1.result); 
+				((LiteralExprContext)_localctx).p_2_1 = literal();
+				 ((LiteralExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr(((LiteralExprContext)_localctx).p_2_1.result); 
 				}
 				break;
 			default:

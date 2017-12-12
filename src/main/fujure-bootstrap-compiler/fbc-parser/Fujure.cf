@@ -25,7 +25,7 @@ separator nonempty TypeSpecFragm "." ;
 TypeSpecFragment . TypeSpecFragm ::= JID ;
 
 VariableExpr      . Expr ::= ValRef ;
-ExprLiteral       . Expr ::= Literal ;
+LiteralExpr       . Expr ::= Literal ;
 
 ValueRef . ValRef ::= [ValRefFragm] ;
 separator nonempty ValRefFragm "." ;

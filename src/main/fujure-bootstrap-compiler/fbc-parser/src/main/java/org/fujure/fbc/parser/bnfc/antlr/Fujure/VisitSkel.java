@@ -122,8 +122,8 @@ public class VisitSkel
     { /* Code For VariableExpr Goes Here */
       p.valref_.accept(new ValRefVisitor<R,A>(), arg);
       return null;
-    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral p, A arg)
-    { /* Code For ExprLiteral Goes Here */
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg)
+    { /* Code For LiteralExpr Goes Here */
       p.literal_.accept(new LiteralVisitor<R,A>(), arg);
       return null;
     }

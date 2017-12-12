@@ -304,13 +304,13 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExprLiteral(FujureParser.ExprLiteralContext ctx) { }
+	@Override public void enterLiteralExpr(FujureParser.LiteralExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExprLiteral(FujureParser.ExprLiteralContext ctx) { }
+	@Override public void exitLiteralExpr(FujureParser.LiteralExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

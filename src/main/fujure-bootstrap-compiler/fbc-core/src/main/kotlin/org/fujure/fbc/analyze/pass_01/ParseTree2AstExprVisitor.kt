@@ -5,7 +5,7 @@ import org.fujure.fbc.ast.ValueReference
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral
@@ -31,7 +31,7 @@ object ParseTree2AstExprVisitor :
         }
     }
 
-    override fun visit(exprLiteral: ExprLiteral, arg: Unit): Expr {
+    override fun visit(exprLiteral: LiteralExpr, arg: Unit): Expr {
         return exprLiteral.literal_.accept(this, Unit)
     }
 

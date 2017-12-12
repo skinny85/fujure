@@ -119,7 +119,7 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
       r = combine(p.valref_.accept(this, arg), r, arg);
       return r;
     }
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprLiteral p, A arg) {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg) {
       R r = leaf(arg);
       r = combine(p.literal_.accept(this, arg), r, arg);
       return r;
