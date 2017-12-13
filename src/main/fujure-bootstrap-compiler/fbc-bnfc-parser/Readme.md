@@ -6,44 +6,13 @@ The actual parsing algorithm is implemented by delegating to
 
 Since this is generated code, don't edit it by hand.
 To regenerate these files after a change to `Fujure.cf`,
-follow this procedure (while in the same directory this `Readme` is in):
+issue a command in this directory similar to:
 
-1. Remove the old generated files:
-
-        rm -fvr src/main/java/*
-
-2. Invoke BNFC:
-
-        bnfc --java --antlr4 -m -o src/main/java -p org.fujure.fbc.parser.bnfc.antlr Fujure.cf
-
-3. There is a bug in BNFC that makes it fail for Char and String-based productions.
-
-    To fix it, you need to edit the `src/main/java/org/fujure/fbc/parser/bnfc/antlr/Fujure/FujureLexer.g4` file,
-    to change the incorrect escape sequences.
-    So, from this on line 20:
-    
-        JCHAR : '\''~['\'']*'\'';
-    
-    to this:
-    
-        JCHAR : '\''~[']*'\'';
-    
-    and this on line 39:
-    
-        STRINGTEXT : ~[\"\\] -> more;
-    
-    to this:
-    
-        STRINGTEXT : ~["\\] -> more;
-
-4. Invoke the auto-generated `Makefile`:
-
-        CLASSPATH=`pwd`/lib/* make -C src/main/java
-
-5. (Optional) Invoke the `clean` target from the generated `Makefile`
-    (it only removes the compiled `.class` files, nothing more):
-
-        make clean -C src/main/java
+```bash
+bnfc --java --antlr4 -m -o src/main/java -p org.fujure.fbc.parser.bnfc.antlr Fujure.cf
+CLASSPATH=`pwd`/lib/* make -C src/main/java
+make clean -C src/main/java # this only removes the generated .class files
+```
 
 After `make` succeeds, Gradle should take over compiling the generated files.
 After your change, try to build the project with Gradle;

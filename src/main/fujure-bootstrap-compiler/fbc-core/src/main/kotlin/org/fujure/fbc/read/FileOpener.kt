@@ -1,7 +1,7 @@
 package org.fujure.fbc.read
 
+import org.antlr.v4.runtime.ANTLRFileStream
 import org.antlr.v4.runtime.CharStream
-import org.antlr.v4.runtime.CharStreams
 import org.fujure.fbc.ProblematicFile.BasicFileIssue
 import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.common.NameValidator
@@ -52,7 +52,7 @@ object SimpleFileOpener : FileOpener {
 
         val stream: CharStream
         try {
-            stream = CharStreams.fromFileName(filePath)
+            stream = ANTLRFileStream(filePath)
         } catch (e: FileNotFoundException) {
             return FileOpenResult.Failure(
                     BasicFileIssue.FileNotFound(filePath))

@@ -1,4 +1,4 @@
-// Generated from org/fujure/fbc/parser/bnfc/antlr/Fujure/FujureParser.g4 by ANTLR 4.7
+// Generated from org/fujure/fbc/parser/bnfc/antlr/Fujure/FujureParser.g4 by ANTLR 4.5.1
 package org.fujure.fbc.parser.bnfc.antlr.Fujure;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 

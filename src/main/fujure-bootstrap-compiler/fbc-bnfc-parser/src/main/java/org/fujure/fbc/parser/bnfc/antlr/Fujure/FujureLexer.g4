@@ -17,7 +17,7 @@ Surrogate_id_SYMB_8 : 'unit' ;
 
 
 JID : ('_'|'$'|LETTER)('_'|'$'|LETTER|DIGIT)*;
-JCHAR : '\''~[']*'\'';
+JCHAR : '\''(~[\'\\]|'\\'[\'\\nt])'\'';
 // String token type
 STRING : '"' -> more, mode(STRINGMODE);
 
@@ -36,4 +36,4 @@ STRESCAPED : Escapable  -> more, popMode ;
 mode STRINGMODE;
 STRINGESC : '\\' -> more , pushMode(STRESCAPE);
 STRINGEND : '"' ->  type(STRING), mode(DEFAULT_MODE);
-STRINGTEXT : ~["\\] -> more;
+STRINGTEXT : ~[\"\\] -> more;

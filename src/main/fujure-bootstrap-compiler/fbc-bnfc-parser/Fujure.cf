@@ -40,4 +40,4 @@ StringLiteral     . Literal ::= String ;
 
 token JID ('_' | '$' | letter) ('_' | '$' | letter | digit)* ;
 
-token JCHAR '\'' (char - '\'')* '\'' ;
+token JCHAR '\'' ((char - ["'\\"]) | ('\\' ["'\\nt"])) '\'' ;

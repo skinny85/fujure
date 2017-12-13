@@ -1,4 +1,4 @@
-// Generated from org/fujure/fbc/parser/bnfc/antlr/Fujure/FujureParser.g4 by ANTLR 4.7
+// Generated from org/fujure/fbc/parser/bnfc/antlr/Fujure/FujureParser.g4 by ANTLR 4.5.1
 package org.fujure.fbc.parser.bnfc.antlr.Fujure;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class FujureParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.5.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -156,7 +156,6 @@ public class FujureParser extends Parser {
 		enterRule(_localctx, 0, RULE_fileContents);
 		try {
 			setState(52);
-			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,0,_ctx) ) {
 			case 1:
 				_localctx = new FileInNamedPackageContext(_localctx);
@@ -303,7 +302,6 @@ public class FujureParser extends Parser {
 		enterRule(_localctx, 4, RULE_listPkgFragm);
 		try {
 			setState(65);
-			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 			case 1:
 				_localctx = new ListPkgFragm_AppendLastContext(_localctx);
@@ -655,7 +653,6 @@ public class FujureParser extends Parser {
 		enterRule(_localctx, 14, RULE_listImportFragm);
 		try {
 			setState(97);
-			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
 			case 1:
 				_localctx = new ListImportFragm_AppendLastContext(_localctx);
@@ -1012,7 +1009,6 @@ public class FujureParser extends Parser {
 		enterRule(_localctx, 24, RULE_valDef);
 		try {
 			setState(134);
-			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
 			case 1:
 				_localctx = new UntypedValueDefContext(_localctx);
@@ -1167,7 +1163,6 @@ public class FujureParser extends Parser {
 		enterRule(_localctx, 28, RULE_listTypeSpecFragm);
 		try {
 			setState(147);
-			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				_localctx = new ListTypeSpecFragm_AppendLastContext(_localctx);
@@ -1303,7 +1298,6 @@ public class FujureParser extends Parser {
 		enterRule(_localctx, 32, RULE_expr);
 		try {
 			setState(158);
-			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case JID:
 				_localctx = new VariableExprContext(_localctx);
@@ -1449,7 +1443,6 @@ public class FujureParser extends Parser {
 		enterRule(_localctx, 36, RULE_listValRefFragm);
 		try {
 			setState(171);
-			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
 			case 1:
 				_localctx = new ListValRefFragm_AppendLastContext(_localctx);
@@ -1630,7 +1623,6 @@ public class FujureParser extends Parser {
 		enterRule(_localctx, 40, RULE_literal);
 		try {
 			setState(188);
-			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INTEGER:
 				_localctx = new IntLiteralContext(_localctx);
@@ -1726,7 +1718,7 @@ public class FujureParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\22\u00c1\4\2\t\2"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\22\u00c1\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3"+
@@ -1740,10 +1732,10 @@ public class FujureParser extends Parser {
 		"\3\22\3\22\5\22\u00a1\n\22\3\23\3\23\3\23\3\24\3\24\3\24\3\24\3\24\3\24"+
 		"\3\24\3\24\5\24\u00ae\n\24\3\25\3\25\3\25\3\26\3\26\3\26\3\26\3\26\3\26"+
 		"\3\26\3\26\3\26\3\26\3\26\3\26\5\26\u00bf\n\26\3\26\2\4\f\26\27\2\4\6"+
-		"\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*\2\2\2\u00b9\2\66\3\2\2\2\48\3"+
-		"\2\2\2\6C\3\2\2\2\bE\3\2\2\2\nH\3\2\2\2\fK\3\2\2\2\16W\3\2\2\2\20c\3\2"+
-		"\2\2\22e\3\2\2\2\24h\3\2\2\2\26k\3\2\2\2\30w\3\2\2\2\32\u0088\3\2\2\2"+
-		"\34\u008a\3\2\2\2\36\u0095\3\2\2\2 \u0097\3\2\2\2\"\u00a0\3\2\2\2$\u00a2"+
+		"\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*\2\2\u00b9\2\66\3\2\2\2\48\3\2"+
+		"\2\2\6C\3\2\2\2\bE\3\2\2\2\nH\3\2\2\2\fK\3\2\2\2\16W\3\2\2\2\20c\3\2\2"+
+		"\2\22e\3\2\2\2\24h\3\2\2\2\26k\3\2\2\2\30w\3\2\2\2\32\u0088\3\2\2\2\34"+
+		"\u008a\3\2\2\2\36\u0095\3\2\2\2 \u0097\3\2\2\2\"\u00a0\3\2\2\2$\u00a2"+
 		"\3\2\2\2&\u00ad\3\2\2\2(\u00af\3\2\2\2*\u00be\3\2\2\2,-\7\t\2\2-.\5\4"+
 		"\3\2./\5\n\6\2/\60\5\24\13\2\60\61\b\2\1\2\61\67\3\2\2\2\62\63\5\n\6\2"+
 		"\63\64\5\24\13\2\64\65\b\2\1\2\65\67\3\2\2\2\66,\3\2\2\2\66\62\3\2\2\2"+
