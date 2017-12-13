@@ -19,8 +19,8 @@ public class FujureParser extends Parser {
 	public static final int
 		Surrogate_id_SYMB_0=1, Surrogate_id_SYMB_1=2, Surrogate_id_SYMB_2=3, Surrogate_id_SYMB_3=4, 
 		Surrogate_id_SYMB_4=5, Surrogate_id_SYMB_5=6, Surrogate_id_SYMB_6=7, Surrogate_id_SYMB_7=8, 
-		Surrogate_id_SYMB_8=9, JID=10, JCHAR=11, INTEGER=12, WS=13, ErrorToken=14, 
-		STRING=15, STRINGESC=16;
+		Surrogate_id_SYMB_8=9, JID=10, JCHAR=11, JSTRING=12, INTEGER=13, WS=14, 
+		ErrorToken=15;
 	public static final int
 		RULE_fileContents = 0, RULE_pkgName = 1, RULE_listPkgFragm = 2, RULE_pkgFragm = 3, 
 		RULE_imports = 4, RULE_listImport = 5, RULE_import_ = 6, RULE_listImportFragm = 7, 
@@ -37,13 +37,13 @@ public class FujureParser extends Parser {
 
 	private static final String[] _LITERAL_NAMES = {
 		null, "'.'", "'='", "':'", "'def'", "'false'", "'import'", "'package'", 
-		"'true'", "'unit'", null, null, null, null, null, "'\"'", "'\\'"
+		"'true'", "'unit'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "Surrogate_id_SYMB_0", "Surrogate_id_SYMB_1", "Surrogate_id_SYMB_2", 
 		"Surrogate_id_SYMB_3", "Surrogate_id_SYMB_4", "Surrogate_id_SYMB_5", "Surrogate_id_SYMB_6", 
-		"Surrogate_id_SYMB_7", "Surrogate_id_SYMB_8", "JID", "JCHAR", "INTEGER", 
-		"WS", "ErrorToken", "STRING", "STRINGESC"
+		"Surrogate_id_SYMB_7", "Surrogate_id_SYMB_8", "JID", "JCHAR", "JSTRING", 
+		"INTEGER", "WS", "ErrorToken"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -1312,8 +1312,8 @@ public class FujureParser extends Parser {
 			case Surrogate_id_SYMB_7:
 			case Surrogate_id_SYMB_8:
 			case JCHAR:
+			case JSTRING:
 			case INTEGER:
-			case STRING:
 				_localctx = new LiteralExprContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
@@ -1557,7 +1557,7 @@ public class FujureParser extends Parser {
 	}
 	public static class StringLiteralContext extends LiteralContext {
 		public Token p_6_1;
-		public TerminalNode STRING() { return getToken(FujureParser.STRING, 0); }
+		public TerminalNode JSTRING() { return getToken(FujureParser.JSTRING, 0); }
 		public StringLiteralContext(LiteralContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1669,13 +1669,13 @@ public class FujureParser extends Parser {
 				 ((CharLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral(((CharLiteralContext)_localctx).p_5_1.getText()); 
 				}
 				break;
-			case STRING:
+			case JSTRING:
 				_localctx = new StringLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(186);
-				((StringLiteralContext)_localctx).p_6_1 = match(STRING);
-				 ((StringLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral(((StringLiteralContext)_localctx).p_6_1.getText().substring(1, ((StringLiteralContext)_localctx).p_6_1.getText().length()-1)); 
+				((StringLiteralContext)_localctx).p_6_1 = match(JSTRING);
+				 ((StringLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral(((StringLiteralContext)_localctx).p_6_1.getText()); 
 				}
 				break;
 			default:
@@ -1718,7 +1718,7 @@ public class FujureParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\22\u00c1\4\2\t\2"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\21\u00c1\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3"+
@@ -1766,9 +1766,9 @@ public class FujureParser extends Parser {
 		"(\25\2\u00a9\u00aa\7\3\2\2\u00aa\u00ab\5&\24\2\u00ab\u00ac\b\24\1\2\u00ac"+
 		"\u00ae\3\2\2\2\u00ad\u00a5\3\2\2\2\u00ad\u00a8\3\2\2\2\u00ae\'\3\2\2\2"+
 		"\u00af\u00b0\7\f\2\2\u00b0\u00b1\b\25\1\2\u00b1)\3\2\2\2\u00b2\u00b3\7"+
-		"\16\2\2\u00b3\u00bf\b\26\1\2\u00b4\u00b5\7\13\2\2\u00b5\u00bf\b\26\1\2"+
+		"\17\2\2\u00b3\u00bf\b\26\1\2\u00b4\u00b5\7\13\2\2\u00b5\u00bf\b\26\1\2"+
 		"\u00b6\u00b7\7\n\2\2\u00b7\u00bf\b\26\1\2\u00b8\u00b9\7\7\2\2\u00b9\u00bf"+
-		"\b\26\1\2\u00ba\u00bb\7\r\2\2\u00bb\u00bf\b\26\1\2\u00bc\u00bd\7\21\2"+
+		"\b\26\1\2\u00ba\u00bb\7\r\2\2\u00bb\u00bf\b\26\1\2\u00bc\u00bd\7\16\2"+
 		"\2\u00bd\u00bf\b\26\1\2\u00be\u00b2\3\2\2\2\u00be\u00b4\3\2\2\2\u00be"+
 		"\u00b6\3\2\2\2\u00be\u00b8\3\2\2\2\u00be\u00ba\3\2\2\2\u00be\u00bc\3\2"+
 		"\2\2\u00bf+\3\2\2\2\f\66CTct\u0088\u0095\u00a0\u00ad\u00be";

@@ -36,8 +36,10 @@ UnitLiteral       . Literal ::= "unit" ;
 BoolTrueLiteral   . Literal ::= "true" ;
 BoolFalseLiteral  . Literal ::= "false" ;
 CharLiteral       . Literal ::= JCHAR ;
-StringLiteral     . Literal ::= String ;
+StringLiteral     . Literal ::= JSTRING ;
 
 token JID ('_' | '$' | letter) ('_' | '$' | letter | digit)* ;
 
 token JCHAR '\'' ((char - ["'\\"]) | ('\\' ["'\\nt"])) '\'' ;
+
+token JSTRING '"' ((char - ["\"\\"]) | ('\\' ["\"\\nt"]))* '"' ;

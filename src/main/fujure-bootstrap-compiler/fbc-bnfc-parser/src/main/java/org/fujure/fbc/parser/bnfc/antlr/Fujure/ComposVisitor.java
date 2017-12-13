@@ -166,7 +166,7 @@ public class ComposVisitor<A> implements
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral(jchar_);
     }    public Literal visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral p, A arg)
     {
-      String string_ = p.string_;
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral(string_);
+      String jstring_ = p.jstring_;
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral(jstring_);
     }
 }

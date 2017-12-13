@@ -152,8 +152,8 @@ class ParserSpec : SpecnazKotlinJUnit("Parser", {
                     ANTLRInputStream("def s = \"\"\"")))
         }
 
-        it.should("return a ParsingResult\$Success") {
-            assume(result).isA<ParsingResult.Success>()
+        it.should("fail parsing") {
+            assume(result).isA<ParsingResult.Failure>()
         }
     }
 })

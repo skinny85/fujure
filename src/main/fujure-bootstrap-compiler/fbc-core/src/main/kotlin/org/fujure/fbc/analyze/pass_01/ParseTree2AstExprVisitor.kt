@@ -56,6 +56,7 @@ object ParseTree2AstExprVisitor :
     }
 
     override fun visit(stringLiteral: StringLiteral, arg: Unit): Expr {
-        return Expr.StringLiteral(stringLiteral.string_)
+        // we need to remove the leading and trailing quotes from the String literal
+        return Expr.StringLiteral(stringLiteral.jstring_.substring(1, stringLiteral.jstring_.length - 1))
     }
 }
