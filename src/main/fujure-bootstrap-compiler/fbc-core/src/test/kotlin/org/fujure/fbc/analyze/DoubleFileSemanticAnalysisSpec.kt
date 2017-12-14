@@ -6,6 +6,7 @@ import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.FileContents
+import org.fujure.fbc.ast.Import
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
@@ -190,6 +191,60 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
         it.should("parse the value without the declared type correctly") {
             assertThat(secondFileContents.defs).containsExactly(
                     Def.ValueDef.SimpleValueDef("x", null, Expr.ValueReferenceExpr(ValueReference("File1", "a"))))
+        }
+    }
+
+    it.describes("called with an import from the default package") {
+        it.beginsAll {
+            analyzeProgramsExpectingErrors(
+                    """
+                        def a = 1
+                    """,
+                    """
+                        package inner
+
+                        import File1
+
+                        def x = File1.a
+                    """)
+        }
+
+        it.should("parse the file in the default package correctly") {
+            assertFirstProgramIsCorrect()
+        }
+
+        it.should("report an UnresolvedImport error for the importing file") {
+            assertThat(secondFileErrors).contains(
+                    SemanticError.UnresolvedImport(Import("File1")))
+        }
+    }
+
+    it.describes("called with a program referencing a value from another package with an import") {
+        it.beginsAll {
+            analyzeProgramsSuccessfully(
+                    """
+                       package com.example
+
+                       def a: Int = 42
+                    """,
+                    """
+                        package com.example.inner
+
+                        import com.example.File1
+
+                        def x: Int = File1.a
+                    """)
+        }
+
+        it.should("parse the imported program correctly") {
+            assertThat(firstFileContents.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.IntLiteral(42)))
+        }
+
+        it.should("parse the importing program correctly") {
+            assertThat(secondFileContents.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("x", TypeReference("Int"), Expr.ValueReferenceExpr(
+                            ValueReference("File1", "a"))))
         }
     }
 })

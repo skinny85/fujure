@@ -2,6 +2,7 @@ package org.fujure.fbc.ast
 
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
+import org.fujure.fbc.analyze.SemanticError
 import kotlin.properties.Delegates
 
 class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
@@ -13,45 +14,39 @@ class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
         currentFile = fileSymbolTables.find { it.inputFile == inputFile }!!
     }
 
-    fun lookup(ref: ValueReference, anchorVariable: String, chain: List<ValueCoordinates> = emptyList()): LookupResult {
-        val targetFile: FileSymbolTable?
-        val simpleName: String
-        val anchor: String?
-
-        when (ref.ids.size) {
-            1 -> {
-                targetFile = currentFile
-                simpleName = ref.ids[0]
-                anchor = anchorVariable
-            }
-            2 -> {
-                targetFile = findFile(currentFile.packageName, ref.ids[0])
-                simpleName = ref.ids[1]
-                anchor = if (targetFile == currentFile) anchorVariable else null
-            }
-            else -> {
-                targetFile = null
-                simpleName = "not used"
-                anchor = null
-            }
-        }
-        return if (targetFile == null) {
-            LookupResult.RefNotFound
+    fun registerImport(import: Import): SemanticError.UnresolvedImport? {
+        if (import.size == 1) {
+            // you cannot import classes from the default package in Java
+            // (see more: https://stackoverflow.com/a/2193298),
+            // so we ban it in Fujure as well
+            return SemanticError.UnresolvedImport(import)
         } else {
-            val lookupResult = targetFile.lookup(simpleName, anchor, this, chain)
-            when (lookupResult) {
-                is FileSymbolTable.LookupResult.RefNotFound ->
-                    LookupResult.RefNotFound
-                is FileSymbolTable.LookupResult.ForwardReference ->
-                    LookupResult.ForwardReference(simpleName)
-                is FileSymbolTable.LookupResult.SelfReference ->
-                    LookupResult.SelfReference(simpleName)
-                is FileSymbolTable.LookupResult.CyclicReference ->
-                    LookupResult.CyclicReference(lookupResult.cycle)
-                is FileSymbolTable.LookupResult.RefFound ->
-                    LookupResult.RefFound(lookupResult.qualifiedType)
+            val packageName = import.allButLastFragments()
+            val moduleName = import.lastFragment()
+
+            val importedModule = findFile(packageName, moduleName)
+            if (importedModule == null) {
+                return SemanticError.UnresolvedImport(import)
+            } else {
+                currentFile.registerImport(moduleName, importedModule)
+                return null
             }
         }
+    }
+
+    fun lookup(ref: ValueReference, anchorVariable: String? = null, chain: List<ValueCoordinates> = emptyList()): LookupResult {
+        val fileLookupResult = currentFile.lookup(ref, anchorVariable, this, chain)
+        if (fileLookupResult is LookupResult.RefNotFound &&
+                ref.ids.size > 1) {
+            // perhaps it's a reference to a non-imported module in the same package?
+            val candidateModule = findFile(currentFile.packageName, ref.ids[0])
+            if (candidateModule != null)
+                return candidateModule.lookup(ref, anchorVariable, this, chain)
+            // ToDo: there's a very subtle edge case here - what if Filex was imported,
+            // but didn't contain the requested field? In that case, we shouldn't search
+            // for Filex in the same package - that would be wrong!
+        }
+        return fileLookupResult
     }
 
     fun findType(typeReference: TypeReference): QualifiedType? {
@@ -82,6 +77,6 @@ class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
         data class ForwardReference(val name: String) : LookupResult()
         data class SelfReference(val name: String) : LookupResult()
         data class CyclicReference(val cycle: List<ValueCoordinates>) : LookupResult()
-        data class RefFound(val qualifiedType: QualifiedType?) : LookupResult()
+        data class RefFound(val qualifiedType: QualifiedType?, val module: Module) : LookupResult()
     }
 }

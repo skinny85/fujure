@@ -168,4 +168,18 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
             assertParsingFailed()
         }
     }
+
+    it.describes("called with import statements") {
+        it.beginsAll {
+            parse("""
+                import a.b.c
+                import d.e.
+                  f
+            """)
+        }
+
+        it.should("parse all import statements correctly") {
+            assertParsingSucceeded()
+        }
+    }
 })

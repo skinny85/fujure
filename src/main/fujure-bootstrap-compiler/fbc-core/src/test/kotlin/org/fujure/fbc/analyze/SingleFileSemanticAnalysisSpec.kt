@@ -304,19 +304,17 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
         }
     }
 
-    it.describes("called with an import statement") {
+    it.describes("called with an import of a non-existent module") {
         it.beginsAll {
-            analyzeProgramSuccessfully("""
-                import a.b.c
-                import d.e.
-                  f
+            analyzeProgramExpectingErrors("""
+                import com.example.File2
             """)
         }
 
-        it.should("parse all import statements correctly") {
-            assertThat(fileContents.imports).containsExactly(
-                    Import("a", "b", "c"),
-                    Import("d", "e", "f"))
+        it.should("return an UnresolvedImport error") {
+            assertThat(errors).containsExactly(
+                    SemanticError.UnresolvedImport(
+                            Import("com", "example", "File2")))
         }
     }
 })

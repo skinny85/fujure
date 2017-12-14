@@ -35,10 +35,20 @@ object VerificationAnalysis {
         symbolTable.enterContext(ast.inputFile)
 
         val errors = mutableListOf<SemanticError>()
+
+        // handle imports
+        for (import in ast.fileContents.imports) {
+            val importError = symbolTable.registerImport(import)
+            if (importError != null)
+                errors.add(importError)
+        }
+
+        // handle definitions
         for (def in ast.fileContents.defs) {
             val defErrors = analyze(def, symbolTable, ast.fileContents.packageName, ast.inputFile.moduleName)
             errors.addAll(defErrors)
         }
+
         return if (errors.isEmpty())
             null
         else

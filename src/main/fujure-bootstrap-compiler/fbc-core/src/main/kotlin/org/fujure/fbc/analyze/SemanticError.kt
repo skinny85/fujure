@@ -1,5 +1,6 @@
 package org.fujure.fbc.analyze
 
+import org.fujure.fbc.ast.Import
 import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueCoordinates
@@ -15,6 +16,8 @@ sealed class SemanticError {
 
     data class DuplicateDefinition(val name: String) :
             SemanticError()
+
+    data class UnresolvedImport(val import: Import) : SemanticError()
 
     data class UnresolvedReference(val context: TypeErrorContext, val valueReference: ValueReference) :
             SemanticError()
