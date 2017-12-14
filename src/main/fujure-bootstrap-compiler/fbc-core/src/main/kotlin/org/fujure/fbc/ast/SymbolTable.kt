@@ -2,6 +2,7 @@ package org.fujure.fbc.ast
 
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
+import org.fujure.fbc.analyze.SemanticError
 import kotlin.properties.Delegates
 
 class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
@@ -11,6 +12,13 @@ class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
         // ToDo this needs to be better
         // (for example, return something nullable so the clients can assert instead)
         currentFile = fileSymbolTables.find { it.inputFile == inputFile }!!
+    }
+
+    fun registerImport(import: Import): SemanticError.ImportError? {
+        if (import.fragments.size == 1)
+            return SemanticError.ImportError.UnresolvedImport(import)
+        else
+            throw UnsupportedOperationException()
     }
 
     fun lookup(ref: ValueReference, anchorVariable: String, chain: List<ValueCoordinates> = emptyList()): LookupResult {

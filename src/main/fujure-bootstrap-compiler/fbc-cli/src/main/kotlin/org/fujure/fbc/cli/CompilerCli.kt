@@ -114,6 +114,10 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
                     "can't be a single underscore, nor one of the reserved keywords"
         is SemanticError.DuplicateDefinition ->
             "${semanticFileIssue.name} is already defined"
+        is SemanticError.ImportError.UnresolvedImport ->
+            "Unresolved import: '${semanticFileIssue.import.inStringForm()}'"
+        is SemanticError.ImportError.ClashingImport ->
+            "Clashing import: '${semanticFileIssue.import.inStringForm()}'"
         is SemanticError.TypeNotFound ->
             "Error ${contextMessage(semanticFileIssue.context)}: " +
                     "Unresolved type reference ${semanticFileIssue.typeReference.inStringForm()}"
