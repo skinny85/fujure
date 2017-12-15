@@ -14,11 +14,8 @@ class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
         currentFile = fileSymbolTables.find { it.inputFile == inputFile }!!
     }
 
-    fun registerImport(import: Import): SemanticError.ImportError? {
-        if (import.fragments.size == 1)
-            return SemanticError.ImportError.UnresolvedImport(import)
-        else
-            throw UnsupportedOperationException()
+    fun registerImport(import: Import): SemanticError.UnresolvedImport? {
+        return currentFile.registerImport(import)
     }
 
     fun lookup(ref: ValueReference, anchorVariable: String, chain: List<ValueCoordinates> = emptyList()): LookupResult {

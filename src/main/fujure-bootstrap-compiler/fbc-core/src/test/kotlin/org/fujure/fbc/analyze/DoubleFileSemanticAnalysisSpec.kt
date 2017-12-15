@@ -215,7 +215,7 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
 
         it.should("report an UnresolvedImport error for the importing file") {
             assertThat(secondFileErrors).contains(
-                    SemanticError.ImportError.UnresolvedImport(Import("File1")))
+                    SemanticError.UnresolvedImport(Import("File1")))
         }
     }
 })

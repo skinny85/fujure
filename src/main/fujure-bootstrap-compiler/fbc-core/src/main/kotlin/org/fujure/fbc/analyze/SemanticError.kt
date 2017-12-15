@@ -17,10 +17,7 @@ sealed class SemanticError {
     data class DuplicateDefinition(val name: String) :
             SemanticError()
 
-    sealed class ImportError : SemanticError() {
-        data class UnresolvedImport(val import: Import) : ImportError()
-        data class ClashingImport(val import: Import) : ImportError()
-    }
+    data class UnresolvedImport(val import: Import) : SemanticError()
 
     data class UnresolvedReference(val context: TypeErrorContext, val valueReference: ValueReference) :
             SemanticError()
