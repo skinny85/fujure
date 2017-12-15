@@ -11,16 +11,8 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
         ValueTypeHolder(pair.first, pair.second)
     }
 
-    fun registerImport(import: Import): SemanticError.UnresolvedImport? {
-        if (import.size == 1) {
-            // you cannot import classes from the default package in Java
-            // (see more: https://stackoverflow.com/a/2193298),
-            // so we ban it in Fujure as well
-            return SemanticError.UnresolvedImport(import)
-        } else {
-            val packageName = import.allButLastFragment()
-            throw UnsupportedOperationException()
-        }
+    fun registerImport(name: String, module: FileSymbolTable): Boolean {
+        throw UnsupportedOperationException()
     }
 
     fun lookup(id: String, anchor: String?, symbolTable: SymbolTable, chain: List<ValueCoordinates>): LookupResult {

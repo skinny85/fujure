@@ -6,6 +6,7 @@ import org.fujure.fbc.analyze.TypeErrorContext.VariableDefinition
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.FileContents
+import org.fujure.fbc.ast.Import
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueReference
 import org.fujure.test.utils.Assumption.Companion.assume
@@ -300,6 +301,20 @@ class SingleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Single file Semantic 
                     SemanticError.UnresolvedReference(
                             VariableDefinition("a"),
                             ValueReference("DoesNotExist", "x")))
+        }
+    }
+
+    it.describes("called with an import of a non-existent module") {
+        it.beginsAll {
+            analyzeProgramExpectingErrors("""
+                import com.example.File2
+            """)
+        }
+
+        it.should("return an UnresolvedImport error") {
+            assertThat(errors).containsExactly(
+                    SemanticError.UnresolvedImport(
+                            Import("com", "example", "File2")))
         }
     }
 })

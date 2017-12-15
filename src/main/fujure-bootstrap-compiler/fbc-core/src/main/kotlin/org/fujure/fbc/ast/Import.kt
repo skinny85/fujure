@@ -8,5 +8,6 @@ data class Import(private val fragments: List<String>) {
 
     fun inStringForm() = fragments.joinToString(".")
 
-    fun allButLastFragment() = fragments.subList(0, size - 1).joinToString(".")
+    fun allButLastFragments() = fragments.subList(0, size - 1).joinToString(".")
+    fun lastFragment() = fragments.last()
 }

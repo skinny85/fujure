@@ -15,7 +15,23 @@ class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
     }
 
     fun registerImport(import: Import): SemanticError.UnresolvedImport? {
-        return currentFile.registerImport(import)
+        if (import.size == 1) {
+            // you cannot import classes from the default package in Java
+            // (see more: https://stackoverflow.com/a/2193298),
+            // so we ban it in Fujure as well
+            return SemanticError.UnresolvedImport(import)
+        } else {
+            val packageName = import.allButLastFragments()
+            val moduleName = import.lastFragment()
+
+            val importedModule = findFile(packageName, moduleName)
+            if (importedModule == null) {
+                return SemanticError.UnresolvedImport(import)
+            } else {
+                currentFile.registerImport(moduleName, importedModule)
+                return null
+            }
+        }
     }
 
     fun lookup(ref: ValueReference, anchorVariable: String, chain: List<ValueCoordinates> = emptyList()): LookupResult {
