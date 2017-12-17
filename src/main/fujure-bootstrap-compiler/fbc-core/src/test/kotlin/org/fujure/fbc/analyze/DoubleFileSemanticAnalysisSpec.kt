@@ -218,4 +218,33 @@ class DoubleFileSemanticAnalysisSpec : SpecnazKotlinJUnit("Double file Semantic 
                     SemanticError.UnresolvedImport(Import("File1")))
         }
     }
+
+    it.describes("called with a program referencing a value from another package with an import") {
+        it.beginsAll {
+            analyzeProgramsSuccessfully(
+                    """
+                       package com.example
+
+                       def a: Int = 42
+                    """,
+                    """
+                        package com.example.inner
+
+                        import com.example.File1
+
+                        def x: Int = File1.a
+                    """)
+        }
+
+        it.should("parse the imported program correctly") {
+            assertThat(firstFileContents.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("a", TypeReference("Int"), Expr.IntLiteral(42)))
+        }
+
+        it.should("parse the importing program correctly") {
+            assertThat(secondFileContents.defs).containsExactly(
+                    Def.ValueDef.SimpleValueDef("x", TypeReference("Int"), Expr.ValueReferenceExpr(
+                            ValueReference("File1", "a"))))
+        }
+    }
 })

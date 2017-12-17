@@ -3,39 +3,65 @@ package org.fujure.fbc.ast
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.analyze.pass_02.VerificationAnalysis
+import org.fujure.fbc.ast.SymbolTable.LookupResult.*
 import org.funktionale.either.Either
 
 class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMap<String, Pair<TypeReference?, Expr>>,
                       val packageName: String) {
-    private val simpleValues = simpleDeclarations.mapValues { (_, pair) ->
-        ValueTypeHolder(pair.first, pair.second)
-    }
+    private val names: LinkedHashMap<String, NameEntity> = LinkedHashMap(simpleDeclarations.mapValues { (_, pair) ->
+        NameEntity.ValueTypeHolder(pair.first, pair.second)
+    })
+
+    private val moduleName = inputFile.moduleName
 
     fun registerImport(name: String, module: FileSymbolTable): Boolean {
-        throw UnsupportedOperationException()
+        // ToDo verify that the imported name is not the same as this module name
+        return names.put(name, NameEntity.ImportedModule(module)) == null
     }
 
-    fun lookup(id: String, anchor: String?, symbolTable: SymbolTable, chain: List<ValueCoordinates>): LookupResult {
+    fun lookup(ref: ValueReference, anchor: String, symbolTable: SymbolTable, chain: List<ValueCoordinates>):
+            SymbolTable.LookupResult {
+        return when (ref.ids.size) {
+            1 -> {
+                lookup(ref.ids[0], anchor, symbolTable, chain)
+            }
+            2 -> {
+                val importedModule = findImport(ref.ids[0]) ?: if (ref.ids[0] == moduleName) this else null
+                importedModule?.lookup(ref.ids[1], if (importedModule == this) anchor else null, symbolTable, chain) ?:
+                        RefNotFound
+            }
+            else -> {
+                RefNotFound
+            }
+        }
+    }
+
+    fun lookup(id: String, anchor: String?, symbolTable: SymbolTable, chain: List<ValueCoordinates>):
+            SymbolTable.LookupResult {
         if (id == anchor)
-            return LookupResult.SelfReference
+            return SelfReference(id)
 
         var seenAnchor = false
-        var ret: LookupResult = LookupResult.RefNotFound
+        var ret: SymbolTable.LookupResult = RefNotFound
 
-        for ((valName, valHolder) in simpleValues) {
+        for ((valName, valHolder) in names) {
             if (valName == anchor) {
                 seenAnchor = true
             }
             if (valName == id) {
-                ret = if (seenAnchor) {
-                    LookupResult.ForwardReference
-                } else {
-                    try {
-                        val valueCoordinates = ValueCoordinates(packageName, inputFile.moduleName, id)
-                        val qualifiedType = valHolder.resolvedType(symbolTable, id, chain + valueCoordinates)
-                        LookupResult.RefFound(qualifiedType)
-                    } catch (e: CyclicReference) {
-                        LookupResult.CyclicReference(e.cycle)
+                when (valHolder) {
+                    is NameEntity.ValueTypeHolder -> {
+                        ret = if (seenAnchor) {
+                            ForwardReference(id)
+                        } else {
+                            try {
+                                val valueCoordinates = ValueCoordinates(packageName, inputFile.moduleName, id)
+                                val qualifiedType = valHolder.resolvedType(symbolTable, id, chain + valueCoordinates)
+                                RefFound(qualifiedType)
+                            } catch (e: CyclicReferenceException) {
+                                CyclicReference(e.cycle)
+                            }
+                        }
                     }
                 }
             }
@@ -44,30 +70,34 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
         return ret
     }
 
-    sealed class LookupResult {
-        object RefNotFound : LookupResult()
-        object ForwardReference : LookupResult()
-        object SelfReference : LookupResult()
-        data class CyclicReference(val cycle: List<ValueCoordinates>) : LookupResult()
-        data class RefFound(val qualifiedType: QualifiedType?) : LookupResult()
+    private fun findImport(moduleName: String): FileSymbolTable? {
+        val candidate = names[moduleName] /*?: return null*/
+        return if (candidate is NameEntity.ImportedModule)
+            candidate.fileSymbolTable
+        else
+            null
     }
 
-    private class ValueTypeHolder(declaredType: TypeReference?, initializer: Expr) {
-        private val valResolution = ValueResolution.fromDeclaration(declaredType, initializer)
-        private var resolved = false
-        private var resolvedType: QualifiedType? = null
+    sealed class NameEntity {
+        class ValueTypeHolder(declaredType: TypeReference?, initializer: Expr) : NameEntity() {
+            private val valResolution = ValueResolution.fromDeclaration(declaredType, initializer)
+            private var resolved = false
+            private var resolvedType: QualifiedType? = null
 
-        fun resolvedType(symbolTable: SymbolTable, valName: String, chain: List<ValueCoordinates>): QualifiedType? {
-            if (!resolved)
-                resolve(symbolTable, valName, chain)
+            fun resolvedType(symbolTable: SymbolTable, valName: String, chain: List<ValueCoordinates>): QualifiedType? {
+                if (!resolved)
+                    resolve(symbolTable, valName, chain)
 
-            return resolvedType
+                return resolvedType
+            }
+
+            private fun resolve(symbolTable: SymbolTable, valName: String, chain: List<ValueCoordinates>) {
+                resolvedType = valResolution.resolve(symbolTable, valName, chain)
+                resolved = true
+            }
         }
 
-        private fun resolve(symbolTable: SymbolTable, valName: String, chain: List<ValueCoordinates>) {
-            resolvedType = valResolution.resolve(symbolTable, valName, chain)
-            resolved = true
-        }
+        class ImportedModule(val fileSymbolTable: FileSymbolTable) : NameEntity()
     }
 
     private sealed class ValueResolution {
@@ -92,7 +122,7 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
                     if (chain.size > 1) {
                         val chainAsSet = chain.toSet()
                         if (chainAsSet.size < chain.size)
-                            throw CyclicReference(chain)
+                            throw CyclicReferenceException(chain)
                     }
 
                     // if not, infer the type from the initializer, failing if that contains a cycle
@@ -101,7 +131,7 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
                         is Either.Left -> {
                             val semanticError = qualifiedTypeOrError.l
                             when (semanticError) {
-                                is SemanticError.CyclicDefinition -> throw CyclicReference(semanticError.cycle)
+                                is SemanticError.CyclicDefinition -> throw CyclicReferenceException(semanticError.cycle)
                                 else -> null
                             }
                         }
@@ -112,7 +142,7 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
         }
     }
 
-    private class CyclicReference(val cycle: List<ValueCoordinates>) : Exception()
+    private class CyclicReferenceException(val cycle: List<ValueCoordinates>) : Exception()
 
     override fun equals(other: Any?): Boolean {
         if (this === other)
