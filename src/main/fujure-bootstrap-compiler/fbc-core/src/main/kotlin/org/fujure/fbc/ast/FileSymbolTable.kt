@@ -36,7 +36,7 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
         }
     }
 
-    fun lookup(id: String, anchor: String?, symbolTable: SymbolTable, chain: List<ValueCoordinates>):
+    private fun lookup(id: String, anchor: String?, symbolTable: SymbolTable, chain: List<ValueCoordinates>):
             SymbolTable.LookupResult {
         if (id == anchor)
             return SelfReference(id)
@@ -71,7 +71,7 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
     }
 
     private fun findImport(moduleName: String): FileSymbolTable? {
-        val candidate = names[moduleName] /*?: return null*/
+        val candidate = names[moduleName]
         return if (candidate is NameEntity.ImportedModule)
             candidate.fileSymbolTable
         else

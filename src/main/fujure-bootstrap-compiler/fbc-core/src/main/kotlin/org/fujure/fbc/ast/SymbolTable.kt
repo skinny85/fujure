@@ -35,34 +35,18 @@ class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
     }
 
     fun lookup(ref: ValueReference, anchorVariable: String, chain: List<ValueCoordinates> = emptyList()): LookupResult {
-        return currentFile.lookup(ref, anchorVariable, this, chain)
-
-        val targetFile: FileSymbolTable?
-        val simpleName: String
-        val anchor: String?
-
-        when (ref.ids.size) {
-            1 -> {
-                targetFile = currentFile
-                simpleName = ref.ids[0]
-                anchor = anchorVariable
-            }
-            2 -> {
-                targetFile = findFile(currentFile.packageName, ref.ids[0])
-                simpleName = ref.ids[1]
-                anchor = if (targetFile == currentFile) anchorVariable else null
-            }
-            else -> {
-                targetFile = null
-                simpleName = "not used"
-                anchor = null
-            }
+        val fileLookupResult = currentFile.lookup(ref, anchorVariable, this, chain)
+        if (fileLookupResult is LookupResult.RefNotFound &&
+                ref.ids.size > 1) {
+            // perhaps it's a reference to a non-imported module in the same package?
+            val candidateModule = findFile(currentFile.packageName, ref.ids[0])
+            if (candidateModule != null)
+                return candidateModule.lookup(ref, anchorVariable, this, chain)
+            // there's a very subtle edge case here - what if Filex was imported,
+            // but didn't contain the requested field? In that case, we shouldn't search
+            // for Filex in the same package - that would be wrong!
         }
-        return if (targetFile == null) {
-            LookupResult.RefNotFound
-        } else {
-            targetFile.lookup(simpleName, anchor, this, chain)
-        }
+        return fileLookupResult
     }
 
     fun findType(typeReference: TypeReference): QualifiedType? {
