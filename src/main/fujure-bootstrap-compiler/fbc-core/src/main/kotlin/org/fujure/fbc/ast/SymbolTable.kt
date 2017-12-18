@@ -34,7 +34,7 @@ class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
         }
     }
 
-    fun lookup(ref: ValueReference, anchorVariable: String, chain: List<ValueCoordinates> = emptyList()): LookupResult {
+    fun lookup(ref: ValueReference, anchorVariable: String? = null, chain: List<ValueCoordinates> = emptyList()): LookupResult {
         val fileLookupResult = currentFile.lookup(ref, anchorVariable, this, chain)
         if (fileLookupResult is LookupResult.RefNotFound &&
                 ref.ids.size > 1) {
@@ -77,6 +77,6 @@ class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
         data class ForwardReference(val name: String) : LookupResult()
         data class SelfReference(val name: String) : LookupResult()
         data class CyclicReference(val cycle: List<ValueCoordinates>) : LookupResult()
-        data class RefFound(val qualifiedType: QualifiedType?) : LookupResult()
+        data class RefFound(val qualifiedType: QualifiedType?, val module: Module) : LookupResult()
     }
 }

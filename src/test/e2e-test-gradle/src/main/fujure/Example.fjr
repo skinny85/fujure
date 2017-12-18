@@ -1,6 +1,8 @@
 package com.
           example
 
+import com.example.inner.Ref
+
 def val1 = 342
 
 def val2: Int = 23

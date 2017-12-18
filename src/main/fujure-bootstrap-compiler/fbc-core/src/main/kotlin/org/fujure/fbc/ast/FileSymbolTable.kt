@@ -19,7 +19,7 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
         return names.put(name, NameEntity.ImportedModule(module)) == null
     }
 
-    fun lookup(ref: ValueReference, anchor: String, symbolTable: SymbolTable, chain: List<ValueCoordinates>):
+    fun lookup(ref: ValueReference, anchor: String?, symbolTable: SymbolTable, chain: List<ValueCoordinates>):
             SymbolTable.LookupResult {
         return when (ref.ids.size) {
             1 -> {
@@ -57,7 +57,7 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
                             try {
                                 val valueCoordinates = ValueCoordinates(packageName, inputFile.moduleName, id)
                                 val qualifiedType = valHolder.resolvedType(symbolTable, id, chain + valueCoordinates)
-                                RefFound(qualifiedType)
+                                RefFound(qualifiedType, toModule())
                             } catch (e: CyclicReferenceException) {
                                 CyclicReference(e.cycle)
                             }
@@ -76,6 +76,10 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
             candidate.fileSymbolTable
         else
             null
+    }
+
+    private fun toModule(): Module {
+        return Module(packageName, moduleName)
     }
 
     sealed class NameEntity {
@@ -152,11 +156,11 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
 
         other as FileSymbolTable
 
-        return inputFile.moduleName == other.inputFile.moduleName &&
+        return moduleName == other.moduleName &&
                 packageName == other.packageName
     }
 
     override fun hashCode(): Int {
-        return 31 * inputFile.moduleName.hashCode() + packageName.hashCode()
+        return 31 * moduleName.hashCode() + packageName.hashCode()
     }
 }

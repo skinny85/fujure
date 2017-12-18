@@ -25,13 +25,10 @@ sealed class CodeGenResult(open val inputPath: InputFile, open val destinationFi
 
 object JavaPoetCodeGenerator : CodeGenerator {
     override fun generate(compileOptions: CompileOptions, astRoot: AstRoot, symbolTable: SymbolTable): CodeGenResult {
+        val javaFile = FileContentsCodeGen.generate(astRoot, symbolTable)
+
         val inputFile = astRoot.inputFile
-
-        val className = inputFile.moduleName
-        val javaFile = FileContentsCodeGen.generate(astRoot.fileContents, className, symbolTable)
-
-        val destFile = File(compileOptions.outputDir, "$className.java")
-
+        val destFile = File(compileOptions.outputDir, "${inputFile.moduleName}.java")
         return try {
             javaFile.writeTo(destFile.parentFile)
             CodeGenResult.Success(inputFile, destFile)
