@@ -61,10 +61,14 @@ object FileContentsCodeGen {
                 initializer = """"${simpleValueDef.initializer.value}""""
             }
             is Expr.ValueReferenceExpr -> {
-                val lookupResult = symbolTable.lookup(simpleValueDef.initializer.ref, simpleValueDef.id) as
-                        SymbolTable.LookupResult.RefFound
-                initializer = ClassName.get(lookupResult.module.packageName, lookupResult.module.moduleName)
-                format = "\$T.${simpleValueDef.initializer.ref.variable()}"
+                if (simpleValueDef.initializer.ref.ids.size == 1) {
+                    initializer = simpleValueDef.initializer.ref.inStringForm()
+                } else {
+                    val lookupResult = symbolTable.lookup(simpleValueDef.initializer.ref, simpleValueDef.id) as
+                            SymbolTable.LookupResult.RefFound
+                    initializer = ClassName.get(lookupResult.module.packageName, lookupResult.module.moduleName)
+                    format = "\$T.${simpleValueDef.initializer.ref.variable()}"
+                }
             }
         }
         return FieldSpec.builder(variableType, simpleValueDef.id,

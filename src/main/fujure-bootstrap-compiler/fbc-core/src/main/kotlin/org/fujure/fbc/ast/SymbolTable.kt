@@ -42,7 +42,7 @@ class SymbolTable(private val fileSymbolTables: Set<FileSymbolTable>) {
             val candidateModule = findFile(currentFile.packageName, ref.ids[0])
             if (candidateModule != null)
                 return candidateModule.lookup(ref, anchorVariable, this, chain)
-            // there's a very subtle edge case here - what if Filex was imported,
+            // ToDo: there's a very subtle edge case here - what if Filex was imported,
             // but didn't contain the requested field? In that case, we shouldn't search
             // for Filex in the same package - that would be wrong!
         }
