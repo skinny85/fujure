@@ -45,10 +45,6 @@ class ImportsAnalysisSpec : AbstractSemanticAnalysisSpec() {
                             .analyzed()
                 }
 
-                it.should("fail") {
-                    assertAnalysisFailed()
-                }
-
                 it.should("analyze the imported file correctly") {
                     assertFile1IsCorrect()
                 }
@@ -67,6 +63,53 @@ class ImportsAnalysisSpec : AbstractSemanticAnalysisSpec() {
 
                                 import com.example.File1
                             """)
+                            .analyzed()
+                }
+
+                it.should("succeed") {
+                    assertAnalysisSucceeded()
+                }
+            }
+
+            it.describes("called with a file importing a non-existent module") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                import com.example.File2
+                            """)
+                            .analyzed()
+                }
+
+                it.should("report an UnresolvedImport error") {
+                    assertThat(file1Errors()).containsExactly(
+                            SemanticError.UnresolvedImport(
+                                    Import("com", "example", "File2")))
+                }
+            }
+
+            it.describes("called with an import shadowing a module in the same package") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                package com.example
+
+                                def x = 3
+                            """)
+                            .named("File1")
+                            .file("""
+                                package com.example.inner
+
+                                def x = true
+                            """)
+                            .named("inner/File1")
+                            .file("""
+                                package com.example
+
+                                import com.example.inner.File1
+
+                                def a: Bool = File1.x
+                            """)
+                            .named("File2.fjr")
                             .analyzed()
                 }
 
