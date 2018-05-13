@@ -27,7 +27,7 @@ subprojects {
     }
 }
 
-def kotlin_subprojects = ['fbc-core', 'fbc-cli']
+def kotlin_subprojects = ['fbc-core', 'fbc-cli', 'fujure-truffle']
 
 configure(subprojects.findAll { subproject ->
         kotlin_subprojects.any { subproject.name.contains(it) }}) {
