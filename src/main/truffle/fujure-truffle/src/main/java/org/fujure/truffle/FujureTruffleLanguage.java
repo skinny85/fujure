@@ -6,10 +6,19 @@ import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.debug.DebuggerTags;
 import com.oracle.truffle.api.instrumentation.ProvidedTags;
 import com.oracle.truffle.api.instrumentation.StandardTags;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureLexer;
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureParser;
+import org.fujure.truffle.parse.FujureTruffleAntlrErrorListener;
+
+import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 @TruffleLanguage.Registration(
         id = FujureTruffleLanguage.LANG_ID,
-        name = "FUJURE",
+        name = "Fujure",
         version = "0.0.1",
         mimeType = FujureTruffleLanguage.MIME_TYPE
 )
@@ -39,7 +48,23 @@ public class FujureTruffleLanguage extends TruffleLanguage<FujureTruffleContext>
     }
 
     @Override
-    protected CallTarget parse(ParsingRequest request) {
+    protected CallTarget parse(ParsingRequest request) throws Exception {
+        FujureLexer lexer = new FujureLexer(new ANTLRInputStream(request.getSource().getInputStream()));
+        FujureParser parser = new FujureParser(new CommonTokenStream(lexer));
+        parser.removeErrorListeners();
+        FujureTruffleAntlrErrorListener errorListener = new FujureTruffleAntlrErrorListener();
+        parser.addErrorListener(errorListener);
+
+        parser.fileContents();
+
+        if (errorListener.hasErrors()) {
+            throw new RuntimeException(format("Could not parse '%s':\n%s",
+                    request.getSource().getName(),
+                    errorListener.errors().stream()
+                            .map(s -> format("\t(%d, %d): %s", s.line, s.column, s.msg))
+                            .collect(Collectors.joining("\n"))));
+        }
+
         return Truffle.getRuntime().createCallTarget(new FujureRootNode(this));
     }
 }
