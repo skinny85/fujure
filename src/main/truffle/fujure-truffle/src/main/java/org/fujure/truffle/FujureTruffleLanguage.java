@@ -8,6 +8,7 @@ import com.oracle.truffle.api.instrumentation.ProvidedTags;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents;
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureLexer;
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureParser;
 import org.fujure.truffle.parse.FujureTruffleAntlrErrorListener;
@@ -55,7 +56,8 @@ public class FujureTruffleLanguage extends TruffleLanguage<FujureTruffleContext>
         FujureTruffleAntlrErrorListener errorListener = new FujureTruffleAntlrErrorListener();
         parser.addErrorListener(errorListener);
 
-        parser.fileContents();
+        FujureParser.FileContentsContext fileContentsContext = parser.fileContents();
+        FileContents fileContents = fileContentsContext.result;
 
         if (errorListener.hasErrors()) {
             throw new RuntimeException(format("Could not parse '%s':\n%s",
@@ -65,6 +67,6 @@ public class FujureTruffleLanguage extends TruffleLanguage<FujureTruffleContext>
                             .collect(Collectors.joining("\n"))));
         }
 
-        return Truffle.getRuntime().createCallTarget(new FujureRootNode(this));
+        return Truffle.getRuntime().createCallTarget(new FujureRootNode(this, fileContents));
     }
 }
