@@ -1,5 +1,6 @@
 package org.fujure.fbc.parse
 
+import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.ast.InputFile
@@ -39,7 +40,7 @@ class ParsedFile(val inputFile: InputFile, val parseTree: FileContents) {
 
 object BnfcParser : Parser {
     override fun parse(openedFile: OpenedFile): ParsingResult {
-        val lexer = FujureLexer(openedFile.stream)
+        val lexer = FujureLexer(ANTLRInputStream(openedFile.stream))
         val parser = FujureParser(CommonTokenStream(lexer))
         parser.removeErrorListeners() // remove the default console listener
         val errorListener = FbcAntlrErrorListener()
@@ -47,13 +48,12 @@ object BnfcParser : Parser {
 
         val fileContentsContext = parser.fileContents()
 
-        return if (errorListener.hasErrors) {
+        return if (errorListener.hasErrors)
             ParsingResult.Failure(
-                    ProblematicFile.ParsingFileIssue(
-                            openedFile.inputFile.userProvidedFilePath, errorListener.errors))
-        } else {
+                ProblematicFile.ParsingFileIssue(
+                        openedFile.inputFile.userProvidedFilePath, errorListener.errors))
+        else
             ParsingResult.Success(
-                    ParsedFile(openedFile.inputFile, fileContentsContext.result))
-        }
+                ParsedFile(openedFile.inputFile, fileContentsContext.result))
     }
 }

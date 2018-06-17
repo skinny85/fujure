@@ -1,18 +1,18 @@
 package org.fujure.fbc.parse
 
-import org.antlr.v4.runtime.ANTLRInputStream
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.read.OpenedFile
 import org.fujure.test.utils.Assumption.Companion.assume
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
+import java.io.StringReader
 
 class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
     val parser: Parser = BnfcParser
     lateinit var result: ParsingResult
 
     fun parse(program: String) {
-        result = parser.parse(OpenedFile(InputFile("whatever.fjr"), ANTLRInputStream(program)))
+        result = parser.parse(OpenedFile(InputFile("whatever.fjr"), StringReader(program)))
     }
 
     fun assertParsingFailed() {
