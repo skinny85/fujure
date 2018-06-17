@@ -1,13 +1,8 @@
 package org.fujure.fbc.read
 
 import org.fujure.fbc.ProblematicFile.BasicFileIssue
+import org.funktionale.either.Disjunction
 
 interface FileOpener {
-    fun open(filePath: String): FileOpenResult
-}
-
-sealed class FileOpenResult {
-    data class Failure(val cause: BasicFileIssue) : FileOpenResult()
-
-    data class Success(val openedFile: OpenedFile) : FileOpenResult()
+    fun open(filePath: String): Disjunction<BasicFileIssue, OpenedFile>
 }

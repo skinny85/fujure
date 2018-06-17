@@ -7,7 +7,6 @@ import org.fujure.fbc.codegen.CodeGenerator
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.parse.Parser
 import org.fujure.fbc.parse.ParsingResult
-import org.fujure.fbc.read.FileOpenResult
 import org.fujure.fbc.read.FileOpener
 import org.fujure.fbc.read.OpenedFile
 import org.funktionale.either.Disjunction
@@ -17,27 +16,17 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
                         private val semanticAnalyzer: SemanticAnalyzer,
                         private val codeGenerator: CodeGenerator) : Compiler {
     override fun compile(compileOptions: CompileOptions, files: List<String>): CompilationResults {
-        val unparsableFiles = mutableListOf<ProblematicFile.BasicFileIssue>()
-        val parsableFiles = mutableSetOf<OpenedFile>()
+        val (openedFiles, failedFiles) = files
+                .map { file -> fileOpener.open(file) }
+                .partition { result -> result.isRight() }
 
-        for (file in files) {
-            val fileOpenResult = fileOpener.open(file)
-            val problematicFile: ProblematicFile.BasicFileIssue? = when (fileOpenResult) {
-                is FileOpenResult.Failure -> fileOpenResult.cause
-                is FileOpenResult.Success -> {
-                    parsableFiles.add(fileOpenResult.openedFile)
-                    null
-                }
-            }
-
-            if (problematicFile != null)
-                unparsableFiles.add(problematicFile)
-        }
-
-        return if (unparsableFiles.isEmpty())
-            compileOpenedFiles(compileOptions, parsableFiles)
+        return if (failedFiles.isEmpty())
+            compileOpenedFiles(compileOptions, openedFiles
+                    .map { (it as Disjunction.Right).value }
+                    .toSet())
         else
-            CompilationResults.CompilationNotAttempted(unparsableFiles)
+            CompilationResults.CompilationNotAttempted(failedFiles
+                    .map { (it as Disjunction.Left).value })
     }
 
     fun compileOpenedFiles(compileOptions: CompileOptions, openedFiles: Set<OpenedFile>): CompilationResults {
