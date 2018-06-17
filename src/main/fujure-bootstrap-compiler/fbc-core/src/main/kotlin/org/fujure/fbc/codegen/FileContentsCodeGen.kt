@@ -64,9 +64,9 @@ object FileContentsCodeGen {
                 if (simpleValueDef.initializer.ref.ids.size == 1) {
                     initializer = simpleValueDef.initializer.ref.inStringForm()
                 } else {
-                    val lookupResult = symbolTable.lookup(simpleValueDef.initializer.ref, simpleValueDef.id) as
+                    val reference = symbolTable.lookup(simpleValueDef.initializer.ref, simpleValueDef.id) as
                             SymbolTable.LookupResult.RefFound
-                    initializer = ClassName.get(lookupResult.module.packageName, lookupResult.module.moduleName)
+                    initializer = ClassName.get(reference.module.packageName, reference.module.moduleName)
                     format = "\$T.${simpleValueDef.initializer.ref.variable()}"
                 }
             }
