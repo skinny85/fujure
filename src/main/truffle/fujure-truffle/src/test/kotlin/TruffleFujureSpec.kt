@@ -1,5 +1,5 @@
 import org.assertj.core.api.Assertions.assertThat
-import org.fujure.truffle.FujureTruffleLanguage.LANG_ID
+import org.fujure.truffle.FujureTruffleLanguage.Companion.LANG_ID
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.PolyglotException
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit

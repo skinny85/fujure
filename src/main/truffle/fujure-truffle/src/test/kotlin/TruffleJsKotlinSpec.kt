@@ -5,7 +5,7 @@ import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 class TruffleJsKotlinSpec : SpecnazKotlinJUnit("Using Truffle Context", {
     it.should("successfully evaluate some JS code") {
         val context = Context.create();
-        val value = context.eval("js", "1 + 2");
+        val value = context.eval("js", "(function() { return 1 + 2; })();");
         assertThat(value.asInt()).isEqualTo(3);
     }
 })

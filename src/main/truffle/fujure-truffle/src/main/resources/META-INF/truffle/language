@@ -1,0 +1,8 @@
+language1.className=org.fujure.truffle.FujureTruffleLanguage
+language1.id=fujure
+language1.implementationName=
+language1.interactive=true
+language1.internal=false
+language1.mimeType.0=application/x-fujure
+language1.name=Fujure
+language1.version=0.0.1
