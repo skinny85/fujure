@@ -1,3 +1,5 @@
+package org.fujure.truffle
+
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.truffle.FujureTruffleLanguage.Companion.LANG_ID
 import org.graalvm.polyglot.Context
