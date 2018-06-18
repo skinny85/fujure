@@ -3,13 +3,10 @@ package org.fujure.truffle;
 import com.oracle.truffle.api.CallTarget
 import com.oracle.truffle.api.Truffle
 import com.oracle.truffle.api.TruffleLanguage
-import org.antlr.v4.runtime.ANTLRInputStream
-import org.antlr.v4.runtime.CommonTokenStream
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureLexer
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureParser
-import org.fujure.truffle.parse.FujureTruffleAntlrErrorListener
-import java.lang.String.format
-import java.util.stream.Collectors
+import org.fujure.fbc.ast.InputFile
+import org.fujure.fbc.parse.BnfcParser
+import org.fujure.fbc.read.OpenedFile
+import org.funktionale.either.Disjunction
 
 class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
     override fun createContext(env: Env): FujureTruffleContext {
@@ -21,24 +18,15 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
     }
 
     override fun parse(request: ParsingRequest): CallTarget {
-        val lexer = FujureLexer(ANTLRInputStream(request.getSource().getInputStream()));
-        val parser = FujureParser(CommonTokenStream(lexer));
-        parser.removeErrorListeners();
-        val errorListener = FujureTruffleAntlrErrorListener();
-        parser.addErrorListener(errorListener);
-
-        val fileContentsContext = parser.fileContents();
-        val fileContents = fileContentsContext.result;
-
-        if (errorListener.hasErrors()) {
-            throw RuntimeException(format("Could not parse '%s':\n%s",
-                    request.getSource().getName(),
-                    errorListener.errors().stream()
-                            .map { s -> format("\t(%d, %d): %s", s.line, s.column, s.msg) }
-                            .collect(Collectors.joining("\n"))));
+        val requestPath = request.source.name
+        val path = if (requestPath.endsWith(".fjr")) requestPath else "$requestPath.fjr"
+        val parsingResult = BnfcParser.parse(OpenedFile(InputFile(path), request.source.reader))
+        return when (parsingResult) {
+            is Disjunction.Left -> throw RuntimeException("Could not parse '$path':\n${
+                parsingResult.value.errors.map { "\t(${it.line}, ${it.column}): ${it.msg}" }.joinToString("\n")
+            }")
+            is Disjunction.Right -> Truffle.getRuntime().createCallTarget(FujureRootNode(this, parsingResult.value.ast))
         }
-
-        return Truffle.getRuntime().createCallTarget(FujureRootNode(this, fileContents));
     }
 
     companion object {
