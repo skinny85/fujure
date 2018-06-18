@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.CommonTokenStream
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.ast.FileContents
 import org.fujure.fbc.ast.InputFile
+import org.fujure.fbc.parse.bnfc.FbcAntlrErrorListener
 import org.fujure.fbc.parse.bnfc.ParseTree2AstVisitor
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureLexer
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureParser
