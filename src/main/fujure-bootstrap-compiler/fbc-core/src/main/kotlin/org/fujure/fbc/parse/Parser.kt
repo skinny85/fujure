@@ -3,8 +3,9 @@ package org.fujure.fbc.parse
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.fujure.fbc.ProblematicFile
+import org.fujure.fbc.ast.FileContents
 import org.fujure.fbc.ast.InputFile
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
+import org.fujure.fbc.parse.bnfc.ParseTree2AstVisitor
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureLexer
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureParser
 import org.fujure.fbc.read.OpenedFile
@@ -21,7 +22,7 @@ sealed class ParsingResult {
             ParsingResult()
 }
 
-class ParsedFile(val inputFile: InputFile, val parseTree: FileContents) {
+class ParsedFile(val inputFile: InputFile, val ast: FileContents) {
     override fun equals(other: Any?): Boolean {
         if (this === other)
             return true
@@ -54,6 +55,7 @@ object BnfcParser : Parser {
                         openedFile.inputFile.userProvidedFilePath, errorListener.errors))
         else
             ParsingResult.Success(
-                ParsedFile(openedFile.inputFile, fileContentsContext.result))
+                ParsedFile(openedFile.inputFile,
+                        fileContentsContext.result.accept(ParseTree2AstVisitor, Unit)))
     }
 }

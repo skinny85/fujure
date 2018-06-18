@@ -1,10 +1,10 @@
-package org.fujure.fbc.analyze.pass_01
+package org.fujure.fbc.parse.bnfc
 
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage
 
-object PackageNameExtractor : FileContents.Visitor<String, Unit> {
+internal object PackageNameExtractor : FileContents.Visitor<String, Unit> {
     override fun visit(fileContents: FileInNamedPackage, arg: Unit): String {
         return fileContents.pkgname_.accept({ packageName, _ ->
             packageName.listpkgfragm_

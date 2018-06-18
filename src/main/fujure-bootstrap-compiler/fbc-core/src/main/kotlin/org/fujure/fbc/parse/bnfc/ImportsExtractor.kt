@@ -1,4 +1,4 @@
-package org.fujure.fbc.analyze.pass_01
+package org.fujure.fbc.parse.bnfc
 
 import org.fujure.fbc.ast.Import
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
@@ -6,7 +6,7 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Imports
 
-object ImportsExtractor : FileContents.Visitor<List<Import>, Unit> {
+internal object ImportsExtractor : FileContents.Visitor<List<Import>, Unit> {
     override fun visit(fileContents: FileInNamedPackage, arg: Unit): List<Import> {
         return visitImports(fileContents.imports_)
     }

@@ -1,13 +1,13 @@
-package org.fujure.fbc.analyze.pass_01
+package org.fujure.fbc.parse.bnfc
 
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.ValueReference
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef
@@ -15,7 +15,7 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr as AbsynExpr
 
-object ParseTree2AstExprVisitor :
+internal object ExprParseTree2AstVisitor :
         AbsynExpr.Visitor<Expr, Unit>,
         ValRef.Visitor<List<String>, Unit>,
         Literal.Visitor<Expr, Unit> {
