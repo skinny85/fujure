@@ -4,7 +4,6 @@ import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.parse.ParsedFile
-import org.fujure.fbc.parse.ParsingResult
 import org.fujure.fbc.read.OpenedFile
 import org.fujure.test.utils.Assumption
 import org.funktionale.either.Disjunction
@@ -37,9 +36,9 @@ class AnalysisBuilder private constructor() {
             val fileName: String = if (setName == null) "File${i + 1}.fjr" else setName
             val openedFile = OpenedFile(InputFile(fileName), StringReader(pair.first))
             val parsingResult = BnfcParser.parse(openedFile)
-            val success = Assumption.assume(parsingResult).isA<ParsingResult.Success>()
-            if (!parsedFiles.add(success.parsedFile))
-                throw IllegalStateException("Duplicate ParsedFile '${success.parsedFile}' provided, " +
+            val success = Assumption.assume(parsingResult).isA<Disjunction.Right<ProblematicFile.ParsingFileIssue, ParsedFile>>()
+            if (!parsedFiles.add(success.value))
+                throw IllegalStateException("Duplicate ParsedFile ${success.value} provided, " +
                         "current parsed files: $parsedFiles")
         }
         return SimpleSemanticAnalyzer.analyze(parsedFiles)

@@ -1,27 +1,29 @@
 package org.fujure.fbc.parse
 
 import org.assertj.core.api.Assertions.assertThat
+import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.read.OpenedFile
 import org.fujure.test.utils.Assumption.Companion.assume
+import org.funktionale.either.Disjunction
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 import java.io.StringReader
 
 class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
     val parser: Parser = BnfcParser
-    lateinit var result: ParsingResult
+    lateinit var result: Disjunction<ProblematicFile.ParsingFileIssue, ParsedFile>
 
     fun parse(program: String) {
         result = parser.parse(OpenedFile(InputFile("whatever.fjr"), StringReader(program)))
     }
 
     fun assertParsingFailed() {
-        val parsingFailure = assume(result).isA<ParsingResult.Failure>()
-        assertThat(parsingFailure.cause.errors).isNotEmpty
+        val parsingFailure = assume(result).isA<Disjunction.Left<ProblematicFile.ParsingFileIssue, ParsedFile>>()
+        assertThat(parsingFailure.value.errors).isNotEmpty
     }
 
     fun assertParsingSucceeded() {
-        assume(result).isA<ParsingResult.Success>()
+        assume(result).isA<Disjunction.Right<ProblematicFile.ParsingFileIssue, ParsedFile>>()
     }
 
     it.describes("called with a file containing 'def xxx'") {
