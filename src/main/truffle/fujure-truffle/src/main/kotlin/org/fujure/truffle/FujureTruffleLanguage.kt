@@ -18,13 +18,14 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
     }
 
     override fun parse(request: ParsingRequest): CallTarget {
-        val requestPath = request.source.name
+        val requestPath = request.source.path ?: request.source.name
         val path = if (requestPath.endsWith(".fjr")) requestPath else "$requestPath.fjr"
-        val parsingResult = BnfcParser.parse(OpenedFile(InputFile(path), request.source.reader))
+
+        val parsingResult = BnfcParser.parse(OpenedFile(
+                InputFile(path), request.source.reader))
+
         return when (parsingResult) {
-            is Disjunction.Left -> throw RuntimeException("Could not parse '$path':\n${
-                parsingResult.value.errors.map { "\t(${it.line}, ${it.column}): ${it.msg}" }.joinToString("\n")
-            }")
+            is Disjunction.Left -> throw FujureTruffleParsingException(request.source, parsingResult.value)
             is Disjunction.Right -> Truffle.getRuntime().createCallTarget(FujureRootNode(this, parsingResult.value.ast))
         }
     }
