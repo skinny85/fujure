@@ -1,6 +1,7 @@
 package org.fujure.truffle;
 
 import com.oracle.truffle.api.CallTarget
+import com.oracle.truffle.api.Scope
 import com.oracle.truffle.api.Truffle
 import com.oracle.truffle.api.TruffleLanguage
 import org.fujure.fbc.ast.InputFile
@@ -28,6 +29,10 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
             is Disjunction.Left -> throw FujureTruffleParsingException(request.source, parsingResult.value)
             is Disjunction.Right -> Truffle.getRuntime().createCallTarget(FujureRootNode(this, parsingResult.value.ast))
         }
+    }
+
+    override fun findTopScopes(context: FujureTruffleContext): Iterable<Scope> {
+        return context.findTopScopes()
     }
 
     companion object {
