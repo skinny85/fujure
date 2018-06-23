@@ -25,7 +25,7 @@ public final class FujureTruffleBindings implements TruffleObject {
         return obj instanceof FujureTruffleBindings;
     }
 
-    private final Map<String, List<String>> keys = new HashMap<>();
+    private final Map<String, List<String>> filesBindings = new HashMap<>();
 
     public void register(ParsedFile parsedFile) {
         String moduleName = parsedFile.getInputFile().getModuleName();
@@ -33,7 +33,7 @@ public final class FujureTruffleBindings implements TruffleObject {
         String fqn = packageName.isEmpty()
                 ? moduleName
                 : packageName + "." + moduleName;
-        keys.put(
+        filesBindings.put(
                 fqn,
                 parsedFile.getAst().getDefs().stream()
                         .map(def -> ((Def.ValueDef.SimpleValueDef) def).getId())
@@ -51,7 +51,7 @@ public final class FujureTruffleBindings implements TruffleObject {
         abstract static class KeysNode extends Node {
             @CompilerDirectives.TruffleBoundary
             public Object access(FujureTruffleBindings fujureTruffleBindings) {
-                return new KeysObject(Collections.unmodifiableSet(fujureTruffleBindings.keys.keySet()));
+                return new MemberKeys(Collections.unmodifiableSet(fujureTruffleBindings.filesBindings.keySet()));
             }
         }
 
@@ -59,7 +59,7 @@ public final class FujureTruffleBindings implements TruffleObject {
         abstract static class ReadNode extends Node {
             @CompilerDirectives.TruffleBoundary
             public Object access(FujureTruffleBindings fujureTruffleBindings, String name) {
-                List<String> bindings = fujureTruffleBindings.keys.get(name);
+                List<String> bindings = fujureTruffleBindings.filesBindings.get(name);
                 if (bindings == null)
                     throw UnknownIdentifierException.raise(name);
                 return new FujureFileBindings(bindings);
@@ -88,46 +88,57 @@ public final class FujureTruffleBindings implements TruffleObject {
                 abstract static class KeysNode extends Node {
                     @CompilerDirectives.TruffleBoundary
                     public Object access(FujureFileBindings fujureFileBindings) {
-                        return new KeysObject(fujureFileBindings.bindings);
-                    }
-                }
-            }
-        }
-
-        static final class KeysObject implements TruffleObject {
-            public static boolean isInstance(TruffleObject obj) {
-                return obj instanceof KeysObject;
-            }
-
-            private final Collection<String> keys;
-
-            public KeysObject(Collection<String> keys) {
-                this.keys = keys;
-            }
-
-            @Override
-            public ForeignAccess getForeignAccess() {
-                return FujureTruffleBindingsKeysObjectMessageResolutionForeign.ACCESS;
-            }
-
-            @MessageResolution(receiverType = KeysObject.class)
-            static final class FujureTruffleBindingsKeysObjectMessageResolution {
-                @Resolve(message = "GET_SIZE")
-                abstract static class GetSizeNode extends Node {
-                    @CompilerDirectives.TruffleBoundary
-                    public Object access(KeysObject keysObject) {
-                        return keysObject.keys.size();
+                        return new MemberKeys(fujureFileBindings.bindings);
                     }
                 }
 
                 @Resolve(message = "READ")
                 abstract static class ReadNode extends Node {
                     @CompilerDirectives.TruffleBoundary
-                    public Object access(KeysObject keysObject, int index) {
-                        if (index >= keysObject.keys.size()) {
+                    public Object access(FujureFileBindings fujureFileBindings, String name) {
+                        int index = fujureFileBindings.bindings.indexOf(name);
+                        if (index == -1)
+                            throw UnknownIdentifierException.raise(name);
+                        return new FujureTruffleValue();
+                    }
+                }
+            }
+        }
+
+        static final class MemberKeys implements TruffleObject {
+            public static boolean isInstance(TruffleObject obj) {
+                return obj instanceof MemberKeys;
+            }
+
+            private final Collection<String> keys;
+
+            public MemberKeys(Collection<String> keys) {
+                this.keys = keys;
+            }
+
+            @Override
+            public ForeignAccess getForeignAccess() {
+                return MemberKeysMessageResolutionForeign.ACCESS;
+            }
+
+            @MessageResolution(receiverType = MemberKeys.class)
+            static final class MemberKeysMessageResolution {
+                @Resolve(message = "GET_SIZE")
+                abstract static class GetSizeNode extends Node {
+                    @CompilerDirectives.TruffleBoundary
+                    public Object access(MemberKeys memberKeys) {
+                        return memberKeys.keys.size();
+                    }
+                }
+
+                @Resolve(message = "READ")
+                abstract static class ReadNode extends Node {
+                    @CompilerDirectives.TruffleBoundary
+                    public Object access(MemberKeys memberKeys, int index) {
+                        if (index >= memberKeys.keys.size()) {
                             throw UnknownIdentifierException.raise(Integer.toString(index));
                         }
-                        Iterator<String> iterator = keysObject.keys.iterator();
+                        Iterator<String> iterator = memberKeys.keys.iterator();
                         int i = index;
                         while (i-- > 0) {
                             iterator.next();

@@ -1,6 +1,7 @@
 package org.fujure.truffle
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.fujure.truffle.FujureTruffleLanguage.Companion.LANG_ID
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.PolyglotException
@@ -23,12 +24,18 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
         assertThat(context.getBindings(LANG_ID).hasMembers()).isTrue()
         assertThat(context.getBindings(LANG_ID).memberKeys).containsOnly("Unnamed")
         assertThat(context.getBindings(LANG_ID).hasMember("Unnamed")).isTrue()
+        assertThatThrownBy {
+            context.getBindings(LANG_ID).putMember("x", 3)
+        }.isInstanceOf(UnsupportedOperationException::class.java)
 
         val fileBindings = context.getBindings(LANG_ID).getMember("Unnamed")
         assertThat(fileBindings).isNotNull()
         assertThat(fileBindings.hasMembers()).isTrue()
         assertThat(fileBindings.memberKeys).containsOnly("a")
         assertThat(fileBindings.hasMember("a")).isTrue()
+
+        assertThat(fileBindings.hasMember("x")).isFalse()
+        assertThat(fileBindings.getMember("x")).isNull()
     }
 
     it.should("evaluate code in a non-default package to 129") {
@@ -51,6 +58,11 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
         assertThat(fileBindings.hasMembers()).isTrue()
         assertThat(fileBindings.memberKeys).containsOnly("b")
         assertThat(fileBindings.hasMember("b")).isTrue()
+
+        val b = fileBindings.getMember("b")
+        assertThat(b).isNotNull()
+        assertThat(b.isNumber).isFalse()
+        assertThat(b.canExecute()).isFalse()
     }
 
     it.shouldThrow<PolyglotException>("when evaluating syntactically incorrect code") {
