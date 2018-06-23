@@ -23,6 +23,12 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
         assertThat(context.getBindings(LANG_ID).hasMembers()).isTrue()
         assertThat(context.getBindings(LANG_ID).memberKeys).containsOnly("Unnamed")
         assertThat(context.getBindings(LANG_ID).hasMember("Unnamed")).isTrue()
+
+        val fileBindings = context.getBindings(LANG_ID).getMember("Unnamed")
+        assertThat(fileBindings).isNotNull()
+        assertThat(fileBindings.hasMembers()).isTrue()
+        assertThat(fileBindings.memberKeys).containsOnly("a")
+        assertThat(fileBindings.hasMember("a")).isTrue()
     }
 
     it.should("evaluate code in a non-default package to 129") {
@@ -39,6 +45,12 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
         assertThat(context.getBindings(LANG_ID).hasMembers()).isTrue()
         assertThat(context.getBindings(LANG_ID).memberKeys).containsOnly("com.example.Unnamed")
         assertThat(context.getBindings(LANG_ID).hasMember("com.example.Unnamed")).isTrue()
+
+        val fileBindings = context.getBindings(LANG_ID).getMember("com.example.Unnamed")
+        assertThat(fileBindings).isNotNull()
+        assertThat(fileBindings.hasMembers()).isTrue()
+        assertThat(fileBindings.memberKeys).containsOnly("b")
+        assertThat(fileBindings.hasMember("b")).isTrue()
     }
 
     it.shouldThrow<PolyglotException>("when evaluating syntactically incorrect code") {
