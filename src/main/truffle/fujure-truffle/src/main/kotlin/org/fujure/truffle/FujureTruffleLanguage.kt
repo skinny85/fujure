@@ -27,7 +27,7 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
 
         return when (parsingResult) {
             is Disjunction.Left -> throw FujureTruffleParsingException(request.source, parsingResult.value)
-            is Disjunction.Right -> Truffle.getRuntime().createCallTarget(FujureRootNode(this, parsingResult.value.ast))
+            is Disjunction.Right -> Truffle.getRuntime().createCallTarget(FujureRootNode(this, parsingResult.value))
         }
     }
 

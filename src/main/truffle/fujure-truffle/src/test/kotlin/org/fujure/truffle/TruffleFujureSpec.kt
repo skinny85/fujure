@@ -17,7 +17,12 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
         val value = context.eval(LANG_ID, "def a = 1")
 
         assertThat(value.asInt()).isEqualTo(42)
-        assertThat(context.getBindings(LANG_ID).memberKeys).containsOnly("a")
+
+        assertThat(context.getBindings(LANG_ID).hasArrayElements()).isFalse()
+
+        assertThat(context.getBindings(LANG_ID).hasMembers()).isTrue()
+        assertThat(context.getBindings(LANG_ID).memberKeys).containsOnly("Unnamed")
+        assertThat(context.getBindings(LANG_ID).hasMember("Unnamed")).isTrue()
     }
 
     it.should("evaluate code in a non-default package to 129") {
@@ -28,7 +33,12 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
             """)
 
         assertThat(value.asInt()).isEqualTo(129)
-        assertThat(context.getBindings(LANG_ID).memberKeys).containsOnly("b")
+
+        assertThat(context.getBindings(LANG_ID).hasArrayElements()).isFalse()
+
+        assertThat(context.getBindings(LANG_ID).hasMembers()).isTrue()
+        assertThat(context.getBindings(LANG_ID).memberKeys).containsOnly("com.example.Unnamed")
+        assertThat(context.getBindings(LANG_ID).hasMember("com.example.Unnamed")).isTrue()
     }
 
     it.shouldThrow<PolyglotException>("when evaluating syntactically incorrect code") {
