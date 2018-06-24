@@ -45,6 +45,13 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
 
         assertThat(fileBindings.hasMember("x")).isFalse()
         assertThat(fileBindings.getMember("x")).isNull()
+
+        val a = fileBindings.getMember("a")
+        assertThat(a).isNotNull()
+        assertThat(a.canExecute()).isFalse()
+        assertThat(a.isNull).isFalse()
+        assertThat(a.isNumber).isTrue()
+        assertThat(a.asInt()).isEqualTo(1)
     }
 
     it.should("evaluate code in a non-default package to 129") {
@@ -69,10 +76,7 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
         assertThat(fileBindings.hasMember("b")).isTrue()
 
         val b = fileBindings.getMember("b")
-        assertThat(b).isNotNull()
-        assertThat(b.canExecute()).isFalse()
-        assertThat(b.isNumber).isTrue()
-        assertThat(b.asInt()).isEqualTo(34)
+        assertThat(b.asInt()).isEqualTo(2)
     }
 
     it.shouldThrow<PolyglotException>("when evaluating syntactically incorrect code") {

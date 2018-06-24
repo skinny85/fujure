@@ -1,10 +1,9 @@
 package org.fujure.truffle
 
-import org.fujure.fbc.ast.Def
 import org.fujure.fbc.parse.ParsedFile
 
 class FujureTruffleBindings {
-    private val filesBindings = mutableMapOf<String, List<String>>()
+    private val filesBindings = mutableMapOf<String, FujureTruffleFileBindings>()
 
     fun register(parsedFile: ParsedFile) {
         val moduleName = parsedFile.inputFile.moduleName
@@ -13,15 +12,10 @@ class FujureTruffleBindings {
             moduleName
         else
             "$packageName.$moduleName"
-        filesBindings[fqn] = parsedFile.ast.defs
-                .map { def ->
-                    when (def) {
-                        is Def.ValueDef.SimpleValueDef -> def.id
-                    }
-                }
+        filesBindings[fqn] = FujureTruffleFileBindings(parsedFile)
     }
 
     fun fileNames(): Set<String> = filesBindings.keys
 
-    fun bindingsFor(fileName: String): List<String>? = filesBindings[fileName]
+    fun bindingsFor(fileName: String): FujureTruffleFileBindings? = filesBindings[fileName]
 }
