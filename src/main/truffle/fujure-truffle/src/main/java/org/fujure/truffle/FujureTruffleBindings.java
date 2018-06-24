@@ -99,7 +99,7 @@ public final class FujureTruffleBindings implements TruffleObject {
                         int index = fujureFileBindings.bindings.indexOf(name);
                         if (index == -1)
                             throw UnknownIdentifierException.raise(name);
-                        return new FujureTruffleValue();
+                        return 34;
                     }
                 }
             }

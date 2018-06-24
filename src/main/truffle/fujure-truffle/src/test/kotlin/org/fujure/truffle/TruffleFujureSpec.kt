@@ -27,12 +27,21 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
         assertThatThrownBy {
             context.getBindings(LANG_ID).putMember("x", 3)
         }.isInstanceOf(UnsupportedOperationException::class.java)
+        assertThatThrownBy {
+            context.getBindings(LANG_ID).removeMember("Unnamed")
+        }.isInstanceOf(UnsupportedOperationException::class.java)
 
         val fileBindings = context.getBindings(LANG_ID).getMember("Unnamed")
         assertThat(fileBindings).isNotNull()
         assertThat(fileBindings.hasMembers()).isTrue()
         assertThat(fileBindings.memberKeys).containsOnly("a")
         assertThat(fileBindings.hasMember("a")).isTrue()
+        assertThatThrownBy {
+            fileBindings.putMember("x", 3)
+        }.isInstanceOf(UnsupportedOperationException::class.java)
+        assertThatThrownBy {
+            fileBindings.removeMember("a")
+        }.isInstanceOf(UnsupportedOperationException::class.java)
 
         assertThat(fileBindings.hasMember("x")).isFalse()
         assertThat(fileBindings.getMember("x")).isNull()
@@ -61,8 +70,9 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
 
         val b = fileBindings.getMember("b")
         assertThat(b).isNotNull()
-        assertThat(b.isNumber).isFalse()
         assertThat(b.canExecute()).isFalse()
+        assertThat(b.isNumber).isTrue()
+        assertThat(b.asInt()).isEqualTo(34)
     }
 
     it.shouldThrow<PolyglotException>("when evaluating syntactically incorrect code") {
