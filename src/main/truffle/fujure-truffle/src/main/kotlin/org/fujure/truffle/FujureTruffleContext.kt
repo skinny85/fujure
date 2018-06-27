@@ -1,14 +1,15 @@
 package org.fujure.truffle;
 
 import com.oracle.truffle.api.Scope
-import org.fujure.fbc.parse.ParsedFile
+import com.oracle.truffle.api.frame.VirtualFrame
+import org.fujure.truffle.nodes.ModuleNode
 
 class FujureTruffleContext {
-    private val fujureTruffleBindings = FujureTruffleBindingsWrapper()
+    private val fujureTruffleBindings = FujureTruffleBindings()
     private val topScopes = setOf<Scope>(Scope.newBuilder("global", fujureTruffleBindings).build())
 
-    fun register(parsedFile: ParsedFile) {
-        fujureTruffleBindings.register(parsedFile)
+    fun register(moduleNode: ModuleNode, frame: VirtualFrame) {
+        fujureTruffleBindings.register(moduleNode, frame)
     }
 
     fun findTopScopes(): Iterable<Scope> {

@@ -7,6 +7,7 @@ import com.oracle.truffle.api.TruffleLanguage
 import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.read.OpenedFile
+import org.fujure.truffle.nodes.ModuleNode
 import org.funktionale.either.Disjunction
 
 class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
@@ -27,7 +28,10 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
 
         return when (parsingResult) {
             is Disjunction.Left -> throw FujureTruffleParsingException(request.source, parsingResult.value)
-            is Disjunction.Right -> Truffle.getRuntime().createCallTarget(FujureRootNode(this, parsingResult.value))
+            is Disjunction.Right -> Truffle.getRuntime().createCallTarget(ModuleNode(this,
+                    parsingResult.value.ast.packageName,
+                    parsingResult.value.inputFile.moduleName,
+                    parsingResult.value.ast.defs.map { def -> Ast2TruffleNodes.translate(def) }))
         }
     }
 
