@@ -58,7 +58,7 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
         val value = context.eval(LANG_ID, """
                 package com.example
 
-                def b = 2
+                def b = "fianceę"
             """)
 
         assertThat(value.asInt()).isEqualTo(129)
@@ -76,7 +76,7 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
         assertThat(fileBindings.hasMember("b")).isTrue()
 
         val b = fileBindings.getMember("b")
-        assertThat(b.asInt()).isEqualTo(2)
+        assertThat(b.asString()).isEqualTo("fianceę")
     }
 
     it.shouldThrow<PolyglotException>("when evaluating syntactically incorrect code") {
