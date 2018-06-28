@@ -3,6 +3,8 @@ apply plugin: 'idea'
 dependencies {
     compile 'com.oracle.truffle:truffle-api:1.0.0-rc1'
     compile 'com.oracle.truffle:truffle-dsl-processor:1.0.0-rc1'
+    compile 'org.apache.commons:commons-text:1.4'
+
     compile project(':src:main:fujure-bootstrap-compiler:fbc-core')
 }
 

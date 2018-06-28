@@ -2,6 +2,7 @@ package org.fujure.truffle
 
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
+import org.fujure.truffle.nodes.CharLiteralExprNode
 import org.fujure.truffle.nodes.DefNode
 import org.fujure.truffle.nodes.ExprNode
 import org.fujure.truffle.nodes.IntLiteralExprNode
@@ -19,6 +20,7 @@ object Ast2TruffleNodes {
         return when (expr) {
             is Expr.IntLiteral -> IntLiteralExprNode(expr.value)
             is Expr.StringLiteral -> StringLiteralExprNode(expr.value)
+            is Expr.CharLiteral -> CharLiteralExprNode(expr.value)
             else -> throw UnsupportedOperationException()
         }
     }
