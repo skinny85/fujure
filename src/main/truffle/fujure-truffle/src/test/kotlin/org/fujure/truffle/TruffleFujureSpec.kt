@@ -86,4 +86,17 @@ class TruffleFujureSpec : SpecnazKotlinJUnit("Fujure on Truffle", {
     it.shouldThrow<PolyglotException>("when evaluating syntactically incorrect code") {
         context.eval(LANG_ID, "1 + 2")
     }.withoutCause()
+
+    it.should("correctly evaluate a reference to a previous value") {
+        context.eval(LANG_ID, """
+                def a = 13
+                def b = a
+            """)
+
+        val bindings = context.getBindings(LANG_ID).getMember("Unnamed")
+
+        assertThat(bindings.memberKeys).containsOnly("a", "b")
+        val b = bindings.getMember("b")
+        assertThat(b.asInt()).isEqualTo(13)
+    }
 })

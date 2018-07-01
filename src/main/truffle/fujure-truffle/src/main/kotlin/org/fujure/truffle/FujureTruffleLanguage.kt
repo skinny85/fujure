@@ -31,7 +31,7 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
             is Disjunction.Right -> Truffle.getRuntime().createCallTarget(ModuleNode(this,
                     parsingResult.value.ast.packageName,
                     parsingResult.value.inputFile.moduleName,
-                    parsingResult.value.ast.defs.map { def -> Ast2TruffleNodes.translate(def) }))
+                    parsingResult.value.ast.defs.map { def -> Ast2TruffleNodes.translate(def, this) }))
         }
     }
 
