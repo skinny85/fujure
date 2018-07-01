@@ -1,22 +1,40 @@
 package org.fujure.truffle
 
 import com.oracle.truffle.api.frame.VirtualFrame
+import org.fujure.fbc.analyze.SemanticError
+import org.fujure.fbc.analyze.TypeErrorContext
+import org.fujure.fbc.ast.ValueReference
 import org.fujure.truffle.nodes.DefNode
 import org.fujure.truffle.nodes.SimpleValueDefNode
+import org.fujure.truffle.nodes.UnresolvedReferenceException
+import java.util.Optional
 
 class ModuleSymbolTable() {
-    private val bindings = mutableMapOf<String, Any>()
+    private val bindings = mutableMapOf<String, Any?>()
 
-    fun register(definitions: List<DefNode>, frame: VirtualFrame) {
+    fun load(definitions: List<DefNode>, frame: VirtualFrame): LoadModuleResult {
+        val errors = mutableListOf<SemanticError>()
         definitions.forEach { defNode ->
             if (defNode is SimpleValueDefNode) {
-                bindings[defNode.id] = defNode.execute(frame)
+                try {
+                    val value = defNode.execute(frame)
+                    bindings[defNode.id] = value
+                } catch (e: UnresolvedReferenceException) {
+                    errors.add(SemanticError.UnresolvedReference(
+                            TypeErrorContext.VariableDefinition(defNode.id),
+                            ValueReference(e.ref)))
+                    bindings[defNode.id] = null
+                }
             }
         }
+        return LoadModuleResult(errors)
     }
 
-    fun lookup(ref: String): Any? {
-        return bindings[ref]
+    fun lookup(ref: String): Optional<Optional<Any>> {
+        return if (bindings.containsKey(ref))
+            Optional.of(Optional.ofNullable(bindings[ref]))
+        else
+            Optional.empty()
     }
 
     fun valueNames(): Set<String> = bindings.keys

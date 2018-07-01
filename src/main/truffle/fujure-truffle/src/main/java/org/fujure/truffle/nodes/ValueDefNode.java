@@ -13,5 +13,5 @@ public abstract class ValueDefNode extends DefNode {
         return id;
     }
 
-    public abstract Object execute(VirtualFrame frame);
+    public abstract Object execute(VirtualFrame frame) throws UnresolvedReferenceException;
 }

@@ -185,9 +185,13 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
     }
 
     it.describes("when evaluating syntactically incorrect code") {
-        it.shouldThrow<PolyglotException>("") {
+        it.shouldThrow<PolyglotException>("that is a non-internal syntax error") {
             evalFujure("1 + 2")
-        }.withoutCause()
+        }.withoutCause().satisfying { e ->
+            assertThat(e.isGuestException).isTrue()
+            assertThat(e.isInternalError).isFalse()
+            assertThat(e.isSyntaxError).isTrue()
+        }
 
         it.should("not add the incorrect module bindings to Fujure's bindings") {
             assertThat(fujureBindings.memberKeys).isEmpty()
@@ -212,6 +216,18 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
             assertThat(a.asInt()).isEqualTo(13)
             val b = moduleBindings.getMember("b")
             assertThat(b.asInt()).isEqualTo(13)
+        }
+    }
+
+    it.describes("when evaluating code referring to a non-existent value") {
+        it.shouldThrow<PolyglotException>("that is not an internal nor syntax error") {
+            evalFujure("""
+                def a = x
+            """)
+        }.withoutCause().satisfying { e ->
+            assertThat(e.isGuestException).isTrue()
+            assertThat(e.isInternalError).isFalse()
+            assertThat(e.isSyntaxError).isFalse()
         }
     }
 })

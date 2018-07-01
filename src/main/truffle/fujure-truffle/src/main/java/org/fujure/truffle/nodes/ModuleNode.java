@@ -5,6 +5,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.RootNode;
 import org.fujure.truffle.FujureTruffleContext;
 import org.fujure.truffle.FujureTruffleLanguage;
+import org.fujure.truffle.LoadModuleResult;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +32,9 @@ public final class ModuleNode extends RootNode {
     public Object execute(VirtualFrame frame) {
         if (!registered) {
             // register values defined in the file as Truffle bindings
-            contextReference.get().register(this, frame);
+            LoadModuleResult loadModuleResult = contextReference.get().load(this, frame);
+            if (!loadModuleResult.isSuccess())
+                throw loadModuleResult.semanticException();
             registered = true;
         }
 

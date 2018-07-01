@@ -5,6 +5,8 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import org.fujure.truffle.FujureTruffleContext;
 import org.fujure.truffle.FujureTruffleLanguage;
 
+import java.util.Optional;
+
 public final class ReferenceExprNode extends ExprNode {
     private final String ref;
     private final TruffleLanguage.ContextReference<FujureTruffleContext> contextReference;
@@ -15,7 +17,11 @@ public final class ReferenceExprNode extends ExprNode {
     }
 
     @Override
-    public Object execute(VirtualFrame frame) {
-        return contextReference.get().lookup(ref);
+    public Object execute(VirtualFrame frame) throws UnresolvedReferenceException {
+        Optional<Optional<Object>> foundResult = contextReference.get().lookup(ref);
+        if (!foundResult.isPresent())
+            throw new UnresolvedReferenceException(ref);
+        Optional<Object> correctResult = foundResult.get();
+        return correctResult.orElse(null);
     }
 }
