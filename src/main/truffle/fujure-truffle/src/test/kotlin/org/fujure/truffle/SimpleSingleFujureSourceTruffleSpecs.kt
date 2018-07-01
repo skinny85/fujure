@@ -13,8 +13,11 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
     lateinit var fujureBindings: Value
 
     fun evalFujure(moduleContents: String) {
-        result = context.eval(LANG_ID, moduleContents)
-        fujureBindings = context.getBindings(LANG_ID)
+        try {
+            result = context.eval(LANG_ID, moduleContents)
+        } finally {
+            fujureBindings = context.getBindings(LANG_ID)
+        }
     }
 
     it.beginsAll {
@@ -110,7 +113,7 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
         }
     }
 
-    it.describes("when evaluating code with defs b & c in the com example package") {
+    it.describes("when evaluating code with defs b & c in the com-example package") {
         it.beginsAll {
             evalFujure("""
                 package com.example
@@ -185,6 +188,10 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
         it.shouldThrow<PolyglotException>("") {
             evalFujure("1 + 2")
         }.withoutCause()
+
+        it.should("not add the incorrect module bindings to Fujure's bindings") {
+            assertThat(fujureBindings.memberKeys).isEmpty()
+        }
     }
 
     it.describes("when evaluating a def referring to a previous def in the same module") {
