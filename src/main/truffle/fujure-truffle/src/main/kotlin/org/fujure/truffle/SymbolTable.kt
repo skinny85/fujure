@@ -11,14 +11,12 @@ class SymbolTable {
 
     fun register(moduleNode: ModuleNode, frame: VirtualFrame) {
         val fqn = moduleNode.fullyQualifiedModuleName()
-        currentModule = fqn
-        // ToDO this doesn't actually work!
-        // ModuleSymbolTable constructor tries to execute the initializers of the definitions,
-        // but if they contain reference expressions, they will call `lookup`, and, at this point,
-        // always get null back!
-        val moduleSymbolTable = ModuleSymbolTable(moduleNode, frame)
+        val moduleSymbolTable = ModuleSymbolTable()
         moduleSymbolTables.put(fqn, moduleSymbolTable)
-        fujureTruffleBindings.register(moduleNode, frame)
+        currentModule = fqn
+        moduleSymbolTable.register(moduleNode.definitions(), frame)
+
+        fujureTruffleBindings.register(fqn, moduleSymbolTable)
     }
 
     fun lookup(ref: String): Any? {
