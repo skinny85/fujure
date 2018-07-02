@@ -15,7 +15,7 @@ class SymbolTable {
         val moduleSymbolTable = ModuleSymbolTable()
         moduleSymbolTables.put(fqn, moduleSymbolTable)
         currentModule = fqn
-        val loadModuleResult = moduleSymbolTable.load(moduleNode.definitions(), frame)
+        val loadModuleResult = moduleSymbolTable.load(moduleNode, frame)
 
         if (loadModuleResult.isSuccess()) {
             fujureTruffleBindings.register(fqn, moduleSymbolTable)

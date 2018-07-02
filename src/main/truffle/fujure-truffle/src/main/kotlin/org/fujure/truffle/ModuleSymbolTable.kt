@@ -4,7 +4,7 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.analyze.TypeErrorContext
 import org.fujure.fbc.ast.ValueReference
-import org.fujure.truffle.nodes.DefNode
+import org.fujure.truffle.nodes.ModuleNode
 import org.fujure.truffle.nodes.SimpleValueDefNode
 import org.fujure.truffle.nodes.UnresolvedReferenceException
 import java.util.Optional
@@ -12,9 +12,9 @@ import java.util.Optional
 class ModuleSymbolTable() {
     private val bindings = mutableMapOf<String, Any?>()
 
-    fun load(definitions: List<DefNode>, frame: VirtualFrame): LoadModuleResult {
+    fun load(moduleNode: ModuleNode, frame: VirtualFrame): LoadModuleResult {
         val errors = mutableListOf<SemanticError>()
-        definitions.forEach { defNode ->
+        moduleNode.definitions().forEach { defNode ->
             if (defNode is SimpleValueDefNode) {
                 try {
                     val value = defNode.execute(frame)
