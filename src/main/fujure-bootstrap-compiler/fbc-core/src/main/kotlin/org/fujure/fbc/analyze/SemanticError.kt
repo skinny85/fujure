@@ -37,9 +37,49 @@ sealed class SemanticError {
     data class TypeMismatch(val context: TypeErrorContext, val expected: QualifiedType,
                             val actual: QualifiedType) :
             SemanticError()
+
+    fun humanReadableMsg(): String = when (this) {
+        is SemanticError.DuplicateModule -> {
+            val prefix = if (this.packageName.isEmpty()) "" else "${this.packageName}."
+            "Error: module ${prefix}${this.moduleName} is defined twice, in " +
+                    "${this.firstOccurence.userProvidedFilePath} and " +
+                    this.secondOccurance.userProvidedFilePath
+        }
+        is SemanticError.InvalidName ->
+            "Invalid name: '${this.name}'. Fujure names cannot contain '$' characters, " +
+                    "can't be a single underscore, nor one of the reserved keywords"
+        is SemanticError.DuplicateDefinition ->
+            "${this.name} is already defined"
+        is SemanticError.UnresolvedImport ->
+            "Unresolved import: '${this.import.inStringForm()}'"
+        is SemanticError.TypeNotFound ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "Unresolved type reference ${this.typeReference.inStringForm()}"
+        is SemanticError.UnresolvedReference ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "Unresolved reference '${this.valueReference.inStringForm()}'"
+        is SemanticError.IllegalForwardReference ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "Illegal forward reference to '${this.name}'"
+        is SemanticError.IllegalSelfReference ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "Illegal self reference"
+        is SemanticError.CyclicDefinition ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "Cycle detected, ${this.cycle.map { it.inStringForm() }.joinToString(" -> ")}"
+        is SemanticError.TypeMismatch ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "Type mismatch, expected: ${this.expected.inStringForm()} " +
+                    "but got: ${this.actual.inStringForm()}"
+    }
 }
 
 sealed class TypeErrorContext {
     data class VariableDefinition(val name: String) :
             TypeErrorContext()
+
+    fun humanReadableMsg(): String = when (this) {
+        is TypeErrorContext.VariableDefinition ->
+            "in declaration of ${this.name}"
+    }
 }

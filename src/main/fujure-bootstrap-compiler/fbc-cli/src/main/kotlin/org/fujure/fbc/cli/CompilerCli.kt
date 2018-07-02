@@ -8,9 +8,6 @@ import com.xenomachina.argparser.UnrecognizedOptionException
 import org.fujure.fbc.CompilationResults
 import org.fujure.fbc.CompileOptions
 import org.fujure.fbc.Compiler
-import org.fujure.fbc.ProblematicFile
-import org.fujure.fbc.analyze.SemanticError
-import org.fujure.fbc.analyze.TypeErrorContext
 
 /**
  * This class encapsulates invoking the (bootstrap) compiler
@@ -51,41 +48,10 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
 
         val exitCode = when (compilationResults) {
             is CompilationResults.CompilationNotAttempted -> {
-                var ret = 1
                 for (problematicFile in compilationResults.problematicFiles) {
-                    ret = when (problematicFile) {
-                        is ProblematicFile.BasicFileIssue.InvalidFileExtension -> {
-                            log.error("Invalid file name: '${problematicFile.userProvidedFilePath}'. Fujure source files must have the .fjr extension")
-                            1
-                        }
-                        is ProblematicFile.BasicFileIssue.InvalidFileName -> {
-                            log.error("Invalid file name: '${problematicFile.userProvidedFilePath}'. " +
-                                    "Fujure files names must be non-empty sequences of underscores, letter and digits, " +
-                                    "starting with a letter. A single underscore name is also forbidden, as are some keywords")
-                            1
-                        }
-                        is ProblematicFile.BasicFileIssue.FileNotFound -> {
-                            log.error("Error opening ${problematicFile.userProvidedFilePath}: file not found")
-                            1
-                        }
-                        is ProblematicFile.BasicFileIssue.CouldNotOpenFile -> {
-                            log.error("Error opening ${problematicFile.userProvidedFilePath}: ${problematicFile.error.message}")
-                            1
-                        }
-                        is ProblematicFile.ParsingFileIssue -> {
-                            for ((line, column, msg) in problematicFile.errors)
-                                log.error("${problematicFile.userProvidedFilePath}:($line:$column): $msg")
-                            1
-                        }
-                        is ProblematicFile.SemanticFileIssue -> {
-                            for (semanticError in problematicFile.errors) {
-                                log.error("${problematicFile.userProvidedFilePath}: ${semanticErrorMessage(semanticError)}")
-                            }
-                            1
-                        }
-                    }
+                    log.error(problematicFile.humanReadableMsg())
                 }
-                ret
+                1
             }
             is CompilationResults.CompilationAttempted -> {
                 if (compilationResults.encounteredFailures()) {
@@ -100,48 +66,6 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
         }
 
         return exitCode
-    }
-
-    private fun semanticErrorMessage(semanticFileIssue: SemanticError): String = when (semanticFileIssue) {
-        is SemanticError.DuplicateModule -> {
-            val prefix = if (semanticFileIssue.packageName.isEmpty()) "" else "${semanticFileIssue.packageName}."
-            "Error: module ${prefix}${semanticFileIssue.moduleName} is defined twice, in " +
-                    "${semanticFileIssue.firstOccurence.userProvidedFilePath} and " +
-                    semanticFileIssue.secondOccurance.userProvidedFilePath
-        }
-        is SemanticError.InvalidName ->
-            "Invalid name: '${semanticFileIssue.name}'. Fujure names cannot contain '$' characters, " +
-                    "can't be a single underscore, nor one of the reserved keywords"
-        is SemanticError.DuplicateDefinition ->
-            "${semanticFileIssue.name} is already defined"
-        is SemanticError.UnresolvedImport ->
-            "Unresolved import: '${semanticFileIssue.import.inStringForm()}'"
-        is SemanticError.TypeNotFound ->
-            "Error ${contextMessage(semanticFileIssue.context)}: " +
-                    "Unresolved type reference ${semanticFileIssue.typeReference.inStringForm()}"
-        is SemanticError.UnresolvedReference ->
-            "Error ${contextMessage(semanticFileIssue.context)}: " +
-                    "Unresolved reference '${semanticFileIssue.valueReference.inStringForm()}'"
-        is SemanticError.IllegalForwardReference ->
-            "Error ${contextMessage(semanticFileIssue.context)}: " +
-                    "Illegal forward reference to '${semanticFileIssue.name}'"
-        is SemanticError.IllegalSelfReference ->
-            "Error ${contextMessage(semanticFileIssue.context)}: " +
-                    "Illegal self reference"
-        is SemanticError.CyclicDefinition ->
-            "Error ${contextMessage(semanticFileIssue.context)}: " +
-                    "Cycle detected, ${semanticFileIssue.cycle.map { it.inStringForm() }.joinToString(" -> ")}"
-        is SemanticError.TypeMismatch ->
-            "Error ${contextMessage(semanticFileIssue.context)}: " +
-                    "Type mismatch, expected: ${semanticFileIssue.expected.inStringForm()} " +
-                    "but got: ${semanticFileIssue.actual.inStringForm()}"
-    }
-
-    private fun contextMessage(context: TypeErrorContext): String {
-        return when (context) {
-            is TypeErrorContext.VariableDefinition ->
-                "in declaration of ${context.name}"
-        }
     }
 
     private fun printHelp() {

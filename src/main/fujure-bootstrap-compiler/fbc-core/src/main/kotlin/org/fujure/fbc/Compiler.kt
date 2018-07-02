@@ -54,4 +54,31 @@ sealed class ProblematicFile(open val userProvidedFilePath: String) {
 
     data class SemanticFileIssue(override val userProvidedFilePath: String, val errors: List<SemanticError>) :
             ProblematicFile(userProvidedFilePath)
+
+    fun humanReadableMsg(): String = when (this) {
+        is ProblematicFile.BasicFileIssue.InvalidFileExtension -> {
+            "Invalid file name: '${this.userProvidedFilePath}'. Fujure source files must have the .fjr extension"
+        }
+        is ProblematicFile.BasicFileIssue.InvalidFileName -> {
+            "Invalid file name: '${this.userProvidedFilePath}'. " +
+                    "Fujure files names must be non-empty sequences of underscores, letter and digits, " +
+                    "starting with a letter. A single underscore name is also forbidden, as are some keywords"
+        }
+        is ProblematicFile.BasicFileIssue.FileNotFound -> {
+            "Error opening ${this.userProvidedFilePath}: file not found"
+        }
+        is ProblematicFile.BasicFileIssue.CouldNotOpenFile -> {
+            "Error opening ${this.userProvidedFilePath}: ${this.error.message}"
+        }
+        is ProblematicFile.ParsingFileIssue -> {
+            this.errors.joinToString("\n") {
+                "${this.userProvidedFilePath}:(${it.line}:${it.column}): ${it.msg}"
+            }
+        }
+        is ProblematicFile.SemanticFileIssue -> {
+            this.errors.joinToString("\n") {
+                "${this.userProvidedFilePath}: ${it.humanReadableMsg()}"
+            }
+        }
+    }
 }
