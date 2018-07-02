@@ -12,6 +12,7 @@ import java.util.List;
 
 public final class ModuleNode extends RootNode {
     private final TruffleLanguage.ContextReference<FujureTruffleContext> contextReference;
+    private final String userProvidedFilePath;
     private final String packageName;
     private final String moduleName;
     @Children
@@ -19,10 +20,11 @@ public final class ModuleNode extends RootNode {
 
     private boolean registered = false;
 
-    public ModuleNode(FujureTruffleLanguage language, String packageName, String moduleName,
-            List<DefNode> defs) {
+    public ModuleNode(FujureTruffleLanguage language, String userProvidedFilePath,
+            String packageName, String moduleName, List<DefNode> defs) {
         super(language);
         this.contextReference = language.getContextReference();
+        this.userProvidedFilePath = userProvidedFilePath;
         this.packageName = packageName;
         this.moduleName = moduleName;
         this.defs = defs.toArray(new DefNode[0]);
@@ -51,5 +53,9 @@ public final class ModuleNode extends RootNode {
 
     public List<DefNode> definitions() {
         return Arrays.asList(defs);
+    }
+
+    public String userProvidedFilePath() {
+        return userProvidedFilePath;
     }
 }

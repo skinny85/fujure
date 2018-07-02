@@ -29,6 +29,7 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
         return when (parsingResult) {
             is Disjunction.Left -> throw FujureTruffleParsingException(request.source, parsingResult.value)
             is Disjunction.Right -> Truffle.getRuntime().createCallTarget(ModuleNode(this,
+                    parsingResult.value.inputFile.userProvidedFilePath,
                     parsingResult.value.ast.packageName,
                     parsingResult.value.inputFile.moduleName,
                     parsingResult.value.ast.defs.map { def -> Ast2TruffleNodes.translate(def, this) }))

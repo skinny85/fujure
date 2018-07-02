@@ -228,6 +228,11 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
             assertThat(e.isGuestException).isTrue()
             assertThat(e.isInternalError).isFalse()
             assertThat(e.isSyntaxError).isFalse()
+
+            assertThat(e.message)
+                    .contains("'x'")
+                    .containsIgnoringCase("unresolved")
+                    .containsIgnoringCase("reference")
         }
     }
 })

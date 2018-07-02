@@ -1,10 +1,10 @@
 package org.fujure.truffle
 
 import com.oracle.truffle.api.TruffleException
-import org.fujure.fbc.analyze.SemanticError
+import org.fujure.fbc.ProblematicFile
 
-class FujureTruffleSemanticException(semanticErrors: List<SemanticError>) :
-        RuntimeException("There were some semantic errors"),
+class FujureTruffleSemanticException(semanticFileIssue: ProblematicFile.SemanticFileIssue) :
+        RuntimeException(semanticFileIssue.humanReadableMsg()),
         TruffleException {
     override fun getLocation() = null
 

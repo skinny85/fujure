@@ -27,7 +27,7 @@ class ModuleSymbolTable() {
                 }
             }
         }
-        return LoadModuleResult(errors)
+        return LoadModuleResult(moduleNode, errors)
     }
 
     fun lookup(ref: String): Optional<Optional<Any>> {
