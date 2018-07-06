@@ -1,8 +1,8 @@
 package org.fujure.truffle
 
 import com.oracle.truffle.api.frame.VirtualFrame
+import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.SemanticError
-import org.fujure.fbc.analyze.TypeErrorContext
 import org.fujure.fbc.ast.ValueReference
 import org.fujure.truffle.nodes.ModuleNode
 import org.fujure.truffle.nodes.SimpleValueDefNode
@@ -21,7 +21,7 @@ class ModuleSymbolTable() {
                     bindings[defNode.id] = value
                 } catch (e: UnresolvedReferenceException) {
                     errors.add(SemanticError.UnresolvedReference(
-                            TypeErrorContext.VariableDefinition(defNode.id),
+                            ErrorContext.ValueDefinition(defNode.id),
                             ValueReference(e.ref)))
                     bindings[defNode.id] = null
                 }

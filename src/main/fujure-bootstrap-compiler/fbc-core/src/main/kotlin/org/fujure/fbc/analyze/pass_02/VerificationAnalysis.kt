@@ -3,9 +3,9 @@ package org.fujure.fbc.analyze.pass_02
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.analyze.AnalyzedProgram
 import org.fujure.fbc.analyze.BuiltInTypes
+import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
-import org.fujure.fbc.analyze.TypeErrorContext
 import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
@@ -60,7 +60,7 @@ object VerificationAnalysis {
         val ret = mutableListOf<SemanticError>()
         when (def) {
             is Def.ValueDef.SimpleValueDef -> {
-                val context = TypeErrorContext.VariableDefinition(def.id)
+                val context = ErrorContext.ValueDefinition(def.id)
 
                 val initializerTypeOrError = exprType(def.initializer, symbolTable, def.id, packageName, moduleName)
                 val declaredQualifiedType: QualifiedType? = if (def.declaredType == null)
@@ -99,7 +99,7 @@ object VerificationAnalysis {
         is Expr.CharLiteral -> Either.Right(BuiltInTypes.Char)
         is Expr.StringLiteral -> Either.Right(BuiltInTypes.String)
         is Expr.ValueReferenceExpr -> {
-            val context = TypeErrorContext.VariableDefinition(valName)
+            val context = ErrorContext.ValueDefinition(valName)
             val lookupResult = symbolTable.lookup(expr.ref, valName, chain)
             when (lookupResult) {
                 is SymbolTable.LookupResult.RefNotFound ->

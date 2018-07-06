@@ -1,7 +1,7 @@
 package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
-import org.fujure.fbc.analyze.TypeErrorContext.VariableDefinition
+import org.fujure.fbc.analyze.ErrorContext.ValueDefinition
 
 class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
     init {
@@ -81,7 +81,7 @@ class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 it.should("report a TypeMismatch error") {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.TypeMismatch(
-                                    VariableDefinition("a"),
+                                    ValueDefinition("a"),
                                     BuiltInTypes.Int, BuiltInTypes.Bool))
                 }
             }

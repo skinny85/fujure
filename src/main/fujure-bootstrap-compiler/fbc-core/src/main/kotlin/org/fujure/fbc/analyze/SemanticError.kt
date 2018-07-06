@@ -19,22 +19,22 @@ sealed class SemanticError {
 
     data class UnresolvedImport(val import: Import) : SemanticError()
 
-    data class UnresolvedReference(val context: TypeErrorContext, val valueReference: ValueReference) :
+    data class UnresolvedReference(val context: ErrorContext, val valueReference: ValueReference) :
             SemanticError()
 
-    data class IllegalForwardReference(val context: TypeErrorContext, val name: String) :
+    data class IllegalForwardReference(val context: ErrorContext, val name: String) :
             SemanticError()
 
-    data class IllegalSelfReference(val context: TypeErrorContext) :
+    data class IllegalSelfReference(val context: ErrorContext) :
             SemanticError()
 
-    data class CyclicDefinition(val context: TypeErrorContext, val cycle: List<ValueCoordinates>) :
+    data class CyclicDefinition(val context: ErrorContext, val cycle: List<ValueCoordinates>) :
             SemanticError()
 
-    data class TypeNotFound(val context: TypeErrorContext, val typeReference: TypeReference) :
+    data class TypeNotFound(val context: ErrorContext, val typeReference: TypeReference) :
             SemanticError()
 
-    data class TypeMismatch(val context: TypeErrorContext, val expected: QualifiedType,
+    data class TypeMismatch(val context: ErrorContext, val expected: QualifiedType,
                             val actual: QualifiedType) :
             SemanticError()
 
@@ -74,12 +74,12 @@ sealed class SemanticError {
     }
 }
 
-sealed class TypeErrorContext {
-    data class VariableDefinition(val name: String) :
-            TypeErrorContext()
+sealed class ErrorContext {
+    data class ValueDefinition(val name: String) :
+            ErrorContext()
 
     fun humanReadableMsg(): String = when (this) {
-        is TypeErrorContext.VariableDefinition ->
+        is ErrorContext.ValueDefinition ->
             "in declaration of ${this.name}"
     }
 }

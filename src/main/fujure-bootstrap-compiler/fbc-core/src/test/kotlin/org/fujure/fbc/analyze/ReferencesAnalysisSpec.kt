@@ -1,7 +1,7 @@
 package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
-import org.fujure.fbc.analyze.TypeErrorContext.VariableDefinition
+import org.fujure.fbc.analyze.ErrorContext.ValueDefinition
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
@@ -44,7 +44,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 it.should("report an UnresolvedReference error") {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.UnresolvedReference(
-                                    VariableDefinition("a"),
+                                    ValueDefinition("a"),
                                     ValueReference("x")))
                 }
             }
@@ -62,7 +62,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 it.should("report an UnresolvedReference error") {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.UnresolvedReference(
-                                    VariableDefinition("a"),
+                                    ValueDefinition("a"),
                                     ValueReference("DoesNotExist", "x")))
                 }
             }
@@ -80,7 +80,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 it.should("report a TypeMismatch error") {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.TypeMismatch(
-                                    VariableDefinition("x"),
+                                    ValueDefinition("x"),
                                     BuiltInTypes.Int, BuiltInTypes.Bool))
                 }
             }
@@ -97,10 +97,10 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 it.should("report both an UnresolvedReference and a TypeNotFound errors") {
                     assertThat(file1Errors()).containsOnly(
                             SemanticError.UnresolvedReference(
-                                    VariableDefinition("a"),
+                                    ValueDefinition("a"),
                                     ValueReference("x")),
                             SemanticError.TypeNotFound(
-                                    VariableDefinition("a"),
+                                    ValueDefinition("a"),
                                     TypeReference("DoesNotExist")))
                 }
             }
@@ -121,10 +121,10 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 it.should("take the incorrectly defined variables into account during analysis") {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.TypeMismatch(
-                                    VariableDefinition("x"),
+                                    ValueDefinition("x"),
                                     BuiltInTypes.Bool, BuiltInTypes.Int),
                             SemanticError.TypeNotFound(
-                                    VariableDefinition("y"),
+                                    ValueDefinition("y"),
                                     TypeReference("a", "B", "C")))
                 }
             }
@@ -169,7 +169,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 it.should("report an UnresolvedReference error for the importing file") {
                     assertThat(file2Errors()).containsExactly(
                             SemanticError.UnresolvedReference(
-                                    VariableDefinition("x"),
+                                    ValueDefinition("x"),
                                     ValueReference("File1", "a")))
                 }
             }
@@ -221,7 +221,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 it.should("report an IllegalForwardReference error") {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.IllegalForwardReference(
-                                    VariableDefinition("a"), "x"))
+                                    ValueDefinition("a"), "x"))
                 }
             }
 
@@ -240,7 +240,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 it.should("detect the cycle in the first file") {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.CyclicDefinition(
-                                    VariableDefinition("a"),
+                                    ValueDefinition("a"),
                                     listOf(
                                             ValueCoordinates("", "File1", "a"),
                                             ValueCoordinates("", "File2", "x"),
@@ -250,7 +250,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 it.should("detect the cycle in the second file") {
                     assertThat(file2Errors()).containsExactly(
                             SemanticError.CyclicDefinition(
-                                    VariableDefinition("x"),
+                                    ValueDefinition("x"),
                                     listOf(
                                             ValueCoordinates("", "File2", "x"),
                                             ValueCoordinates("", "File1", "a"),
@@ -286,7 +286,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
 
                 it.should("report an IllegalSelfReference error") {
                     assertThat(file1Errors()).containsExactly(
-                            SemanticError.IllegalSelfReference(VariableDefinition("a")))
+                            SemanticError.IllegalSelfReference(ValueDefinition("a")))
                 }
             }
 
@@ -301,7 +301,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
 
                 it.should("report an IllegalSelfReference error") {
                     assertThat(file1Errors()).containsExactly(
-                            SemanticError.IllegalSelfReference(VariableDefinition("a")))
+                            SemanticError.IllegalSelfReference(ValueDefinition("a")))
                 }
             }
         }
