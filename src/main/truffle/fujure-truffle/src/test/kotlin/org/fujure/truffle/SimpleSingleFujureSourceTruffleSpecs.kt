@@ -10,14 +10,23 @@ import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle implementation", {
     lateinit var context: Context
     lateinit var result: Value
+    lateinit var exception: Exception
     lateinit var fujureBindings: Value
 
     fun evalFujure(moduleContents: String) {
         try {
             result = context.eval(LANG_ID, moduleContents)
+            exception = Exception()
+        } catch (e: PolyglotException) {
+            exception = e
         } finally {
             fujureBindings = context.getBindings(LANG_ID)
         }
+    }
+
+    fun assertThatExceptionIsPolyglot(): PolyglotException {
+        assertThat(exception).isInstanceOf(PolyglotException::class.java)
+        return exception as PolyglotException
     }
 
     it.beginsAll {
@@ -27,8 +36,8 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
     it.describes("when evaluating code 'def a = 1'") {
         it.beginsAll {
             evalFujure("""
-                    def a = 1
-                """)
+                def a = 1
+            """)
         }
 
         it.should("result in the value 42") {
@@ -185,15 +194,18 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
     }
 
     it.describes("when evaluating syntactically incorrect code") {
-        it.shouldThrow<PolyglotException>("that is a non-internal syntax error") {
+        it.beginsAll {
             evalFujure("1 + 2")
-        }.withoutCause().satisfying { e ->
+        }
+
+        it.should("throw a guest PolyglotException that is a non-internal syntax error") {
+            val e = assertThatExceptionIsPolyglot()
             assertThat(e.isGuestException).isTrue()
             assertThat(e.isInternalError).isFalse()
             assertThat(e.isSyntaxError).isTrue()
         }
 
-        it.should("not add the incorrect module bindings to Fujure's bindings") {
+        it.should("not add the incorrect module's bindings to Fujure's bindings") {
             assertThat(fujureBindings.memberKeys).isEmpty()
         }
     }
@@ -220,11 +232,14 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
     }
 
     it.describes("when evaluating code referring to a non-existent value") {
-        it.shouldThrow<PolyglotException>("that is not an internal nor syntax error") {
+        it.beginsAll {
             evalFujure("""
                 def a = x
             """)
-        }.withoutCause().satisfying { e ->
+        }
+
+        it.should("throw a guest PolyglotException that is not an internal nor syntax error") {
+            val e = assertThatExceptionIsPolyglot()
             assertThat(e.isGuestException).isTrue()
             assertThat(e.isInternalError).isFalse()
             assertThat(e.isSyntaxError).isFalse()
@@ -233,6 +248,10 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
                     .contains("'x'")
                     .containsIgnoringCase("unresolved")
                     .containsIgnoringCase("reference")
+        }
+
+        it.should("not add the incorrect module's bindings to Fujure's bindings") {
+            assertThat(fujureBindings.memberKeys).isEmpty()
         }
     }
 })
