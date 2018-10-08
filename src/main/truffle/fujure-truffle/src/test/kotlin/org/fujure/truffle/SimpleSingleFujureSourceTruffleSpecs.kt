@@ -235,6 +235,8 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
         it.beginsAll {
             evalFujure("""
                 def a = x
+                def b = a
+                def c = b
             """)
         }
 
@@ -248,6 +250,9 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
                     .contains("'x'")
                     .containsIgnoringCase("unresolved")
                     .containsIgnoringCase("reference")
+                    .doesNotContain("'a'")
+                    .doesNotContain("'b'")
+                    .doesNotContain("'c'")
         }
 
         it.should("not add the incorrect module's bindings to Fujure's bindings") {

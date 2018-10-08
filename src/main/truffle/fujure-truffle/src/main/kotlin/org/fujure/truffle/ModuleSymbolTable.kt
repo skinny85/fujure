@@ -4,10 +4,10 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.ast.ValueReference
+import org.fujure.truffle.nodes.InvalidReferenceException
 import org.fujure.truffle.nodes.ModuleNode
 import org.fujure.truffle.nodes.SimpleValueDefNode
 import org.fujure.truffle.nodes.UnresolvedReferenceException
-import java.util.Optional
 
 class ModuleSymbolTable() {
     private val bindings = mutableMapOf<String, Any?>()
@@ -24,18 +24,32 @@ class ModuleSymbolTable() {
                             ErrorContext.ValueDefinition(defNode.id),
                             ValueReference(e.ref)))
                     bindings[defNode.id] = null
+                } catch (e: InvalidReferenceException) {
+                    // If a value references an incorrectly defined value in its definition,
+                    // it becomes incorrectly defined, transitively.
+                    // However, we don't report another error for it -
+                    // the original one from the incorrect definition will be enough.
+                    bindings[defNode.id] = null
                 }
             }
         }
         return LoadModuleResult(moduleNode, errors)
     }
 
-    fun lookup(ref: String): Optional<Optional<Any>> {
-        return if (bindings.containsKey(ref))
-            Optional.of(Optional.ofNullable(bindings[ref]))
-        else
-            Optional.empty()
+    fun lookup(ref: String): LookupResult {
+        return if (bindings.containsKey(ref)) {
+            val v = bindings[ref]
+            if (v == null) LookupResult.InvalidRefFound else LookupResult.ValidRefFound(v)
+        } else {
+            LookupResult.RefNotFound
+        }
     }
 
     fun valueNames(): Set<String> = bindings.keys
+}
+
+sealed class LookupResult {
+    object RefNotFound : LookupResult()
+    object InvalidRefFound : LookupResult()
+    data class ValidRefFound(val value: Any) : LookupResult()
 }

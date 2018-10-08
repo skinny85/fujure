@@ -4,5 +4,6 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node;
 
 public abstract class ExprNode extends Node {
-    public abstract Object execute(VirtualFrame frame) throws UnresolvedReferenceException;
+    public abstract Object execute(VirtualFrame frame) throws
+            UnresolvedReferenceException, InvalidReferenceException;
 }

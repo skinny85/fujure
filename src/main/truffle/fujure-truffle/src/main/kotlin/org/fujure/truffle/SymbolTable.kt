@@ -2,7 +2,6 @@ package org.fujure.truffle
 
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.fujure.truffle.nodes.ModuleNode
-import java.util.Optional
 
 class SymbolTable {
     internal val fujureTruffleBindings = FujureTruffleBindings()
@@ -24,7 +23,7 @@ class SymbolTable {
         return loadModuleResult
     }
 
-    fun lookup(ref: String): Optional<Optional<Any>> {
+    fun lookup(ref: String): LookupResult {
         return moduleSymbolTables[currentModule]!!.lookup(ref)
     }
 }
