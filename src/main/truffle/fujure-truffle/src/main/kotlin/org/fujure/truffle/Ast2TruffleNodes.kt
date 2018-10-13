@@ -1,5 +1,6 @@
 package org.fujure.truffle
 
+import org.apache.commons.text.StringEscapeUtils
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.truffle.nodes.CharLiteralExprNode
@@ -27,8 +28,14 @@ object Ast2TruffleNodes {
             }
             is Expr.IntLiteral -> IntLiteralExprNode(expr.value)
             is Expr.StringLiteral -> StringLiteralExprNode(expr.value)
-            is Expr.CharLiteral -> CharLiteralExprNode(expr.value)
+            is Expr.CharLiteral -> CharLiteralExprNode(parseCharaLiteral(expr.value))
             else -> throw UnsupportedOperationException("Translating '$expr' expressions to Truffle is not supported (yet)")
         }
+    }
+
+    private fun parseCharaLiteral(string: String): Char {
+        // first, strip the surrounding single quotes
+        val character = string.substring(1, string.length - 1)
+        return StringEscapeUtils.unescapeJava(character)[0]
     }
 }

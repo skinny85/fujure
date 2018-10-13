@@ -14,6 +14,6 @@ public final class SimpleValueDefNode extends ValueDefNode {
     @Override
     public Object execute(VirtualFrame frame) throws
             UnresolvedReferenceException, InvalidReferenceException {
-        return initializer.execute(frame);
+        return initializer.executeGeneric(frame);
     }
 }

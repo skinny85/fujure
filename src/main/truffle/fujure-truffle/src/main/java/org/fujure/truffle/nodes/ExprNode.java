@@ -1,9 +1,24 @@
 package org.fujure.truffle.nodes;
 
+import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node;
+import com.oracle.truffle.api.nodes.UnexpectedResultException;
+import org.fujure.truffle.FujureTypeSystem;
+import org.fujure.truffle.FujureTypeSystemGen;
 
+@TypeSystemReference(FujureTypeSystem.class)
 public abstract class ExprNode extends Node {
-    public abstract Object execute(VirtualFrame frame) throws
+    public abstract Object executeGeneric(VirtualFrame frame) throws
             UnresolvedReferenceException, InvalidReferenceException;
+
+    public int executeInt(VirtualFrame virtualFrame) throws
+            UnexpectedResultException, InvalidReferenceException, UnresolvedReferenceException {
+        return FujureTypeSystemGen.expectInteger(this.executeGeneric(virtualFrame));
+    }
+
+    public String executeString(VirtualFrame virtualFrame) throws
+            UnexpectedResultException, InvalidReferenceException, UnresolvedReferenceException {
+        return FujureTypeSystemGen.expectString(this.executeGeneric(virtualFrame));
+    }
 }

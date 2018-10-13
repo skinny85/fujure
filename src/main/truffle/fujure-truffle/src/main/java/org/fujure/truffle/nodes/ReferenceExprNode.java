@@ -16,7 +16,7 @@ public final class ReferenceExprNode extends ExprNode {
     }
 
     @Override
-    public Object execute(VirtualFrame frame) throws
+    public Object executeGeneric(VirtualFrame frame) throws
             UnresolvedReferenceException, InvalidReferenceException {
         LookupResult lookup = contextReference.get().lookup(ref);
         if (lookup instanceof LookupResult.RefNotFound) {
