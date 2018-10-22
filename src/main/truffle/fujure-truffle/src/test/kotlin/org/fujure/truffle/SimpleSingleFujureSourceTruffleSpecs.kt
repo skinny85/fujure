@@ -25,7 +25,13 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
     }
 
     fun assertThatExceptionIsPolyglot(): PolyglotException {
-        assertThat(exception).isInstanceOf(PolyglotException::class.java)
+        assertThat(exception)
+                .withFailMessage(if (exception::class == Exception::class)
+                    "Expected a PolyglotException, but no exception was thrown!"
+                else
+                    "Expected a PolyglotException, but got $exception instead"
+                )
+                .isInstanceOf(PolyglotException::class.java)
         return exception as PolyglotException
     }
 
@@ -253,6 +259,30 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
                     .doesNotContain("'a'")
                     .doesNotContain("'b'")
                     .doesNotContain("'c'")
+        }
+
+        it.should("not add the incorrect module's bindings to Fujure's bindings") {
+            assertThat(fujureBindings.memberKeys).isEmpty()
+        }
+    }
+
+    it.describes("when assigning a String to an Int-typed value") {
+        it.beginsAll {
+            evalFujure("""
+               def a: Int = "1"
+            """)
+        }
+
+        it.should("throw a guest PolyglotException that is not an internal nor syntax error") {
+            val e = assertThatExceptionIsPolyglot()
+            assertThat(e.isGuestException).isTrue()
+            assertThat(e.isInternalError).isFalse()
+            assertThat(e.isSyntaxError).isFalse()
+
+            assertThat(e.message)
+                    .contains("a:")
+                    .contains("Int")
+                    .contains("String")
         }
 
         it.should("not add the incorrect module's bindings to Fujure's bindings") {

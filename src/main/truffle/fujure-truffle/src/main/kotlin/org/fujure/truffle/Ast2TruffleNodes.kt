@@ -14,7 +14,8 @@ import org.fujure.truffle.nodes.StringLiteralExprNode
 object Ast2TruffleNodes {
     fun translate(def: Def, fujureTruffleLanguage: FujureTruffleLanguage): DefNode {
         return when (def) {
-            is Def.ValueDef.SimpleValueDef -> SimpleValueDefNode(def.id, translateExpr(def.initializer, fujureTruffleLanguage))
+            is Def.ValueDef.SimpleValueDef -> SimpleValueDefNode(
+                    def.id, def.declaredType, translateExpr(def.initializer, fujureTruffleLanguage), fujureTruffleLanguage)
         }
     }
 

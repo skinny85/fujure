@@ -7,6 +7,7 @@ import org.fujure.fbc.ast.ValueReference
 import org.fujure.truffle.nodes.InvalidReferenceException
 import org.fujure.truffle.nodes.ModuleNode
 import org.fujure.truffle.nodes.SimpleValueDefNode
+import org.fujure.truffle.nodes.TypeMismatchException
 import org.fujure.truffle.nodes.UnresolvedReferenceException
 
 class ModuleSymbolTable() {
@@ -23,6 +24,11 @@ class ModuleSymbolTable() {
                     errors.add(SemanticError.UnresolvedReference(
                             ErrorContext.ValueDefinition(defNode.id),
                             ValueReference(e.ref)))
+                    bindings[defNode.id] = null
+                } catch (e: TypeMismatchException) {
+                    errors.add(SemanticError.TypeMismatch(
+                            ErrorContext.ValueDefinition(defNode.id),
+                            e.declaredType, e.actualType))
                     bindings[defNode.id] = null
                 } catch (e: InvalidReferenceException) {
                     // If a value references an incorrectly defined value in its definition,

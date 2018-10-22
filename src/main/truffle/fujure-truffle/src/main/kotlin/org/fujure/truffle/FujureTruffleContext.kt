@@ -2,6 +2,8 @@ package org.fujure.truffle;
 
 import com.oracle.truffle.api.Scope
 import com.oracle.truffle.api.frame.VirtualFrame
+import org.fujure.fbc.analyze.QualifiedType
+import org.fujure.fbc.ast.TypeReference
 import org.fujure.truffle.nodes.ModuleNode
 
 class FujureTruffleContext {
@@ -17,6 +19,10 @@ class FujureTruffleContext {
 
     fun lookup(ref: String): LookupResult {
         return symbolTable.lookup(ref)
+    }
+
+    fun findType(typeReference: TypeReference): QualifiedType? {
+        return symbolTable.findType(typeReference)
     }
 
     fun findTopScopes(): Iterable<Scope> {

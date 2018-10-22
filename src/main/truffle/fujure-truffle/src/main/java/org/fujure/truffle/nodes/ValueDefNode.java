@@ -3,7 +3,7 @@ package org.fujure.truffle.nodes;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 public abstract class ValueDefNode extends DefNode {
-    private final String id;
+    protected final String id;
 
     protected ValueDefNode(String id) {
         this.id = id;
@@ -14,5 +14,5 @@ public abstract class ValueDefNode extends DefNode {
     }
 
     public abstract Object execute(VirtualFrame frame) throws
-            UnresolvedReferenceException, InvalidReferenceException;
+            UnresolvedReferenceException, InvalidReferenceException, TypeMismatchException;
 }
