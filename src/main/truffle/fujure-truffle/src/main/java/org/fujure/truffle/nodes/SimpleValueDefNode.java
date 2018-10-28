@@ -14,33 +14,44 @@ public final class SimpleValueDefNode extends ValueDefNode {
     @Child
     private ExprNode initializer;
 
-    private final Optional<TypeReference> declaredType;
+    private final Optional<TypeReference> declaredTypeReference;
     private final TruffleLanguage.ContextReference<FujureTruffleContext> contextReference;
 
-    public SimpleValueDefNode(String id, TypeReference declaredType, ExprNode initializer,
+    public SimpleValueDefNode(String id, TypeReference declaredTypeReference, ExprNode initializer,
             FujureTruffleLanguage fujureTruffleLanguage) {
         super(id);
         this.initializer = initializer;
-        this.declaredType = Optional.ofNullable(declaredType);
+        this.declaredTypeReference = Optional.ofNullable(declaredTypeReference);
         this.contextReference = fujureTruffleLanguage.getContextReference();
     }
 
     @Override
     public Object execute(VirtualFrame frame) throws
             UnresolvedReferenceException, InvalidReferenceException, TypeMismatchException {
-        Object value = initializer.executeGeneric(frame);
-        if (declaredType.isPresent()) {
-            Optional<QualifiedType> declaredQualifiedType = Optional.ofNullable(contextReference.get().findType(declaredType.get()));
-            Optional<QualifiedType> valueQualifiedType = establishTypeOfValue(value);
-            if (valueQualifiedType.isPresent()) {
-                QualifiedType vqt = valueQualifiedType.get();
-                // ToDo handle an unrecognized declared type error
-                QualifiedType dqt = declaredQualifiedType.get();
-                if (!vqt.equals(dqt))
-                   throw new TypeMismatchException(dqt, vqt);
+        Optional<QualifiedType> maybeDeclaredType = Optional.empty();
+        if (declaredTypeReference.isPresent()) {
+            maybeDeclaredType = findType(declaredTypeReference.get());
+            if (!maybeDeclaredType.isPresent()) {
+                throw new UnresolvedReferenceException(declaredTypeReference.get().inStringForm());
             }
         }
+
+        Object value = initializer.executeGeneric(frame);
+
+        Optional<QualifiedType> maybeValueType = establishTypeOfValue(value);
+        if (maybeDeclaredType.isPresent() && maybeValueType.isPresent()) {
+            // ToDO handle unknown value type?
+            QualifiedType valueType = maybeValueType.get();
+            QualifiedType declaredType = maybeDeclaredType.get();
+            if (!valueType.equals(declaredType))
+                throw new TypeMismatchException(declaredType, valueType);
+        }
+
         return value;
+    }
+
+    private Optional<QualifiedType> findType(TypeReference typeReference) {
+        return Optional.ofNullable(contextReference.get().findType(typeReference));
     }
 
     private Optional<QualifiedType> establishTypeOfValue(Object value) {

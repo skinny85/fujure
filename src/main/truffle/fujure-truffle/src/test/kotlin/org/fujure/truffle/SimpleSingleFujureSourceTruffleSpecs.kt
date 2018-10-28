@@ -245,10 +245,13 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
                     .isGuestNonSyntaxError()
                     .message()
                     .contains("'x'")
+                    .contains("a:")
                     .containsIgnoringCase("unresolved")
                     .containsIgnoringCase("reference")
                     .doesNotContain("'a'")
                     .doesNotContain("'b'")
+                    .doesNotContain("b:")
+                    .doesNotContain("c:")
         }
 
         it.should("not add the incorrect module's bindings to Fujure's bindings") {
@@ -269,6 +272,27 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
                     .hasMessageContaining("a:")
                     .hasMessageContaining("Int")
                     .hasMessageContaining("String")
+        }
+
+        it.should("not add the incorrect module's bindings to Fujure's bindings") {
+            assertThat(fujureBindings.memberKeys).isEmpty()
+        }
+    }
+
+    it.describes("when declaring a definition with a non-existent declared type and an incorrect initializer") {
+        it.beginsAll {
+            evalFujure("""
+               def a: SomeTypeThatDoesNotExist = x
+            """)
+        }
+
+        it.should("throw an error mentioning only the non-existent declared type") {
+            assertThatPolyglot()
+                    .isGuestNonSyntaxError()
+                    .message()
+                    .contains("a:")
+                    .contains("SomeTypeThatDoesNotExist")
+                    .doesNotContain("'x'")
         }
 
         it.should("not add the incorrect module's bindings to Fujure's bindings") {

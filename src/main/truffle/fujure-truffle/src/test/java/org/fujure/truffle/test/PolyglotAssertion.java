@@ -21,7 +21,7 @@ public final class PolyglotAssertion extends
         isGuestException();
         isNotAnInternalError();
         if (actual.isSyntaxError())
-            failWithMessage("Expected isSyntaxError to be false, but was: true");
+            failWithMessage("Expected the PolyglotException to not be a syntax error, but it was");
 
         return this;
     }
@@ -30,7 +30,7 @@ public final class PolyglotAssertion extends
         isGuestException();
         isNotAnInternalError();
         if (!actual.isSyntaxError())
-            failWithMessage("Expected isSyntaxError to be true, but was: false");
+            failWithMessage("Expected the PolyglotException to be a syntax error, but it was not");
 
         return this;
     }
@@ -41,11 +41,11 @@ public final class PolyglotAssertion extends
 
     private void isGuestException() {
         if (!actual.isGuestException())
-            failWithMessage("Expected isGuestException to be true, but was: false");
+            failWithMessage("Expected the PolyglotException to be a guest exception, but it was not");
     }
 
     private void isNotAnInternalError() {
         if (actual.isInternalError())
-            failWithMessage("Expected isInternal to be false, but was: true");
+            failWithMessage("Expected the PolyglotException to not be an internal error, but it was");
     }
 }
