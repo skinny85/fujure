@@ -40,7 +40,7 @@ public final class SimpleValueDefNode extends ValueDefNode {
 
         Optional<QualifiedType> maybeValueType = establishTypeOfValue(value);
         if (maybeDeclaredType.isPresent() && maybeValueType.isPresent()) {
-            // ToDO handle unknown value type?
+            // ToDo handle unknown value type?
             QualifiedType valueType = maybeValueType.get();
             QualifiedType declaredType = maybeDeclaredType.get();
             if (!valueType.equals(declaredType))
@@ -55,7 +55,9 @@ public final class SimpleValueDefNode extends ValueDefNode {
     }
 
     private Optional<QualifiedType> establishTypeOfValue(Object value) {
-        if (value instanceof Integer) {
+        if (value instanceof Character) {
+            return Optional.of(BuiltInTypes.INSTANCE.getChar());
+        } else if (value instanceof Integer) {
             return Optional.of(BuiltInTypes.INSTANCE.getInt());
         } else if (value instanceof String) {
             return Optional.of(BuiltInTypes.INSTANCE.getString());

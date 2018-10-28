@@ -15,7 +15,7 @@ public final class IntLiteralExprNode extends ExprNode {
     }
 
     @Override
-    public int executeInt(VirtualFrame virtualFrame) {
+    public int executeInteger(VirtualFrame frame) {
         return value;
     }
 }

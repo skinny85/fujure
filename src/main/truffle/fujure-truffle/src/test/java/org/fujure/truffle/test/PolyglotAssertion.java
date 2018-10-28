@@ -9,6 +9,9 @@ public final class PolyglotAssertion extends
         AbstractThrowableAssert<PolyglotAssertion, PolyglotException> {
     public static PolyglotAssertion assertThatPolyglot(Throwable throwable) {
         Assertions.assertThat(throwable)
+                .withFailMessage("Expected a PolyglotException to have been thrown, but no Exception was thrown")
+                .isNotNull();
+        Assertions.assertThat(throwable)
                 .isInstanceOf(PolyglotException.class);
         return new PolyglotAssertion((PolyglotException) throwable);
     }

@@ -15,7 +15,7 @@ public final class StringLiteralExprNode extends ExprNode {
     }
 
     @Override
-    public String executeString(VirtualFrame virtualFrame) {
+    public String executeString(VirtualFrame frame) {
         return value;
     }
 }

@@ -12,13 +12,18 @@ public abstract class ExprNode extends Node {
     public abstract Object executeGeneric(VirtualFrame frame) throws
             UnresolvedReferenceException, InvalidReferenceException;
 
-    public int executeInt(VirtualFrame virtualFrame) throws
+    public char executeCharacter(VirtualFrame frame) throws
             UnexpectedResultException, InvalidReferenceException, UnresolvedReferenceException {
-        return FujureTypeSystemGen.expectInteger(this.executeGeneric(virtualFrame));
+        return FujureTypeSystemGen.expectCharacter(this.executeGeneric(frame));
     }
 
-    public String executeString(VirtualFrame virtualFrame) throws
+    public int executeInteger(VirtualFrame frame) throws
             UnexpectedResultException, InvalidReferenceException, UnresolvedReferenceException {
-        return FujureTypeSystemGen.expectString(this.executeGeneric(virtualFrame));
+        return FujureTypeSystemGen.expectInteger(this.executeGeneric(frame));
+    }
+
+    public String executeString(VirtualFrame frame) throws
+            UnexpectedResultException, InvalidReferenceException, UnresolvedReferenceException {
+        return FujureTypeSystemGen.expectString(this.executeGeneric(frame));
     }
 }

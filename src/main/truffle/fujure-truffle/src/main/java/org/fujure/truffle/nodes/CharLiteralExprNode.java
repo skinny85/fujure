@@ -11,11 +11,11 @@ public final class CharLiteralExprNode extends ExprNode {
 
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-        return (int) value;
+        return value;
     }
 
     @Override
-    public int executeInt(VirtualFrame virtualFrame) {
+    public char executeCharacter(VirtualFrame frame) {
         return value;
     }
 }

@@ -299,4 +299,24 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
             assertThat(fujureBindings.memberKeys).isEmpty()
         }
     }
+
+    it.describes("when assigning a Char to an Int variable") {
+        it.beginsAll {
+            evalFujure("""
+               def a: Int = 'x'
+            """)
+        }
+
+        it.should("throw a guest PolyglotException that is not an internal nor syntax error") {
+            assertThatPolyglot()
+                    .isGuestNonSyntaxError()
+                    .hasMessageContaining("a:")
+                    .hasMessageContaining("Int")
+                    .hasMessageContaining("Char")
+        }
+
+        it.should("not add the incorrect module's bindings to Fujure's bindings") {
+            assertThat(fujureBindings.memberKeys).isEmpty()
+        }
+    }
 })

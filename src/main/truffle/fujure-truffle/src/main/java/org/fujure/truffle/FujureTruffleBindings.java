@@ -89,7 +89,10 @@ public final class FujureTruffleBindings implements TruffleObject {
                     } else if (lookup instanceof LookupResult.InvalidRefFound) {
                         return null;
                     } else {
-                        return ((LookupResult.ValidRefFound)lookup).getValue();
+                        // Truffle doesn't support returning chars from bindings,
+                        // so we special case char and convert them to an int
+                        Object value = ((LookupResult.ValidRefFound) lookup).getValue();
+                        return value instanceof Character ? (int) (Character) value : value;
                     }
                 }
             }
