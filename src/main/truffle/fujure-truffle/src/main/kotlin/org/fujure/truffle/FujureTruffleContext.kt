@@ -25,6 +25,10 @@ class FujureTruffleContext {
         return symbolTable.findType(typeReference)
     }
 
+    fun establishTypeOfValue(value: Any): QualifiedType? {
+        return symbolTable.establishTypeOfValue(value)
+    }
+
     fun findTopScopes(): Iterable<Scope> {
         return topScopes
     }

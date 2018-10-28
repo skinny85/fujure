@@ -43,4 +43,13 @@ class SymbolTable {
             }
         }
     }
+
+    fun establishTypeOfValue(value: Any): QualifiedType? {
+        return when (value) {
+            is Char -> BuiltInTypes.Char
+            is Int -> BuiltInTypes.Int
+            is String -> BuiltInTypes.String
+            else -> null
+        }
+    }
 }

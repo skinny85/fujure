@@ -2,7 +2,6 @@ package org.fujure.truffle.nodes;
 
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.frame.VirtualFrame;
-import org.fujure.fbc.analyze.BuiltInTypes;
 import org.fujure.fbc.analyze.QualifiedType;
 import org.fujure.fbc.ast.TypeReference;
 import org.fujure.truffle.FujureTruffleContext;
@@ -55,14 +54,6 @@ public final class SimpleValueDefNode extends ValueDefNode {
     }
 
     private Optional<QualifiedType> establishTypeOfValue(Object value) {
-        if (value instanceof Character) {
-            return Optional.of(BuiltInTypes.INSTANCE.getChar());
-        } else if (value instanceof Integer) {
-            return Optional.of(BuiltInTypes.INSTANCE.getInt());
-        } else if (value instanceof String) {
-            return Optional.of(BuiltInTypes.INSTANCE.getString());
-        } else {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(contextReference.get().establishTypeOfValue(value));
     }
 }
