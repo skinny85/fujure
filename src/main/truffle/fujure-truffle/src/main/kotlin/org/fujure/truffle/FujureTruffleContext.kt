@@ -4,6 +4,7 @@ import com.oracle.truffle.api.Scope
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.ast.TypeReference
+import org.fujure.fbc.ast.ValueReference
 import org.fujure.truffle.nodes.ModuleNode
 
 class FujureTruffleContext {
@@ -17,8 +18,8 @@ class FujureTruffleContext {
         return symbolTable.load(moduleNode, frame)
     }
 
-    fun lookup(ref: String): LookupResult {
-        return symbolTable.lookup(ref)
+    fun lookup(reference: ValueReference): LookupResult {
+        return symbolTable.lookup(reference)
     }
 
     fun findType(typeReference: TypeReference): QualifiedType? {

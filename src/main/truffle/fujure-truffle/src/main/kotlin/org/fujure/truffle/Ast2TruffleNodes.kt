@@ -21,12 +21,7 @@ object Ast2TruffleNodes {
 
     private fun translateExpr(expr: Expr, fujureTruffleLanguage: FujureTruffleLanguage): ExprNode {
         return when (expr) {
-            is Expr.ValueReferenceExpr -> {
-                if (expr.ref.size != 1)
-                    throw UnsupportedOperationException("Translating complex references like '$expr' to Truffle is not supported (yet)")
-                else
-                    ReferenceExprNode(expr.ref.ids[0], fujureTruffleLanguage)
-            }
+            is Expr.ValueReferenceExpr -> ReferenceExprNode(expr.ref, fujureTruffleLanguage)
             is Expr.IntLiteral -> IntLiteralExprNode(expr.value)
             is Expr.StringLiteral -> StringLiteralExprNode(expr.value)
             is Expr.CharLiteral -> CharLiteralExprNode(parseCharaLiteral(expr.value))

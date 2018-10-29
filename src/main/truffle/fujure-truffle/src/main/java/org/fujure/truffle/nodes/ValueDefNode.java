@@ -14,5 +14,5 @@ public abstract class ValueDefNode extends DefNode {
     }
 
     public abstract Object execute(VirtualFrame frame) throws
-            UnresolvedReferenceException, InvalidReferenceException, TypeMismatchException;
+            UnresolvedReference, InvalidReference, NonExistentTypeReferenced, TypeMismatch;
 }

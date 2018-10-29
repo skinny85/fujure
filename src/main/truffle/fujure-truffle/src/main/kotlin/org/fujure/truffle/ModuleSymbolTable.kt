@@ -3,12 +3,12 @@ package org.fujure.truffle
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.SemanticError
-import org.fujure.fbc.ast.ValueReference
-import org.fujure.truffle.nodes.InvalidReferenceException
+import org.fujure.truffle.nodes.InvalidReference
 import org.fujure.truffle.nodes.ModuleNode
+import org.fujure.truffle.nodes.NonExistentTypeReferenced
 import org.fujure.truffle.nodes.SimpleValueDefNode
-import org.fujure.truffle.nodes.TypeMismatchException
-import org.fujure.truffle.nodes.UnresolvedReferenceException
+import org.fujure.truffle.nodes.TypeMismatch
+import org.fujure.truffle.nodes.UnresolvedReference
 
 class ModuleSymbolTable() {
     private val bindings = mutableMapOf<String, Any?>()
@@ -20,22 +20,30 @@ class ModuleSymbolTable() {
                 try {
                     val value = defNode.execute(frame)
                     bindings[defNode.id] = value
-                } catch (e: UnresolvedReferenceException) {
-                    errors.add(SemanticError.UnresolvedReference(
-                            ErrorContext.ValueDefinition(defNode.id),
-                            ValueReference(e.ref)))
+                } catch (e: Exception) {
+                    val valueDefinitionContext = ErrorContext.ValueDefinition(defNode.id)
                     bindings[defNode.id] = null
-                } catch (e: TypeMismatchException) {
-                    errors.add(SemanticError.TypeMismatch(
-                            ErrorContext.ValueDefinition(defNode.id),
-                            e.declaredType, e.actualType))
-                    bindings[defNode.id] = null
-                } catch (e: InvalidReferenceException) {
-                    // If a value references an incorrectly defined value in its definition,
-                    // it becomes incorrectly defined, transitively.
-                    // However, we don't report another error for it -
-                    // the original one from the incorrect definition will be enough.
-                    bindings[defNode.id] = null
+                    when (e) {
+                        is UnresolvedReference -> {
+                            errors.add(SemanticError.UnresolvedReference(
+                                    valueDefinitionContext, e.reference))
+                        }
+                        is NonExistentTypeReferenced -> {
+                            errors.add(SemanticError.TypeNotFound(
+                                    valueDefinitionContext, e.reference))
+                        }
+                        is TypeMismatch -> {
+                            errors.add(SemanticError.TypeMismatch(
+                                    valueDefinitionContext, e.declaredType, e.actualType))
+                        }
+                        is InvalidReference -> {
+                            // If a value references an incorrectly defined value in its definition,
+                            // it becomes incorrectly defined, transitively.
+                            // However, we don't report another error for it -
+                            // the original one from the incorrect definition will be enough.
+                        }
+                        else -> throw e
+                    }
                 }
             }
         }

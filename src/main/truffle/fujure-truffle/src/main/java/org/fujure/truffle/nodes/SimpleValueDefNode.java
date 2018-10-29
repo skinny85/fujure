@@ -26,12 +26,12 @@ public final class SimpleValueDefNode extends ValueDefNode {
 
     @Override
     public Object execute(VirtualFrame frame) throws
-            UnresolvedReferenceException, InvalidReferenceException, TypeMismatchException {
+            UnresolvedReference, InvalidReference, TypeMismatch, NonExistentTypeReferenced {
         Optional<QualifiedType> maybeDeclaredType = Optional.empty();
         if (declaredTypeReference.isPresent()) {
             maybeDeclaredType = findType(declaredTypeReference.get());
             if (!maybeDeclaredType.isPresent()) {
-                throw new UnresolvedReferenceException(declaredTypeReference.get().inStringForm());
+                throw new NonExistentTypeReferenced(declaredTypeReference.get());
             }
         }
 
@@ -43,7 +43,7 @@ public final class SimpleValueDefNode extends ValueDefNode {
             QualifiedType valueType = maybeValueType.get();
             QualifiedType declaredType = maybeDeclaredType.get();
             if (!valueType.equals(declaredType))
-                throw new TypeMismatchException(declaredType, valueType);
+                throw new TypeMismatch(declaredType, valueType);
         }
 
         return value;

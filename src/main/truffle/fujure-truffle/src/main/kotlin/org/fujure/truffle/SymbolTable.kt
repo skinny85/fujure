@@ -4,6 +4,7 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.ast.TypeReference
+import org.fujure.fbc.ast.ValueReference
 import org.fujure.truffle.nodes.ModuleNode
 
 class SymbolTable {
@@ -26,8 +27,12 @@ class SymbolTable {
         return loadModuleResult
     }
 
-    fun lookup(ref: String): LookupResult {
-        return moduleSymbolTables[currentModule]!!.lookup(ref)
+    fun lookup(reference: ValueReference): LookupResult {
+        if (reference.size != 1) {
+            throw UnsupportedOperationException("Translating complex references like '$reference' to Truffle is not supported (yet)")
+        } else {
+            return moduleSymbolTables[currentModule]!!.lookup(reference.variable())
+        }
     }
 
     fun findType(typeReference: TypeReference): QualifiedType? {

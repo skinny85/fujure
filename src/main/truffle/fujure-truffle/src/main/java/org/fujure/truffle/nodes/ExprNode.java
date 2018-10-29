@@ -10,20 +10,20 @@ import org.fujure.truffle.FujureTypeSystemGen;
 @TypeSystemReference(FujureTypeSystem.class)
 public abstract class ExprNode extends Node {
     public abstract Object executeGeneric(VirtualFrame frame) throws
-            UnresolvedReferenceException, InvalidReferenceException;
+            UnresolvedReference, InvalidReference;
 
     public char executeCharacter(VirtualFrame frame) throws
-            UnexpectedResultException, InvalidReferenceException, UnresolvedReferenceException {
+            UnexpectedResultException, InvalidReference, UnresolvedReference {
         return FujureTypeSystemGen.expectCharacter(this.executeGeneric(frame));
     }
 
     public int executeInteger(VirtualFrame frame) throws
-            UnexpectedResultException, InvalidReferenceException, UnresolvedReferenceException {
+            UnexpectedResultException, InvalidReference, UnresolvedReference {
         return FujureTypeSystemGen.expectInteger(this.executeGeneric(frame));
     }
 
     public String executeString(VirtualFrame frame) throws
-            UnexpectedResultException, InvalidReferenceException, UnresolvedReferenceException {
+            UnexpectedResultException, InvalidReference, UnresolvedReference {
         return FujureTypeSystemGen.expectString(this.executeGeneric(frame));
     }
 }
