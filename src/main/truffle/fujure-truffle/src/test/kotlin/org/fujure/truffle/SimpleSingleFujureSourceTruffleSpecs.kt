@@ -25,6 +25,11 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
         }
     }
 
+    fun assertNoException() {
+        assertThat(exception)
+                .isNotInstanceOf(PolyglotException::class.java)
+    }
+
     fun assertThatPolyglot(): PolyglotAssertion {
         return PolyglotAssertion.assertThatPolyglot(if (exception::class == Exception::class)
             null
@@ -44,6 +49,7 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
         }
 
         it.should("result in the value 42") {
+            assertNoException()
             assertThat(result.isNumber).isTrue()
             assertThat(result.asInt()).isEqualTo(42)
         }
@@ -136,6 +142,7 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
         }
 
         it.should("result in the value 129") {
+            assertNoException()
             assertThat(result.asInt()).isEqualTo(129)
         }
 
@@ -193,6 +200,32 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
                     }
                 }
             }
+        }
+    }
+
+    it.describes("when evaluating code with Boolean and Unit literals") {
+        it.beginsAll {
+            evalFujure("""
+                def u = unit
+                def b: Bool = true
+            """)
+        }
+
+        lateinit var moduleBindings: Value
+
+        it.beginsAll {
+            assertNoException()
+            moduleBindings = fujureBindings.getMember("Unnamed")
+        }
+
+        it.should("evaluate the unit value to the Unit instance") {
+            val u = moduleBindings.getMember("u")
+            assertThat(u).isNotNull()
+        }
+
+        it.should("evaluate the Boolean value to the correct Boolean literal") {
+            val b = moduleBindings.getMember("b")
+            assertThat(b.asBoolean()).isEqualTo(true)
         }
     }
 

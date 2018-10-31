@@ -12,6 +12,11 @@ public abstract class ExprNode extends Node {
     public abstract Object executeGeneric(VirtualFrame frame) throws
             UnresolvedReference, InvalidReference;
 
+    public boolean executeBoolean(VirtualFrame frame) throws
+            UnexpectedResultException, InvalidReference, UnresolvedReference {
+        return FujureTypeSystemGen.expectBoolean(this.executeGeneric(frame));
+    }
+
     public char executeCharacter(VirtualFrame frame) throws
             UnexpectedResultException, InvalidReference, UnresolvedReference {
         return FujureTypeSystemGen.expectCharacter(this.executeGeneric(frame));
@@ -20,10 +25,5 @@ public abstract class ExprNode extends Node {
     public int executeInteger(VirtualFrame frame) throws
             UnexpectedResultException, InvalidReference, UnresolvedReference {
         return FujureTypeSystemGen.expectInteger(this.executeGeneric(frame));
-    }
-
-    public String executeString(VirtualFrame frame) throws
-            UnexpectedResultException, InvalidReference, UnresolvedReference {
-        return FujureTypeSystemGen.expectString(this.executeGeneric(frame));
     }
 }

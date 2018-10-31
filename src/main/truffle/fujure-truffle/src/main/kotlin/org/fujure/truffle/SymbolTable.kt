@@ -42,6 +42,8 @@ class SymbolTable {
             val id = typeReference.ids[0]
             return when (id) {
                 "Int" -> BuiltInTypes.Int
+                "Unit" -> BuiltInTypes.Unit
+                "Bool" -> BuiltInTypes.Bool
                 "Char" -> BuiltInTypes.Char
                 "String" -> BuiltInTypes.String
                 else -> null
