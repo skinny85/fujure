@@ -83,17 +83,10 @@ public final class FujureTruffleBindings implements TruffleObject {
             abstract static class ReadNode extends Node {
                 @CompilerDirectives.TruffleBoundary
                 public Object access(ModuleBindings moduleBindings, String name) {
-                    LookupResult lookup = moduleBindings.moduleSymbolTable.lookup(name);
-                    if (lookup instanceof LookupResult.RefNotFound) {
+                    Object value = moduleBindings.moduleSymbolTable.phase2lookup(name);
+                    if (value == null)
                         throw UnknownIdentifierException.raise(name);
-                    } else if (lookup instanceof LookupResult.InvalidRefFound) {
-                        return null;
-                    } else {
-                        // Truffle doesn't support returning chars from bindings,
-                        // so we special case char and convert them to an int
-                        Object value = ((LookupResult.ValidRefFound) lookup).getValue();
-                        return value instanceof Character ? (int) (Character) value : value;
-                    }
+                    return value instanceof Character ? (int) (Character) value : value;
                 }
             }
         }

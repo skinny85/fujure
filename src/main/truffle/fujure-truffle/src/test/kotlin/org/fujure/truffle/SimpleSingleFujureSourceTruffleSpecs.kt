@@ -319,13 +319,13 @@ class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle 
             """)
         }
 
-        it.should("throw an error mentioning only the non-existent declared type") {
+        it.should("throw an error mentioning both the non-existent declared type and the unresolved reference") {
             assertThatPolyglot()
                     .isGuestNonSyntaxError()
                     .message()
                     .contains("a:")
                     .contains("SomeTypeThatDoesNotExist")
-                    .doesNotContain("'x'")
+                    .contains("'x'")
         }
 
         it.should("not add the incorrect module's bindings to Fujure's bindings") {

@@ -2,8 +2,11 @@ package org.fujure.truffle.nodes;
 
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import org.fujure.fbc.analyze.ErrorContext;
 import org.fujure.fbc.analyze.QualifiedType;
+import org.fujure.fbc.analyze.SemanticError;
 import org.fujure.fbc.ast.TypeReference;
+import org.fujure.truffle.DefValidationResult;
 import org.fujure.truffle.FujureTruffleContext;
 import org.fujure.truffle.FujureTruffleLanguage;
 
@@ -25,35 +28,37 @@ public final class SimpleValueDefNode extends ValueDefNode {
     }
 
     @Override
-    public Object execute(VirtualFrame frame) throws
-            UnresolvedReference, InvalidReference, TypeMismatch, NonExistentTypeReferenced {
-        Optional<QualifiedType> maybeDeclaredType = Optional.empty();
+    public DefValidationResult validate() {
+        ErrorContext.ValueDefinition errorContext = new ErrorContext.ValueDefinition(id);
+        DefValidationResult initializerValidation = initializer.validate(errorContext);
+
         if (declaredTypeReference.isPresent()) {
-            maybeDeclaredType = findType(declaredTypeReference.get());
+            Optional<QualifiedType> maybeDeclaredType = findType(declaredTypeReference.get());
             if (!maybeDeclaredType.isPresent()) {
-                throw new NonExistentTypeReferenced(declaredTypeReference.get());
+                initializerValidation = initializerValidation.withError(
+                        new SemanticError.TypeNotFound(
+                                errorContext,
+                                declaredTypeReference.get()));
+            } else if (initializerValidation instanceof DefValidationResult.Correct) {
+                QualifiedType declaredType = maybeDeclaredType.get();
+                QualifiedType initializerType = ((DefValidationResult.Correct) initializerValidation).getType();
+                if (!declaredType.equals(initializerType))
+                    initializerValidation = initializerValidation.withError(
+                        new SemanticError.TypeMismatch(
+                                errorContext,
+                                declaredType, initializerType));
             }
         }
 
-        Object value = initializer.executeGeneric(frame);
+        return initializerValidation;
+    }
 
-        Optional<QualifiedType> maybeValueType = establishTypeOfValue(value);
-        if (maybeDeclaredType.isPresent() && maybeValueType.isPresent()) {
-            // ToDo handle unknown value type?
-            QualifiedType valueType = maybeValueType.get();
-            QualifiedType declaredType = maybeDeclaredType.get();
-            if (!valueType.equals(declaredType))
-                throw new TypeMismatch(declaredType, valueType);
-        }
-
-        return value;
+    @Override
+    public Object execute(VirtualFrame frame) {
+        return initializer.executeGeneric(frame);
     }
 
     private Optional<QualifiedType> findType(TypeReference typeReference) {
         return Optional.ofNullable(contextReference.get().findType(typeReference));
-    }
-
-    private Optional<QualifiedType> establishTypeOfValue(Object value) {
-        return Optional.ofNullable(contextReference.get().establishTypeOfValue(value));
     }
 }

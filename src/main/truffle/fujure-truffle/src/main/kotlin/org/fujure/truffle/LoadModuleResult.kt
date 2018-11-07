@@ -9,9 +9,10 @@ class LoadModuleResult(val moduleNode: ModuleNode, val errors: List<SemanticErro
         return errors.isEmpty()
     }
 
-    fun semanticException(): FujureTruffleSemanticException? {
+    fun semanticException(): FujureTruffleSemanticException {
         return if (isSuccess())
-            null
+            throw RuntimeException("Loading '${moduleNode.userProvidedFilePath()}' was successful, " +
+                    "cannot create FujureTruffleSemanticException")
         else
             FujureTruffleSemanticException(ProblematicFile.SemanticFileIssue(
                     moduleNode.userProvidedFilePath(), errors))

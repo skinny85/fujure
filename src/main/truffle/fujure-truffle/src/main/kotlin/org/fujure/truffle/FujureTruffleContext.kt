@@ -18,16 +18,16 @@ class FujureTruffleContext {
         return symbolTable.load(moduleNode, frame)
     }
 
-    fun lookup(reference: ValueReference): LookupResult {
-        return symbolTable.lookup(reference)
+    fun phase1Lookup(reference: ValueReference): Phase1LookupResult {
+        return symbolTable.phase1Lookup(reference)
+    }
+
+    fun phase2Lookup(reference: ValueReference): Any? {
+        return symbolTable.phase2Lookup(reference)
     }
 
     fun findType(typeReference: TypeReference): QualifiedType? {
         return symbolTable.findType(typeReference)
-    }
-
-    fun establishTypeOfValue(value: Any): QualifiedType? {
-        return symbolTable.establishTypeOfValue(value)
     }
 
     fun findTopScopes(): Iterable<Scope> {

@@ -11,28 +11,37 @@ class SymbolTable {
     internal val fujureTruffleBindings = FujureTruffleBindings()
 
     private val moduleSymbolTables = mutableMapOf<String, ModuleSymbolTable>()
-    private lateinit var currentModule: String
+    private lateinit var currentlyValidatingModule: ModuleSymbolTablePhase1
+    private lateinit var currentlyExecutingModule: ModuleSymbolTable
 
     fun load(moduleNode: ModuleNode, frame: VirtualFrame): LoadModuleResult {
-        val fqn = moduleNode.fullyQualifiedModuleName()
-        val moduleSymbolTable = ModuleSymbolTable()
-        moduleSymbolTables.put(fqn, moduleSymbolTable)
-        currentModule = fqn
-        val loadModuleResult = moduleSymbolTable.load(moduleNode, frame)
-
-        if (loadModuleResult.isSuccess()) {
-            fujureTruffleBindings.register(fqn, moduleSymbolTable)
+        currentlyValidatingModule = ModuleSymbolTablePhase1()
+        val validateModuleResult = currentlyValidatingModule.validate(moduleNode)
+        return when (validateModuleResult) {
+            is ValidateModulePhase1Result.Invalid -> {
+                LoadModuleResult(moduleNode, validateModuleResult.errors)
+            }
+            is ValidateModulePhase1Result.Valid -> {
+                currentlyExecutingModule = validateModuleResult.moduleSymbolTable
+                val fqn = moduleNode.fullyQualifiedModuleName()
+                moduleSymbolTables[fqn] = currentlyExecutingModule
+                currentlyExecutingModule.execute(frame)
+                fujureTruffleBindings.register(fqn, currentlyExecutingModule)
+                LoadModuleResult(moduleNode, emptyList())
+            }
         }
-
-        return loadModuleResult
     }
 
-    fun lookup(reference: ValueReference): LookupResult {
+    fun phase1Lookup(reference: ValueReference): Phase1LookupResult {
         if (reference.size != 1) {
             throw UnsupportedOperationException("Translating complex references like '$reference' to Truffle is not supported (yet)")
         } else {
-            return moduleSymbolTables[currentModule]!!.lookup(reference.variable())
+            return currentlyValidatingModule.phase1Lookup(reference.variable())
         }
+    }
+
+    fun phase2Lookup(reference: ValueReference): Any? {
+        return currentlyExecutingModule.phase2lookup(reference.variable())
     }
 
     fun findType(typeReference: TypeReference): QualifiedType? {
@@ -48,15 +57,6 @@ class SymbolTable {
                 "String" -> BuiltInTypes.String
                 else -> null
             }
-        }
-    }
-
-    fun establishTypeOfValue(value: Any): QualifiedType? {
-        return when (value) {
-            is Char -> BuiltInTypes.Char
-            is Int -> BuiltInTypes.Int
-            is String -> BuiltInTypes.String
-            else -> null
         }
     }
 }
