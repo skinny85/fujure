@@ -8,7 +8,7 @@ import org.graalvm.polyglot.PolyglotException
 import org.graalvm.polyglot.Value
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnit
 
-class SimpleSingleFujureSourceTruffleSpecs : SpecnazKotlinJUnit("Fujure Truffle implementation", {
+class SingleFileFujureTruffleSpec : SpecnazKotlinJUnit("Fujure Truffle implementation", {
     lateinit var context: Context
     lateinit var result: Value
     lateinit var exception: Exception
