@@ -3,8 +3,10 @@ package org.fujure.truffle.nodes;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.RootNode;
+import org.fujure.fbc.ProblematicFile;
 import org.fujure.truffle.FujureTruffleContext;
 import org.fujure.truffle.FujureTruffleLanguage;
+import org.fujure.truffle.FujureTruffleSemanticException;
 import org.fujure.truffle.LoadModuleResult;
 
 import java.util.Arrays;
@@ -35,8 +37,11 @@ public final class ModuleNode extends RootNode {
         if (!registered) {
             // register values defined in the file as Truffle bindings
             LoadModuleResult loadModuleResult = contextReference.get().load(this, frame);
-            if (!loadModuleResult.isSuccess())
-                throw loadModuleResult.semanticException();
+            if (loadModuleResult instanceof LoadModuleResult.Failure) {
+                LoadModuleResult.Failure loadModuleFailure = (LoadModuleResult.Failure) loadModuleResult;
+                throw new FujureTruffleSemanticException(new ProblematicFile.SemanticFileIssue(
+                        userProvidedFilePath, loadModuleFailure.getErrors()));
+            }
             registered = true;
         }
 

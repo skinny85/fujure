@@ -9,13 +9,19 @@ import org.fujure.truffle.nodes.ModuleNode
 
 class FujureTruffleContext {
     private val symbolTable = SymbolTable()
+    private val fujureTruffleBindings = FujureTruffleBindings()
     private val topScopes = setOf<Scope>(
             Scope
-                    .newBuilder("global", symbolTable.fujureTruffleBindings)
+                    .newBuilder("global", fujureTruffleBindings)
                     .build())
 
     fun load(moduleNode: ModuleNode, frame: VirtualFrame): LoadModuleResult {
-        return symbolTable.load(moduleNode, frame)
+        val loadModuleResult = symbolTable.load(moduleNode, frame)
+        if (loadModuleResult is LoadModuleResult.Success) {
+            val fqn = moduleNode.fullyQualifiedModuleName()
+            fujureTruffleBindings.register(fqn, loadModuleResult.moduleSymbolTable)
+        }
+        return loadModuleResult
     }
 
     fun phase1Lookup(reference: ValueReference): Phase1LookupResult {

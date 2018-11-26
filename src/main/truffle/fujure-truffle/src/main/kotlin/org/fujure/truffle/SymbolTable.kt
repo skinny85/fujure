@@ -8,8 +8,6 @@ import org.fujure.fbc.ast.ValueReference
 import org.fujure.truffle.nodes.ModuleNode
 
 class SymbolTable {
-    internal val fujureTruffleBindings = FujureTruffleBindings()
-
     private val moduleSymbolTables = mutableMapOf<String, ModuleSymbolTable>()
     private lateinit var currentlyValidatingModule: ModuleSymbolTablePhase1
     private lateinit var currentlyExecutingModule: ModuleSymbolTable
@@ -19,15 +17,14 @@ class SymbolTable {
         val validateModuleResult = currentlyValidatingModule.validate(moduleNode)
         return when (validateModuleResult) {
             is ValidateModulePhase1Result.Invalid -> {
-                LoadModuleResult(moduleNode, validateModuleResult.errors)
+                LoadModuleResult.Failure(validateModuleResult.errors)
             }
             is ValidateModulePhase1Result.Valid -> {
                 currentlyExecutingModule = validateModuleResult.moduleSymbolTable
                 val fqn = moduleNode.fullyQualifiedModuleName()
                 moduleSymbolTables[fqn] = currentlyExecutingModule
                 currentlyExecutingModule.execute(frame)
-                fujureTruffleBindings.register(fqn, currentlyExecutingModule)
-                LoadModuleResult(moduleNode, emptyList())
+                LoadModuleResult.Success(currentlyExecutingModule)
             }
         }
     }
