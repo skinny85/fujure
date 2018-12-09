@@ -7,6 +7,7 @@ import com.oracle.truffle.api.interop.Resolve;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.interop.UnknownIdentifierException;
 import com.oracle.truffle.api.nodes.Node;
+import org.fujure.fbc.ast.ValueReference;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,9 +22,26 @@ public final class FujureTruffleBindings implements TruffleObject {
     }
 
     private final Map<String, ModuleBindings> modulesBindings = new HashMap<>();
+    private String currentModule;
 
-    public void register(String fqn, ModuleSymbolTable moduleSymbolTable) {
-        this.modulesBindings.put(fqn, new ModuleBindings(moduleSymbolTable));
+    public void enterModuleScope(String fullyQualifiedModuleName) {
+        this.currentModule = fullyQualifiedModuleName;
+    }
+
+    public void resetCurrentModule() {
+        modulesBindings.put(currentModule, new ModuleBindings());
+    }
+
+    public Object findInCurrentModule(ValueReference reference) {
+        return modulesBindings.get(currentModule).find(reference);
+    }
+
+    public void registerInCurrentModule(String name, Object value) {
+        modulesBindings.get(currentModule).register(name, value);
+    }
+
+    public void leaveCurrentModule() {
+        this.currentModule = null;
     }
 
     @Override
@@ -54,14 +72,26 @@ public final class FujureTruffleBindings implements TruffleObject {
     }
 
     static final class ModuleBindings implements TruffleObject {
-        private final ModuleSymbolTable moduleSymbolTable;
+        private final Map<String, Object> moduleValues;
 
         public static boolean isInstance(TruffleObject obj) {
             return obj instanceof ModuleBindings;
         }
 
-        public ModuleBindings(ModuleSymbolTable moduleSymbolTable) {
-            this.moduleSymbolTable = moduleSymbolTable;
+        public ModuleBindings() {
+            this.moduleValues = new HashMap<>();
+        }
+
+        public Object find(ValueReference reference) {
+            if (reference.getSize() != 1)
+                throw new UnsupportedOperationException("Translating complex references like '" +
+                        reference + "' to Truffle is not supported (yet)");
+            else
+                return moduleValues.get(reference.variable());
+        }
+
+        public void register(String name, Object value) {
+            moduleValues.put(name, value);
         }
 
         @Override
@@ -75,7 +105,7 @@ public final class FujureTruffleBindings implements TruffleObject {
             abstract static class KeysNode extends Node {
                 @CompilerDirectives.TruffleBoundary
                 public Object access(ModuleBindings moduleBindings) {
-                    return new MemberKeys(moduleBindings.moduleSymbolTable.valueNames());
+                    return new MemberKeys(moduleBindings.moduleValues.keySet());
                 }
             }
 
@@ -83,9 +113,12 @@ public final class FujureTruffleBindings implements TruffleObject {
             abstract static class ReadNode extends Node {
                 @CompilerDirectives.TruffleBoundary
                 public Object access(ModuleBindings moduleBindings, String name) {
-                    Object value = moduleBindings.moduleSymbolTable.phase2lookup(name);
+                    Object value = moduleBindings.moduleValues.get(name);
                     if (value == null)
                         throw UnknownIdentifierException.raise(name);
+
+                    // Truffle doesn't support returning chars from bindings,
+                    // so we special case char and convert them to an int
                     return value instanceof Character ? (int) (Character) value : value;
                 }
             }

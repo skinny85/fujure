@@ -4,19 +4,24 @@ import com.oracle.truffle.api.CallTarget
 import com.oracle.truffle.api.Scope
 import com.oracle.truffle.api.Truffle
 import com.oracle.truffle.api.TruffleLanguage
+import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.read.OpenedFile
-import org.fujure.truffle.nodes.ModuleNode
+import org.fujure.truffle.analyze.NotTruffleSemanticAnalyzer
+import org.fujure.truffle.analyze.NotTruffleSymbolTable
+import org.fujure.truffle.nodes.RootModuleNode
 import org.funktionale.either.Disjunction
 
 class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
+    private val symbolTable = NotTruffleSymbolTable()
+
     override fun createContext(env: Env): FujureTruffleContext {
-        return FujureTruffleContext();
+        return FujureTruffleContext()
     }
 
     override fun isObjectOfLanguage(obj: Any): Boolean {
-        return false;
+        return false
     }
 
     override fun parse(request: ParsingRequest): CallTarget {
@@ -27,12 +32,29 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
                 InputFile(path), request.source.reader))
 
         return when (parsingResult) {
-            is Disjunction.Left -> throw FujureTruffleParsingException(request.source, parsingResult.value)
-            is Disjunction.Right -> Truffle.getRuntime().createCallTarget(ModuleNode(this,
-                    parsingResult.value.inputFile.userProvidedFilePath,
-                    parsingResult.value.ast.packageName,
-                    parsingResult.value.inputFile.moduleName,
-                    parsingResult.value.ast.defs.map { def -> Ast2TruffleNodes.translate(def, this) }))
+            is Disjunction.Left -> {
+                throw FujureTruffleParsingException(request.source, parsingResult.value)
+            }
+            is Disjunction.Right -> {
+                 val parsedFile = parsingResult.value
+                 val analysisResults = NotTruffleSemanticAnalyzer.analyze(parsedFile, symbolTable)
+                 when (analysisResults) {
+                     is Disjunction.Left -> {
+                         val errors = analysisResults.value
+                         throw FujureTruffleSemanticException(ProblematicFile.SemanticFileIssue(
+                                 parsedFile.inputFile.userProvidedFilePath, errors))
+                     }
+                     is Disjunction.Right -> {
+                         val moduleSymbols = analysisResults.value
+                         symbolTable.merge(moduleSymbols)
+                         Truffle.getRuntime().createCallTarget(RootModuleNode(
+                             this,
+                             parsedFile.inputFile,
+                             Ast2TruffleNodes.translate(parsedFile.ast, this)
+                         ))
+                     }
+                 }
+            }
         }
     }
 

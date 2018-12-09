@@ -9,9 +9,5 @@ public abstract class ValueDefNode extends DefNode {
         this.id = id;
     }
 
-    public String getId() {
-        return id;
-    }
-
     public abstract Object execute(VirtualFrame frame);
 }
