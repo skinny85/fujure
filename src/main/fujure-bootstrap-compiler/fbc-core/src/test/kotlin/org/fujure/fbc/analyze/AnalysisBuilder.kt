@@ -2,6 +2,7 @@ package org.fujure.fbc.analyze
 
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.ast.InputFile
+import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.read.OpenedFile
@@ -29,7 +30,7 @@ class AnalysisBuilder private constructor() {
         return this
     }
 
-    fun analyze(): Disjunction<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram> {
+    fun analyze(): Disjunction<List<ProblematicFile.SemanticFileIssue>, SymbolTable> {
         val parsedFiles = linkedSetOf<ParsedFile>()
         programs.forEachIndexed { i, pair ->
             val setName = pair.second

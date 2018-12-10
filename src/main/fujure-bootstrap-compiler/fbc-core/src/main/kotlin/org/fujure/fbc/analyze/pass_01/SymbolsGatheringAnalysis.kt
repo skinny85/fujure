@@ -1,9 +1,7 @@
 package org.fujure.fbc.analyze.pass_01
 
 import org.fujure.fbc.ProblematicFile
-import org.fujure.fbc.analyze.AnalyzedProgram
 import org.fujure.fbc.analyze.SemanticError
-import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.FileSymbolTable
 import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.parse.ParsedFile
@@ -11,8 +9,7 @@ import org.funktionale.either.Disjunction
 
 object SymbolsGatheringAnalysis {
     fun analyze(parsedFiles: Set<ParsedFile>):
-            Disjunction<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram> {
-        val asts = mutableListOf<AstRoot>()
+            Disjunction<List<ProblematicFile.SemanticFileIssue>, SymbolTable> {
         val fileSymbolTables = mutableSetOf<FileSymbolTable>()
         val issues = mutableListOf<ProblematicFile.SemanticFileIssue>()
 
@@ -28,7 +25,6 @@ object SymbolsGatheringAnalysis {
                         listOf(SemanticError.DuplicateModule(
                                 previous.packageName, previous.inputFile.moduleName, previous.inputFile, parsedFile.inputFile))
                     } else {
-                        asts.add(fileSymbolsGatheringResult.astRoot)
                         null
                     }
                 }
@@ -39,7 +35,7 @@ object SymbolsGatheringAnalysis {
         }
 
         return if (issues.isEmpty())
-            Disjunction.Right(AnalyzedProgram(asts, SymbolTable(fileSymbolTables)))
+            Disjunction.Right(SymbolTable(fileSymbolTables))
         else
             Disjunction.Left(issues)
     }

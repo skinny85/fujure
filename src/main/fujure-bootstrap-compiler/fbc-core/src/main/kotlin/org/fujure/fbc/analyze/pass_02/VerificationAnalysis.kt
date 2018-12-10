@@ -1,58 +1,57 @@
 package org.fujure.fbc.analyze.pass_02
 
 import org.fujure.fbc.ProblematicFile
-import org.fujure.fbc.analyze.AnalyzedProgram
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
-import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.ast.ValueCoordinates
+import org.fujure.fbc.parse.ParsedFile
 import org.funktionale.either.Disjunction
 import org.funktionale.either.Either
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def as AbsynDef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents as AbsynFileContents
 
 object VerificationAnalysis {
-    fun analyze(analyzedProgram: AnalyzedProgram):
-            Disjunction<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram> {
+    fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable):
+            Disjunction<List<ProblematicFile.SemanticFileIssue>, SymbolTable> {
         val problematicFiles = mutableListOf<ProblematicFile.SemanticFileIssue>()
-        for (ast in analyzedProgram.asts) {
-            val problematicFile = analyze(ast, analyzedProgram.symbolTable)
+        for (parsedFile in parsedFiles) {
+            val problematicFile = analyze(parsedFile, symbolTable)
             if (problematicFile != null)
                 problematicFiles.add(problematicFile)
         }
         return if (problematicFiles.isEmpty())
-            Disjunction.Right(analyzedProgram)
+            Disjunction.Right(symbolTable)
         else
             Disjunction.Left(problematicFiles)
     }
 
-    private fun analyze(ast: AstRoot, symbolTable: SymbolTable): ProblematicFile.SemanticFileIssue? {
-        symbolTable.enterContext(ast.inputFile)
+    private fun analyze(parsedFile: ParsedFile, symbolTable: SymbolTable): ProblematicFile.SemanticFileIssue? {
+        symbolTable.enterContext(parsedFile.inputFile)
 
         val errors = mutableListOf<SemanticError>()
 
         // handle imports
-        for (import in ast.fileContents.imports) {
+        for (import in parsedFile.ast.imports) {
             val importError = symbolTable.registerImport(import)
             if (importError != null)
                 errors.add(importError)
         }
 
         // handle definitions
-        for (def in ast.fileContents.defs) {
-            val defErrors = analyze(def, symbolTable, ast.fileContents.packageName, ast.inputFile.moduleName)
+        for (def in parsedFile.ast.defs) {
+            val defErrors = analyze(def, symbolTable, parsedFile.ast.packageName, parsedFile.inputFile.moduleName)
             errors.addAll(defErrors)
         }
 
         return if (errors.isEmpty())
             null
         else
-            ProblematicFile.SemanticFileIssue(ast.inputFile.userProvidedFilePath, errors)
+            ProblematicFile.SemanticFileIssue(parsedFile.inputFile.userProvidedFilePath, errors)
     }
 
     private fun analyze(def: Def, symbolTable: SymbolTable, packageName: String, moduleName: String):

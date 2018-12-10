@@ -1,8 +1,8 @@
 package org.fujure.fbc
 
 import org.fujure.fbc.CompilationResults.CompilationAttempted
-import org.fujure.fbc.analyze.AnalyzedProgram
 import org.fujure.fbc.analyze.SemanticAnalyzer
+import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.codegen.CodeGenerator
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.parse.Parser
@@ -33,14 +33,14 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
             is Disjunction.Left ->
                     CompilationResults.CompilationNotAttempted(semanticAnalysisResult.value)
             is Disjunction.Right ->
-                    generateCode(compileOptions, semanticAnalysisResult.value)
+                    generateCode(compileOptions, parsedFiles, semanticAnalysisResult.value)
         }
     }
 
-    fun generateCode(compileOptions: CompileOptions, analyzedProgram: AnalyzedProgram): CompilationAttempted {
+    fun generateCode(compileOptions: CompileOptions, parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable): CompilationAttempted {
         val builder = CompilationAttempted.Builder()
-        for (astRoot in analyzedProgram.asts) {
-            val codeGenResult = codeGenerator.generate(compileOptions, astRoot, analyzedProgram.symbolTable)
+        for (parsedFile in parsedFiles) {
+            val codeGenResult = codeGenerator.generate(compileOptions, parsedFile, symbolTable)
             builder.add(codeGenResult)
         }
         return builder.build()

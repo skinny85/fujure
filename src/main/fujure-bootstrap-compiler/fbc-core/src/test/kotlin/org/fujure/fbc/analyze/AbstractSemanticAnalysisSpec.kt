@@ -2,6 +2,7 @@ package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.ProblematicFile
+import org.fujure.fbc.ast.SymbolTable
 import org.funktionale.either.Disjunction
 import org.junit.runner.RunWith
 import org.specnaz.kotlin.SpecnazKotlin
@@ -13,7 +14,7 @@ abstract class AbstractSemanticAnalysisSpec : SpecnazKotlin {
 
     fun AnalysisBuilder.analyzed() {
         val result = this.analyze()
-        errors = if (result is Disjunction.Left<List<ProblematicFile.SemanticFileIssue>, AnalyzedProgram>) {
+        errors = if (result is Disjunction.Left<List<ProblematicFile.SemanticFileIssue>, SymbolTable>) {
             result.value
         } else {
             emptyList()

@@ -6,17 +6,17 @@ import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
-import org.fujure.fbc.ast.AstRoot
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.ast.ValueReference
+import org.fujure.fbc.parse.ParsedFile
 import java.lang.reflect.Type
 import javax.lang.model.element.Modifier
 
 object FileContentsCodeGen {
-    fun generate(astRoot: AstRoot, symbolTable: SymbolTable): JavaFile {
-        val inputFile = astRoot.inputFile
+    fun generate(parsedFile: ParsedFile, symbolTable: SymbolTable): JavaFile {
+        val inputFile = parsedFile.inputFile
         val className = inputFile.moduleName
 
         val typeSpecBuilder = TypeSpec.classBuilder(className)
@@ -24,7 +24,7 @@ object FileContentsCodeGen {
 
         symbolTable.enterContext(inputFile)
 
-        val fileContents = astRoot.fileContents
+        val fileContents = parsedFile.ast
         for (def in fileContents.defs) {
             when (def) {
                 is Def.ValueDef.SimpleValueDef ->
