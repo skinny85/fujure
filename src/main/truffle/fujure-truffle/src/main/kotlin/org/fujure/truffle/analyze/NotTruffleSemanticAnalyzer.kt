@@ -1,5 +1,6 @@
 package org.fujure.truffle.analyze
 
+import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.QualifiedType
@@ -64,41 +65,45 @@ class NotTruffleModuleSymbols {
 object NotTruffleSemanticAnalyzer {
     fun analyze(parsedFile: ParsedFile, symbolTable: NotTruffleSymbolTable):
             Disjunction<
-                List<SemanticError>,
+                ProblematicFile.SemanticFileIssue,
                 NotTruffleModuleSymbols
             > {
         // ToDo split into 2 passes (to handle imports)
 
-        val mutableErrors = mutableListOf<SemanticError>()
+        val moduleErrors = mutableListOf<SemanticError>()
 
         val moduleSymbols = NotTruffleModuleSymbols()
         for (def in parsedFile.ast.defs) {
             when (def) {
                 is Def.ValueDef.SimpleValueDef -> {
                     val errorContext = ErrorContext.ValueDefinition(def.id)
-                    val (effectiveType, errors) = determineEffectiveType(def.initializer, moduleSymbols, errorContext)
-                    mutableErrors.addAll(errors)
-                    moduleSymbols.register(def.id, effectiveType)
+                    val (effectiveType, definitionErrors) = determineEffectiveType(def.initializer, moduleSymbols, errorContext)
 
-                    if (def.declaredType != null){
+                    moduleErrors.addAll(definitionErrors)
+
+                    if (def.declaredType != null) {
                         val declaredType = symbolTable.findType(def.declaredType!!)
+                        moduleSymbols.register(def.id, declaredType)
+
                         if (declaredType == null) {
-                            mutableErrors.add(SemanticError.TypeNotFound(errorContext, def.declaredType!!))
+                            moduleErrors.add(SemanticError.TypeNotFound(errorContext, def.declaredType!!))
                         } else {
                             if (effectiveType != null && effectiveType != declaredType) {
-                                mutableErrors.add(SemanticError.TypeMismatch(errorContext,
+                                moduleErrors.add(SemanticError.TypeMismatch(errorContext,
                                         declaredType, effectiveType))
                             }
                         }
+                    } else {
+                        moduleSymbols.register(def.id, effectiveType)
                     }
                 }
             }
         }
 
-        return if (mutableErrors.isEmpty())
+        return if (moduleErrors.isEmpty())
             Disjunction.right(moduleSymbols)
         else
-            Disjunction.left(mutableErrors)
+            Disjunction.left(ProblematicFile.SemanticFileIssue(parsedFile.inputFile.userProvidedFilePath, moduleErrors))
     }
 
     private fun determineEffectiveType(expr: Expr, moduleSymbols: NotTruffleModuleSymbols,

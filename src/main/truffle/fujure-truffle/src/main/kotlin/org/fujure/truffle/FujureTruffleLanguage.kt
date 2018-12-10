@@ -4,7 +4,6 @@ import com.oracle.truffle.api.CallTarget
 import com.oracle.truffle.api.Scope
 import com.oracle.truffle.api.Truffle
 import com.oracle.truffle.api.TruffleLanguage
-import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.read.OpenedFile
@@ -40,9 +39,7 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
                  val analysisResults = NotTruffleSemanticAnalyzer.analyze(parsedFile, symbolTable)
                  when (analysisResults) {
                      is Disjunction.Left -> {
-                         val errors = analysisResults.value
-                         throw FujureTruffleSemanticException(ProblematicFile.SemanticFileIssue(
-                                 parsedFile.inputFile.userProvidedFilePath, errors))
+                         throw FujureTruffleSemanticException(analysisResults.value)
                      }
                      is Disjunction.Right -> {
                          val moduleSymbols = analysisResults.value
