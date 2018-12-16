@@ -85,6 +85,30 @@ class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     BuiltInTypes.Int, BuiltInTypes.Bool))
                 }
             }
+
+            it.describes("called with both an invalid name and an invalid type value definitions") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def interface = 2
+
+                                def c: Char = interface
+                            """)
+                            .analyzed()
+                }
+
+                it.should("report an InvalidName error") {
+                    assertThat(file1Errors()).contains(
+                            SemanticError.InvalidName("interface"))
+                }
+
+                it.should("also report a TypeMismatch error") {
+                    assertThat(file1Errors()).contains(
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("c"),
+                                    BuiltInTypes.Char, BuiltInTypes.Int))
+                }
+            }
         }
     }
 }

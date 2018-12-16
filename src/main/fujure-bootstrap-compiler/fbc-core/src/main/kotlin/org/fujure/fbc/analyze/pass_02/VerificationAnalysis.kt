@@ -10,24 +10,20 @@ import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.parse.ParsedFile
-import org.funktionale.either.Disjunction
 import org.funktionale.either.Either
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def as AbsynDef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents as AbsynFileContents
 
 object VerificationAnalysis {
     fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable):
-            Disjunction<List<ProblematicFile.SemanticFileIssue>, SymbolTable> {
+            Pair<SymbolTable, List<ProblematicFile.SemanticFileIssue>> {
         val problematicFiles = mutableListOf<ProblematicFile.SemanticFileIssue>()
         for (parsedFile in parsedFiles) {
             val problematicFile = analyze(parsedFile, symbolTable)
             if (problematicFile != null)
                 problematicFiles.add(problematicFile)
         }
-        return if (problematicFiles.isEmpty())
-            Disjunction.Right(symbolTable)
-        else
-            Disjunction.Left(problematicFiles)
+        return Pair(symbolTable, problematicFiles)
     }
 
     private fun analyze(parsedFile: ParsedFile, symbolTable: SymbolTable): ProblematicFile.SemanticFileIssue? {

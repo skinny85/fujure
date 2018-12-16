@@ -7,7 +7,7 @@ import org.fujure.fbc.common.NameValidator
 import org.fujure.fbc.parse.ParsedFile
 
 object FileSymbolsGatheringAnalysis {
-    fun analyze(parsedFile: ParsedFile): FileSymbolsGatheringResult {
+    fun analyze(parsedFile: ParsedFile): Pair<FileSymbolTable, List<SemanticError>> {
         val fileSymbolTableBuilder = FileSymbolTableBuilder(parsedFile.inputFile, parsedFile.ast.packageName)
         val errors = mutableListOf<SemanticError>()
 
@@ -15,27 +15,14 @@ object FileSymbolsGatheringAnalysis {
             when (def) {
                 is Def.ValueDef.SimpleValueDef -> {
                     val id = def.id
-                    if (!NameValidator.validValueName(id)) {
+                    if (!NameValidator.validValueName(id))
                         errors.add(SemanticError.InvalidName(id))
-                    } else {
-                        if (!fileSymbolTableBuilder.noteSimpleValueDeclaration(id, def.declaredType, def.initializer))
-                            errors.add(SemanticError.DuplicateDefinition(id))
-                    }
+                    if (!fileSymbolTableBuilder.noteSimpleValueDeclaration(id, def.declaredType, def.initializer))
+                        errors.add(SemanticError.DuplicateDefinition(id))
                 }
             }
         }
 
-        return if (errors.isEmpty())
-            FileSymbolsGatheringResult.Success(fileSymbolTableBuilder.build())
-        else
-            FileSymbolsGatheringResult.Failure(errors)
+        return Pair(fileSymbolTableBuilder.build(), errors)
     }
-}
-
-sealed class FileSymbolsGatheringResult {
-    data class Failure(val errors: List<SemanticError>) :
-            FileSymbolsGatheringResult()
-
-    data class Success(val fileSymbolTable: FileSymbolTable) :
-            FileSymbolsGatheringResult()
 }
