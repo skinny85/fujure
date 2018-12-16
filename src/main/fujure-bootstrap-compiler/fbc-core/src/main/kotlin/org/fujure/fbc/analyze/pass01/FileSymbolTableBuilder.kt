@@ -1,4 +1,4 @@
-package org.fujure.fbc.analyze.pass_01
+package org.fujure.fbc.analyze.pass01
 
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.FileSymbolTable

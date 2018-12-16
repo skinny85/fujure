@@ -2,7 +2,7 @@ package org.fujure.fbc.ast
 
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
-import org.fujure.fbc.analyze.pass_02.VerificationAnalysis
+import org.fujure.fbc.analyze.pass02.VerificationAnalysis
 import org.fujure.fbc.ast.SymbolTable.LookupResult.*
 import org.funktionale.either.Either
 

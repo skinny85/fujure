@@ -1,4 +1,4 @@
-package org.fujure.fbc.analyze.pass_02
+package org.fujure.fbc.analyze.pass02
 
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.analyze.BuiltInTypes
