@@ -10,9 +10,7 @@ import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.parse.ParsedFile
-import org.funktionale.either.Either
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def as AbsynDef
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents as AbsynFileContents
+import org.funktionale.either.Disjunction
 
 object VerificationAnalysis {
     fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable):
@@ -64,9 +62,9 @@ object VerificationAnalysis {
                     symbolTable.findType(def.declaredType)
 
                 when (initializerTypeOrError) {
-                    is Either.Left -> ret.add(initializerTypeOrError.l)
-                    is Either.Right -> {
-                        val initializerQualifiedType = initializerTypeOrError.r
+                    is Disjunction.Left -> ret.add(initializerTypeOrError.value)
+                    is Disjunction.Right -> {
+                        val initializerQualifiedType = initializerTypeOrError.value
                         if (declaredQualifiedType != null &&
                                 initializerQualifiedType != null &&
                                 declaredQualifiedType != initializerQualifiedType)
@@ -83,30 +81,30 @@ object VerificationAnalysis {
     }
 
     private fun exprType(expr: Expr, symbolTable: SymbolTable, valName: String,
-                         packageName: String, moduleName: String): Either<SemanticError, QualifiedType?> =
+                         packageName: String, moduleName: String): Disjunction<SemanticError, QualifiedType?> =
             exprType(expr, symbolTable, valName, listOf(ValueCoordinates(packageName, moduleName, valName)))
 
     fun exprType(expr: Expr, symbolTable: SymbolTable, valName: String, chain: List<ValueCoordinates>):
-            Either<SemanticError, QualifiedType?> = when (expr) {
-        is Expr.IntLiteral -> Either.Right(BuiltInTypes.Int)
-        is Expr.UnitLiteral -> Either.Right(BuiltInTypes.Unit)
-        is Expr.BoolLiteral -> Either.Right(BuiltInTypes.Bool)
-        is Expr.CharLiteral -> Either.Right(BuiltInTypes.Char)
-        is Expr.StringLiteral -> Either.Right(BuiltInTypes.String)
+            Disjunction<SemanticError, QualifiedType?> = when (expr) {
+        is Expr.IntLiteral -> Disjunction.Right(BuiltInTypes.Int)
+        is Expr.UnitLiteral -> Disjunction.Right(BuiltInTypes.Unit)
+        is Expr.BoolLiteral -> Disjunction.Right(BuiltInTypes.Bool)
+        is Expr.CharLiteral -> Disjunction.Right(BuiltInTypes.Char)
+        is Expr.StringLiteral -> Disjunction.Right(BuiltInTypes.String)
         is Expr.ValueReferenceExpr -> {
             val context = ErrorContext.ValueDefinition(valName)
             val lookupResult = symbolTable.lookup(expr.ref, valName, chain)
             when (lookupResult) {
                 is SymbolTable.LookupResult.RefNotFound ->
-                    Either.Left(SemanticError.UnresolvedReference(context, expr.ref))
+                    Disjunction.Left(SemanticError.UnresolvedReference(context, expr.ref))
                 is SymbolTable.LookupResult.ForwardReference ->
-                    Either.Left(SemanticError.IllegalForwardReference(context, lookupResult.name))
+                    Disjunction.Left(SemanticError.IllegalForwardReference(context, lookupResult.name))
                 is SymbolTable.LookupResult.SelfReference ->
-                    Either.Left(SemanticError.IllegalSelfReference(context))
+                    Disjunction.Left(SemanticError.IllegalSelfReference(context))
                 is SymbolTable.LookupResult.CyclicReference ->
-                    Either.Left(SemanticError.CyclicDefinition(context, lookupResult.cycle))
+                    Disjunction.Left(SemanticError.CyclicDefinition(context, lookupResult.cycle))
                 is SymbolTable.LookupResult.RefFound ->
-                    Either.Right(lookupResult.qualifiedType)
+                    Disjunction.Right(lookupResult.qualifiedType)
             }
         }
     }

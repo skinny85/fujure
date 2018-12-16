@@ -3,8 +3,12 @@ package org.fujure.fbc.ast
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.analyze.pass02.VerificationAnalysis
-import org.fujure.fbc.ast.SymbolTable.LookupResult.*
-import org.funktionale.either.Either
+import org.fujure.fbc.ast.SymbolTable.LookupResult.CyclicReference
+import org.fujure.fbc.ast.SymbolTable.LookupResult.ForwardReference
+import org.fujure.fbc.ast.SymbolTable.LookupResult.RefFound
+import org.fujure.fbc.ast.SymbolTable.LookupResult.RefNotFound
+import org.fujure.fbc.ast.SymbolTable.LookupResult.SelfReference
+import org.funktionale.either.Disjunction
 
 class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMap<String, Pair<TypeReference?, Expr>>,
                       val packageName: String) {
@@ -132,14 +136,14 @@ class FileSymbolTable(val inputFile: InputFile, simpleDeclarations: LinkedHashMa
                     // if not, infer the type from the initializer, failing if that contains a cycle
                     val qualifiedTypeOrError = VerificationAnalysis.exprType(this.initializer, symbolTable, valName, chain)
                     when (qualifiedTypeOrError) {
-                        is Either.Left -> {
-                            val semanticError = qualifiedTypeOrError.l
+                        is Disjunction.Left -> {
+                            val semanticError = qualifiedTypeOrError.value
                             when (semanticError) {
                                 is SemanticError.CyclicDefinition -> throw CyclicReferenceException(semanticError.cycle)
                                 else -> null
                             }
                         }
-                        is Either.Right -> qualifiedTypeOrError.r
+                        is Disjunction.Right -> qualifiedTypeOrError.value
                     }
                 }
             }
