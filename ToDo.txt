@@ -1,0 +1,90 @@
+- correct the imports flaws
+
+- validate that the package fragment is correct (no '_', no $s in the name etc.)
+- enforce the directory structure follows the package structure in Fujure files
+- add to the grammar a form of value definition without an initializer or function body
+
+- use fbc-core instead of fbc-cli in the Gradle plugin
+- allow setting the input directory in the Gradle plugin
+- allow setting the output directory in the Gradle plugin
+    - and also make it different for 'main' and 'test' sourceSets by default
+- remove the generated Java files in clean
+
+Identifiers
+-----------
+1. In package names
+    Q: What should we do with $ in package fragments?
+    A: Screw that. Just let them be (Java lets them be as well)
+    A2: I actually changed my mind. Ban them in Fujure. We'll use `` to interface with Java if needed.
+
+    Q: What about a package fragment = '_'?
+    A: Java 8 warns about it. We could legitimately ban it probably, as Java 9 might do it.
+
+2. In identifiers
+    Q: What about a top-level identifier = '_'?
+    A: 2 options: a) warn about an unused binding, b) error out. Erroring out sounds better to me.
+
+    Q: What about $s in top-level value ids?
+    A: We must error out here (the $s are needed in generated code, for identifiers equal to Java keywords)
+        but still store them and perform semantic analysis. We'll use `` for interfacing with Java.
+
+    Q: What about type variables?
+    A: They must start with $, but can't just be '$', and can't contain other $s.
+
+Import ambiguity
+----------------
+
+We have an ambiguity.
+Say I have the program:
+
+    import a.b.c
+
+And there are files:
+
+     // a/b.fjr
+     package a
+
+     def c = 1
+
+     // a/b/c.fjr
+     package a.b
+
+     def x = true
+     def y = false
+
+Does the import above import the member c from module b.fjr,
+or does it import module c.fjr?
+
+Possible behaviors:
+
+1. Error out, reporting the ambiguity.
+
+This seems overly harsh.
+The developer writing the program might not have control over the imported code
+(it could be from a library, or multiple libraries),
+and so reporting an error here seems very frustrating.
+
+2. Import the c member from b.fjr.
+
+This has the problem of completely shadowing the c.fjr module.
+So, just the existence of the a/b.fjr module with member c
+makes module c.fjr inaccessible
+(perhaps our dev actually wanted to import c.fjr all along - but they can't!
+At best, they can say `import a.b.c.(x, y)`).
+
+3. Import the c.fjr module.
+
+This seems reasonable.
+If we ever need the c member of b.fjr,
+we can always say: `import a.b`, and then `b.c` -
+so, we're not blocking access to any modules in this way.
+
+Fujure guiding principles
+-------------------------
+- 100% purely functional
+- Syntax: readable and familiar, in that order
+    - Conciseness is nice to have, but never at the expense of the above 2 traits - it's always 3rd in line
+- Eager by default, but laziness is built-in and easy
+- Blue-collar language. Use common and familiar concepts. Be explicit instead of clever. Simplicity is a virtue
+- We strive for regularity and a "single way to do things". We do that not with constraints
+    but by designing the language in a way that incentivizes that "single way"
