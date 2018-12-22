@@ -21,7 +21,7 @@ object SymbolsGatheringAnalysis2 {
             val fileSymbolsGatheringResult = analyzeFile(parsedFile)
             semanticErrors.addAll(fileSymbolsGatheringResult.second)
 
-            val module = Module(parsedFile.ast.packageName, parsedFile.inputFile.moduleName)
+            val module = parsedFile.module()
             val previous = modules.putIfAbsent(module, fileSymbolsGatheringResult.first)
             if (previous != null) {
                 semanticErrors.add(SemanticError.DuplicateModule(
