@@ -6,9 +6,10 @@ import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
+import org.fujure.fbc.analyze.SymbolTable
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
-import org.fujure.fbc.ast.SymbolTable
+import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.ValueReference
 import org.fujure.fbc.parse.ParsedFile
 import java.lang.reflect.Type
@@ -22,13 +23,11 @@ object FileContentsCodeGen {
         val typeSpecBuilder = TypeSpec.classBuilder(className)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 
-        symbolTable.enterContext(inputFile)
-
         val fileContents = parsedFile.ast
         for (def in fileContents.defs) {
             when (def) {
                 is Def.ValueDef.SimpleValueDef ->
-                    typeSpecBuilder.addField(generateField(def, symbolTable))
+                    typeSpecBuilder.addField(generateField(def, parsedFile.module(), symbolTable))
             }
         }
 
@@ -38,9 +37,10 @@ object FileContentsCodeGen {
                 .build()
     }
 
-    private fun generateField(simpleValueDef: Def.ValueDef.SimpleValueDef, symbolTable: SymbolTable): FieldSpec {
-        val lookupResult = symbolTable.lookup(ValueReference(simpleValueDef.id))
-        val variableType = toJavaType((lookupResult as SymbolTable.LookupResult.RefFound).qualifiedType)!!
+    private fun generateField(simpleValueDef: Def.ValueDef.SimpleValueDef, module: Module,
+            symbolTable: SymbolTable): FieldSpec {
+        val lookupResult = symbolTable.lookup(module, ValueReference(simpleValueDef.id))
+        val variableType = toJavaType(lookupResult.qualifiedType)!!
 
         var format = "\$L"
         val initializer: Any
@@ -64,8 +64,7 @@ object FileContentsCodeGen {
                 if (simpleValueDef.initializer.ref.ids.size == 1) {
                     initializer = simpleValueDef.initializer.ref.inStringForm()
                 } else {
-                    val reference = symbolTable.lookup(simpleValueDef.initializer.ref, simpleValueDef.id) as
-                            SymbolTable.LookupResult.RefFound
+                    val reference = symbolTable.lookup(module, simpleValueDef.initializer.ref)
                     initializer = ClassName.get(reference.module.packageName, reference.module.moduleName)
                     format = "\$T.${simpleValueDef.initializer.ref.variable()}"
                 }

@@ -1,8 +1,8 @@
 package org.fujure.fbc.codegen
 
 import org.fujure.fbc.CompileOptions
+import org.fujure.fbc.analyze.SymbolTable
 import org.fujure.fbc.ast.InputFile
-import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.parse.ParsedFile
 import java.io.File
 import java.io.IOException

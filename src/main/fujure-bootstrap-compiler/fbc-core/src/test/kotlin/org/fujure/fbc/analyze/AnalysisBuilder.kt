@@ -2,7 +2,6 @@ package org.fujure.fbc.analyze
 
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.ast.InputFile
-import org.fujure.fbc.ast.SymbolTable
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.read.OpenedFile
@@ -42,6 +41,6 @@ class AnalysisBuilder private constructor() {
                 throw IllegalStateException("Duplicate ParsedFile ${success.value} provided, " +
                         "current parsed files: $parsedFiles")
         }
-        return SimpleSemanticAnalyzer.analyze(parsedFiles)
+        return SimpleSemanticAnalyzer2.analyze(parsedFiles)
     }
 }
