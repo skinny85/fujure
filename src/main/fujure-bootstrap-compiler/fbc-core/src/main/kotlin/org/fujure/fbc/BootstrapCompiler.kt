@@ -1,8 +1,8 @@
 package org.fujure.fbc
 
 import org.fujure.fbc.CompilationResults.CompilationAttempted
-import org.fujure.fbc.analyze.SemanticAnalyzer
-import org.fujure.fbc.ast.SymbolTable
+import org.fujure.fbc.analyze.SemanticAnalyzer2
+import org.fujure.fbc.analyze.SymbolTable
 import org.fujure.fbc.codegen.CodeGenerator
 import org.fujure.fbc.parse.ParsedFile
 import org.fujure.fbc.parse.Parser
@@ -12,7 +12,7 @@ import org.funktionale.either.Disjunction
 
 class BootstrapCompiler(private val fileOpener: FileOpener,
                         private val parser: Parser,
-                        private val semanticAnalyzer: SemanticAnalyzer,
+                        private val semanticAnalyzer: SemanticAnalyzer2,
                         private val codeGenerator: CodeGenerator) : Compiler {
     override fun compile(compileOptions: CompileOptions, files: List<String>): CompilationResults {
         return appyFailingTransformation(files, { file -> fileOpener.open(file) }, { openedFiles ->

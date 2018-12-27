@@ -37,7 +37,7 @@ class Pass02SymbolTable(val modules: Map<Module, Pass02ModuleSymbols>) {
             val targetModule = Module(module.packageName, ref.ids[0])
             val moduleSymbols = modules[targetModule]
             if (moduleSymbols != null) {
-                return moduleSymbols.lookup(ValueReference(ref.ids[1]), anchor, targetModule, this, chain)
+                return moduleSymbols.lookup(ValueReference(ref.ids.subList(1, ref.ids.size)), anchor, targetModule, this, chain)
             }
             // ToDo: there's a very subtle edge case here - what if ref.ids[0] was imported,
             // but didn't contain the variable ref.ids[1]? In that case, we shouldn't search
@@ -57,7 +57,7 @@ class Pass02SymbolTable(val modules: Map<Module, Pass02ModuleSymbols>) {
 
 class Pass02ModuleSymbols(val imports: Map<String, Module?>,
         simpleValues: Map<String, Pair<TypeReference?, Expr>>) {
-    private val values: Map<String, NameEntity> = simpleValues.mapValues { (_, pair) ->
+    val values: Map<String, NameEntity> = simpleValues.mapValues { (_, pair) ->
         NameEntity.ValueTypeHolder(pair.first, pair.second)
     }
 
@@ -120,13 +120,16 @@ class Pass02ModuleSymbols(val imports: Map<String, Module?>,
     }
 }
 
-internal sealed class NameEntity {
+sealed class NameEntity {
+    abstract fun resolvedType(symbolTable: Pass02SymbolTable, module: Module, valName: String,
+            chain: List<ValueCoordinates>): QualifiedType?
+
     class ValueTypeHolder(declaredType: TypeReference?, initializer: Expr) : NameEntity() {
         private val valResolution = ValueResolution.fromDeclaration(declaredType, initializer)
         private var resolved = false
         private var resolvedType: QualifiedType? = null
 
-        fun resolvedType(symbolTable: Pass02SymbolTable, module: Module, valName: String,
+        override fun resolvedType(symbolTable: Pass02SymbolTable, module: Module, valName: String,
                          chain: List<ValueCoordinates>): QualifiedType? {
             if (!resolved)
                 resolve(symbolTable, module, valName, chain)

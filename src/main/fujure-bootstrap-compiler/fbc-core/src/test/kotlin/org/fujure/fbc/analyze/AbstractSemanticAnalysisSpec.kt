@@ -2,7 +2,6 @@ package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.ProblematicFile
-import org.fujure.fbc.ast.SymbolTable
 import org.funktionale.either.Disjunction
 import org.junit.runner.RunWith
 import org.specnaz.kotlin.SpecnazKotlin
