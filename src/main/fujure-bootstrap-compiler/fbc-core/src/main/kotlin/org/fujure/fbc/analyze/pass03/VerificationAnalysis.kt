@@ -5,7 +5,6 @@ import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
-import org.fujure.fbc.analyze.pass02.Pass02SymbolTable
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.Module
@@ -13,8 +12,8 @@ import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.parse.ParsedFile
 import org.funktionale.either.Disjunction
 
-object VerificationAnalysis2 {
-    fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: Pass02SymbolTable):
+object VerificationAnalysis {
+    fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: Pass03SymbolTable):
             List<ProblematicFile.SemanticFileIssue> {
         val problematicFiles = mutableListOf<ProblematicFile.SemanticFileIssue>()
         for (parsedFile in parsedFiles) {
@@ -25,7 +24,7 @@ object VerificationAnalysis2 {
         return problematicFiles
     }
 
-    private fun analyzeFile(parsedFile: ParsedFile, symbolTable: Pass02SymbolTable):
+    private fun analyzeFile(parsedFile: ParsedFile, symbolTable: Pass03SymbolTable):
             ProblematicFile.SemanticFileIssue? {
         val module = parsedFile.module()
 
@@ -43,7 +42,7 @@ object VerificationAnalysis2 {
             ProblematicFile.SemanticFileIssue(parsedFile.inputFile.userProvidedFilePath, errors)
     }
 
-    private fun analyzeDefinition(def: Def, symbolTable: Pass02SymbolTable, module: Module):
+    private fun analyzeDefinition(def: Def, symbolTable: Pass03SymbolTable, module: Module):
             List<SemanticError> {
         val ret = mutableListOf<SemanticError>()
         when (def) {
@@ -75,11 +74,11 @@ object VerificationAnalysis2 {
         return ret
     }
 
-    private fun exprType(expr: Expr, symbolTable: Pass02SymbolTable, valName: String,
+    private fun exprType(expr: Expr, symbolTable: Pass03SymbolTable, valName: String,
                          module: Module): Disjunction<SemanticError, QualifiedType?> =
             exprType(expr, symbolTable, module, valName, listOf(ValueCoordinates(module.packageName, module.moduleName, valName)))
 
-    fun exprType(expr: Expr, symbolTable: Pass02SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>):
+    fun exprType(expr: Expr, symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>):
             Disjunction<SemanticError, QualifiedType?> = when (expr)  {
         is Expr.IntLiteral -> Disjunction.Right(BuiltInTypes.Int)
         is Expr.UnitLiteral -> Disjunction.Right(BuiltInTypes.Unit)
@@ -90,15 +89,15 @@ object VerificationAnalysis2 {
             val context = ErrorContext.ValueDefinition(valName)
             val lookupResult = symbolTable.lookup(expr.ref, module, valName, chain)
             when (lookupResult) {
-                is Pass02SymbolTable.LookupResult.RefNotFound ->
+                is Pass03SymbolTable.LookupResult.RefNotFound ->
                     Disjunction.Left(SemanticError.UnresolvedReference(context, expr.ref))
-                is Pass02SymbolTable.LookupResult.ForwardReference ->
+                is Pass03SymbolTable.LookupResult.ForwardReference ->
                     Disjunction.Left(SemanticError.IllegalForwardReference(context, lookupResult.name))
-                is Pass02SymbolTable.LookupResult.SelfReference ->
+                is Pass03SymbolTable.LookupResult.SelfReference ->
                     Disjunction.Left(SemanticError.IllegalSelfReference(context))
-                is Pass02SymbolTable.LookupResult.CyclicReference ->
+                is Pass03SymbolTable.LookupResult.CyclicReference ->
                     Disjunction.Left(SemanticError.CyclicDefinition(context, lookupResult.cycle))
-                is Pass02SymbolTable.LookupResult.RefFound ->
+                is Pass03SymbolTable.LookupResult.RefFound ->
                     Disjunction.Right(lookupResult.qualifiedType)
             }
         }
