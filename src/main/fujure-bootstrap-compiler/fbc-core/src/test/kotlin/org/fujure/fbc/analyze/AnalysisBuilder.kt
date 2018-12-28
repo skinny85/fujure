@@ -41,6 +41,6 @@ class AnalysisBuilder private constructor() {
                 throw IllegalStateException("Duplicate ParsedFile ${success.value} provided, " +
                         "current parsed files: $parsedFiles")
         }
-        return SimpleSemanticAnalyzer2.analyze(parsedFiles)
+        return SimpleSemanticAnalyzer.analyze(parsedFiles)
     }
 }

@@ -1,40 +1,40 @@
 package org.fujure.fbc.analyze
 
 import org.fujure.fbc.ProblematicFile
-import org.fujure.fbc.analyze.pass01.SymbolsGatheringAnalysis2
+import org.fujure.fbc.analyze.pass01.SymbolsGatheringAnalysis
 import org.fujure.fbc.analyze.pass02.ImportsGatheringAnalysis
-import org.fujure.fbc.analyze.pass02.Pass02ModuleSymbols
-import org.fujure.fbc.analyze.pass02.Pass02SymbolTable
-import org.fujure.fbc.analyze.pass03.VerificationAnalysis2
+import org.fujure.fbc.analyze.pass03.Pass03ModuleSymbols
+import org.fujure.fbc.analyze.pass03.Pass03SymbolTable
+import org.fujure.fbc.analyze.pass03.VerificationAnalysis
 import org.fujure.fbc.ast.Module
 import org.fujure.fbc.parse.ParsedFile
 import org.funktionale.either.Disjunction
 
-interface SemanticAnalyzer2 {
+interface SemanticAnalyzer {
     fun analyze(parsedFiles: Set<ParsedFile>): Disjunction<
             List<ProblematicFile.SemanticFileIssue>,
             SymbolTable>
 }
 
-object SimpleSemanticAnalyzer2 : SemanticAnalyzer2 {
+object SimpleSemanticAnalyzer : SemanticAnalyzer {
     override fun analyze(parsedFiles: Set<ParsedFile>):
             Disjunction<List<ProblematicFile.SemanticFileIssue>, SymbolTable> {
-        val (firstPassSymbolTable, firstPassErrors) = SymbolsGatheringAnalysis2.analyze(parsedFiles)
-        val (secondPassSymbolTable, secondPassErrors) = ImportsGatheringAnalysis.analyze(parsedFiles, firstPassSymbolTable)
-        val thirdPassErrors = VerificationAnalysis2.analyze(parsedFiles, secondPassSymbolTable)
+        val (secondPassSymbolTable, firstPassErrors) = SymbolsGatheringAnalysis.analyze(parsedFiles)
+        val (thirdPassSymbolTable, secondPassErrors) = ImportsGatheringAnalysis.analyze(parsedFiles, secondPassSymbolTable)
+        val thirdPassErrors = VerificationAnalysis.analyze(parsedFiles, thirdPassSymbolTable)
         val errors = combine(combine(firstPassErrors, secondPassErrors), thirdPassErrors)
         return if (errors.isEmpty())
-            Disjunction.right(buildSymbolTable(secondPassSymbolTable))
+            Disjunction.right(buildSymbolTable(thirdPassSymbolTable))
         else
             Disjunction.left(errors)
     }
 
-    private fun buildSymbolTable(symbolTable: Pass02SymbolTable): SymbolTable {
+    private fun buildSymbolTable(symbolTable: Pass03SymbolTable): SymbolTable {
         return SymbolTable(symbolTable.modules.mapValues { buildModuleSymbols(symbolTable, it.key, it.value) })
     }
 
-    private fun buildModuleSymbols(symbolTable: Pass02SymbolTable, module: Module,
-            moduleSymbols: Pass02ModuleSymbols): ModuleSymbols {
+    private fun buildModuleSymbols(symbolTable: Pass03SymbolTable, module: Module,
+            moduleSymbols: Pass03ModuleSymbols): ModuleSymbols {
         return ModuleSymbols(moduleSymbols.imports, moduleSymbols.values.mapValues {
             it.value.resolvedType(symbolTable, module, it.key, emptyList())!!
         })

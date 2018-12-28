@@ -1,6 +1,6 @@
 package org.fujure.fbc
 
-import org.fujure.fbc.analyze.SimpleSemanticAnalyzer2
+import org.fujure.fbc.analyze.SimpleSemanticAnalyzer
 import org.fujure.fbc.cli.CompilerCli
 import org.fujure.fbc.cli.ConsoleLogger
 import org.fujure.fbc.codegen.JavaPoetCodeGenerator
@@ -19,7 +19,7 @@ object Main {
     @JvmStatic
     fun runCompiler(args: Array<String>): Int {
         val compiler = BootstrapCompiler(SimpleFileOpener, BnfcParser,
-                SimpleSemanticAnalyzer2, JavaPoetCodeGenerator)
+                SimpleSemanticAnalyzer, JavaPoetCodeGenerator)
         val compilerCli = CompilerCli(ConsoleLogger, compiler)
         return compilerCli.invokeCompiler(args)
     }

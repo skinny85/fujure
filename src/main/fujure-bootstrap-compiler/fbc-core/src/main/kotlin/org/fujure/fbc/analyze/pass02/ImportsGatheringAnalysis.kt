@@ -2,15 +2,16 @@ package org.fujure.fbc.analyze.pass02
 
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.analyze.SemanticError
-import org.fujure.fbc.analyze.pass01.Pass01SymbolTable
+import org.fujure.fbc.analyze.pass03.Pass03ModuleSymbols
+import org.fujure.fbc.analyze.pass03.Pass03SymbolTable
 import org.fujure.fbc.ast.Module
 import org.fujure.fbc.parse.ParsedFile
 
 object ImportsGatheringAnalysis {
-    fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: Pass01SymbolTable):
-            Pair<Pass02SymbolTable, List<ProblematicFile.SemanticFileIssue>> {
+    fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: Pass02SymbolTable):
+            Pair<Pass03SymbolTable, List<ProblematicFile.SemanticFileIssue>> {
         val issues = mutableListOf<ProblematicFile.SemanticFileIssue>()
-        val modules = mutableMapOf<Module, Pass02ModuleSymbols>()
+        val modules = mutableMapOf<Module, Pass03ModuleSymbols>()
 
         for (parsedFile in parsedFiles) {
             val (pass02ModuleSymbols, errors) = analyzeFile(parsedFile, symbolTable)
@@ -21,11 +22,11 @@ object ImportsGatheringAnalysis {
             }
         }
 
-        return Pair(Pass02SymbolTable(modules), issues)
+        return Pair(Pass03SymbolTable(modules), issues)
     }
 
-    private fun analyzeFile(parsedFile: ParsedFile, symbolTable: Pass01SymbolTable):
-            Pair<Pass02ModuleSymbols, List<SemanticError>> {
+    private fun analyzeFile(parsedFile: ParsedFile, symbolTable: Pass02SymbolTable):
+            Pair<Pass03ModuleSymbols, List<SemanticError>> {
         val errors = mutableListOf<SemanticError>()
         val imports = mutableMapOf<String, Module?>()
 
@@ -50,7 +51,7 @@ object ImportsGatheringAnalysis {
 
         val moduleSymbols = symbolTable.modules[parsedFile.module()]!!
         return Pair(
-                Pass02ModuleSymbols(imports, moduleSymbols.simpleValues),
+                Pass03ModuleSymbols(imports, moduleSymbols.simpleValues),
                 errors)
     }
 }

@@ -2,6 +2,8 @@ package org.fujure.fbc.analyze.pass01
 
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.analyze.SemanticError
+import org.fujure.fbc.analyze.pass02.Pass02ModuleSymbols
+import org.fujure.fbc.analyze.pass02.Pass02SymbolTable
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.Module
@@ -9,10 +11,10 @@ import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.common.NameValidator
 import org.fujure.fbc.parse.ParsedFile
 
-object SymbolsGatheringAnalysis2 {
+object SymbolsGatheringAnalysis {
     fun analyze(parsedFiles: Set<ParsedFile>):
-            Pair<Pass01SymbolTable, List<ProblematicFile.SemanticFileIssue>> {
-        val modules = mutableMapOf<Module, Pass01ModuleSymbols>()
+            Pair<Pass02SymbolTable, List<ProblematicFile.SemanticFileIssue>> {
+        val modules = mutableMapOf<Module, Pass02ModuleSymbols>()
         val issues = mutableListOf<ProblematicFile.SemanticFileIssue>()
 
         for (parsedFile in parsedFiles) {
@@ -33,10 +35,10 @@ object SymbolsGatheringAnalysis2 {
             }
         }
 
-        return Pair(Pass01SymbolTable(modules), issues)
+        return Pair(Pass02SymbolTable(modules), issues)
     }
 
-    private fun analyzeFile(parsedFile: ParsedFile): Pair<Pass01ModuleSymbols, List<SemanticError>> {
+    private fun analyzeFile(parsedFile: ParsedFile): Pair<Pass02ModuleSymbols, List<SemanticError>> {
         val simpleValues = linkedMapOf<String, Pair<TypeReference?, Expr>>()
         val errors = mutableListOf<SemanticError>()
 
@@ -52,6 +54,6 @@ object SymbolsGatheringAnalysis2 {
             }
         }
 
-        return Pair(Pass01ModuleSymbols(parsedFile.inputFile, simpleValues), errors)
+        return Pair(Pass02ModuleSymbols(parsedFile.inputFile, simpleValues), errors)
     }
 }
