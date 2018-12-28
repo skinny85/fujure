@@ -56,8 +56,8 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>) {
 
 class Pass03ModuleSymbols(val imports: Map<String, Module?>,
         simpleValues: Map<String, Pair<TypeReference?, Expr>>) {
-    val values: Map<String, NameEntity> = simpleValues.mapValues { (_, pair) ->
-        NameEntity.ValueTypeHolder(pair.first, pair.second)
+    internal val values: Map<String, ValueTypeHolder> = simpleValues.mapValues { (_, pair) ->
+        ValueTypeHolder(pair.first, pair.second)
     }
 
     fun lookup(ref: ValueReference, anchor: String?, currentModule: Module, symbolTable: Pass03SymbolTable,
@@ -97,19 +97,15 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
                 seenAnchor = true
             }
             if (valName == id) {
-                when (valHolder) {
-                    is NameEntity.ValueTypeHolder -> {
-                        ret = if (seenAnchor) {
-                            Pass03SymbolTable.LookupResult.ForwardReference(id)
-                        } else {
-                            try {
-                                val valueCoordinates = ValueCoordinates(module.packageName, module.moduleName, id)
-                                val qualifiedType = valHolder.resolvedType(symbolTable, module, id, chain + valueCoordinates)
-                                Pass03SymbolTable.LookupResult.RefFound(qualifiedType, module)
-                            } catch (e: CyclicReferenceException) {
-                                Pass03SymbolTable.LookupResult.CyclicReference(e.cycle)
-                            }
-                        }
+                ret = if (seenAnchor) {
+                    Pass03SymbolTable.LookupResult.ForwardReference(id)
+                } else {
+                    try {
+                        val valueCoordinates = ValueCoordinates(module.packageName, module.moduleName, id)
+                        val qualifiedType = valHolder.resolvedType(symbolTable, module, id, chain + valueCoordinates)
+                        Pass03SymbolTable.LookupResult.RefFound(qualifiedType, module)
+                    } catch (e: CyclicReferenceException) {
+                        Pass03SymbolTable.LookupResult.CyclicReference(e.cycle)
                     }
                 }
             }
@@ -117,19 +113,14 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
 
         return ret
     }
-}
 
-sealed class NameEntity {
-    abstract fun resolvedType(symbolTable: Pass03SymbolTable, module: Module, valName: String,
-            chain: List<ValueCoordinates>): QualifiedType?
-
-    class ValueTypeHolder(declaredType: TypeReference?, initializer: Expr) : NameEntity() {
+    internal class ValueTypeHolder(declaredType: TypeReference?, initializer: Expr) {
         private val valResolution = ValueResolution.fromDeclaration(declaredType, initializer)
         private var resolved = false
         private var resolvedType: QualifiedType? = null
 
-        override fun resolvedType(symbolTable: Pass03SymbolTable, module: Module, valName: String,
-                         chain: List<ValueCoordinates>): QualifiedType? {
+        fun resolvedType(symbolTable: Pass03SymbolTable, module: Module, valName: String,
+                chain: List<ValueCoordinates>): QualifiedType? {
             if (!resolved)
                 resolve(symbolTable, module, valName, chain)
 
@@ -137,53 +128,53 @@ sealed class NameEntity {
         }
 
         private fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String,
-                            chain: List<ValueCoordinates>) {
+                chain: List<ValueCoordinates>) {
             resolvedType = valResolution.resolve(symbolTable, module, valName, chain)
             resolved = true
         }
     }
-}
 
-internal sealed class ValueResolution {
-    class FromDeclaredType(val declaredType: TypeReference) : ValueResolution()
-    class FromInitializer(val initializer: Expr) : ValueResolution()
+    private sealed class ValueResolution {
+        class FromDeclaredType(val declaredType: TypeReference) : ValueResolution()
+        class FromInitializer(val initializer: Expr) : ValueResolution()
 
-    companion object {
-        fun fromDeclaration(declaredType: TypeReference?, initializer: Expr):
-                ValueResolution {
-            return if (declaredType == null)
-                FromInitializer(initializer)
-            else
-                FromDeclaredType(declaredType)
+        companion object {
+            fun fromDeclaration(declaredType: TypeReference?, initializer: Expr):
+                    ValueResolution {
+                return if (declaredType == null)
+                    FromInitializer(initializer)
+                else
+                    FromDeclaredType(declaredType)
+            }
         }
-    }
 
-    fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>): QualifiedType? {
-        return when (this) {
-            is FromDeclaredType -> symbolTable.findType(this.declaredType)
-            is FromInitializer -> {
-                // first, check if we don't have a cycle already
-                if (chain.size > 1) {
-                    val chainAsSet = chain.toSet()
-                    if (chainAsSet.size < chain.size)
-                        throw CyclicReferenceException(chain)
-                }
-
-                // if not, infer the type from the initializer, failing if that contains a cycle
-                val qualifiedTypeOrError = VerificationAnalysis.exprType(this.initializer, symbolTable, module, valName, chain)
-                when (qualifiedTypeOrError) {
-                    is Disjunction.Left -> {
-                        val semanticError = qualifiedTypeOrError.value
-                        when (semanticError) {
-                            is SemanticError.CyclicDefinition -> throw CyclicReferenceException(semanticError.cycle)
-                            else -> null
-                        }
+        fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>): QualifiedType? {
+            return when (this) {
+                is FromDeclaredType -> symbolTable.findType(this.declaredType)
+                is FromInitializer -> {
+                    // first, check if we don't have a cycle already
+                    if (chain.size > 1) {
+                        val chainAsSet = chain.toSet()
+                        if (chainAsSet.size < chain.size)
+                            throw CyclicReferenceException(chain)
                     }
-                    is Disjunction.Right -> qualifiedTypeOrError.value
+
+                    // if not, infer the type from the initializer, failing if that contains a cycle
+                    val qualifiedTypeOrError = VerificationAnalysis.exprType(this.initializer, symbolTable, module, valName, chain)
+                    when (qualifiedTypeOrError) {
+                        is Disjunction.Left -> {
+                            val semanticError = qualifiedTypeOrError.value
+                            when (semanticError) {
+                                is SemanticError.CyclicDefinition -> throw CyclicReferenceException(semanticError.cycle)
+                                else -> null
+                            }
+                        }
+                        is Disjunction.Right -> qualifiedTypeOrError.value
+                    }
                 }
             }
         }
     }
-}
 
-internal class CyclicReferenceException(val cycle: List<ValueCoordinates>) : Exception()
+    private class CyclicReferenceException(val cycle: List<ValueCoordinates>) : Exception()
+}
