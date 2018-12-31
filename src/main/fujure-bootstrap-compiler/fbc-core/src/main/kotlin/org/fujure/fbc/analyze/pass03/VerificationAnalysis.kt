@@ -1,6 +1,6 @@
 package org.fujure.fbc.analyze.pass03
 
-import org.fujure.fbc.ProblematicFile
+import org.fujure.fbc.ProblematicFile.SemanticFileIssue
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.QualifiedType
@@ -14,8 +14,8 @@ import org.funktionale.either.Disjunction
 
 object VerificationAnalysis {
     fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: Pass03SymbolTable):
-            List<ProblematicFile.SemanticFileIssue> {
-        val problematicFiles = mutableListOf<ProblematicFile.SemanticFileIssue>()
+            List<SemanticFileIssue> {
+        val problematicFiles = mutableListOf<SemanticFileIssue>()
         for (parsedFile in parsedFiles) {
             val problematicFile = analyzeFile(parsedFile, symbolTable)
             if (problematicFile != null)
@@ -25,7 +25,7 @@ object VerificationAnalysis {
     }
 
     private fun analyzeFile(parsedFile: ParsedFile, symbolTable: Pass03SymbolTable):
-            ProblematicFile.SemanticFileIssue? {
+            SemanticFileIssue? {
         val module = parsedFile.module()
 
         val errors = mutableListOf<SemanticError>()
@@ -39,7 +39,7 @@ object VerificationAnalysis {
         return if (errors.isEmpty())
             null
         else
-            ProblematicFile.SemanticFileIssue(parsedFile.inputFile.userProvidedFilePath, errors)
+            SemanticFileIssue(parsedFile.inputFile.userProvidedFilePath, errors)
     }
 
     private fun analyzeDefinition(def: Def, symbolTable: Pass03SymbolTable, module: Module):

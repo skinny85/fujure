@@ -1,6 +1,6 @@
 package org.fujure.fbc.analyze
 
-import org.fujure.fbc.ProblematicFile
+import org.fujure.fbc.ProblematicFile.SemanticFileIssue
 import org.fujure.fbc.analyze.pass01.SymbolsGatheringAnalysis
 import org.fujure.fbc.analyze.pass02.ImportsGatheringAnalysis
 import org.fujure.fbc.analyze.pass03.Pass03ModuleSymbols
@@ -11,14 +11,13 @@ import org.fujure.fbc.parse.ParsedFile
 import org.funktionale.either.Disjunction
 
 interface SemanticAnalyzer {
-    fun analyze(parsedFiles: Set<ParsedFile>): Disjunction<
-            List<ProblematicFile.SemanticFileIssue>,
-            SymbolTable>
+    fun analyze(parsedFiles: Set<ParsedFile>):
+        Disjunction<List<SemanticFileIssue>, SymbolTable>
 }
 
 object SimpleSemanticAnalyzer : SemanticAnalyzer {
     override fun analyze(parsedFiles: Set<ParsedFile>):
-            Disjunction<List<ProblematicFile.SemanticFileIssue>, SymbolTable> {
+            Disjunction<List<SemanticFileIssue>, SymbolTable> {
         val (secondPassSymbolTable, firstPassErrors) = SymbolsGatheringAnalysis.analyze(parsedFiles)
         val (thirdPassSymbolTable, secondPassErrors) = ImportsGatheringAnalysis.analyze(parsedFiles, secondPassSymbolTable)
         val thirdPassErrors = VerificationAnalysis.analyze(parsedFiles, thirdPassSymbolTable)
@@ -40,9 +39,9 @@ object SimpleSemanticAnalyzer : SemanticAnalyzer {
         })
     }
 
-    private fun combine(list1: List<ProblematicFile.SemanticFileIssue>, list2: List<ProblematicFile.SemanticFileIssue>):
-            List<ProblematicFile.SemanticFileIssue> {
-        val result = mutableListOf<ProblematicFile.SemanticFileIssue>()
+    private fun combine(list1: List<SemanticFileIssue>, list2: List<SemanticFileIssue>):
+            List<SemanticFileIssue> {
+        val result = mutableListOf<SemanticFileIssue>()
 
         for (fileIssue in list1) {
             val otherFileIssue = list2.findSameFile(fileIssue)
@@ -50,7 +49,7 @@ object SimpleSemanticAnalyzer : SemanticAnalyzer {
                     if (otherFileIssue == null)
                         fileIssue
                     else
-                        ProblematicFile.SemanticFileIssue(otherFileIssue.userProvidedFilePath,
+                        SemanticFileIssue(otherFileIssue.userProvidedFilePath,
                                 fileIssue.errors + otherFileIssue.errors))
         }
 
@@ -62,8 +61,8 @@ object SimpleSemanticAnalyzer : SemanticAnalyzer {
         return result
     }
 
-    private fun List<ProblematicFile.SemanticFileIssue>.findSameFile(fileIssue: ProblematicFile.SemanticFileIssue):
-            ProblematicFile.SemanticFileIssue? {
+    private fun List<SemanticFileIssue>.findSameFile(fileIssue: SemanticFileIssue):
+            SemanticFileIssue? {
         return this.find { it.userProvidedFilePath == fileIssue.userProvidedFilePath }
     }
 }
