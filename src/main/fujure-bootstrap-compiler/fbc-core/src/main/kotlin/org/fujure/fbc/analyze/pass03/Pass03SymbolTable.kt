@@ -1,8 +1,10 @@
 package org.fujure.fbc.analyze.pass03
 
 import org.fujure.fbc.analyze.BuiltInTypes
+import org.fujure.fbc.analyze.LookupResult as ALookupResult
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
+import org.fujure.fbc.analyze.SymbolTable
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.TypeReference
@@ -10,7 +12,8 @@ import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
 import org.funktionale.either.Disjunction
 
-class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>) {
+class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
+        private val symbolTable: SymbolTable?) {
     fun findType(typeReference: TypeReference): QualifiedType? {
         if (typeReference.ids.size != 1) {
             return null
@@ -29,19 +32,42 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>) {
 
     fun lookup(ref: ValueReference, module: Module, anchor: String?, chain: List<ValueCoordinates>):
             LookupResult {
-        val fileLookupResult = modules[module]!!.lookup(ref, anchor, module, this, chain)
+        var fileLookupResult = modules[module]!!.lookup(ref, anchor, module, this, chain)
         if (fileLookupResult is LookupResult.RefNotFound &&
                 ref.ids.size > 1) {
             // perhaps it's a reference to a non-imported module in the same package?
             val targetModule = Module(module.packageName, ref.ids[0])
             val moduleSymbols = modules[targetModule]
             if (moduleSymbols != null) {
-                return moduleSymbols.lookup(ValueReference(ref.ids.subList(1, ref.ids.size)), anchor, targetModule, this, chain)
+                fileLookupResult = moduleSymbols.lookup(ValueReference(ref.ids.subList(1, ref.ids.size)), anchor, targetModule, this, chain)
             }
             // ToDo: there's a very subtle edge case here - what if ref.ids[0] was imported,
             // but didn't contain the variable ref.ids[1]? In that case, we shouldn't search
             // for ref.ids[0] in the same package - that would be wrong!
         }
+
+        if (fileLookupResult is LookupResult.RefNotFound && symbolTable != null) {
+            // ToDo this needs to be refactored
+            var lookupResult: ALookupResult? = null
+            try {
+                lookupResult = symbolTable.lookup(module, ref)
+            } catch (e: Exception) {
+                // perhaps it's a non-imported module in the same package?
+                if (ref.size > 1) {
+                    val newModule = Module(module.packageName, ref.ids[0])
+                    try {
+                        lookupResult = symbolTable.lookup(newModule, ref)
+                    } catch (e: Exception) {
+                        // ok, maybe not
+                    }
+                }
+            }
+
+            if (lookupResult != null) {
+                fileLookupResult = LookupResult.RefFound(lookupResult.qualifiedType, lookupResult.module)
+            }
+        }
+
         return fileLookupResult
     }
 

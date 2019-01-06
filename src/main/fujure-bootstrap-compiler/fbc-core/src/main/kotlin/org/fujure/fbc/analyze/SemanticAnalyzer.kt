@@ -11,14 +11,14 @@ import org.fujure.fbc.parse.ParsedFile
 import org.funktionale.either.Disjunction
 
 interface SemanticAnalyzer {
-    fun analyze(parsedFiles: Set<ParsedFile>):
+    fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable? = null):
         Disjunction<List<SemanticFileIssue>, SymbolTable>
 }
 
 object SimpleSemanticAnalyzer : SemanticAnalyzer {
-    override fun analyze(parsedFiles: Set<ParsedFile>):
+    override fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable?):
             Disjunction<List<SemanticFileIssue>, SymbolTable> {
-        val (secondPassSymbolTable, firstPassErrors) = SymbolsGatheringAnalysis.analyze(parsedFiles)
+        val (secondPassSymbolTable, firstPassErrors) = SymbolsGatheringAnalysis.analyze(parsedFiles, symbolTable)
         val (thirdPassSymbolTable, secondPassErrors) = ImportsGatheringAnalysis.analyze(parsedFiles, secondPassSymbolTable)
         val thirdPassErrors = VerificationAnalysis.analyze(parsedFiles, thirdPassSymbolTable)
         val errors = combine(combine(firstPassErrors, secondPassErrors), thirdPassErrors)

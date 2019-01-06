@@ -2,6 +2,7 @@ package org.fujure.fbc.analyze.pass01
 
 import org.fujure.fbc.ProblematicFile.SemanticFileIssue
 import org.fujure.fbc.analyze.SemanticError
+import org.fujure.fbc.analyze.SymbolTable
 import org.fujure.fbc.analyze.pass02.Pass02ModuleSymbols
 import org.fujure.fbc.analyze.pass02.Pass02SymbolTable
 import org.fujure.fbc.ast.Def
@@ -12,7 +13,7 @@ import org.fujure.fbc.common.NameValidator
 import org.fujure.fbc.parse.ParsedFile
 
 object SymbolsGatheringAnalysis {
-    fun analyze(parsedFiles: Set<ParsedFile>):
+    fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable?):
             Pair<Pass02SymbolTable, List<SemanticFileIssue>> {
         val modules = mutableMapOf<Module, Pass02ModuleSymbols>()
         val issues = mutableListOf<SemanticFileIssue>()
@@ -35,7 +36,7 @@ object SymbolsGatheringAnalysis {
             }
         }
 
-        return Pair(Pass02SymbolTable(modules), issues)
+        return Pair(Pass02SymbolTable(modules, symbolTable), issues)
     }
 
     private fun analyzeFile(parsedFile: ParsedFile): Pair<Pass02ModuleSymbols, List<SemanticError>> {

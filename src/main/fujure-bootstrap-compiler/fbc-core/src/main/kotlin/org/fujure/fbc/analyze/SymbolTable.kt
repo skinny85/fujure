@@ -4,6 +4,10 @@ import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.ValueReference
 
 class SymbolTable(private val modules: Map<Module, ModuleSymbols>) {
+    fun find(module: Module): Boolean {
+        return modules.containsKey(module)
+    }
+
     fun lookup(module: Module, ref: ValueReference): LookupResult {
         return modules[module]!!.lookup(ref, module, this)
     }
