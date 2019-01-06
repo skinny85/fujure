@@ -22,7 +22,7 @@ object ImportsGatheringAnalysis {
             }
         }
 
-        return Pair(Pass03SymbolTable(modules), issues)
+        return Pair(Pass03SymbolTable(modules, symbolTable.symbolTable), issues)
     }
 
     private fun analyzeFile(parsedFile: ParsedFile, symbolTable: Pass02SymbolTable):
@@ -38,13 +38,13 @@ object ImportsGatheringAnalysis {
                 imports[imprt.lastFragment()] = null
             } else {
                 val module = Module(imprt.allButLastFragments(), imprt.lastFragment())
-                val moduleSymbols = symbolTable.modules[module]
-                if (moduleSymbols == null) {
-                    errors.add(SemanticError.UnresolvedImport(imprt))
-                    imports[imprt.lastFragment()] = null
-                } else {
+                val moduleFound = symbolTable.find(module)
+                if (moduleFound) {
                     // ToDo handle imports with the same module name
                     imports[imprt.lastFragment()] = module
+                } else {
+                    errors.add(SemanticError.UnresolvedImport(imprt))
+                    imports[imprt.lastFragment()] = null
                 }
             }
         }

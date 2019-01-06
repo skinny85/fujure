@@ -162,11 +162,11 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                             .analyzed()
                 }
 
-                it.should("analyze the imported file correctly") {
+                it.should("analyze the referenced file correctly") {
                     assertFile1IsCorrect()
                 }
 
-                it.should("report an UnresolvedReference error for the importing file") {
+                it.should("report an UnresolvedReference error for the referencing file") {
                     assertThat(file2Errors()).containsExactly(
                             SemanticError.UnresolvedReference(
                                     ValueDefinition("x"),
@@ -302,6 +302,28 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 it.should("report an IllegalSelfReference error") {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.IllegalSelfReference(ValueDefinition("a")))
+                }
+            }
+
+            it.describes("called with a module referencing a value from another module, " +
+                    "both in the same non-default package, analyzed incrementally") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                package com.example
+
+                                def a = 42
+                            """)
+                            .file("""
+                                package com.example
+
+                                def x: Int = File1.a
+                            """)
+                            .incrementallyAnalyzed()
+                }
+
+                it.should("succeed") {
+                    assertAnalysisSucceeded()
                 }
             }
         }

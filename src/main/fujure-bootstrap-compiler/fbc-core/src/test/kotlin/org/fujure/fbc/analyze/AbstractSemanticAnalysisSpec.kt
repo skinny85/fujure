@@ -20,6 +20,14 @@ abstract class AbstractSemanticAnalysisSpec : SpecnazKotlin {
         }
     }
 
+    fun AnalysisBuilder.incrementallyAnalyzed() {
+        val result = this.incrementallyAnalyze()
+        errors = when (result) {
+            is Disjunction.Left<List<ProblematicFile.SemanticFileIssue>, SymbolTable> -> result.value
+            else -> emptyList()
+        }
+    }
+
     fun assertAnalysisSucceeded() {
         assertNoErrors(errors)
     }
