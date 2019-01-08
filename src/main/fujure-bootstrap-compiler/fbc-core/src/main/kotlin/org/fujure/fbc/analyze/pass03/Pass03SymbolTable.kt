@@ -1,7 +1,7 @@
 package org.fujure.fbc.analyze.pass03
 
 import org.fujure.fbc.analyze.BuiltInTypes
-import org.fujure.fbc.analyze.LookupResult as ALookupResult
+import org.fujure.fbc.analyze.SymbolTable.LookupResult as SymTabLookupResult
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.analyze.SymbolTable
@@ -48,7 +48,7 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
 
         if (fileLookupResult is LookupResult.RefNotFound && symbolTable != null) {
             // ToDo this needs to be refactored
-            var lookupResult: ALookupResult? = null
+            var lookupResult: SymTabLookupResult? = null
             try {
                 lookupResult = symbolTable.lookup(module, ref)
             } catch (e: Exception) {

@@ -11,14 +11,16 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols>) {
     fun lookup(module: Module, ref: ValueReference): LookupResult {
         return modules[module]!!.lookup(ref, module, this)
     }
+
+    data class LookupResult(val qualifiedType: QualifiedType, val module: Module)
 }
 
 class ModuleSymbols(private val imports: Map<String, Module?>,
         private val simpleValues: Map<String, QualifiedType>) {
-    fun lookup(ref: ValueReference, module: Module, symbolTable: SymbolTable): LookupResult {
+    fun lookup(ref: ValueReference, module: Module, symbolTable: SymbolTable): SymbolTable.LookupResult {
         return when (ref.ids.size) {
             1 -> {
-                LookupResult(simpleValues[ref.ids[0]]!!, module)
+                SymbolTable.LookupResult(simpleValues[ref.ids[0]]!!, module)
             }
             else -> {
                 val importedModule = imports[ref.ids[0]] ?: if (ref.ids[0] == module.moduleName) module else null
@@ -27,5 +29,3 @@ class ModuleSymbols(private val imports: Map<String, Module?>,
         }
     }
 }
-
-data class LookupResult(val qualifiedType: QualifiedType, val module: Module)
