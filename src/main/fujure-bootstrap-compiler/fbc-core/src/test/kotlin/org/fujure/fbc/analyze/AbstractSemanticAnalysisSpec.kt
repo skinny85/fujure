@@ -10,6 +10,7 @@ import org.specnaz.kotlin.junit.SpecnazKotlinJUnitRunner
 @RunWith(SpecnazKotlinJUnitRunner::class)
 abstract class AbstractSemanticAnalysisSpec : SpecnazKotlin {
     lateinit var errors: List<ProblematicFile.SemanticFileIssue>
+    lateinit var analysisBuilder: AnalysisBuilder
 
     fun AnalysisBuilder.analyzed() {
         val result = this.analyze()
@@ -18,6 +19,7 @@ abstract class AbstractSemanticAnalysisSpec : SpecnazKotlin {
         } else {
             emptyList()
         }
+        analysisBuilder = this
     }
 
     fun AnalysisBuilder.incrementallyAnalyzed() {
@@ -26,6 +28,7 @@ abstract class AbstractSemanticAnalysisSpec : SpecnazKotlin {
             is Disjunction.Left<List<ProblematicFile.SemanticFileIssue>, SymbolTable> -> result.value
             else -> emptyList()
         }
+        analysisBuilder = this
     }
 
     fun assertAnalysisSucceeded() {
@@ -45,15 +48,15 @@ abstract class AbstractSemanticAnalysisSpec : SpecnazKotlin {
     }
 
     fun file1Errors(): List<SemanticError> {
-        return fileErrors(1)
+        return fileErrors(0)
     }
 
     fun file2Errors(): List<SemanticError> {
-        return fileErrors(2)
+        return fileErrors(1)
     }
 
-    fun fileErrors(i: Int): List<SemanticError> {
-        return fileErrors("File$i.fjr")
+    private fun fileErrors(i: Int): List<SemanticError> {
+        return fileErrors(analysisBuilder.fileName(i))
     }
 
     fun fileErrors(file: String): List<SemanticError> {

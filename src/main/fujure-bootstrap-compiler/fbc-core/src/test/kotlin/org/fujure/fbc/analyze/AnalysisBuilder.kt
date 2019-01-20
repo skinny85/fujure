@@ -32,16 +32,17 @@ class AnalysisBuilder private constructor() {
 
     fun analyze(): Disjunction<List<SemanticFileIssue>, SymbolTable> {
         val parsedFiles = linkedSetOf<ParsedFile>()
+
         programs.forEachIndexed { i, pair ->
-            val setName = pair.second
-            val fileName: String = if (setName == null) "File${i + 1}.fjr" else setName
-            val openedFile = OpenedFile(InputFile(fileName), StringReader(pair.first))
+            val openedFile = OpenedFile(InputFile(fileName(i)), StringReader(pair.first))
             val parsingResult = BnfcParser.parse(openedFile)
             val success = Assumption.assume(parsingResult).isA<Disjunction.Right<ParsingFileIssue, ParsedFile>>()
+
             if (!parsedFiles.add(success.value))
                 throw IllegalStateException("Duplicate ParsedFile ${success.value} provided, " +
                         "current parsed files: $parsedFiles")
         }
+
         return SimpleSemanticAnalyzer.analyze(parsedFiles)
     }
 
@@ -50,9 +51,7 @@ class AnalysisBuilder private constructor() {
         val invalidFiles = mutableListOf<SemanticFileIssue>()
 
         programs.forEachIndexed { i, pair ->
-            val setName = pair.second
-            val fileName = if (setName == null) "File${i + 1}.fjr" else setName
-            val openedFile = OpenedFile(InputFile(fileName), StringReader(pair.first))
+            val openedFile = OpenedFile(InputFile(fileName(i)), StringReader(pair.first))
             val parsingResult = BnfcParser.parse(openedFile)
             val success = Assumption.assume(parsingResult).isA<Disjunction.Right<ParsingFileIssue, ParsedFile>>()
 
@@ -71,5 +70,10 @@ class AnalysisBuilder private constructor() {
             Disjunction.Right(symbolTable!!)
         else
             Disjunction.Left(invalidFiles)
+    }
+
+    fun fileName(i: Int): String {
+        val setName = programs[i].second
+        return if (setName == null) "File${i + 1}.fjr" else setName
     }
 }
