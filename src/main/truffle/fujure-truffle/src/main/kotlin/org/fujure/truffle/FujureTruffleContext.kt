@@ -1,6 +1,7 @@
 package org.fujure.truffle;
 
 import com.oracle.truffle.api.Scope
+import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.ValueReference
 
 class FujureTruffleContext {
@@ -10,8 +11,8 @@ class FujureTruffleContext {
                     .newBuilder("global", fujureTruffleBindings)
                     .build())
 
-    fun enterModuleScope(fullyQualifiedModuleName: String) {
-         fujureTruffleBindings.enterModuleScope(fullyQualifiedModuleName)
+    fun enterModuleScope(module: Module) {
+         fujureTruffleBindings.enterModuleScope(module)
     }
 
     fun resetCurrentModule() {

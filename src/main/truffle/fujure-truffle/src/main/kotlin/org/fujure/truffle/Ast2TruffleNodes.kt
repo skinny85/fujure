@@ -3,7 +3,7 @@ package org.fujure.truffle
 import org.apache.commons.text.StringEscapeUtils
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
-import org.fujure.fbc.ast.FileContents
+import org.fujure.fbc.parse.ParsedFile
 import org.fujure.truffle.nodes.BoolLiteralExprNode
 import org.fujure.truffle.nodes.CharLiteralExprNode
 import org.fujure.truffle.nodes.DefNode
@@ -16,9 +16,9 @@ import org.fujure.truffle.nodes.StringLiteralExprNode
 import org.fujure.truffle.nodes.UnitLiteralExprNode
 
 object Ast2TruffleNodes {
-    fun translate(fileContents: FileContents, fujureTruffleLanguage: FujureTruffleLanguage): ModuleNonRootNode {
-        return ModuleNonRootNode(fileContents.packageName,
-                fileContents.defs.map { translate(it, fujureTruffleLanguage) })
+    fun translate(parsedFile: ParsedFile, fujureTruffleLanguage: FujureTruffleLanguage): ModuleNonRootNode {
+        return ModuleNonRootNode(parsedFile.module(),
+                parsedFile.ast.defs.map { translate(it, fujureTruffleLanguage) })
     }
 
     private fun translate(def: Def, fujureTruffleLanguage: FujureTruffleLanguage): DefNode {

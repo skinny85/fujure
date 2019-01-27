@@ -164,7 +164,6 @@ class SingleFileFujureTruffleSpec : SpecnazKotlinJUnit("Fujure Truffle implement
                     moduleBindings = fujureBindings.getMember("com.example.Unnamed")
                 }
 
-
                 it.should("not be null") {
                     assertThat(moduleBindings).isNotNull()
                 }

@@ -7,6 +7,7 @@ import com.oracle.truffle.api.interop.Resolve;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.interop.UnknownIdentifierException;
 import com.oracle.truffle.api.nodes.Node;
+import org.fujure.fbc.ast.Module;
 import org.fujure.fbc.ast.ValueReference;
 
 import java.util.Collection;
@@ -24,8 +25,8 @@ public final class FujureTruffleBindings implements TruffleObject {
     private final Map<String, ModuleBindings> modulesBindings = new HashMap<>();
     private String currentModule;
 
-    public void enterModuleScope(String fullyQualifiedModuleName) {
-        this.currentModule = fullyQualifiedModuleName;
+    public void enterModuleScope(Module module) {
+        this.currentModule = module.getFullyQualifiedName();
     }
 
     public void resetCurrentModule() {

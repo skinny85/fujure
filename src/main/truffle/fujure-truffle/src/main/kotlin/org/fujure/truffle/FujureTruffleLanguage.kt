@@ -47,7 +47,7 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
                          Truffle.getRuntime().createCallTarget(RootModuleNode(
                              this,
                              parsedFile.inputFile,
-                             Ast2TruffleNodes.translate(parsedFile.ast, this)
+                             Ast2TruffleNodes.translate(parsedFile, this)
                          ))
                      }
                  }

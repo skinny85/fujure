@@ -4,13 +4,14 @@ import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.RootNode;
 import org.fujure.fbc.ast.InputFile;
+import org.fujure.fbc.ast.Module;
 import org.fujure.truffle.FujureTruffleContext;
 import org.fujure.truffle.FujureTruffleLanguage;
 
 public final class RootModuleNode extends RootNode {
     private final TruffleLanguage.ContextReference<FujureTruffleContext> contextReference;
     private final InputFile inputFile;
-    private final String packageName;
+    private final Module module;
 
     @Children
     private final DefNode[] defs;
@@ -23,7 +24,7 @@ public final class RootModuleNode extends RootNode {
 
         this.contextReference = language.getContextReference();
         this.inputFile = inputFile;
-        this.packageName = moduleNode.getPackageName();
+        this.module = moduleNode.getModule();
         this.defs = moduleNode.getDefs().toArray(new DefNode[0]);
     }
 
@@ -34,13 +35,13 @@ public final class RootModuleNode extends RootNode {
             registerTruffleValues(frame);
         }
 
-        return packageName.isEmpty()
+        return module.getPackageName().isEmpty()
                 ? 42
                 : 129;
     }
 
     private void registerTruffleValues(VirtualFrame frame) {
-        contextReference.get().enterModuleScope(fullyQualifiedModuleName());
+        contextReference.get().enterModuleScope(module);
         contextReference.get().resetCurrentModule();
         for (DefNode defNode : defs) {
             if (defNode instanceof SimpleValueDefNode) {
@@ -50,15 +51,5 @@ public final class RootModuleNode extends RootNode {
             }
         }
         contextReference.get().leaveCurrentModule();
-    }
-
-    private String fullyQualifiedModuleName() {
-        return packageName.isEmpty()
-                ? moduleName()
-                : packageName + "." + moduleName();
-    }
-
-    private String moduleName() {
-        return inputFile.getModuleName();
     }
 }

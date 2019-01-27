@@ -1,3 +1,5 @@
 package org.fujure.truffle.nodes
 
-class ModuleNonRootNode(val packageName: String, val defs: List<DefNode>)
+import org.fujure.fbc.ast.Module
+
+class ModuleNonRootNode(val module: Module, val defs: List<DefNode>)
