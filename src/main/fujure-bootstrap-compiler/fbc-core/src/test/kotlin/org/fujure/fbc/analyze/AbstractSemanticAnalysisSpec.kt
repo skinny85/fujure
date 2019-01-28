@@ -14,10 +14,9 @@ abstract class AbstractSemanticAnalysisSpec : SpecnazKotlin {
 
     fun AnalysisBuilder.analyzed() {
         val result = this.analyze()
-        errors = if (result is Disjunction.Left<List<ProblematicFile.SemanticFileIssue>, SymbolTable>) {
-            result.value
-        } else {
-            emptyList()
+        errors = when (result) {
+            is SemanticAnalysisResult.Failure -> result.issues
+            is SemanticAnalysisResult.Success -> emptyList()
         }
         analysisBuilder = this
     }
@@ -25,8 +24,8 @@ abstract class AbstractSemanticAnalysisSpec : SpecnazKotlin {
     fun AnalysisBuilder.incrementallyAnalyzed() {
         val result = this.incrementallyAnalyze()
         errors = when (result) {
-            is Disjunction.Left<List<ProblematicFile.SemanticFileIssue>, SymbolTable> -> result.value
-            else -> emptyList()
+            is Disjunction.Left -> result.value
+            is Disjunction.Right -> emptyList()
         }
         analysisBuilder = this
     }

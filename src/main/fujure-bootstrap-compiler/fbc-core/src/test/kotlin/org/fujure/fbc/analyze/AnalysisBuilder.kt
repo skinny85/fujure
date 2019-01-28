@@ -30,7 +30,7 @@ class AnalysisBuilder private constructor() {
         return this
     }
 
-    fun analyze(): Disjunction<List<SemanticFileIssue>, SymbolTable> {
+    fun analyze(): SemanticAnalysisResult {
         val parsedFiles = linkedSetOf<ParsedFile>()
 
         programs.forEachIndexed { i, pair ->
@@ -57,11 +57,11 @@ class AnalysisBuilder private constructor() {
 
             val analysisResult = SimpleSemanticAnalyzer.analyze(setOf(success.value), symbolTable)
             when (analysisResult) {
-                is Disjunction.Left<List<SemanticFileIssue>, SymbolTable> -> {
-                    invalidFiles.addAll(analysisResult.value)
+                is SemanticAnalysisResult.Failure -> {
+                    invalidFiles.addAll(analysisResult.issues)
                 }
-                is Disjunction.Right<List<SemanticFileIssue>, SymbolTable> -> {
-                    symbolTable = analysisResult.value
+                is SemanticAnalysisResult.Success -> {
+                    symbolTable = analysisResult.symbolTable
                 }
             }
         }

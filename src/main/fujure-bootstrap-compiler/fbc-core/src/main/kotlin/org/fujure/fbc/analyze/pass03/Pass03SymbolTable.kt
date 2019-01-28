@@ -186,16 +186,16 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
                     }
 
                     // if not, infer the type from the initializer, failing if that contains a cycle
-                    val qualifiedTypeOrError = VerificationAnalysis.exprType(this.initializer, symbolTable, module, valName, chain)
-                    when (qualifiedTypeOrError) {
+                    val annotatedExprOrError = VerificationAnalysis.exprType(this.initializer, symbolTable, module, valName, chain)
+                    when (annotatedExprOrError) {
                         is Disjunction.Left -> {
-                            val semanticError = qualifiedTypeOrError.value
+                            val semanticError = annotatedExprOrError.value
                             when (semanticError) {
                                 is SemanticError.CyclicDefinition -> throw CyclicReferenceException(semanticError.cycle)
                                 else -> null
                             }
                         }
-                        is Disjunction.Right -> qualifiedTypeOrError.value
+                        is Disjunction.Right -> annotatedExprOrError.value?.type()
                     }
                 }
             }

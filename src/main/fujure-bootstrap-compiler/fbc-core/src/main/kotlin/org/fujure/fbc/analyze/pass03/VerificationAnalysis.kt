@@ -1,9 +1,10 @@
 package org.fujure.fbc.analyze.pass03
 
 import org.fujure.fbc.ProblematicFile.SemanticFileIssue
-import org.fujure.fbc.analyze.BuiltInTypes
+import org.fujure.fbc.aast.ADef
+import org.fujure.fbc.aast.AExpr
+import org.fujure.fbc.aast.AFileContents
 import org.fujure.fbc.analyze.ErrorContext
-import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
@@ -14,77 +15,107 @@ import org.funktionale.either.Disjunction
 
 object VerificationAnalysis {
     fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: Pass03SymbolTable):
-            List<SemanticFileIssue> {
+            Pair<List<AFileContents>, List<SemanticFileIssue>> {
         val problematicFiles = mutableListOf<SemanticFileIssue>()
+        val aAsts = mutableListOf<AFileContents>()
+
         for (parsedFile in parsedFiles) {
-            val problematicFile = analyzeFile(parsedFile, symbolTable)
-            if (problematicFile != null)
-                problematicFiles.add(problematicFile)
+            val fileContentsOrIssue = analyzeFile(parsedFile, symbolTable)
+            when (fileContentsOrIssue) {
+                is Disjunction.Left -> problematicFiles.add(fileContentsOrIssue.value)
+                is Disjunction.Right -> aAsts.add(fileContentsOrIssue.value)
+            }
         }
-        return problematicFiles
+
+        return Pair(aAsts, problematicFiles)
     }
 
     private fun analyzeFile(parsedFile: ParsedFile, symbolTable: Pass03SymbolTable):
-            SemanticFileIssue? {
-        val module = parsedFile.module()
-
+            Disjunction<SemanticFileIssue, AFileContents> {
         val errors = mutableListOf<SemanticError>()
+        val aDefs = mutableListOf<ADef>()
+
+        val module = parsedFile.module()
 
         // handle definitions
         for (def in parsedFile.ast.defs) {
-            val defErrors = analyzeDefinition(def, symbolTable, module)
-            errors.addAll(defErrors)
+            val defOrErrors = analyzeDefinition(def, symbolTable, module)
+            when (defOrErrors) {
+                is Disjunction.Left -> {
+                    errors.addAll(defOrErrors.value)
+                }
+                is Disjunction.Right -> {
+                    val aDef = defOrErrors.value
+                    if (aDef != null)
+                        aDefs.add(aDef)
+                }
+            }
         }
 
         return if (errors.isEmpty())
-            null
+            Disjunction.right(AFileContents(module, aDefs))
         else
-            SemanticFileIssue(parsedFile.inputFile.userProvidedFilePath, errors)
+            Disjunction.left(SemanticFileIssue(parsedFile.inputFile.userProvidedFilePath, errors))
     }
 
     private fun analyzeDefinition(def: Def, symbolTable: Pass03SymbolTable, module: Module):
-            List<SemanticError> {
-        val ret = mutableListOf<SemanticError>()
+            Disjunction<List<SemanticError>, ADef?> {
+        val errors = mutableListOf<SemanticError>()
+        var aDef: ADef? = null
+
         when (def) {
             is Def.ValueDef.SimpleValueDef -> {
                 val context = ErrorContext.ValueDefinition(def.id)
-
-                val initializerTypeOrError = exprType(def.initializer, symbolTable, def.id, module)
-                val declaredQualifiedType: QualifiedType? = if (def.declaredType == null)
+                val declaredQualifiedType = if (def.declaredType == null) {
                     null
-                else
+                } else {
                     symbolTable.findType(def.declaredType)
-
-                when (initializerTypeOrError) {
-                    is Disjunction.Left -> ret.add(initializerTypeOrError.value)
-                    is Disjunction.Right -> {
-                        val initializerQualifiedType = initializerTypeOrError.value
-                        if (declaredQualifiedType != null &&
-                                initializerQualifiedType != null &&
-                                declaredQualifiedType != initializerQualifiedType)
-                            ret.add(SemanticError.TypeMismatch(context, declaredQualifiedType,
-                                    initializerQualifiedType))
-                    }
+                }
+                if (def.declaredType != null && declaredQualifiedType == null) {
+                    errors.add(SemanticError.TypeNotFound(context, def.declaredType))
                 }
 
-                if (def.declaredType != null && declaredQualifiedType == null)
-                    ret.add(SemanticError.TypeNotFound(context, def.declaredType))
+                val annotatedExprOrError = exprType(def.initializer, symbolTable, def.id, module)
+                when (annotatedExprOrError) {
+                    is Disjunction.Left -> {
+                        errors.add(annotatedExprOrError.value)
+                    }
+                    is Disjunction.Right -> {
+                        val initializerExpr = annotatedExprOrError.value
+                        if (initializerExpr != null) {
+                            val initializerType = initializerExpr.type()
+                            if (declaredQualifiedType != null && declaredQualifiedType != initializerType) {
+                                errors.add(SemanticError.TypeMismatch(context, declaredQualifiedType, initializerType))
+                            } else {
+                                aDef = ADef.AValueDef.ASimpleValueDef(def.id, initializerType, initializerExpr)
+                            }
+                        }
+                    }
+                }
             }
         }
-        return ret
+
+        return if (errors.isEmpty())
+            Disjunction.Right(aDef)
+        else
+            Disjunction.Left(errors)
     }
 
-    private fun exprType(expr: Expr, symbolTable: Pass03SymbolTable, valName: String,
-                         module: Module): Disjunction<SemanticError, QualifiedType?> =
-            exprType(expr, symbolTable, module, valName, listOf(ValueCoordinates(module.packageName, module.moduleName, valName)))
+    private fun exprType(expr: Expr, symbolTable: Pass03SymbolTable, valName: String, module: Module):
+            Disjunction<SemanticError, AExpr?> =
+        exprType(expr, symbolTable, module, valName, listOf(ValueCoordinates(module.packageName, module.moduleName, valName)))
 
     fun exprType(expr: Expr, symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>):
-            Disjunction<SemanticError, QualifiedType?> = when (expr)  {
-        is Expr.IntLiteral -> Disjunction.Right(BuiltInTypes.Int)
-        is Expr.UnitLiteral -> Disjunction.Right(BuiltInTypes.Unit)
-        is Expr.BoolLiteral -> Disjunction.Right(BuiltInTypes.Bool)
-        is Expr.CharLiteral -> Disjunction.Right(BuiltInTypes.Char)
-        is Expr.StringLiteral -> Disjunction.Right(BuiltInTypes.String)
+            Disjunction<SemanticError, AExpr?> = when (expr)  {
+        is Expr.IntLiteral -> Disjunction.Right(AExpr.AIntLiteral(expr.value))
+        is Expr.UnitLiteral -> Disjunction.Right(AExpr.AUnitLiteral)
+        is Expr.BoolLiteral -> Disjunction.Right(if (expr is Expr.BoolLiteral.True)
+            AExpr.ABoolLiteral.True
+        else
+            AExpr.ABoolLiteral.False
+        )
+        is Expr.CharLiteral -> Disjunction.Right(AExpr.ACharLiteral(expr.value))
+        is Expr.StringLiteral -> Disjunction.Right(AExpr.AStringLiteral(expr.value))
         is Expr.ValueReferenceExpr -> {
             val context = ErrorContext.ValueDefinition(valName)
             val lookupResult = symbolTable.lookup(expr.ref, module, valName, chain)
@@ -97,8 +128,14 @@ object VerificationAnalysis {
                     Disjunction.Left(SemanticError.IllegalSelfReference(context))
                 is Pass03SymbolTable.LookupResult.CyclicReference ->
                     Disjunction.Left(SemanticError.CyclicDefinition(context, lookupResult.cycle))
-                is Pass03SymbolTable.LookupResult.RefFound ->
-                    Disjunction.Right(lookupResult.qualifiedType)
+                is Pass03SymbolTable.LookupResult.RefFound -> {
+                    val qualifiedType = lookupResult.qualifiedType
+                    Disjunction.Right(if (qualifiedType == null)
+                        null
+                    else
+                        AExpr.AValueReferenceExpr(lookupResult.module, expr.ref.variable(), qualifiedType)
+                    )
+                }
             }
         }
     }
