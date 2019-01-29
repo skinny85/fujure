@@ -319,6 +319,12 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
 
                                 def x: Int = File1.a
                             """)
+                            .file("""
+                                package com.example
+
+                                def i1: Int = File2.x
+                                def i2: Int = File1.a
+                            """)
                             .incrementallyAnalyzed()
                 }
 

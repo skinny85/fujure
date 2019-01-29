@@ -26,7 +26,8 @@ object SimpleSemanticAnalyzer : SemanticAnalyzer {
         val (annotatedAsts, thirdPassErrors) = VerificationAnalysis.analyze(parsedFiles, thirdPassSymbolTable)
         val errors = combine(combine(firstPassErrors, secondPassErrors), thirdPassErrors)
         return if (errors.isEmpty()) {
-            SemanticAnalysisResult.Success(annotatedAsts, buildSymbolTable(thirdPassSymbolTable))
+            val newSymbolTable = buildSymbolTable(thirdPassSymbolTable)
+            SemanticAnalysisResult.Success(annotatedAsts, symbolTable?.merge(newSymbolTable) ?: newSymbolTable)
         } else {
             SemanticAnalysisResult.Failure(errors)
         }
