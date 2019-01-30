@@ -32,43 +32,25 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
 
     fun lookup(ref: ValueReference, module: Module, anchor: String?, chain: List<ValueCoordinates>):
             LookupResult {
-        var fileLookupResult = modules[module]!!.lookup(ref, anchor, module, this, chain)
-        if (fileLookupResult is LookupResult.RefNotFound &&
-                ref.ids.size > 1) {
-            // perhaps it's a reference to a non-imported module in the same package?
-            val targetModule = Module(module.packageName, ref.ids[0])
-            val moduleSymbols = modules[targetModule]
-            if (moduleSymbols != null) {
-                fileLookupResult = moduleSymbols.lookup(ValueReference(ref.ids.subList(1, ref.ids.size)), anchor, targetModule, this, chain)
-            }
-            // ToDo: there's a very subtle edge case here - what if ref.ids[0] was imported,
-            // but didn't contain the variable ref.ids[1]? In that case, we shouldn't search
-            // for ref.ids[0] in the same package - that would be wrong!
+        val candidateModule = when (ref.size) {
+            1 -> module
+            2 -> modules[module]!!.candidateModule(ref.ids[0], module) ?: return LookupResult.RefNotFound
+            else -> return LookupResult.RefNotFound
         }
-
-        if (fileLookupResult is LookupResult.RefNotFound && symbolTable != null) {
-            // ToDo this needs to be refactored
-            var lookupResult: SymTabLookupResult? = null
+        val candidateModuleSymbols = modules[candidateModule]
+        if (candidateModuleSymbols != null) {
+            return candidateModuleSymbols.lookupVariable(ref.variable(), candidateModule, anchor, this, chain)
+        } else if (symbolTable != null) {
+            val qualifiedType: QualifiedType
             try {
-                lookupResult = symbolTable.lookup(module, ref)
+                qualifiedType = symbolTable.lookup2(candidateModule, ref.variable())
             } catch (e: Exception) {
-                // perhaps it's a non-imported module in the same package?
-                if (ref.size > 1) {
-                    val newModule = Module(module.packageName, ref.ids[0])
-                    try {
-                        lookupResult = symbolTable.lookup(newModule, ref)
-                    } catch (e: Exception) {
-                        // ok, maybe not
-                    }
-                }
+                return LookupResult.RefNotFound
             }
-
-            if (lookupResult != null) {
-                fileLookupResult = LookupResult.RefFound(lookupResult.qualifiedType, lookupResult.module)
-            }
+            return LookupResult.RefFound(qualifiedType, candidateModule)
+        } else {
+            return LookupResult.RefNotFound
         }
-
-        return fileLookupResult
     }
 
     sealed class LookupResult {
@@ -86,31 +68,15 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
         ValueTypeHolder(pair.first, pair.second)
     }
 
-    fun lookup(ref: ValueReference, anchor: String?, currentModule: Module, symbolTable: Pass03SymbolTable,
-               chain: List<ValueCoordinates>): Pass03SymbolTable.LookupResult {
-        return when (ref.ids.size) {
-            1 -> {
-                lookupVariable(ref.ids[0], currentModule, anchor, symbolTable, chain)
-            }
-            2 -> {
-                val importedModule = imports[ref.ids[0]] ?: if (ref.ids[0] == currentModule.moduleName) currentModule else null
-                if (importedModule == null) {
-                    Pass03SymbolTable.LookupResult.RefNotFound
-                } else {
-                    symbolTable.lookup(
-                            ValueReference(ref.ids[1]),
-                            importedModule,
-                            if (importedModule == currentModule) anchor else null,
-                            chain)
-                }
-            }
-            else -> {
-                Pass03SymbolTable.LookupResult.RefNotFound
-            }
+    fun candidateModule(moduleName: String, currentModule: Module): Module? {
+        return if (imports.containsKey(moduleName)) {
+            imports[moduleName]
+        } else {
+            Module(currentModule.packageName, moduleName)
         }
     }
 
-    private fun lookupVariable(id: String, module: Module, anchor: String?, symbolTable: Pass03SymbolTable, chain: List<ValueCoordinates>):
+    fun lookupVariable(id: String, module: Module, anchor: String?, symbolTable: Pass03SymbolTable, chain: List<ValueCoordinates>):
             Pass03SymbolTable.LookupResult {
         if (id == anchor)
             return Pass03SymbolTable.LookupResult.SelfReference(id)

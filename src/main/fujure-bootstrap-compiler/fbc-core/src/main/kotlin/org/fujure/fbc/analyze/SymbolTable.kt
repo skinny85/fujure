@@ -12,6 +12,10 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols>) {
         return modules[module]!!.lookup(ref, module, this)
     }
 
+    fun lookup2(targetModule: Module, name: String): QualifiedType {
+        return modules[targetModule]!!.lookup2(name)
+    }
+
     fun merge(symbolTable: SymbolTable): SymbolTable {
         return SymbolTable(modules + symbolTable.modules)
     }
@@ -31,5 +35,9 @@ class ModuleSymbols(private val imports: Map<String, Module?>,
                 symbolTable.lookup(importedModule!!, ValueReference(ref.ids.subList(1, ref.size)))
             }
         }
+    }
+
+    fun lookup2(name: String): QualifiedType {
+        return simpleValues[name]!!
     }
 }
