@@ -56,7 +56,7 @@ class CompilerCli(private val log: Logger, private val compiler: Compiler) {
             is CompilationResults.CompilationAttempted -> {
                 if (compilationResults.encounteredFailures()) {
                     for (failure in compilationResults.failures) {
-                        log.error("Error generating code for ${failure.inputPath.userProvidedFilePath}: ${failure.error.message}")
+                        log.error("Error generating code for ${failure.inputFile.userProvidedFilePath}: ${failure.error.message}")
                     }
                     1
                 } else {

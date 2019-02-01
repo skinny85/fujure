@@ -39,7 +39,7 @@ object SimpleSemanticAnalyzer : SemanticAnalyzer {
 
     private fun buildModuleSymbols(symbolTable: Pass03SymbolTable, module: Module,
             moduleSymbols: Pass03ModuleSymbols): ModuleSymbols {
-        return ModuleSymbols(moduleSymbols.imports, moduleSymbols.values.mapValues {
+        return ModuleSymbols(moduleSymbols.values.mapValues {
             it.value.resolvedType(symbolTable, module, it.key, emptyList())!!
         })
     }

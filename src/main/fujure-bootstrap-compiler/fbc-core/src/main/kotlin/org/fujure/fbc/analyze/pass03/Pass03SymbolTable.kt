@@ -43,7 +43,7 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         } else if (symbolTable != null) {
             val qualifiedType: QualifiedType
             try {
-                qualifiedType = symbolTable.lookup2(candidateModule, ref.variable())
+                qualifiedType = symbolTable.lookup(candidateModule, ref.variable())
             } catch (e: Exception) {
                 return LookupResult.RefNotFound
             }

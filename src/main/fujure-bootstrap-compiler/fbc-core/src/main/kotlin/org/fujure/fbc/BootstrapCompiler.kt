@@ -1,6 +1,7 @@
 package org.fujure.fbc
 
 import org.fujure.fbc.CompilationResults.CompilationAttempted
+import org.fujure.fbc.aast.AFileContents
 import org.fujure.fbc.analyze.SemanticAnalysisResult
 import org.fujure.fbc.analyze.SemanticAnalyzer
 import org.fujure.fbc.analyze.SymbolTable
@@ -17,11 +18,11 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
                         private val codeGenerator: CodeGenerator) : Compiler {
     override fun compile(compileOptions: CompileOptions, files: List<String>): CompilationResults {
         return appyFailingTransformation(files, { file -> fileOpener.open(file) }, { openedFiles ->
-            compileOpenedFiles(compileOptions, openedFiles)
+            compileOpenFiles(compileOptions, openedFiles)
         })
     }
 
-    fun compileOpenedFiles(compileOptions: CompileOptions, openedFiles: Set<OpenedFile>):
+    fun compileOpenFiles(compileOptions: CompileOptions, openedFiles: Set<OpenedFile>):
             CompilationResults {
         return appyFailingTransformation(openedFiles, { openedFile -> parser.parse(openedFile) }, { parsedFiles ->
             compileParsedFiles(compileOptions, parsedFiles)
@@ -34,14 +35,15 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
             is SemanticAnalysisResult.Failure ->
                     CompilationResults.CompilationNotAttempted(semanticAnalysisResult.issues)
             is SemanticAnalysisResult.Success ->
-                    generateCode(compileOptions, parsedFiles, semanticAnalysisResult.symbolTable)
+                    generateCode(compileOptions, semanticAnalysisResult.aasts, semanticAnalysisResult.symbolTable)
         }
     }
 
-    fun generateCode(compileOptions: CompileOptions, parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable): CompilationAttempted {
+    fun generateCode(compileOptions: CompileOptions, annotatedAsts: List<AFileContents>, symbolTable: SymbolTable):
+            CompilationAttempted {
         val builder = CompilationAttempted.Builder()
-        for (parsedFile in parsedFiles) {
-            val codeGenResult = codeGenerator.generate(compileOptions, parsedFile, symbolTable)
+        for (annotatedAst in annotatedAsts) {
+            val codeGenResult = codeGenerator.generate(compileOptions, annotatedAst, symbolTable)
             builder.add(codeGenResult)
         }
         return builder.build()

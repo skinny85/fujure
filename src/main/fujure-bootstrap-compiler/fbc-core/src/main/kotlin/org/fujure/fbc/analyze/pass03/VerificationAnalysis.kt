@@ -53,7 +53,7 @@ object VerificationAnalysis {
         }
 
         return if (errors.isEmpty())
-            Disjunction.right(AFileContents(module, aDefs))
+            Disjunction.right(AFileContents(parsedFile.inputFile, module, aDefs))
         else
             Disjunction.left(SemanticFileIssue(parsedFile.inputFile.userProvidedFilePath, errors))
     }

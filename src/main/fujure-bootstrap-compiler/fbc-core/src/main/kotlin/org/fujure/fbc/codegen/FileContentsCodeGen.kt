@@ -4,69 +4,61 @@ import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
+import org.fujure.fbc.aast.ADef
+import org.fujure.fbc.aast.AExpr
+import org.fujure.fbc.aast.AFileContents
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
-import org.fujure.fbc.analyze.SymbolTable
-import org.fujure.fbc.ast.Def
-import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.Module
-import org.fujure.fbc.ast.ValueReference
-import org.fujure.fbc.parse.ParsedFile
 import java.lang.reflect.Type
 import javax.lang.model.element.Modifier
 
 object FileContentsCodeGen {
-    fun generate(parsedFile: ParsedFile, symbolTable: SymbolTable): JavaFile {
-        val inputFile = parsedFile.inputFile
-        val className = inputFile.moduleName
-
-        val typeSpecBuilder = TypeSpec.classBuilder(className)
+    fun generate(annotatedAst: AFileContents): JavaFile {
+        val typeSpecBuilder = TypeSpec.classBuilder(annotatedAst.module.moduleName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 
-        val fileContents = parsedFile.ast
-        for (def in fileContents.defs) {
+        for (def in annotatedAst.defs) {
             when (def) {
-                is Def.ValueDef.SimpleValueDef ->
-                    typeSpecBuilder.addField(generateField(def, parsedFile.module(), symbolTable))
+                is ADef.AValueDef.ASimpleValueDef ->
+                    typeSpecBuilder.addField(generateField(def, annotatedAst.module))
             }
         }
 
         return JavaFile
-                .builder(fileContents.packageName, typeSpecBuilder.build())
+                .builder(annotatedAst.module.packageName, typeSpecBuilder.build())
                 .skipJavaLangImports(true)
                 .build()
     }
 
-    private fun generateField(simpleValueDef: Def.ValueDef.SimpleValueDef, module: Module,
-            symbolTable: SymbolTable): FieldSpec {
-        val lookupResult = symbolTable.lookup(module, ValueReference(simpleValueDef.id))
-        val variableType = toJavaType(lookupResult.qualifiedType)!!
+    private fun generateField(simpleValueDef: ADef.AValueDef.ASimpleValueDef, module: Module): FieldSpec {
+        val variableType = toJavaType(simpleValueDef.type)!!
 
         var format = "\$L"
         val initializer: Any
         when (simpleValueDef.initializer) {
-            is Expr.IntLiteral -> {
+            is AExpr.AIntLiteral -> {
                 initializer = simpleValueDef.initializer.value
             }
-            is Expr.UnitLiteral -> {
+            is AExpr.AUnitLiteral -> {
                 initializer = "null"
             }
-            is Expr.BoolLiteral -> {
-                initializer = simpleValueDef.initializer == Expr.BoolLiteral.True
+            is AExpr.ABoolLiteral -> {
+                initializer = simpleValueDef.initializer == AExpr.ABoolLiteral.True
             }
-            is Expr.CharLiteral -> {
+            is AExpr.ACharLiteral -> {
                 initializer = simpleValueDef.initializer.value
             }
-            is Expr.StringLiteral -> {
+            is AExpr.AStringLiteral -> {
                 initializer = """"${simpleValueDef.initializer.value}""""
             }
-            is Expr.ValueReferenceExpr -> {
-                if (simpleValueDef.initializer.ref.ids.size == 1) {
-                    initializer = simpleValueDef.initializer.ref.inStringForm()
+            is AExpr.AValueReferenceExpr -> {
+                if (simpleValueDef.initializer.targetModule == module) {
+                    initializer = simpleValueDef.initializer.reference
                 } else {
-                    val reference = symbolTable.lookup(module, simpleValueDef.initializer.ref)
-                    initializer = ClassName.get(reference.module.packageName, reference.module.moduleName)
-                    format = "\$T.${simpleValueDef.initializer.ref.variable()}"
+                    initializer = ClassName.get(simpleValueDef.initializer.targetModule.packageName,
+                            simpleValueDef.initializer.targetModule.moduleName)
+                    format = "\$T.${simpleValueDef.initializer.reference}"
                 }
             }
         }
