@@ -75,7 +75,7 @@ object VerificationAnalysis {
                     errors.add(SemanticError.TypeNotFound(context, def.declaredType))
                 }
 
-                val annotatedExprOrError = exprType(def.initializer, symbolTable, def.id, module)
+                val annotatedExprOrError = astExpr2AastExpr(def.initializer, symbolTable, def.id, module)
                 when (annotatedExprOrError) {
                     is Disjunction.Left -> {
                         errors.add(annotatedExprOrError.value)
@@ -101,11 +101,11 @@ object VerificationAnalysis {
             Disjunction.Left(errors)
     }
 
-    private fun exprType(expr: Expr, symbolTable: Pass03SymbolTable, valName: String, module: Module):
+    private fun astExpr2AastExpr(expr: Expr, symbolTable: Pass03SymbolTable, valName: String, module: Module):
             Disjunction<SemanticError, AExpr?> =
-        exprType(expr, symbolTable, module, valName, listOf(ValueCoordinates(module.packageName, module.moduleName, valName)))
+        astExpr2AastExpr(expr, symbolTable, module, valName, listOf(ValueCoordinates(module.packageName, module.moduleName, valName)))
 
-    fun exprType(expr: Expr, symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>):
+    fun astExpr2AastExpr(expr: Expr, symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>):
             Disjunction<SemanticError, AExpr?> = when (expr)  {
         is Expr.IntLiteral -> Disjunction.Right(AExpr.AIntLiteral(expr.value))
         is Expr.UnitLiteral -> Disjunction.Right(AExpr.AUnitLiteral)

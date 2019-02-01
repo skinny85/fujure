@@ -34,7 +34,7 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
             LookupResult {
         val candidateModule = when (ref.size) {
             1 -> module
-            2 -> modules[module]!!.candidateModule(ref.ids[0], module) ?: return LookupResult.RefNotFound
+            2 -> modules[module]!!.candidateModule(ref.ids[0], module) ?: return LookupResult.RefFound(null, module)
             else -> return LookupResult.RefNotFound
         }
         val candidateModuleSymbols = modules[candidateModule]
@@ -152,7 +152,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
                     }
 
                     // if not, infer the type from the initializer, failing if that contains a cycle
-                    val annotatedExprOrError = VerificationAnalysis.exprType(this.initializer, symbolTable, module, valName, chain)
+                    val annotatedExprOrError = VerificationAnalysis.astExpr2AastExpr(this.initializer, symbolTable, module, valName, chain)
                     when (annotatedExprOrError) {
                         is Disjunction.Left -> {
                             val semanticError = annotatedExprOrError.value

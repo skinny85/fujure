@@ -77,11 +77,14 @@ class ImportsAnalysisSpec : AbstractSemanticAnalysisSpec() {
                     AnalysisBuilder
                             .file("""
                                 import com.example.File2
+
+                                def a = File2.x
+                                def b = a
                             """)
                             .analyzed()
                 }
 
-                it.should("report an UnresolvedImport error") {
+                it.should("report only an UnresolvedImport error, even if that import was referenced") {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.UnresolvedImport(
                                     Import("com", "example", "File2")))
