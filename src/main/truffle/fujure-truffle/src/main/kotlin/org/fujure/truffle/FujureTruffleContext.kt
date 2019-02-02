@@ -1,8 +1,7 @@
-package org.fujure.truffle;
+package org.fujure.truffle
 
 import com.oracle.truffle.api.Scope
 import org.fujure.fbc.ast.Module
-import org.fujure.fbc.ast.ValueReference
 
 class FujureTruffleContext {
     private val fujureTruffleBindings = FujureTruffleBindings()
@@ -19,16 +18,16 @@ class FujureTruffleContext {
         fujureTruffleBindings.resetCurrentModule()
     }
 
-    fun findInCurrentModule(reference: ValueReference): Any {
-        return fujureTruffleBindings.findInCurrentModule(reference)
-    }
-
     fun registerInCurrentModule(name: String, value: Any) {
         fujureTruffleBindings.registerInCurrentModule(name, value)
     }
 
     fun leaveCurrentModule() {
         fujureTruffleBindings.leaveCurrentModule()
+    }
+
+    fun find(targetModule: Module, reference: String): Any {
+        return fujureTruffleBindings.find(targetModule, reference)
     }
 
     fun findTopScopes(): Iterable<Scope> {

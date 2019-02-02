@@ -3,14 +3,12 @@ package org.fujure.truffle.nodes;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.RootNode;
-import org.fujure.fbc.ast.InputFile;
 import org.fujure.fbc.ast.Module;
 import org.fujure.truffle.FujureTruffleContext;
 import org.fujure.truffle.FujureTruffleLanguage;
 
 public final class RootModuleNode extends RootNode {
     private final TruffleLanguage.ContextReference<FujureTruffleContext> contextReference;
-    private final InputFile inputFile;
     private final Module module;
 
     @Children
@@ -19,11 +17,10 @@ public final class RootModuleNode extends RootNode {
     private boolean registered = false;
 
     public RootModuleNode(FujureTruffleLanguage language,
-            InputFile inputFile, ModuleNonRootNode moduleNode) {
+            ModuleNonRootNode moduleNode) {
         super(language);
 
         this.contextReference = language.getContextReference();
-        this.inputFile = inputFile;
         this.module = moduleNode.getModule();
         this.defs = moduleNode.getDefs().toArray(new DefNode[0]);
     }

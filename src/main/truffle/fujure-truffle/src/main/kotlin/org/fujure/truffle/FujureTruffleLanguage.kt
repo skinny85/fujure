@@ -1,19 +1,20 @@
-package org.fujure.truffle;
+package org.fujure.truffle
 
 import com.oracle.truffle.api.CallTarget
 import com.oracle.truffle.api.Scope
 import com.oracle.truffle.api.Truffle
 import com.oracle.truffle.api.TruffleLanguage
+import org.fujure.fbc.analyze.SemanticAnalysisResult
+import org.fujure.fbc.analyze.SimpleSemanticAnalyzer
+import org.fujure.fbc.analyze.SymbolTable
 import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.read.OpenedFile
-import org.fujure.truffle.analyze.NotTruffleSemanticAnalyzer
-import org.fujure.truffle.analyze.NotTruffleSymbolTable
 import org.fujure.truffle.nodes.RootModuleNode
 import org.funktionale.either.Disjunction
 
 class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
-    private val symbolTable = NotTruffleSymbolTable()
+    private var symbolTable: SymbolTable? = null
 
     override fun createContext(env: Env): FujureTruffleContext {
         return FujureTruffleContext()
@@ -35,22 +36,20 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
                 throw FujureTruffleParsingException(request.source, parsingResult.value)
             }
             is Disjunction.Right -> {
-                 val parsedFile = parsingResult.value
-                 val analysisResults = NotTruffleSemanticAnalyzer.analyze(parsedFile, symbolTable)
-                 when (analysisResults) {
-                     is Disjunction.Left -> {
-                         throw FujureTruffleSemanticException(analysisResults.value)
-                     }
-                     is Disjunction.Right -> {
-                         val moduleSymbols = analysisResults.value
-                         symbolTable.merge(moduleSymbols)
-                         Truffle.getRuntime().createCallTarget(RootModuleNode(
-                             this,
-                             parsedFile.inputFile,
-                             Ast2TruffleNodes.translate(parsedFile, this)
-                         ))
-                     }
-                 }
+                val parsedFile = parsingResult.value
+                val analysisResults = SimpleSemanticAnalyzer.analyze(setOf(parsedFile), symbolTable)
+                when (analysisResults) {
+                    is SemanticAnalysisResult.Failure -> {
+                        throw FujureTruffleSemanticException(analysisResults.issues.first())
+                    }
+                    is SemanticAnalysisResult.Success -> {
+                        symbolTable = analysisResults.symbolTable
+                        Truffle.getRuntime().createCallTarget(RootModuleNode(
+                            this,
+                            Aast2TruffleNodes.translate(analysisResults.aasts.first(), this)
+                        ))
+                    }
+                }
             }
         }
     }

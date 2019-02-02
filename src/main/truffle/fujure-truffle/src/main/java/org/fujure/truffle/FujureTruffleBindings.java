@@ -8,7 +8,6 @@ import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.interop.UnknownIdentifierException;
 import com.oracle.truffle.api.nodes.Node;
 import org.fujure.fbc.ast.Module;
-import org.fujure.fbc.ast.ValueReference;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,16 +32,16 @@ public final class FujureTruffleBindings implements TruffleObject {
         modulesBindings.put(currentModule, new ModuleBindings());
     }
 
-    public Object findInCurrentModule(ValueReference reference) {
-        return modulesBindings.get(currentModule).find(reference);
-    }
-
     public void registerInCurrentModule(String name, Object value) {
         modulesBindings.get(currentModule).register(name, value);
     }
 
     public void leaveCurrentModule() {
         this.currentModule = null;
+    }
+
+    public Object find(Module targetModule, String reference) {
+        return modulesBindings.get(targetModule.getFullyQualifiedName()).find(reference);
     }
 
     @Override
@@ -83,16 +82,12 @@ public final class FujureTruffleBindings implements TruffleObject {
             this.moduleValues = new HashMap<>();
         }
 
-        public Object find(ValueReference reference) {
-            if (reference.getSize() != 1)
-                throw new UnsupportedOperationException("Translating complex references like '" +
-                        reference + "' to Truffle is not supported (yet)");
-            else
-                return moduleValues.get(reference.variable());
-        }
-
         public void register(String name, Object value) {
             moduleValues.put(name, value);
+        }
+
+        public Object find(String reference) {
+            return moduleValues.get(reference);
         }
 
         @Override
