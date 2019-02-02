@@ -1,7 +1,6 @@
 package org.fujure.fbc.analyze.pass03
 
 import org.fujure.fbc.analyze.BuiltInTypes
-import org.fujure.fbc.analyze.SymbolTable.LookupResult as SymTabLookupResult
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.analyze.SymbolTable

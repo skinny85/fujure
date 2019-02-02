@@ -14,8 +14,6 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols>) {
     fun merge(symbolTable: SymbolTable): SymbolTable {
         return SymbolTable(modules + symbolTable.modules)
     }
-
-    data class LookupResult(val qualifiedType: QualifiedType, val module: Module)
 }
 
 class ModuleSymbols(private val simpleValues: Map<String, QualifiedType>) {
