@@ -3,7 +3,7 @@ package org.fujure.fbc.analyze
 import org.fujure.fbc.ast.Module
 
 class SymbolTable(private val modules: Map<Module, ModuleSymbols>) {
-    fun find(module: Module): Boolean {
+    fun hasModule(module: Module): Boolean {
         return modules.containsKey(module)
     }
 
