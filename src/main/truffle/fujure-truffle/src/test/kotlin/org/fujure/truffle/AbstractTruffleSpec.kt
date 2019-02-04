@@ -5,6 +5,7 @@ import org.fujure.truffle.FujureTruffleLanguage.Companion.LANG_ID
 import org.fujure.truffle.test.PolyglotAssertion
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.PolyglotException
+import org.graalvm.polyglot.Source
 import org.graalvm.polyglot.Value
 import org.junit.runner.RunWith
 import org.specnaz.kotlin.SpecnazKotlin
@@ -17,9 +18,14 @@ abstract class AbstractTruffleSpec : SpecnazKotlin {
     private lateinit var exception: Exception
     protected lateinit var fujureBindings: Value
 
-    fun evalFujure(moduleContents: String) {
+    fun evalFujure(moduleContents: String, fileName: String? = null) {
         try {
-            result = context.eval(LANG_ID, moduleContents)
+            result = if (fileName == null) {
+                context.eval(LANG_ID, moduleContents)
+            } else {
+                val source = Source.newBuilder(LANG_ID, moduleContents, fileName).build()
+                context.eval(source)
+            }
             exception = Exception()
         } catch (e: PolyglotException) {
             exception = e

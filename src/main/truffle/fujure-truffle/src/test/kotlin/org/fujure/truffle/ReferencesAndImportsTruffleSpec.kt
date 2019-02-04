@@ -41,6 +41,24 @@ class ReferencesAndImportsTruffleSpec : AbstractTruffleSpec() { init {
                     assertThat(importingModuleBindings.getMember("b").asInt()).isEqualTo(3)
                 }
             }
+
+            it.describes("and then a named module in the same package referencing it") {
+                it.beginsAll {
+                    evalFujure("""
+                        package com.example
+
+                        def b = Unnamed.a
+                    """,
+                    "File1.fjr")
+                }
+
+                it.should("correctly evaluate the referencing module") {
+                    assertNoException()
+                    assertThat(fujureBindings.hasMember("com.example.File1")).isTrue()
+                    val referencingModuleBindings = fujureBindings.getMember("com.example.File1")
+                    assertThat(referencingModuleBindings.getMember("b").asInt()).isEqualTo(3)
+                }
+            }
         }
     }
 }}

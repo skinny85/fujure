@@ -11,7 +11,7 @@ class FujureTruffleContext {
                     .build())
 
     fun enterModuleScope(module: Module) {
-         fujureTruffleBindings.enterModuleScope(module)
+        fujureTruffleBindings.enterModuleScope(module)
     }
 
     fun resetCurrentModule() {
