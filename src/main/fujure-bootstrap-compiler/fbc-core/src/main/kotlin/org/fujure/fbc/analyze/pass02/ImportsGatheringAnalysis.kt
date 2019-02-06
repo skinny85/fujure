@@ -38,7 +38,7 @@ object ImportsGatheringAnalysis {
                 imports[imprt.lastFragment()] = null
             } else {
                 val module = Module(imprt.allButLastFragments(), imprt.lastFragment())
-                val moduleFound = symbolTable.find(module)
+                val moduleFound = symbolTable.hasModule(module)
                 if (moduleFound) {
                     // ToDo handle imports with the same module name
                     imports[imprt.lastFragment()] = module

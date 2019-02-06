@@ -38,15 +38,13 @@ public final class RootModuleNode extends RootNode {
     }
 
     private void registerTruffleValues(VirtualFrame frame) {
-        contextReference.get().enterModuleScope(module);
-        contextReference.get().resetCurrentModule();
+        contextReference.get().resetModule(module);
         for (DefNode defNode : defs) {
             if (defNode instanceof SimpleValueDefNode) {
                 SimpleValueDefNode simpleValueDefNode = (SimpleValueDefNode) defNode;
-                contextReference.get().registerInCurrentModule(simpleValueDefNode.id,
+                contextReference.get().registerSimpleValue(module, simpleValueDefNode.id,
                         simpleValueDefNode.execute(frame));
             }
         }
-        contextReference.get().leaveCurrentModule();
     }
 }

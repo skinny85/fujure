@@ -22,22 +22,13 @@ public final class FujureTruffleBindings implements TruffleObject {
     }
 
     private final Map<String, ModuleBindings> modulesBindings = new HashMap<>();
-    private String currentModule;
 
-    public void enterModuleScope(Module module) {
-        this.currentModule = module.getFullyQualifiedName();
+    public void resetModule(Module module) {
+        modulesBindings.put(module.getFullyQualifiedName(), new ModuleBindings());
     }
 
-    public void resetCurrentModule() {
-        modulesBindings.put(currentModule, new ModuleBindings());
-    }
-
-    public void registerInCurrentModule(String name, Object value) {
-        modulesBindings.get(currentModule).register(name, value);
-    }
-
-    public void leaveCurrentModule() {
-        this.currentModule = null;
+    public void registerSimpleValue(Module module, String name, Object value) {
+        modulesBindings.get(module.getFullyQualifiedName()).register(name, value);
     }
 
     public Object find(Module targetModule, String reference) {

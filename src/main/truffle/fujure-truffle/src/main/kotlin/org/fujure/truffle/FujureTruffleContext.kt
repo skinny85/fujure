@@ -5,25 +5,15 @@ import org.fujure.fbc.ast.Module
 
 class FujureTruffleContext {
     private val fujureTruffleBindings = FujureTruffleBindings()
-    private val topScopes = setOf<Scope>(
-            Scope
-                    .newBuilder("global", fujureTruffleBindings)
-                    .build())
+    private val topScopes = setOf(
+            Scope.newBuilder("global", fujureTruffleBindings).build())
 
-    fun enterModuleScope(module: Module) {
-        fujureTruffleBindings.enterModuleScope(module)
+    fun resetModule(module: Module) {
+        fujureTruffleBindings.resetModule(module)
     }
 
-    fun resetCurrentModule() {
-        fujureTruffleBindings.resetCurrentModule()
-    }
-
-    fun registerInCurrentModule(name: String, value: Any) {
-        fujureTruffleBindings.registerInCurrentModule(name, value)
-    }
-
-    fun leaveCurrentModule() {
-        fujureTruffleBindings.leaveCurrentModule()
+    fun registerSimpleValue(module: Module, name: String, value: Any) {
+        fujureTruffleBindings.registerSimpleValue(module, name, value)
     }
 
     fun find(targetModule: Module, reference: String): Any {
