@@ -14,8 +14,8 @@ INTEGER=13
 WS=14
 ErrorToken=15
 '.'=1
-'='=2
-':'=3
+':'=2
+'='=3
 'def'=4
 'false'=5
 'import'=6

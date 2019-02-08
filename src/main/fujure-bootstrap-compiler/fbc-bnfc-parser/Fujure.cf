@@ -15,10 +15,12 @@ ImportFragment . ImportFragm ::= JID ;
 
 Definitions . Defs ::= [Def] ;
 separator Def "" ;
-ValueDef . Def ::= ValDef ;
+SimpleValueDef . Def ::= "def" Binding ;
 
-UntypedValueDef . ValDef ::= "def" JID "=" Expr ;
-TypedValueDef   . ValDef ::= "def" JID ":" TypeSpec "=" Expr ;
+OnlyNameBinding . Binding ::= JID ;
+NameTypeBinding . Binding ::= JID ":" TypeSpec ;
+NameInitBinding . Binding ::= JID "=" Expr ;
+FullBinding     . Binding ::= JID ":" TypeSpec "=" Expr ;
 
 TypeSpecifier . TypeSpec ::= [TypeSpecFragm] ;
 separator nonempty TypeSpecFragm "." ;

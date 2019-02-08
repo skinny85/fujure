@@ -32,10 +32,12 @@ defs returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs result ] : p_1
 listDef returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListDef result ] :  /* empty */  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListDef(); } # ListDef_Empty 
   | p_2_1=listDef p_2_2=def  { $result = $p_2_1.result; $result.addLast($p_2_2.result); } # ListDef_PrependFirst
 ;
-def returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def result ] : p_1_1=valDef  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef($p_1_1.result); } # ValueDef 
+def returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def result ] : Surrogate_id_SYMB_3 p_1_2=binding  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef($p_1_2.result); } # SimpleValueDef 
 ;
-valDef returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef result ] : Surrogate_id_SYMB_3 p_1_2=JID Surrogate_id_SYMB_1 p_1_4=expr  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef($p_1_2.getText(),$p_1_4.result); } # UntypedValueDef 
-  | Surrogate_id_SYMB_3 p_2_2=JID Surrogate_id_SYMB_2 p_2_4=typeSpec Surrogate_id_SYMB_1 p_2_6=expr  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef($p_2_2.getText(),$p_2_4.result,$p_2_6.result); } # TypedValueDef
+binding returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding result ] : p_1_1=JID  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding($p_1_1.getText()); } # OnlyNameBinding 
+  | p_2_1=JID Surrogate_id_SYMB_1 p_2_3=typeSpec  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding($p_2_1.getText(),$p_2_3.result); } # NameTypeBinding
+  | p_3_1=JID Surrogate_id_SYMB_2 p_3_3=expr  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding($p_3_1.getText(),$p_3_3.result); } # NameInitBinding
+  | p_4_1=JID Surrogate_id_SYMB_1 p_4_3=typeSpec Surrogate_id_SYMB_2 p_4_5=expr  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding($p_4_1.getText(),$p_4_3.result,$p_4_5.result); } # FullBinding
 ;
 typeSpec returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpec result ] : p_1_1=listTypeSpecFragm  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecifier($p_1_1.result); } # TypeSpecifier 
 ;

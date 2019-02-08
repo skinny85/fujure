@@ -15,4 +15,4 @@ class Pass02SymbolTable(internal val modules: Map<Module, Pass02ModuleSymbols>,
 }
 
 class Pass02ModuleSymbols(val inputFile: InputFile,
-        val simpleValues: Map<String, Pair<TypeReference?, Expr>>)
+        val simpleValues: Map<String, Pair<TypeReference?, Expr?>>)

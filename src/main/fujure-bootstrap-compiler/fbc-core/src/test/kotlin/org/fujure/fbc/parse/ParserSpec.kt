@@ -26,11 +26,11 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
         assume(result).isA<Disjunction.Right<ProblematicFile.ParsingFileIssue, ParsedFile>>()
     }
 
-    it.describes("called with a file containing 'def xxx'") {
+    it.describes("called with a file containing just the word 'def'") {
         it.beginsAll {
             parse("""
-                def xxx
-                """)
+                def
+            """)
         }
 
         it.should("fail parsing") {
@@ -42,7 +42,7 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
         it.beginsAll {
             parse("""
                 #
-                """)
+            """)
         }
 
         it.should("fail parsing") {
@@ -50,11 +50,23 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
         }
     }
 
-    it.describes("called with a value with the name 'package'") {
+    it.describes("called with a simple value definition without an initializer expression") {
+        it.beginsAll {
+            parse("""
+                def xxx
+            """)
+        }
+
+        it.should("parse the program correctly") {
+            assertParsingSucceeded()
+        }
+    }
+
+    it.describes("called with a simple value definition with the name 'package'") {
         it.beginsAll {
             parse("""
                 def package = 1
-                """)
+            """)
         }
 
         it.should("fail parsing") {
@@ -66,7 +78,7 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
         it.beginsAll {
             parse("""
                 def c = 'a'
-                """)
+            """)
         }
 
         it.should("parse the program correctly") {
@@ -79,7 +91,7 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
             parse("""
                 def c1 = '\''
                 def c2 = '\\'
-                """)
+            """)
         }
 
         it.should("parse the program correctly") {
@@ -91,7 +103,7 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
         it.beginsAll {
             parse("""
                 def c = '\'
-                """)
+            """)
         }
 
         it.should("fail parsing") {
@@ -103,7 +115,7 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
         it.beginsAll {
             parse("""
                 def c = '''
-                """)
+            """)
         }
 
         it.should("fail parsing") {
@@ -115,7 +127,7 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
         it.beginsAll {
             parse("""
                 def c = ''
-                """)
+            """)
         }
 
         it.should("fail parsing") {
@@ -127,7 +139,7 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
         it.beginsAll {
             parse("""
                 def c = "a"
-                """)
+            """)
         }
 
         it.should("parse the program correctly") {
@@ -139,7 +151,7 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
         it.beginsAll {
             parse("""
                 def c = "\n\\"
-                """)
+            """)
         }
 
         it.should("parse the program correctly") {
@@ -151,7 +163,7 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
         it.beginsAll {
             parse("""
                 def s = "\"
-                """)
+            """)
         }
 
         it.should("fail parsing") {

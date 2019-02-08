@@ -40,7 +40,7 @@ object SymbolsGatheringAnalysis {
     }
 
     private fun analyzeFile(parsedFile: ParsedFile): Pair<Pass02ModuleSymbols, List<SemanticError>> {
-        val simpleValues = linkedMapOf<String, Pair<TypeReference?, Expr>>()
+        val simpleValues = linkedMapOf<String, Pair<TypeReference?, Expr?>>()
         val errors = mutableListOf<SemanticError>()
 
         for (def in parsedFile.ast.defs) {

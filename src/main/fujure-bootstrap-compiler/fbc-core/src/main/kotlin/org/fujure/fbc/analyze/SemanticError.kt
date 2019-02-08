@@ -28,6 +28,9 @@ sealed class SemanticError {
     data class IllegalSelfReference(val context: ErrorContext) :
             SemanticError()
 
+    data class MissingInitializer(val context: ErrorContext) :
+            SemanticError()
+
     data class CyclicDefinition(val context: ErrorContext, val cycle: List<ValueCoordinates>) :
             SemanticError()
 
@@ -64,6 +67,9 @@ sealed class SemanticError {
         is SemanticError.IllegalSelfReference ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Illegal self reference"
+        is SemanticError.MissingInitializer ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "a top-level value must be initialized when defined"
         is SemanticError.CyclicDefinition ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Cycle detected, ${this.cycle.map { it.inStringForm() }.joinToString(" -> ")}"

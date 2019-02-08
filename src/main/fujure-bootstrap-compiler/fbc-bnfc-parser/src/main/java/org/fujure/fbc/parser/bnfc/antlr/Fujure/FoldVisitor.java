@@ -78,19 +78,28 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
     }
 
 /* Def */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg) {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef p, A arg) {
       R r = leaf(arg);
-      r = combine(p.valdef_.accept(this, arg), r, arg);
+      r = combine(p.binding_.accept(this, arg), r, arg);
       return r;
     }
 
-/* ValDef */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg) {
+/* Binding */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding p, A arg) {
+      R r = leaf(arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.typespec_.accept(this, arg), r, arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding p, A arg) {
       R r = leaf(arg);
       r = combine(p.expr_.accept(this, arg), r, arg);
       return r;
     }
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef p, A arg) {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding p, A arg) {
       R r = leaf(arg);
       r = combine(p.typespec_.accept(this, arg), r, arg);
       r = combine(p.expr_.accept(this, arg), r, arg);

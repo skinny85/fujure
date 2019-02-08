@@ -39,14 +39,16 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* Def */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
-/* ValDef */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg) { return visitDefault(p, arg); }
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef p, A arg) { return visitDefault(p, arg); }
-    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef p, A arg) {
+/* Binding */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* TypeSpec */

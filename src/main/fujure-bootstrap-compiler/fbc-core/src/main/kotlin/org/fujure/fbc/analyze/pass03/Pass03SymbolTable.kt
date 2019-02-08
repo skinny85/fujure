@@ -62,7 +62,7 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
 }
 
 class Pass03ModuleSymbols(val imports: Map<String, Module?>,
-        simpleValues: Map<String, Pair<TypeReference?, Expr>>) {
+        simpleValues: Map<String, Pair<TypeReference?, Expr?>>) {
     internal val values: Map<String, ValueTypeHolder> = simpleValues.mapValues { (_, pair) ->
         ValueTypeHolder(pair.first, pair.second)
     }
@@ -105,7 +105,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
         return ret
     }
 
-    internal class ValueTypeHolder(declaredType: TypeReference?, initializer: Expr) {
+    internal class ValueTypeHolder(declaredType: TypeReference?, initializer: Expr?) {
         private val valResolution = ValueResolution.fromDeclaration(declaredType, initializer)
         private var resolved = false
         private var resolvedType: QualifiedType? = null
@@ -128,19 +128,23 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
     private sealed class ValueResolution {
         class FromDeclaredType(val declaredType: TypeReference) : ValueResolution()
         class FromInitializer(val initializer: Expr) : ValueResolution()
+        object NoInfoProvided : ValueResolution()
 
         companion object {
-            fun fromDeclaration(declaredType: TypeReference?, initializer: Expr):
+            fun fromDeclaration(declaredType: TypeReference?, initializer: Expr?):
                     ValueResolution {
-                return if (declaredType == null)
-                    FromInitializer(initializer)
-                else
+                return if (declaredType == null) {
+                    if (initializer == null) NoInfoProvided else FromInitializer(initializer)
+                } else {
                     FromDeclaredType(declaredType)
+                }
             }
         }
 
-        fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>): QualifiedType? {
+        fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>):
+                QualifiedType? {
             return when (this) {
+                is NoInfoProvided -> null
                 is FromDeclaredType -> symbolTable.findType(this.declaredType)
                 is FromInitializer -> {
                     // first, check if we don't have a cycle already

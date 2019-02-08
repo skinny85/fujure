@@ -208,37 +208,61 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterValueDef(FujureParser.ValueDefContext ctx) { }
+	@Override public void enterSimpleValueDef(FujureParser.SimpleValueDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitValueDef(FujureParser.ValueDefContext ctx) { }
+	@Override public void exitSimpleValueDef(FujureParser.SimpleValueDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterUntypedValueDef(FujureParser.UntypedValueDefContext ctx) { }
+	@Override public void enterOnlyNameBinding(FujureParser.OnlyNameBindingContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitUntypedValueDef(FujureParser.UntypedValueDefContext ctx) { }
+	@Override public void exitOnlyNameBinding(FujureParser.OnlyNameBindingContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypedValueDef(FujureParser.TypedValueDefContext ctx) { }
+	@Override public void enterNameTypeBinding(FujureParser.NameTypeBindingContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypedValueDef(FujureParser.TypedValueDefContext ctx) { }
+	@Override public void exitNameTypeBinding(FujureParser.NameTypeBindingContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNameInitBinding(FujureParser.NameInitBindingContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNameInitBinding(FujureParser.NameInitBindingContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFullBinding(FujureParser.FullBindingContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFullBinding(FujureParser.FullBindingContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

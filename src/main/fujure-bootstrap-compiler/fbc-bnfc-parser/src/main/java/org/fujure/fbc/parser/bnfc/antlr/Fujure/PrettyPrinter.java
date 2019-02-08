@@ -243,7 +243,7 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef foo)
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding foo)
   {
     pp(foo, 0);
     trim();
@@ -251,7 +251,7 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef foo)
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding foo)
   {
     sh(foo);
     String temp = buf_.toString();
@@ -519,37 +519,52 @@ public class PrettyPrinter
 
   private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def foo, int _i_)
   {
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef)
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef)
     {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef _valuedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef) foo;
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef _simplevaluedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef) foo;
        if (_i_ > 0) render(_L_PAREN);
-       pp(_valuedef.valdef_, 0);
+       render("def");
+       pp(_simplevaluedef.binding_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
 
-  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef foo, int _i_)
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding foo, int _i_)
   {
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef)
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding)
     {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef _untypedvaluedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef) foo;
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding _onlynamebinding = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding) foo;
        if (_i_ > 0) render(_L_PAREN);
-       render("def");
-       pp(_untypedvaluedef.jid_, 0);
-       render("=");
-       pp(_untypedvaluedef.expr_, 0);
+       pp(_onlynamebinding.jid_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
-    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef)
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding)
     {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef _typedvaluedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef) foo;
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding _nametypebinding = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding) foo;
        if (_i_ > 0) render(_L_PAREN);
-       render("def");
-       pp(_typedvaluedef.jid_, 0);
+       pp(_nametypebinding.jid_, 0);
        render(":");
-       pp(_typedvaluedef.typespec_, 0);
+       pp(_nametypebinding.typespec_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding _nameinitbinding = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_nameinitbinding.jid_, 0);
        render("=");
-       pp(_typedvaluedef.expr_, 0);
+       pp(_nameinitbinding.expr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding _fullbinding = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_fullbinding.jid_, 0);
+       render(":");
+       pp(_fullbinding.typespec_, 0);
+       render("=");
+       pp(_fullbinding.expr_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -832,35 +847,52 @@ public class PrettyPrinter
 
   private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def foo)
   {
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef)
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef)
     {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef _valuedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef) foo;
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef _simplevaluedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef) foo;
        render("(");
-       render("ValueDef");
-       sh(_valuedef.valdef_);
+       render("SimpleValueDef");
+       sh(_simplevaluedef.binding_);
        render(")");
     }
   }
 
-  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef foo)
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding foo)
   {
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef)
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding)
     {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef _untypedvaluedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef) foo;
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding _onlynamebinding = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding) foo;
        render("(");
-       render("UntypedValueDef");
-       sh(_untypedvaluedef.jid_);
-       sh(_untypedvaluedef.expr_);
+       render("OnlyNameBinding");
+       sh(_onlynamebinding.jid_);
        render(")");
     }
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef)
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding)
     {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef _typedvaluedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef) foo;
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding _nametypebinding = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding) foo;
        render("(");
-       render("TypedValueDef");
-       sh(_typedvaluedef.jid_);
-       sh(_typedvaluedef.typespec_);
-       sh(_typedvaluedef.expr_);
+       render("NameTypeBinding");
+       sh(_nametypebinding.jid_);
+       sh(_nametypebinding.typespec_);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding _nameinitbinding = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding) foo;
+       render("(");
+       render("NameInitBinding");
+       sh(_nameinitbinding.jid_);
+       sh(_nameinitbinding.expr_);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding _fullbinding = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding) foo;
+       render("(");
+       render("FullBinding");
+       sh(_fullbinding.jid_);
+       sh(_fullbinding.typespec_);
+       sh(_fullbinding.expr_);
        render(")");
     }
   }

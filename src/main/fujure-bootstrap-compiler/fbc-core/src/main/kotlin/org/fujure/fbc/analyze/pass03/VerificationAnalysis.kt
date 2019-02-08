@@ -75,19 +75,23 @@ object VerificationAnalysis {
                     errors.add(SemanticError.TypeNotFound(context, def.declaredType))
                 }
 
-                val annotatedExprOrError = astExpr2AastExpr(def.initializer, symbolTable, def.id, module)
-                when (annotatedExprOrError) {
-                    is Disjunction.Left -> {
-                        errors.add(annotatedExprOrError.value)
-                    }
-                    is Disjunction.Right -> {
-                        val initializerExpr = annotatedExprOrError.value
-                        if (initializerExpr != null) {
-                            val initializerType = initializerExpr.type()
-                            if (declaredQualifiedType != null && declaredQualifiedType != initializerType) {
-                                errors.add(SemanticError.TypeMismatch(context, declaredQualifiedType, initializerType))
-                            } else {
-                                aDef = ADef.AValueDef.ASimpleValueDef(def.id, initializerType, initializerExpr)
+                if (def.initializer == null) {
+                    errors.add(SemanticError.MissingInitializer(context))
+                } else {
+                    val annotatedExprOrError = astExpr2AastExpr(def.initializer, symbolTable, def.id, module)
+                    when (annotatedExprOrError) {
+                        is Disjunction.Left -> {
+                            errors.add(annotatedExprOrError.value)
+                        }
+                        is Disjunction.Right -> {
+                            val initializerExpr = annotatedExprOrError.value
+                            if (initializerExpr != null) {
+                                val initializerType = initializerExpr.type()
+                                if (declaredQualifiedType != null && declaredQualifiedType != initializerType) {
+                                    errors.add(SemanticError.TypeMismatch(context, declaredQualifiedType, initializerType))
+                                } else {
+                                    aDef = ADef.AValueDef.ASimpleValueDef(def.id, initializerType, initializerExpr)
+                                }
                             }
                         }
                     }

@@ -12,7 +12,7 @@ public class ComposVisitor<A> implements
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragm,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def,A>,
-  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValDef,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpec.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpec,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr,A>,
@@ -86,23 +86,32 @@ public class ComposVisitor<A> implements
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions(listdef_);
     }
 /* Def */
-    public Def visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg)
+    public Def visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef p, A arg)
     {
-      ValDef valdef_ = p.valdef_.accept(this, arg);
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef(valdef_);
+      Binding binding_ = p.binding_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef(binding_);
     }
-/* ValDef */
-    public ValDef visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg)
+/* Binding */
+    public Binding visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding p, A arg)
+    {
+      String jid_ = p.jid_;
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding(jid_);
+    }    public Binding visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding p, A arg)
+    {
+      String jid_ = p.jid_;
+      TypeSpec typespec_ = p.typespec_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding(jid_, typespec_);
+    }    public Binding visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding p, A arg)
     {
       String jid_ = p.jid_;
       Expr expr_ = p.expr_.accept(this, arg);
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef(jid_, expr_);
-    }    public ValDef visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef p, A arg)
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding(jid_, expr_);
+    }    public Binding visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding p, A arg)
     {
       String jid_ = p.jid_;
       TypeSpec typespec_ = p.typespec_.accept(this, arg);
       Expr expr_ = p.expr_.accept(this, arg);
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef(jid_, typespec_, expr_);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding(jid_, typespec_, expr_);
     }
 /* TypeSpec */
     public TypeSpec visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecifier p, A arg)

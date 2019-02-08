@@ -332,6 +332,26 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                     assertAnalysisSucceeded()
                 }
             }
+
+            it.describes("called with a module referencing a value of a non-existent type and without an initializer") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def a: DoesNotExist
+                                def b = a
+                            """)
+                            .analyzed()
+                }
+
+                it.should("report only TypeNotFound and MissingInitializer errors") {
+                    assertThat(file1Errors()).containsExactly(
+                            SemanticError.TypeNotFound(
+                                    ValueDefinition("a"),
+                                    TypeReference("DoesNotExist")),
+                            SemanticError.MissingInitializer(
+                                    ValueDefinition("a")))
+                }
+            }
         }
     }
 }

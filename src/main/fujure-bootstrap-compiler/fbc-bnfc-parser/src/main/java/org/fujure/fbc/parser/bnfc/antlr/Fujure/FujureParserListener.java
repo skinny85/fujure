@@ -200,41 +200,65 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitListDef_PrependFirst(FujureParser.ListDef_PrependFirstContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ValueDef}
+	 * Enter a parse tree produced by the {@code SimpleValueDef}
 	 * labeled alternative in {@link FujureParser#def}.
 	 * @param ctx the parse tree
 	 */
-	void enterValueDef(FujureParser.ValueDefContext ctx);
+	void enterSimpleValueDef(FujureParser.SimpleValueDefContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ValueDef}
+	 * Exit a parse tree produced by the {@code SimpleValueDef}
 	 * labeled alternative in {@link FujureParser#def}.
 	 * @param ctx the parse tree
 	 */
-	void exitValueDef(FujureParser.ValueDefContext ctx);
+	void exitSimpleValueDef(FujureParser.SimpleValueDefContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code UntypedValueDef}
-	 * labeled alternative in {@link FujureParser#valDef}.
+	 * Enter a parse tree produced by the {@code OnlyNameBinding}
+	 * labeled alternative in {@link FujureParser#binding}.
 	 * @param ctx the parse tree
 	 */
-	void enterUntypedValueDef(FujureParser.UntypedValueDefContext ctx);
+	void enterOnlyNameBinding(FujureParser.OnlyNameBindingContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code UntypedValueDef}
-	 * labeled alternative in {@link FujureParser#valDef}.
+	 * Exit a parse tree produced by the {@code OnlyNameBinding}
+	 * labeled alternative in {@link FujureParser#binding}.
 	 * @param ctx the parse tree
 	 */
-	void exitUntypedValueDef(FujureParser.UntypedValueDefContext ctx);
+	void exitOnlyNameBinding(FujureParser.OnlyNameBindingContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code TypedValueDef}
-	 * labeled alternative in {@link FujureParser#valDef}.
+	 * Enter a parse tree produced by the {@code NameTypeBinding}
+	 * labeled alternative in {@link FujureParser#binding}.
 	 * @param ctx the parse tree
 	 */
-	void enterTypedValueDef(FujureParser.TypedValueDefContext ctx);
+	void enterNameTypeBinding(FujureParser.NameTypeBindingContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code TypedValueDef}
-	 * labeled alternative in {@link FujureParser#valDef}.
+	 * Exit a parse tree produced by the {@code NameTypeBinding}
+	 * labeled alternative in {@link FujureParser#binding}.
 	 * @param ctx the parse tree
 	 */
-	void exitTypedValueDef(FujureParser.TypedValueDefContext ctx);
+	void exitNameTypeBinding(FujureParser.NameTypeBindingContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code NameInitBinding}
+	 * labeled alternative in {@link FujureParser#binding}.
+	 * @param ctx the parse tree
+	 */
+	void enterNameInitBinding(FujureParser.NameInitBindingContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code NameInitBinding}
+	 * labeled alternative in {@link FujureParser#binding}.
+	 * @param ctx the parse tree
+	 */
+	void exitNameInitBinding(FujureParser.NameInitBindingContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code FullBinding}
+	 * labeled alternative in {@link FujureParser#binding}.
+	 * @param ctx the parse tree
+	 */
+	void enterFullBinding(FujureParser.FullBindingContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code FullBinding}
+	 * labeled alternative in {@link FujureParser#binding}.
+	 * @param ctx the parse tree
+	 */
+	void exitFullBinding(FujureParser.FullBindingContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code TypeSpecifier}
 	 * labeled alternative in {@link FujureParser#typeSpec}.

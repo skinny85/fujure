@@ -78,21 +78,30 @@ public class VisitSkel
   }
   public class DefVisitor<R,A> implements Def.Visitor<R,A>
   {
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueDef p, A arg)
-    { /* Code For ValueDef Goes Here */
-      p.valdef_.accept(new ValDefVisitor<R,A>(), arg);
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef p, A arg)
+    { /* Code For SimpleValueDef Goes Here */
+      p.binding_.accept(new BindingVisitor<R,A>(), arg);
       return null;
     }
   }
-  public class ValDefVisitor<R,A> implements ValDef.Visitor<R,A>
+  public class BindingVisitor<R,A> implements Binding.Visitor<R,A>
   {
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UntypedValueDef p, A arg)
-    { /* Code For UntypedValueDef Goes Here */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding p, A arg)
+    { /* Code For OnlyNameBinding Goes Here */
+      //p.jid_;
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding p, A arg)
+    { /* Code For NameTypeBinding Goes Here */
+      //p.jid_;
+      p.typespec_.accept(new TypeSpecVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding p, A arg)
+    { /* Code For NameInitBinding Goes Here */
       //p.jid_;
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
-    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypedValueDef p, A arg)
-    { /* Code For TypedValueDef Goes Here */
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding p, A arg)
+    { /* Code For FullBinding Goes Here */
       //p.jid_;
       p.typespec_.accept(new TypeSpecVisitor<R,A>(), arg);
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
