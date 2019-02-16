@@ -142,5 +142,6 @@ object VerificationAnalysis {
                 }
             }
         }
+        else -> throw UnsupportedOperationException()
     }
 }

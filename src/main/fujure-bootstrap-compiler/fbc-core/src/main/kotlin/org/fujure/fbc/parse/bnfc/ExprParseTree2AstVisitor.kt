@@ -23,15 +23,19 @@ internal object ExprParseTree2AstVisitor :
         ValRef.Visitor<List<String>, Unit>,
         Literal.Visitor<Expr, Unit> {
     override fun visit(orExpr: OrExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Disjunction(
+                orExpr.expr_1.accept(this, arg),
+                orExpr.expr_2.accept(this, arg))
     }
 
     override fun visit(andExpr: AndExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Conjunction(
+                andExpr.expr_1.accept(this, arg),
+                andExpr.expr_2.accept(this, arg))
     }
 
     override fun visit(notExpr: NotExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Negation(notExpr.expr_.accept(this, arg))
     }
 
     override fun visit(variableExpr: VariableExpr, arg: Unit): Expr {

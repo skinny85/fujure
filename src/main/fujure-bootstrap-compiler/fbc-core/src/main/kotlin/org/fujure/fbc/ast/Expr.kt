@@ -14,4 +14,8 @@ sealed class Expr {
 
     data class CharLiteral(val value: String) : Expr()
     data class StringLiteral(val value: String) : Expr()
+
+    data class Disjunction(val leftDisjunct: Expr, val rightDisjunct: Expr) : Expr()
+    data class Conjunction(val leftConjunct: Expr, val rightConjunct: Expr) : Expr()
+    data class Negation(val operand: Expr) : Expr()
 }
