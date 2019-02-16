@@ -659,27 +659,72 @@ public class PrettyPrinter
        pp(_greaterequalexpr.expr_2, 3);
        if (_i_ > 2) render(_R_PAREN);
     }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AdditionExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AdditionExpr _additionexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AdditionExpr) foo;
+       if (_i_ > 3) render(_L_PAREN);
+       pp(_additionexpr.expr_1, 3);
+       render("+");
+       pp(_additionexpr.expr_2, 4);
+       if (_i_ > 3) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SubtractionExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SubtractionExpr _subtractionexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SubtractionExpr) foo;
+       if (_i_ > 3) render(_L_PAREN);
+       pp(_subtractionexpr.expr_1, 3);
+       render("-");
+       pp(_subtractionexpr.expr_2, 4);
+       if (_i_ > 3) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiplicationExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiplicationExpr _multiplicationexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiplicationExpr) foo;
+       if (_i_ > 4) render(_L_PAREN);
+       pp(_multiplicationexpr.expr_1, 4);
+       render("*");
+       pp(_multiplicationexpr.expr_2, 5);
+       if (_i_ > 4) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DivisionExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DivisionExpr _divisionexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DivisionExpr) foo;
+       if (_i_ > 4) render(_L_PAREN);
+       pp(_divisionexpr.expr_1, 4);
+       render("/");
+       pp(_divisionexpr.expr_2, 5);
+       if (_i_ > 4) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ModuloExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ModuloExpr _moduloexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ModuloExpr) foo;
+       if (_i_ > 4) render(_L_PAREN);
+       pp(_moduloexpr.expr_1, 4);
+       render("%");
+       pp(_moduloexpr.expr_2, 5);
+       if (_i_ > 4) render(_R_PAREN);
+    }
     else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr _notexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr) foo;
-       if (_i_ > 3) render(_L_PAREN);
+       if (_i_ > 5) render(_L_PAREN);
        render("!");
-       pp(_notexpr.expr_, 3);
-       if (_i_ > 3) render(_R_PAREN);
+       pp(_notexpr.expr_, 5);
+       if (_i_ > 5) render(_R_PAREN);
     }
     else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr _variableexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr) foo;
-       if (_i_ > 3) render(_L_PAREN);
+       if (_i_ > 5) render(_L_PAREN);
        pp(_variableexpr.valref_, 0);
-       if (_i_ > 3) render(_R_PAREN);
+       if (_i_ > 5) render(_R_PAREN);
     }
     else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr _literalexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr) foo;
-       if (_i_ > 3) render(_L_PAREN);
+       if (_i_ > 5) render(_L_PAREN);
        pp(_literalexpr.literal_, 0);
-       if (_i_ > 3) render(_R_PAREN);
+       if (_i_ > 5) render(_R_PAREN);
     }
   }
 
@@ -1049,6 +1094,51 @@ public class PrettyPrinter
        render("GreaterEqualExpr");
        sh(_greaterequalexpr.expr_1);
        sh(_greaterequalexpr.expr_2);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AdditionExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AdditionExpr _additionexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AdditionExpr) foo;
+       render("(");
+       render("AdditionExpr");
+       sh(_additionexpr.expr_1);
+       sh(_additionexpr.expr_2);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SubtractionExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SubtractionExpr _subtractionexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SubtractionExpr) foo;
+       render("(");
+       render("SubtractionExpr");
+       sh(_subtractionexpr.expr_1);
+       sh(_subtractionexpr.expr_2);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiplicationExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiplicationExpr _multiplicationexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiplicationExpr) foo;
+       render("(");
+       render("MultiplicationExpr");
+       sh(_multiplicationexpr.expr_1);
+       sh(_multiplicationexpr.expr_2);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DivisionExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DivisionExpr _divisionexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DivisionExpr) foo;
+       render("(");
+       render("DivisionExpr");
+       sh(_divisionexpr.expr_1);
+       sh(_divisionexpr.expr_2);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ModuloExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ModuloExpr _moduloexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ModuloExpr) foo;
+       render("(");
+       render("ModuloExpr");
+       sh(_moduloexpr.expr_1);
+       sh(_moduloexpr.expr_2);
        render(")");
     }
     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr)

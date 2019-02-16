@@ -22,26 +22,29 @@ public class FujureParser extends Parser {
 		Surrogate_id_SYMB_8=9, Surrogate_id_SYMB_9=10, Surrogate_id_SYMB_10=11, 
 		Surrogate_id_SYMB_11=12, Surrogate_id_SYMB_12=13, Surrogate_id_SYMB_13=14, 
 		Surrogate_id_SYMB_14=15, Surrogate_id_SYMB_15=16, Surrogate_id_SYMB_16=17, 
-		Surrogate_id_SYMB_17=18, JID=19, JCHAR=20, JSTRING=21, INTEGER=22, WS=23, 
-		ErrorToken=24;
+		Surrogate_id_SYMB_17=18, Surrogate_id_SYMB_18=19, Surrogate_id_SYMB_19=20, 
+		Surrogate_id_SYMB_20=21, Surrogate_id_SYMB_21=22, Surrogate_id_SYMB_22=23, 
+		JID=24, JCHAR=25, JSTRING=26, INTEGER=27, WS=28, ErrorToken=29;
 	public static final int
 		RULE_fileContents = 0, RULE_pkgName = 1, RULE_listPkgFragm = 2, RULE_pkgFragm = 3, 
 		RULE_imports = 4, RULE_listImport = 5, RULE_import_ = 6, RULE_listImportFragm = 7, 
 		RULE_importFragm = 8, RULE_defs = 9, RULE_listDef = 10, RULE_def = 11, 
 		RULE_binding = 12, RULE_typeSpec = 13, RULE_listTypeSpecFragm = 14, RULE_typeSpecFragm = 15, 
-		RULE_expr = 16, RULE_expr1 = 17, RULE_expr2 = 18, RULE_expr3 = 19, RULE_valRef = 20, 
-		RULE_listValRefFragm = 21, RULE_valRefFragm = 22, RULE_literal = 23;
+		RULE_expr = 16, RULE_expr1 = 17, RULE_expr2 = 18, RULE_expr3 = 19, RULE_expr4 = 20, 
+		RULE_expr5 = 21, RULE_valRef = 22, RULE_listValRefFragm = 23, RULE_valRefFragm = 24, 
+		RULE_literal = 25;
 	public static final String[] ruleNames = {
 		"fileContents", "pkgName", "listPkgFragm", "pkgFragm", "imports", "listImport", 
 		"import_", "listImportFragm", "importFragm", "defs", "listDef", "def", 
 		"binding", "typeSpec", "listTypeSpecFragm", "typeSpecFragm", "expr", "expr1", 
-		"expr2", "expr3", "valRef", "listValRefFragm", "valRefFragm", "literal"
+		"expr2", "expr3", "expr4", "expr5", "valRef", "listValRefFragm", "valRefFragm", 
+		"literal"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
 		null, "'.'", "':'", "'='", "'||'", "'&&'", "'<'", "'<='", "'>'", "'>='", 
-		"'!'", "'('", "')'", "'def'", "'false'", "'import'", "'package'", "'true'", 
-		"'unit'"
+		"'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'('", "')'", "'def'", "'false'", 
+		"'import'", "'package'", "'true'", "'unit'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "Surrogate_id_SYMB_0", "Surrogate_id_SYMB_1", "Surrogate_id_SYMB_2", 
@@ -49,7 +52,9 @@ public class FujureParser extends Parser {
 		"Surrogate_id_SYMB_7", "Surrogate_id_SYMB_8", "Surrogate_id_SYMB_9", "Surrogate_id_SYMB_10", 
 		"Surrogate_id_SYMB_11", "Surrogate_id_SYMB_12", "Surrogate_id_SYMB_13", 
 		"Surrogate_id_SYMB_14", "Surrogate_id_SYMB_15", "Surrogate_id_SYMB_16", 
-		"Surrogate_id_SYMB_17", "JID", "JCHAR", "JSTRING", "INTEGER", "WS", "ErrorToken"
+		"Surrogate_id_SYMB_17", "Surrogate_id_SYMB_18", "Surrogate_id_SYMB_19", 
+		"Surrogate_id_SYMB_20", "Surrogate_id_SYMB_21", "Surrogate_id_SYMB_22", 
+		"JID", "JCHAR", "JSTRING", "INTEGER", "WS", "ErrorToken"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -136,7 +141,7 @@ public class FujureParser extends Parser {
 		public PkgNameContext p_1_2;
 		public ImportsContext p_1_3;
 		public DefsContext p_1_4;
-		public TerminalNode Surrogate_id_SYMB_15() { return getToken(FujureParser.Surrogate_id_SYMB_15, 0); }
+		public TerminalNode Surrogate_id_SYMB_20() { return getToken(FujureParser.Surrogate_id_SYMB_20, 0); }
 		public PkgNameContext pkgName() {
 			return getRuleContext(PkgNameContext.class,0);
 		}
@@ -161,19 +166,19 @@ public class FujureParser extends Parser {
 		FileContentsContext _localctx = new FileContentsContext(_ctx, getState());
 		enterRule(_localctx, 0, RULE_fileContents);
 		try {
-			setState(58);
+			setState(62);
 			switch ( getInterpreter().adaptivePredict(_input,0,_ctx) ) {
 			case 1:
 				_localctx = new FileInNamedPackageContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(48);
-				match(Surrogate_id_SYMB_15);
-				setState(49);
+				setState(52);
+				match(Surrogate_id_SYMB_20);
+				setState(53);
 				((FileInNamedPackageContext)_localctx).p_1_2 = pkgName();
-				setState(50);
+				setState(54);
 				((FileInNamedPackageContext)_localctx).p_1_3 = imports();
-				setState(51);
+				setState(55);
 				((FileInNamedPackageContext)_localctx).p_1_4 = defs();
 				 ((FileInNamedPackageContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage(((FileInNamedPackageContext)_localctx).p_1_2.result,((FileInNamedPackageContext)_localctx).p_1_3.result,((FileInNamedPackageContext)_localctx).p_1_4.result); 
 				}
@@ -182,9 +187,9 @@ public class FujureParser extends Parser {
 				_localctx = new FileInDefaultPackageContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(54);
+				setState(58);
 				((FileInDefaultPackageContext)_localctx).p_2_1 = imports();
-				setState(55);
+				setState(59);
 				((FileInDefaultPackageContext)_localctx).p_2_2 = defs();
 				 ((FileInDefaultPackageContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage(((FileInDefaultPackageContext)_localctx).p_2_1.result,((FileInDefaultPackageContext)_localctx).p_2_2.result); 
 				}
@@ -238,7 +243,7 @@ public class FujureParser extends Parser {
 			_localctx = new PackageNameContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(60);
+			setState(64);
 			((PackageNameContext)_localctx).p_1_1 = listPkgFragm();
 			 ((PackageNameContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageName(((PackageNameContext)_localctx).p_1_1.result); 
 			}
@@ -307,13 +312,13 @@ public class FujureParser extends Parser {
 		ListPkgFragmContext _localctx = new ListPkgFragmContext(_ctx, getState());
 		enterRule(_localctx, 4, RULE_listPkgFragm);
 		try {
-			setState(71);
+			setState(75);
 			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 			case 1:
 				_localctx = new ListPkgFragm_AppendLastContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(63);
+				setState(67);
 				((ListPkgFragm_AppendLastContext)_localctx).p_1_1 = pkgFragm();
 				 ((ListPkgFragm_AppendLastContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListPkgFragm(); _localctx.result.addLast(((ListPkgFragm_AppendLastContext)_localctx).p_1_1.result); 
 				}
@@ -322,11 +327,11 @@ public class FujureParser extends Parser {
 				_localctx = new ListPkgFragm_PrependFirstContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(66);
+				setState(70);
 				((ListPkgFragm_PrependFirstContext)_localctx).p_2_1 = pkgFragm();
-				setState(67);
+				setState(71);
 				match(Surrogate_id_SYMB_0);
-				setState(68);
+				setState(72);
 				((ListPkgFragm_PrependFirstContext)_localctx).p_2_3 = listPkgFragm();
 				 ((ListPkgFragm_PrependFirstContext)_localctx).result =  ((ListPkgFragm_PrependFirstContext)_localctx).p_2_3.result; _localctx.result.addFirst(((ListPkgFragm_PrependFirstContext)_localctx).p_2_1.result); 
 				}
@@ -378,7 +383,7 @@ public class FujureParser extends Parser {
 			_localctx = new PackageFragmentContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(73);
+			setState(77);
 			((PackageFragmentContext)_localctx).p_1_1 = match(JID);
 			 ((PackageFragmentContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PackageFragment(((PackageFragmentContext)_localctx).p_1_1.getText()); 
 			}
@@ -430,7 +435,7 @@ public class FujureParser extends Parser {
 			_localctx = new ImportStmtsContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(76);
+			setState(80);
 			((ImportStmtsContext)_localctx).p_1_1 = listImport(0);
 			 ((ImportStmtsContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmts(((ImportStmtsContext)_localctx).p_1_1.result); 
 			}
@@ -513,7 +518,7 @@ public class FujureParser extends Parser {
 			 ((ListImport_EmptyContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListImport(); 
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(88);
+			setState(92);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -525,15 +530,15 @@ public class FujureParser extends Parser {
 					_localctx = new ListImport_PrependFirstContext(new ListImportContext(_parentctx, _parentState));
 					((ListImport_PrependFirstContext)_localctx).p_2_1 = _prevctx;
 					pushNewRecursionContext(_localctx, _startState, RULE_listImport);
-					setState(82);
+					setState(86);
 					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-					setState(83);
+					setState(87);
 					((ListImport_PrependFirstContext)_localctx).p_2_2 = import_();
 					 ((ListImport_PrependFirstContext)_localctx).result =  ((ListImport_PrependFirstContext)_localctx).p_2_1.result; _localctx.result.addLast(((ListImport_PrependFirstContext)_localctx).p_2_2.result); 
 					}
 					} 
 				}
-				setState(90);
+				setState(94);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			}
@@ -565,7 +570,7 @@ public class FujureParser extends Parser {
 	}
 	public static class ImportStmtContext extends Import_Context {
 		public ListImportFragmContext p_1_2;
-		public TerminalNode Surrogate_id_SYMB_14() { return getToken(FujureParser.Surrogate_id_SYMB_14, 0); }
+		public TerminalNode Surrogate_id_SYMB_19() { return getToken(FujureParser.Surrogate_id_SYMB_19, 0); }
 		public ListImportFragmContext listImportFragm() {
 			return getRuleContext(ListImportFragmContext.class,0);
 		}
@@ -587,9 +592,9 @@ public class FujureParser extends Parser {
 			_localctx = new ImportStmtContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(91);
-			match(Surrogate_id_SYMB_14);
-			setState(92);
+			setState(95);
+			match(Surrogate_id_SYMB_19);
+			setState(96);
 			((ImportStmtContext)_localctx).p_1_2 = listImportFragm();
 			 ((ImportStmtContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportStmt(((ImportStmtContext)_localctx).p_1_2.result); 
 			}
@@ -658,13 +663,13 @@ public class FujureParser extends Parser {
 		ListImportFragmContext _localctx = new ListImportFragmContext(_ctx, getState());
 		enterRule(_localctx, 14, RULE_listImportFragm);
 		try {
-			setState(103);
+			setState(107);
 			switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
 			case 1:
 				_localctx = new ListImportFragm_AppendLastContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(95);
+				setState(99);
 				((ListImportFragm_AppendLastContext)_localctx).p_1_1 = importFragm();
 				 ((ListImportFragm_AppendLastContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListImportFragm(); _localctx.result.addLast(((ListImportFragm_AppendLastContext)_localctx).p_1_1.result); 
 				}
@@ -673,11 +678,11 @@ public class FujureParser extends Parser {
 				_localctx = new ListImportFragm_PrependFirstContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(98);
+				setState(102);
 				((ListImportFragm_PrependFirstContext)_localctx).p_2_1 = importFragm();
-				setState(99);
+				setState(103);
 				match(Surrogate_id_SYMB_0);
-				setState(100);
+				setState(104);
 				((ListImportFragm_PrependFirstContext)_localctx).p_2_3 = listImportFragm();
 				 ((ListImportFragm_PrependFirstContext)_localctx).result =  ((ListImportFragm_PrependFirstContext)_localctx).p_2_3.result; _localctx.result.addFirst(((ListImportFragm_PrependFirstContext)_localctx).p_2_1.result); 
 				}
@@ -729,7 +734,7 @@ public class FujureParser extends Parser {
 			_localctx = new ImportFragmentContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(105);
+			setState(109);
 			((ImportFragmentContext)_localctx).p_1_1 = match(JID);
 			 ((ImportFragmentContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment(((ImportFragmentContext)_localctx).p_1_1.getText()); 
 			}
@@ -781,7 +786,7 @@ public class FujureParser extends Parser {
 			_localctx = new DefinitionsContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(108);
+			setState(112);
 			((DefinitionsContext)_localctx).p_1_1 = listDef(0);
 			 ((DefinitionsContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions(((DefinitionsContext)_localctx).p_1_1.result); 
 			}
@@ -864,7 +869,7 @@ public class FujureParser extends Parser {
 			 ((ListDef_EmptyContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListDef(); 
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(120);
+			setState(124);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -876,15 +881,15 @@ public class FujureParser extends Parser {
 					_localctx = new ListDef_PrependFirstContext(new ListDefContext(_parentctx, _parentState));
 					((ListDef_PrependFirstContext)_localctx).p_2_1 = _prevctx;
 					pushNewRecursionContext(_localctx, _startState, RULE_listDef);
-					setState(114);
+					setState(118);
 					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-					setState(115);
+					setState(119);
 					((ListDef_PrependFirstContext)_localctx).p_2_2 = def();
 					 ((ListDef_PrependFirstContext)_localctx).result =  ((ListDef_PrependFirstContext)_localctx).p_2_1.result; _localctx.result.addLast(((ListDef_PrependFirstContext)_localctx).p_2_2.result); 
 					}
 					} 
 				}
-				setState(122);
+				setState(126);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
 			}
@@ -916,7 +921,7 @@ public class FujureParser extends Parser {
 	}
 	public static class SimpleValueDefContext extends DefContext {
 		public BindingContext p_1_2;
-		public TerminalNode Surrogate_id_SYMB_12() { return getToken(FujureParser.Surrogate_id_SYMB_12, 0); }
+		public TerminalNode Surrogate_id_SYMB_17() { return getToken(FujureParser.Surrogate_id_SYMB_17, 0); }
 		public BindingContext binding() {
 			return getRuleContext(BindingContext.class,0);
 		}
@@ -938,9 +943,9 @@ public class FujureParser extends Parser {
 			_localctx = new SimpleValueDefContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(123);
-			match(Surrogate_id_SYMB_12);
-			setState(124);
+			setState(127);
+			match(Surrogate_id_SYMB_17);
+			setState(128);
 			((SimpleValueDefContext)_localctx).p_1_2 = binding();
 			 ((SimpleValueDefContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef(((SimpleValueDefContext)_localctx).p_1_2.result); 
 			}
@@ -1046,13 +1051,13 @@ public class FujureParser extends Parser {
 		BindingContext _localctx = new BindingContext(_ctx, getState());
 		enterRule(_localctx, 24, RULE_binding);
 		try {
-			setState(146);
+			setState(150);
 			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
 			case 1:
 				_localctx = new OnlyNameBindingContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(127);
+				setState(131);
 				((OnlyNameBindingContext)_localctx).p_1_1 = match(JID);
 				 ((OnlyNameBindingContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding(((OnlyNameBindingContext)_localctx).p_1_1.getText()); 
 				}
@@ -1061,11 +1066,11 @@ public class FujureParser extends Parser {
 				_localctx = new NameTypeBindingContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(129);
+				setState(133);
 				((NameTypeBindingContext)_localctx).p_2_1 = match(JID);
-				setState(130);
+				setState(134);
 				match(Surrogate_id_SYMB_1);
-				setState(131);
+				setState(135);
 				((NameTypeBindingContext)_localctx).p_2_3 = typeSpec();
 				 ((NameTypeBindingContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding(((NameTypeBindingContext)_localctx).p_2_1.getText(),((NameTypeBindingContext)_localctx).p_2_3.result); 
 				}
@@ -1074,11 +1079,11 @@ public class FujureParser extends Parser {
 				_localctx = new NameInitBindingContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(134);
+				setState(138);
 				((NameInitBindingContext)_localctx).p_3_1 = match(JID);
-				setState(135);
+				setState(139);
 				match(Surrogate_id_SYMB_2);
-				setState(136);
+				setState(140);
 				((NameInitBindingContext)_localctx).p_3_3 = expr(0);
 				 ((NameInitBindingContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding(((NameInitBindingContext)_localctx).p_3_1.getText(),((NameInitBindingContext)_localctx).p_3_3.result); 
 				}
@@ -1087,15 +1092,15 @@ public class FujureParser extends Parser {
 				_localctx = new FullBindingContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(139);
-				((FullBindingContext)_localctx).p_4_1 = match(JID);
-				setState(140);
-				match(Surrogate_id_SYMB_1);
-				setState(141);
-				((FullBindingContext)_localctx).p_4_3 = typeSpec();
-				setState(142);
-				match(Surrogate_id_SYMB_2);
 				setState(143);
+				((FullBindingContext)_localctx).p_4_1 = match(JID);
+				setState(144);
+				match(Surrogate_id_SYMB_1);
+				setState(145);
+				((FullBindingContext)_localctx).p_4_3 = typeSpec();
+				setState(146);
+				match(Surrogate_id_SYMB_2);
+				setState(147);
 				((FullBindingContext)_localctx).p_4_5 = expr(0);
 				 ((FullBindingContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding(((FullBindingContext)_localctx).p_4_1.getText(),((FullBindingContext)_localctx).p_4_3.result,((FullBindingContext)_localctx).p_4_5.result); 
 				}
@@ -1149,7 +1154,7 @@ public class FujureParser extends Parser {
 			_localctx = new TypeSpecifierContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(148);
+			setState(152);
 			((TypeSpecifierContext)_localctx).p_1_1 = listTypeSpecFragm();
 			 ((TypeSpecifierContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecifier(((TypeSpecifierContext)_localctx).p_1_1.result); 
 			}
@@ -1218,13 +1223,13 @@ public class FujureParser extends Parser {
 		ListTypeSpecFragmContext _localctx = new ListTypeSpecFragmContext(_ctx, getState());
 		enterRule(_localctx, 28, RULE_listTypeSpecFragm);
 		try {
-			setState(159);
+			setState(163);
 			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				_localctx = new ListTypeSpecFragm_AppendLastContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(151);
+				setState(155);
 				((ListTypeSpecFragm_AppendLastContext)_localctx).p_1_1 = typeSpecFragm();
 				 ((ListTypeSpecFragm_AppendLastContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListTypeSpecFragm(); _localctx.result.addLast(((ListTypeSpecFragm_AppendLastContext)_localctx).p_1_1.result); 
 				}
@@ -1233,11 +1238,11 @@ public class FujureParser extends Parser {
 				_localctx = new ListTypeSpecFragm_PrependFirstContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(154);
+				setState(158);
 				((ListTypeSpecFragm_PrependFirstContext)_localctx).p_2_1 = typeSpecFragm();
-				setState(155);
+				setState(159);
 				match(Surrogate_id_SYMB_0);
-				setState(156);
+				setState(160);
 				((ListTypeSpecFragm_PrependFirstContext)_localctx).p_2_3 = listTypeSpecFragm();
 				 ((ListTypeSpecFragm_PrependFirstContext)_localctx).result =  ((ListTypeSpecFragm_PrependFirstContext)_localctx).p_2_3.result; _localctx.result.addFirst(((ListTypeSpecFragm_PrependFirstContext)_localctx).p_2_1.result); 
 				}
@@ -1289,7 +1294,7 @@ public class FujureParser extends Parser {
 			_localctx = new TypeSpecFragmentContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(161);
+			setState(165);
 			((TypeSpecFragmentContext)_localctx).p_1_1 = match(JID);
 			 ((TypeSpecFragmentContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment(((TypeSpecFragmentContext)_localctx).p_1_1.getText()); 
 			}
@@ -1374,12 +1379,12 @@ public class FujureParser extends Parser {
 			_ctx = _localctx;
 			_prevctx = _localctx;
 
-			setState(165);
+			setState(169);
 			((Coercion_ExprContext)_localctx).p_2_1 = expr1(0);
 			 ((Coercion_ExprContext)_localctx).result =  ((Coercion_ExprContext)_localctx).p_2_1.result; 
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(175);
+			setState(179);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -1391,17 +1396,17 @@ public class FujureParser extends Parser {
 					_localctx = new OrExprContext(new ExprContext(_parentctx, _parentState));
 					((OrExprContext)_localctx).p_1_1 = _prevctx;
 					pushNewRecursionContext(_localctx, _startState, RULE_expr);
-					setState(168);
+					setState(172);
 					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-					setState(169);
+					setState(173);
 					match(Surrogate_id_SYMB_3);
-					setState(170);
+					setState(174);
 					((OrExprContext)_localctx).p_1_3 = expr1(0);
 					 ((OrExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr(((OrExprContext)_localctx).p_1_1.result,((OrExprContext)_localctx).p_1_3.result); 
 					}
 					} 
 				}
-				setState(177);
+				setState(181);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
 			}
@@ -1487,12 +1492,12 @@ public class FujureParser extends Parser {
 			_ctx = _localctx;
 			_prevctx = _localctx;
 
-			setState(179);
+			setState(183);
 			((Coercion_Expr1Context)_localctx).p_2_1 = expr2(0);
 			 ((Coercion_Expr1Context)_localctx).result =  ((Coercion_Expr1Context)_localctx).p_2_1.result; 
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(189);
+			setState(193);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -1504,17 +1509,17 @@ public class FujureParser extends Parser {
 					_localctx = new AndExprContext(new Expr1Context(_parentctx, _parentState));
 					((AndExprContext)_localctx).p_1_1 = _prevctx;
 					pushNewRecursionContext(_localctx, _startState, RULE_expr1);
-					setState(182);
+					setState(186);
 					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-					setState(183);
+					setState(187);
 					match(Surrogate_id_SYMB_4);
-					setState(184);
+					setState(188);
 					((AndExprContext)_localctx).p_1_3 = expr2(0);
 					 ((AndExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr(((AndExprContext)_localctx).p_1_1.result,((AndExprContext)_localctx).p_1_3.result); 
 					}
 					} 
 				}
-				setState(191);
+				setState(195);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
 			}
@@ -1660,12 +1665,12 @@ public class FujureParser extends Parser {
 			_ctx = _localctx;
 			_prevctx = _localctx;
 
-			setState(193);
-			((Coercion_Expr2Context)_localctx).p_5_1 = expr3();
+			setState(197);
+			((Coercion_Expr2Context)_localctx).p_5_1 = expr3(0);
 			 ((Coercion_Expr2Context)_localctx).result =  ((Coercion_Expr2Context)_localctx).p_5_1.result; 
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(218);
+			setState(222);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,10,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -1673,19 +1678,19 @@ public class FujureParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(216);
+					setState(220);
 					switch ( getInterpreter().adaptivePredict(_input,9,_ctx) ) {
 					case 1:
 						{
 						_localctx = new LesserExprContext(new Expr2Context(_parentctx, _parentState));
 						((LesserExprContext)_localctx).p_1_1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr2);
-						setState(196);
+						setState(200);
 						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
-						setState(197);
+						setState(201);
 						match(Surrogate_id_SYMB_5);
-						setState(198);
-						((LesserExprContext)_localctx).p_1_3 = expr3();
+						setState(202);
+						((LesserExprContext)_localctx).p_1_3 = expr3(0);
 						 ((LesserExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserExpr(((LesserExprContext)_localctx).p_1_1.result,((LesserExprContext)_localctx).p_1_3.result); 
 						}
 						break;
@@ -1694,12 +1699,12 @@ public class FujureParser extends Parser {
 						_localctx = new LesserEqualExprContext(new Expr2Context(_parentctx, _parentState));
 						((LesserEqualExprContext)_localctx).p_2_1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr2);
-						setState(201);
+						setState(205);
 						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
-						setState(202);
+						setState(206);
 						match(Surrogate_id_SYMB_6);
-						setState(203);
-						((LesserEqualExprContext)_localctx).p_2_3 = expr3();
+						setState(207);
+						((LesserEqualExprContext)_localctx).p_2_3 = expr3(0);
 						 ((LesserEqualExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserEqualExpr(((LesserEqualExprContext)_localctx).p_2_1.result,((LesserEqualExprContext)_localctx).p_2_3.result); 
 						}
 						break;
@@ -1708,12 +1713,12 @@ public class FujureParser extends Parser {
 						_localctx = new GreaterExprContext(new Expr2Context(_parentctx, _parentState));
 						((GreaterExprContext)_localctx).p_3_1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr2);
-						setState(206);
+						setState(210);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-						setState(207);
+						setState(211);
 						match(Surrogate_id_SYMB_7);
-						setState(208);
-						((GreaterExprContext)_localctx).p_3_3 = expr3();
+						setState(212);
+						((GreaterExprContext)_localctx).p_3_3 = expr3(0);
 						 ((GreaterExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterExpr(((GreaterExprContext)_localctx).p_3_1.result,((GreaterExprContext)_localctx).p_3_3.result); 
 						}
 						break;
@@ -1722,19 +1727,19 @@ public class FujureParser extends Parser {
 						_localctx = new GreaterEqualExprContext(new Expr2Context(_parentctx, _parentState));
 						((GreaterEqualExprContext)_localctx).p_4_1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr2);
-						setState(211);
+						setState(215);
 						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-						setState(212);
+						setState(216);
 						match(Surrogate_id_SYMB_8);
-						setState(213);
-						((GreaterEqualExprContext)_localctx).p_4_3 = expr3();
+						setState(217);
+						((GreaterEqualExprContext)_localctx).p_4_3 = expr3(0);
 						 ((GreaterEqualExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterEqualExpr(((GreaterEqualExprContext)_localctx).p_4_1.result,((GreaterEqualExprContext)_localctx).p_4_3.result); 
 						}
 						break;
 					}
 					} 
 				}
-				setState(220);
+				setState(224);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,10,_ctx);
 			}
@@ -1764,58 +1769,50 @@ public class FujureParser extends Parser {
 			this.result = ctx.result;
 		}
 	}
-	public static class LiteralExprContext extends Expr3Context {
-		public LiteralContext p_3_1;
-		public LiteralContext literal() {
-			return getRuleContext(LiteralContext.class,0);
-		}
-		public LiteralExprContext(Expr3Context ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterLiteralExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitLiteralExpr(this);
-		}
-	}
-	public static class VariableExprContext extends Expr3Context {
-		public ValRefContext p_2_1;
-		public ValRefContext valRef() {
-			return getRuleContext(ValRefContext.class,0);
-		}
-		public VariableExprContext(Expr3Context ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterVariableExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitVariableExpr(this);
-		}
-	}
-	public static class NotExprContext extends Expr3Context {
-		public Expr3Context p_1_2;
+	public static class AdditionExprContext extends Expr3Context {
+		public Expr3Context p_1_1;
+		public Expr4Context p_1_3;
 		public TerminalNode Surrogate_id_SYMB_9() { return getToken(FujureParser.Surrogate_id_SYMB_9, 0); }
 		public Expr3Context expr3() {
 			return getRuleContext(Expr3Context.class,0);
 		}
-		public NotExprContext(Expr3Context ctx) { copyFrom(ctx); }
+		public Expr4Context expr4() {
+			return getRuleContext(Expr4Context.class,0);
+		}
+		public AdditionExprContext(Expr3Context ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterNotExpr(this);
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterAdditionExpr(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitNotExpr(this);
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitAdditionExpr(this);
+		}
+	}
+	public static class SubtractionExprContext extends Expr3Context {
+		public Expr3Context p_2_1;
+		public Expr4Context p_2_3;
+		public TerminalNode Surrogate_id_SYMB_10() { return getToken(FujureParser.Surrogate_id_SYMB_10, 0); }
+		public Expr3Context expr3() {
+			return getRuleContext(Expr3Context.class,0);
+		}
+		public Expr4Context expr4() {
+			return getRuleContext(Expr4Context.class,0);
+		}
+		public SubtractionExprContext(Expr3Context ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterSubtractionExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitSubtractionExpr(this);
 		}
 	}
 	public static class Coercion_Expr3Context extends Expr3Context {
-		public ExprContext p_4_2;
-		public TerminalNode Surrogate_id_SYMB_10() { return getToken(FujureParser.Surrogate_id_SYMB_10, 0); }
-		public TerminalNode Surrogate_id_SYMB_11() { return getToken(FujureParser.Surrogate_id_SYMB_11, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
+		public Expr4Context p_3_1;
+		public Expr4Context expr4() {
+			return getRuleContext(Expr4Context.class,0);
 		}
 		public Coercion_Expr3Context(Expr3Context ctx) { copyFrom(ctx); }
 		@Override
@@ -1829,19 +1826,365 @@ public class FujureParser extends Parser {
 	}
 
 	public final Expr3Context expr3() throws RecognitionException {
-		Expr3Context _localctx = new Expr3Context(_ctx, getState());
-		enterRule(_localctx, 38, RULE_expr3);
+		return expr3(0);
+	}
+
+	private Expr3Context expr3(int _p) throws RecognitionException {
+		ParserRuleContext _parentctx = _ctx;
+		int _parentState = getState();
+		Expr3Context _localctx = new Expr3Context(_ctx, _parentState);
+		Expr3Context _prevctx = _localctx;
+		int _startState = 38;
+		enterRecursionRule(_localctx, 38, RULE_expr3, _p);
 		try {
-			setState(236);
+			int _alt;
+			enterOuterAlt(_localctx, 1);
+			{
+			{
+			_localctx = new Coercion_Expr3Context(_localctx);
+			_ctx = _localctx;
+			_prevctx = _localctx;
+
+			setState(226);
+			((Coercion_Expr3Context)_localctx).p_3_1 = expr4(0);
+			 ((Coercion_Expr3Context)_localctx).result =  ((Coercion_Expr3Context)_localctx).p_3_1.result; 
+			}
+			_ctx.stop = _input.LT(-1);
+			setState(241);
+			_errHandler.sync(this);
+			_alt = getInterpreter().adaptivePredict(_input,12,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					if ( _parseListeners!=null ) triggerExitRuleEvent();
+					_prevctx = _localctx;
+					{
+					setState(239);
+					switch ( getInterpreter().adaptivePredict(_input,11,_ctx) ) {
+					case 1:
+						{
+						_localctx = new AdditionExprContext(new Expr3Context(_parentctx, _parentState));
+						((AdditionExprContext)_localctx).p_1_1 = _prevctx;
+						pushNewRecursionContext(_localctx, _startState, RULE_expr3);
+						setState(229);
+						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
+						setState(230);
+						match(Surrogate_id_SYMB_9);
+						setState(231);
+						((AdditionExprContext)_localctx).p_1_3 = expr4(0);
+						 ((AdditionExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AdditionExpr(((AdditionExprContext)_localctx).p_1_1.result,((AdditionExprContext)_localctx).p_1_3.result); 
+						}
+						break;
+					case 2:
+						{
+						_localctx = new SubtractionExprContext(new Expr3Context(_parentctx, _parentState));
+						((SubtractionExprContext)_localctx).p_2_1 = _prevctx;
+						pushNewRecursionContext(_localctx, _startState, RULE_expr3);
+						setState(234);
+						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
+						setState(235);
+						match(Surrogate_id_SYMB_10);
+						setState(236);
+						((SubtractionExprContext)_localctx).p_2_3 = expr4(0);
+						 ((SubtractionExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SubtractionExpr(((SubtractionExprContext)_localctx).p_2_1.result,((SubtractionExprContext)_localctx).p_2_3.result); 
+						}
+						break;
+					}
+					} 
+				}
+				setState(243);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,12,_ctx);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			unrollRecursionContexts(_parentctx);
+		}
+		return _localctx;
+	}
+
+	public static class Expr4Context extends ParserRuleContext {
+		public org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr result;
+		public Expr4Context(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_expr4; }
+	 
+		public Expr4Context() { }
+		public void copyFrom(Expr4Context ctx) {
+			super.copyFrom(ctx);
+			this.result = ctx.result;
+		}
+	}
+	public static class ModuloExprContext extends Expr4Context {
+		public Expr4Context p_3_1;
+		public Expr5Context p_3_3;
+		public TerminalNode Surrogate_id_SYMB_13() { return getToken(FujureParser.Surrogate_id_SYMB_13, 0); }
+		public Expr4Context expr4() {
+			return getRuleContext(Expr4Context.class,0);
+		}
+		public Expr5Context expr5() {
+			return getRuleContext(Expr5Context.class,0);
+		}
+		public ModuloExprContext(Expr4Context ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterModuloExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitModuloExpr(this);
+		}
+	}
+	public static class DivisionExprContext extends Expr4Context {
+		public Expr4Context p_2_1;
+		public Expr5Context p_2_3;
+		public TerminalNode Surrogate_id_SYMB_12() { return getToken(FujureParser.Surrogate_id_SYMB_12, 0); }
+		public Expr4Context expr4() {
+			return getRuleContext(Expr4Context.class,0);
+		}
+		public Expr5Context expr5() {
+			return getRuleContext(Expr5Context.class,0);
+		}
+		public DivisionExprContext(Expr4Context ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterDivisionExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitDivisionExpr(this);
+		}
+	}
+	public static class Coercion_Expr4Context extends Expr4Context {
+		public Expr5Context p_4_1;
+		public Expr5Context expr5() {
+			return getRuleContext(Expr5Context.class,0);
+		}
+		public Coercion_Expr4Context(Expr4Context ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterCoercion_Expr4(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitCoercion_Expr4(this);
+		}
+	}
+	public static class MultiplicationExprContext extends Expr4Context {
+		public Expr4Context p_1_1;
+		public Expr5Context p_1_3;
+		public TerminalNode Surrogate_id_SYMB_11() { return getToken(FujureParser.Surrogate_id_SYMB_11, 0); }
+		public Expr4Context expr4() {
+			return getRuleContext(Expr4Context.class,0);
+		}
+		public Expr5Context expr5() {
+			return getRuleContext(Expr5Context.class,0);
+		}
+		public MultiplicationExprContext(Expr4Context ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterMultiplicationExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitMultiplicationExpr(this);
+		}
+	}
+
+	public final Expr4Context expr4() throws RecognitionException {
+		return expr4(0);
+	}
+
+	private Expr4Context expr4(int _p) throws RecognitionException {
+		ParserRuleContext _parentctx = _ctx;
+		int _parentState = getState();
+		Expr4Context _localctx = new Expr4Context(_ctx, _parentState);
+		Expr4Context _prevctx = _localctx;
+		int _startState = 40;
+		enterRecursionRule(_localctx, 40, RULE_expr4, _p);
+		try {
+			int _alt;
+			enterOuterAlt(_localctx, 1);
+			{
+			{
+			_localctx = new Coercion_Expr4Context(_localctx);
+			_ctx = _localctx;
+			_prevctx = _localctx;
+
+			setState(245);
+			((Coercion_Expr4Context)_localctx).p_4_1 = expr5();
+			 ((Coercion_Expr4Context)_localctx).result =  ((Coercion_Expr4Context)_localctx).p_4_1.result; 
+			}
+			_ctx.stop = _input.LT(-1);
+			setState(265);
+			_errHandler.sync(this);
+			_alt = getInterpreter().adaptivePredict(_input,14,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					if ( _parseListeners!=null ) triggerExitRuleEvent();
+					_prevctx = _localctx;
+					{
+					setState(263);
+					switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
+					case 1:
+						{
+						_localctx = new MultiplicationExprContext(new Expr4Context(_parentctx, _parentState));
+						((MultiplicationExprContext)_localctx).p_1_1 = _prevctx;
+						pushNewRecursionContext(_localctx, _startState, RULE_expr4);
+						setState(248);
+						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
+						setState(249);
+						match(Surrogate_id_SYMB_11);
+						setState(250);
+						((MultiplicationExprContext)_localctx).p_1_3 = expr5();
+						 ((MultiplicationExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiplicationExpr(((MultiplicationExprContext)_localctx).p_1_1.result,((MultiplicationExprContext)_localctx).p_1_3.result); 
+						}
+						break;
+					case 2:
+						{
+						_localctx = new DivisionExprContext(new Expr4Context(_parentctx, _parentState));
+						((DivisionExprContext)_localctx).p_2_1 = _prevctx;
+						pushNewRecursionContext(_localctx, _startState, RULE_expr4);
+						setState(253);
+						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
+						setState(254);
+						match(Surrogate_id_SYMB_12);
+						setState(255);
+						((DivisionExprContext)_localctx).p_2_3 = expr5();
+						 ((DivisionExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DivisionExpr(((DivisionExprContext)_localctx).p_2_1.result,((DivisionExprContext)_localctx).p_2_3.result); 
+						}
+						break;
+					case 3:
+						{
+						_localctx = new ModuloExprContext(new Expr4Context(_parentctx, _parentState));
+						((ModuloExprContext)_localctx).p_3_1 = _prevctx;
+						pushNewRecursionContext(_localctx, _startState, RULE_expr4);
+						setState(258);
+						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
+						setState(259);
+						match(Surrogate_id_SYMB_13);
+						setState(260);
+						((ModuloExprContext)_localctx).p_3_3 = expr5();
+						 ((ModuloExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ModuloExpr(((ModuloExprContext)_localctx).p_3_1.result,((ModuloExprContext)_localctx).p_3_3.result); 
+						}
+						break;
+					}
+					} 
+				}
+				setState(267);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,14,_ctx);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			unrollRecursionContexts(_parentctx);
+		}
+		return _localctx;
+	}
+
+	public static class Expr5Context extends ParserRuleContext {
+		public org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr result;
+		public Expr5Context(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_expr5; }
+	 
+		public Expr5Context() { }
+		public void copyFrom(Expr5Context ctx) {
+			super.copyFrom(ctx);
+			this.result = ctx.result;
+		}
+	}
+	public static class LiteralExprContext extends Expr5Context {
+		public LiteralContext p_3_1;
+		public LiteralContext literal() {
+			return getRuleContext(LiteralContext.class,0);
+		}
+		public LiteralExprContext(Expr5Context ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterLiteralExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitLiteralExpr(this);
+		}
+	}
+	public static class VariableExprContext extends Expr5Context {
+		public ValRefContext p_2_1;
+		public ValRefContext valRef() {
+			return getRuleContext(ValRefContext.class,0);
+		}
+		public VariableExprContext(Expr5Context ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterVariableExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitVariableExpr(this);
+		}
+	}
+	public static class NotExprContext extends Expr5Context {
+		public Expr5Context p_1_2;
+		public TerminalNode Surrogate_id_SYMB_14() { return getToken(FujureParser.Surrogate_id_SYMB_14, 0); }
+		public Expr5Context expr5() {
+			return getRuleContext(Expr5Context.class,0);
+		}
+		public NotExprContext(Expr5Context ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterNotExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitNotExpr(this);
+		}
+	}
+	public static class Coercion_Expr5Context extends Expr5Context {
+		public ExprContext p_4_2;
+		public TerminalNode Surrogate_id_SYMB_15() { return getToken(FujureParser.Surrogate_id_SYMB_15, 0); }
+		public TerminalNode Surrogate_id_SYMB_16() { return getToken(FujureParser.Surrogate_id_SYMB_16, 0); }
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public Coercion_Expr5Context(Expr5Context ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).enterCoercion_Expr5(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FujureParserListener ) ((FujureParserListener)listener).exitCoercion_Expr5(this);
+		}
+	}
+
+	public final Expr5Context expr5() throws RecognitionException {
+		Expr5Context _localctx = new Expr5Context(_ctx, getState());
+		enterRule(_localctx, 42, RULE_expr5);
+		try {
+			setState(283);
 			switch (_input.LA(1)) {
-			case Surrogate_id_SYMB_9:
+			case Surrogate_id_SYMB_14:
 				_localctx = new NotExprContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(221);
-				match(Surrogate_id_SYMB_9);
-				setState(222);
-				((NotExprContext)_localctx).p_1_2 = expr3();
+				setState(268);
+				match(Surrogate_id_SYMB_14);
+				setState(269);
+				((NotExprContext)_localctx).p_1_2 = expr5();
 				 ((NotExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr(((NotExprContext)_localctx).p_1_2.result); 
 				}
 				break;
@@ -1849,36 +2192,36 @@ public class FujureParser extends Parser {
 				_localctx = new VariableExprContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(225);
+				setState(272);
 				((VariableExprContext)_localctx).p_2_1 = valRef();
 				 ((VariableExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr(((VariableExprContext)_localctx).p_2_1.result); 
 				}
 				break;
-			case Surrogate_id_SYMB_13:
-			case Surrogate_id_SYMB_16:
-			case Surrogate_id_SYMB_17:
+			case Surrogate_id_SYMB_18:
+			case Surrogate_id_SYMB_21:
+			case Surrogate_id_SYMB_22:
 			case JCHAR:
 			case JSTRING:
 			case INTEGER:
 				_localctx = new LiteralExprContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(228);
+				setState(275);
 				((LiteralExprContext)_localctx).p_3_1 = literal();
 				 ((LiteralExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr(((LiteralExprContext)_localctx).p_3_1.result); 
 				}
 				break;
-			case Surrogate_id_SYMB_10:
-				_localctx = new Coercion_Expr3Context(_localctx);
+			case Surrogate_id_SYMB_15:
+				_localctx = new Coercion_Expr5Context(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(231);
-				match(Surrogate_id_SYMB_10);
-				setState(232);
-				((Coercion_Expr3Context)_localctx).p_4_2 = expr(0);
-				setState(233);
-				match(Surrogate_id_SYMB_11);
-				 ((Coercion_Expr3Context)_localctx).result =  ((Coercion_Expr3Context)_localctx).p_4_2.result; 
+				setState(278);
+				match(Surrogate_id_SYMB_15);
+				setState(279);
+				((Coercion_Expr5Context)_localctx).p_4_2 = expr(0);
+				setState(280);
+				match(Surrogate_id_SYMB_16);
+				 ((Coercion_Expr5Context)_localctx).result =  ((Coercion_Expr5Context)_localctx).p_4_2.result; 
 				}
 				break;
 			default:
@@ -1927,12 +2270,12 @@ public class FujureParser extends Parser {
 
 	public final ValRefContext valRef() throws RecognitionException {
 		ValRefContext _localctx = new ValRefContext(_ctx, getState());
-		enterRule(_localctx, 40, RULE_valRef);
+		enterRule(_localctx, 44, RULE_valRef);
 		try {
 			_localctx = new ValueRefContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(238);
+			setState(285);
 			((ValueRefContext)_localctx).p_1_1 = listValRefFragm();
 			 ((ValueRefContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef(((ValueRefContext)_localctx).p_1_1.result); 
 			}
@@ -1999,15 +2342,15 @@ public class FujureParser extends Parser {
 
 	public final ListValRefFragmContext listValRefFragm() throws RecognitionException {
 		ListValRefFragmContext _localctx = new ListValRefFragmContext(_ctx, getState());
-		enterRule(_localctx, 42, RULE_listValRefFragm);
+		enterRule(_localctx, 46, RULE_listValRefFragm);
 		try {
-			setState(249);
-			switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
+			setState(296);
+			switch ( getInterpreter().adaptivePredict(_input,16,_ctx) ) {
 			case 1:
 				_localctx = new ListValRefFragm_AppendLastContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(241);
+				setState(288);
 				((ListValRefFragm_AppendLastContext)_localctx).p_1_1 = valRefFragm();
 				 ((ListValRefFragm_AppendLastContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListValRefFragm(); _localctx.result.addLast(((ListValRefFragm_AppendLastContext)_localctx).p_1_1.result); 
 				}
@@ -2016,11 +2359,11 @@ public class FujureParser extends Parser {
 				_localctx = new ListValRefFragm_PrependFirstContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(244);
+				setState(291);
 				((ListValRefFragm_PrependFirstContext)_localctx).p_2_1 = valRefFragm();
-				setState(245);
+				setState(292);
 				match(Surrogate_id_SYMB_0);
-				setState(246);
+				setState(293);
 				((ListValRefFragm_PrependFirstContext)_localctx).p_2_3 = listValRefFragm();
 				 ((ListValRefFragm_PrependFirstContext)_localctx).result =  ((ListValRefFragm_PrependFirstContext)_localctx).p_2_3.result; _localctx.result.addFirst(((ListValRefFragm_PrependFirstContext)_localctx).p_2_1.result); 
 				}
@@ -2067,12 +2410,12 @@ public class FujureParser extends Parser {
 
 	public final ValRefFragmContext valRefFragm() throws RecognitionException {
 		ValRefFragmContext _localctx = new ValRefFragmContext(_ctx, getState());
-		enterRule(_localctx, 44, RULE_valRefFragm);
+		enterRule(_localctx, 48, RULE_valRefFragm);
 		try {
 			_localctx = new ValueRefFragmentContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(251);
+			setState(298);
 			((ValueRefFragmentContext)_localctx).p_1_1 = match(JID);
 			 ((ValueRefFragmentContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment(((ValueRefFragmentContext)_localctx).p_1_1.getText()); 
 			}
@@ -2128,7 +2471,7 @@ public class FujureParser extends Parser {
 		}
 	}
 	public static class BoolTrueLiteralContext extends LiteralContext {
-		public TerminalNode Surrogate_id_SYMB_16() { return getToken(FujureParser.Surrogate_id_SYMB_16, 0); }
+		public TerminalNode Surrogate_id_SYMB_21() { return getToken(FujureParser.Surrogate_id_SYMB_21, 0); }
 		public BoolTrueLiteralContext(LiteralContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2140,7 +2483,7 @@ public class FujureParser extends Parser {
 		}
 	}
 	public static class BoolFalseLiteralContext extends LiteralContext {
-		public TerminalNode Surrogate_id_SYMB_13() { return getToken(FujureParser.Surrogate_id_SYMB_13, 0); }
+		public TerminalNode Surrogate_id_SYMB_18() { return getToken(FujureParser.Surrogate_id_SYMB_18, 0); }
 		public BoolFalseLiteralContext(LiteralContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2165,7 +2508,7 @@ public class FujureParser extends Parser {
 		}
 	}
 	public static class UnitLiteralContext extends LiteralContext {
-		public TerminalNode Surrogate_id_SYMB_17() { return getToken(FujureParser.Surrogate_id_SYMB_17, 0); }
+		public TerminalNode Surrogate_id_SYMB_22() { return getToken(FujureParser.Surrogate_id_SYMB_22, 0); }
 		public UnitLiteralContext(LiteralContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2179,43 +2522,43 @@ public class FujureParser extends Parser {
 
 	public final LiteralContext literal() throws RecognitionException {
 		LiteralContext _localctx = new LiteralContext(_ctx, getState());
-		enterRule(_localctx, 46, RULE_literal);
+		enterRule(_localctx, 50, RULE_literal);
 		try {
-			setState(266);
+			setState(313);
 			switch (_input.LA(1)) {
 			case INTEGER:
 				_localctx = new IntLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(254);
+				setState(301);
 				((IntLiteralContext)_localctx).p_1_1 = match(INTEGER);
 				 ((IntLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral(Integer.parseInt(((IntLiteralContext)_localctx).p_1_1.getText())); 
 				}
 				break;
-			case Surrogate_id_SYMB_17:
+			case Surrogate_id_SYMB_22:
 				_localctx = new UnitLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(256);
-				match(Surrogate_id_SYMB_17);
+				setState(303);
+				match(Surrogate_id_SYMB_22);
 				 ((UnitLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral(); 
 				}
 				break;
-			case Surrogate_id_SYMB_16:
+			case Surrogate_id_SYMB_21:
 				_localctx = new BoolTrueLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(258);
-				match(Surrogate_id_SYMB_16);
+				setState(305);
+				match(Surrogate_id_SYMB_21);
 				 ((BoolTrueLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral(); 
 				}
 				break;
-			case Surrogate_id_SYMB_13:
+			case Surrogate_id_SYMB_18:
 				_localctx = new BoolFalseLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(260);
-				match(Surrogate_id_SYMB_13);
+				setState(307);
+				match(Surrogate_id_SYMB_18);
 				 ((BoolFalseLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral(); 
 				}
 				break;
@@ -2223,7 +2566,7 @@ public class FujureParser extends Parser {
 				_localctx = new CharLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(262);
+				setState(309);
 				((CharLiteralContext)_localctx).p_5_1 = match(JCHAR);
 				 ((CharLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral(((CharLiteralContext)_localctx).p_5_1.getText()); 
 				}
@@ -2232,7 +2575,7 @@ public class FujureParser extends Parser {
 				_localctx = new StringLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(264);
+				setState(311);
 				((StringLiteralContext)_localctx).p_6_1 = match(JSTRING);
 				 ((StringLiteralContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral(((StringLiteralContext)_localctx).p_6_1.getText()); 
 				}
@@ -2264,6 +2607,10 @@ public class FujureParser extends Parser {
 			return expr1_sempred((Expr1Context)_localctx, predIndex);
 		case 18:
 			return expr2_sempred((Expr2Context)_localctx, predIndex);
+		case 19:
+			return expr3_sempred((Expr3Context)_localctx, predIndex);
+		case 20:
+			return expr4_sempred((Expr4Context)_localctx, predIndex);
 		}
 		return true;
 	}
@@ -2308,94 +2655,133 @@ public class FujureParser extends Parser {
 		}
 		return true;
 	}
+	private boolean expr3_sempred(Expr3Context _localctx, int predIndex) {
+		switch (predIndex) {
+		case 8:
+			return precpred(_ctx, 3);
+		case 9:
+			return precpred(_ctx, 2);
+		}
+		return true;
+	}
+	private boolean expr4_sempred(Expr4Context _localctx, int predIndex) {
+		switch (predIndex) {
+		case 10:
+			return precpred(_ctx, 4);
+		case 11:
+			return precpred(_ctx, 3);
+		case 12:
+			return precpred(_ctx, 2);
+		}
+		return true;
+	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\32\u010f\4\2\t\2"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\37\u013e\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
-		"\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\5\2=\n\2\3\3\3\3\3\3\3\4\3\4"+
-		"\3\4\3\4\3\4\3\4\3\4\3\4\5\4J\n\4\3\5\3\5\3\5\3\6\3\6\3\6\3\7\3\7\3\7"+
-		"\3\7\3\7\3\7\3\7\7\7Y\n\7\f\7\16\7\\\13\7\3\b\3\b\3\b\3\b\3\t\3\t\3\t"+
-		"\3\t\3\t\3\t\3\t\3\t\5\tj\n\t\3\n\3\n\3\n\3\13\3\13\3\13\3\f\3\f\3\f\3"+
-		"\f\3\f\3\f\3\f\7\fy\n\f\f\f\16\f|\13\f\3\r\3\r\3\r\3\r\3\16\3\16\3\16"+
-		"\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16"+
-		"\3\16\3\16\5\16\u0095\n\16\3\17\3\17\3\17\3\20\3\20\3\20\3\20\3\20\3\20"+
-		"\3\20\3\20\5\20\u00a2\n\20\3\21\3\21\3\21\3\22\3\22\3\22\3\22\3\22\3\22"+
-		"\3\22\3\22\3\22\7\22\u00b0\n\22\f\22\16\22\u00b3\13\22\3\23\3\23\3\23"+
-		"\3\23\3\23\3\23\3\23\3\23\3\23\7\23\u00be\n\23\f\23\16\23\u00c1\13\23"+
+		"\4\32\t\32\4\33\t\33\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\5\2A\n\2"+
+		"\3\3\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4N\n\4\3\5\3\5\3\5\3\6"+
+		"\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\7\7]\n\7\f\7\16\7`\13\7\3\b\3\b\3"+
+		"\b\3\b\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\5\tn\n\t\3\n\3\n\3\n\3\13\3\13"+
+		"\3\13\3\f\3\f\3\f\3\f\3\f\3\f\3\f\7\f}\n\f\f\f\16\f\u0080\13\f\3\r\3\r"+
+		"\3\r\3\r\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3"+
+		"\16\3\16\3\16\3\16\3\16\3\16\3\16\5\16\u0099\n\16\3\17\3\17\3\17\3\20"+
+		"\3\20\3\20\3\20\3\20\3\20\3\20\3\20\5\20\u00a6\n\20\3\21\3\21\3\21\3\22"+
+		"\3\22\3\22\3\22\3\22\3\22\3\22\3\22\3\22\7\22\u00b4\n\22\f\22\16\22\u00b7"+
+		"\13\22\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\7\23\u00c2\n\23\f"+
+		"\23\16\23\u00c5\13\23\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24"+
 		"\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24"+
-		"\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\7\24\u00db\n\24\f\24"+
-		"\16\24\u00de\13\24\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3"+
-		"\25\3\25\3\25\3\25\3\25\5\25\u00ef\n\25\3\26\3\26\3\26\3\27\3\27\3\27"+
-		"\3\27\3\27\3\27\3\27\3\27\5\27\u00fc\n\27\3\30\3\30\3\30\3\31\3\31\3\31"+
-		"\3\31\3\31\3\31\3\31\3\31\3\31\3\31\3\31\3\31\5\31\u010d\n\31\3\31\2\7"+
-		"\f\26\"$&\32\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\2\2\u010e"+
-		"\2<\3\2\2\2\4>\3\2\2\2\6I\3\2\2\2\bK\3\2\2\2\nN\3\2\2\2\fQ\3\2\2\2\16"+
-		"]\3\2\2\2\20i\3\2\2\2\22k\3\2\2\2\24n\3\2\2\2\26q\3\2\2\2\30}\3\2\2\2"+
-		"\32\u0094\3\2\2\2\34\u0096\3\2\2\2\36\u00a1\3\2\2\2 \u00a3\3\2\2\2\"\u00a6"+
-		"\3\2\2\2$\u00b4\3\2\2\2&\u00c2\3\2\2\2(\u00ee\3\2\2\2*\u00f0\3\2\2\2,"+
-		"\u00fb\3\2\2\2.\u00fd\3\2\2\2\60\u010c\3\2\2\2\62\63\7\22\2\2\63\64\5"+
-		"\4\3\2\64\65\5\n\6\2\65\66\5\24\13\2\66\67\b\2\1\2\67=\3\2\2\289\5\n\6"+
-		"\29:\5\24\13\2:;\b\2\1\2;=\3\2\2\2<\62\3\2\2\2<8\3\2\2\2=\3\3\2\2\2>?"+
-		"\5\6\4\2?@\b\3\1\2@\5\3\2\2\2AB\5\b\5\2BC\b\4\1\2CJ\3\2\2\2DE\5\b\5\2"+
-		"EF\7\3\2\2FG\5\6\4\2GH\b\4\1\2HJ\3\2\2\2IA\3\2\2\2ID\3\2\2\2J\7\3\2\2"+
-		"\2KL\7\25\2\2LM\b\5\1\2M\t\3\2\2\2NO\5\f\7\2OP\b\6\1\2P\13\3\2\2\2QR\b"+
-		"\7\1\2RS\b\7\1\2SZ\3\2\2\2TU\f\3\2\2UV\5\16\b\2VW\b\7\1\2WY\3\2\2\2XT"+
-		"\3\2\2\2Y\\\3\2\2\2ZX\3\2\2\2Z[\3\2\2\2[\r\3\2\2\2\\Z\3\2\2\2]^\7\21\2"+
-		"\2^_\5\20\t\2_`\b\b\1\2`\17\3\2\2\2ab\5\22\n\2bc\b\t\1\2cj\3\2\2\2de\5"+
-		"\22\n\2ef\7\3\2\2fg\5\20\t\2gh\b\t\1\2hj\3\2\2\2ia\3\2\2\2id\3\2\2\2j"+
-		"\21\3\2\2\2kl\7\25\2\2lm\b\n\1\2m\23\3\2\2\2no\5\26\f\2op\b\13\1\2p\25"+
-		"\3\2\2\2qr\b\f\1\2rs\b\f\1\2sz\3\2\2\2tu\f\3\2\2uv\5\30\r\2vw\b\f\1\2"+
-		"wy\3\2\2\2xt\3\2\2\2y|\3\2\2\2zx\3\2\2\2z{\3\2\2\2{\27\3\2\2\2|z\3\2\2"+
-		"\2}~\7\17\2\2~\177\5\32\16\2\177\u0080\b\r\1\2\u0080\31\3\2\2\2\u0081"+
-		"\u0082\7\25\2\2\u0082\u0095\b\16\1\2\u0083\u0084\7\25\2\2\u0084\u0085"+
-		"\7\4\2\2\u0085\u0086\5\34\17\2\u0086\u0087\b\16\1\2\u0087\u0095\3\2\2"+
-		"\2\u0088\u0089\7\25\2\2\u0089\u008a\7\5\2\2\u008a\u008b\5\"\22\2\u008b"+
-		"\u008c\b\16\1\2\u008c\u0095\3\2\2\2\u008d\u008e\7\25\2\2\u008e\u008f\7"+
-		"\4\2\2\u008f\u0090\5\34\17\2\u0090\u0091\7\5\2\2\u0091\u0092\5\"\22\2"+
-		"\u0092\u0093\b\16\1\2\u0093\u0095\3\2\2\2\u0094\u0081\3\2\2\2\u0094\u0083"+
-		"\3\2\2\2\u0094\u0088\3\2\2\2\u0094\u008d\3\2\2\2\u0095\33\3\2\2\2\u0096"+
-		"\u0097\5\36\20\2\u0097\u0098\b\17\1\2\u0098\35\3\2\2\2\u0099\u009a\5 "+
-		"\21\2\u009a\u009b\b\20\1\2\u009b\u00a2\3\2\2\2\u009c\u009d\5 \21\2\u009d"+
-		"\u009e\7\3\2\2\u009e\u009f\5\36\20\2\u009f\u00a0\b\20\1\2\u00a0\u00a2"+
-		"\3\2\2\2\u00a1\u0099\3\2\2\2\u00a1\u009c\3\2\2\2\u00a2\37\3\2\2\2\u00a3"+
-		"\u00a4\7\25\2\2\u00a4\u00a5\b\21\1\2\u00a5!\3\2\2\2\u00a6\u00a7\b\22\1"+
-		"\2\u00a7\u00a8\5$\23\2\u00a8\u00a9\b\22\1\2\u00a9\u00b1\3\2\2\2\u00aa"+
-		"\u00ab\f\4\2\2\u00ab\u00ac\7\6\2\2\u00ac\u00ad\5$\23\2\u00ad\u00ae\b\22"+
-		"\1\2\u00ae\u00b0\3\2\2\2\u00af\u00aa\3\2\2\2\u00b0\u00b3\3\2\2\2\u00b1"+
-		"\u00af\3\2\2\2\u00b1\u00b2\3\2\2\2\u00b2#\3\2\2\2\u00b3\u00b1\3\2\2\2"+
-		"\u00b4\u00b5\b\23\1\2\u00b5\u00b6\5&\24\2\u00b6\u00b7\b\23\1\2\u00b7\u00bf"+
-		"\3\2\2\2\u00b8\u00b9\f\4\2\2\u00b9\u00ba\7\7\2\2\u00ba\u00bb\5&\24\2\u00bb"+
-		"\u00bc\b\23\1\2\u00bc\u00be\3\2\2\2\u00bd\u00b8\3\2\2\2\u00be\u00c1\3"+
-		"\2\2\2\u00bf\u00bd\3\2\2\2\u00bf\u00c0\3\2\2\2\u00c0%\3\2\2\2\u00c1\u00bf"+
-		"\3\2\2\2\u00c2\u00c3\b\24\1\2\u00c3\u00c4\5(\25\2\u00c4\u00c5\b\24\1\2"+
-		"\u00c5\u00dc\3\2\2\2\u00c6\u00c7\f\7\2\2\u00c7\u00c8\7\b\2\2\u00c8\u00c9"+
-		"\5(\25\2\u00c9\u00ca\b\24\1\2\u00ca\u00db\3\2\2\2\u00cb\u00cc\f\6\2\2"+
-		"\u00cc\u00cd\7\t\2\2\u00cd\u00ce\5(\25\2\u00ce\u00cf\b\24\1\2\u00cf\u00db"+
-		"\3\2\2\2\u00d0\u00d1\f\5\2\2\u00d1\u00d2\7\n\2\2\u00d2\u00d3\5(\25\2\u00d3"+
-		"\u00d4\b\24\1\2\u00d4\u00db\3\2\2\2\u00d5\u00d6\f\4\2\2\u00d6\u00d7\7"+
-		"\13\2\2\u00d7\u00d8\5(\25\2\u00d8\u00d9\b\24\1\2\u00d9\u00db\3\2\2\2\u00da"+
-		"\u00c6\3\2\2\2\u00da\u00cb\3\2\2\2\u00da\u00d0\3\2\2\2\u00da\u00d5\3\2"+
-		"\2\2\u00db\u00de\3\2\2\2\u00dc\u00da\3\2\2\2\u00dc\u00dd\3\2\2\2\u00dd"+
-		"\'\3\2\2\2\u00de\u00dc\3\2\2\2\u00df\u00e0\7\f\2\2\u00e0\u00e1\5(\25\2"+
-		"\u00e1\u00e2\b\25\1\2\u00e2\u00ef\3\2\2\2\u00e3\u00e4\5*\26\2\u00e4\u00e5"+
-		"\b\25\1\2\u00e5\u00ef\3\2\2\2\u00e6\u00e7\5\60\31\2\u00e7\u00e8\b\25\1"+
-		"\2\u00e8\u00ef\3\2\2\2\u00e9\u00ea\7\r\2\2\u00ea\u00eb\5\"\22\2\u00eb"+
-		"\u00ec\7\16\2\2\u00ec\u00ed\b\25\1\2\u00ed\u00ef\3\2\2\2\u00ee\u00df\3"+
-		"\2\2\2\u00ee\u00e3\3\2\2\2\u00ee\u00e6\3\2\2\2\u00ee\u00e9\3\2\2\2\u00ef"+
-		")\3\2\2\2\u00f0\u00f1\5,\27\2\u00f1\u00f2\b\26\1\2\u00f2+\3\2\2\2\u00f3"+
-		"\u00f4\5.\30\2\u00f4\u00f5\b\27\1\2\u00f5\u00fc\3\2\2\2\u00f6\u00f7\5"+
-		".\30\2\u00f7\u00f8\7\3\2\2\u00f8\u00f9\5,\27\2\u00f9\u00fa\b\27\1\2\u00fa"+
-		"\u00fc\3\2\2\2\u00fb\u00f3\3\2\2\2\u00fb\u00f6\3\2\2\2\u00fc-\3\2\2\2"+
-		"\u00fd\u00fe\7\25\2\2\u00fe\u00ff\b\30\1\2\u00ff/\3\2\2\2\u0100\u0101"+
-		"\7\30\2\2\u0101\u010d\b\31\1\2\u0102\u0103\7\24\2\2\u0103\u010d\b\31\1"+
-		"\2\u0104\u0105\7\23\2\2\u0105\u010d\b\31\1\2\u0106\u0107\7\20\2\2\u0107"+
-		"\u010d\b\31\1\2\u0108\u0109\7\26\2\2\u0109\u010d\b\31\1\2\u010a\u010b"+
-		"\7\27\2\2\u010b\u010d\b\31\1\2\u010c\u0100\3\2\2\2\u010c\u0102\3\2\2\2"+
-		"\u010c\u0104\3\2\2\2\u010c\u0106\3\2\2\2\u010c\u0108\3\2\2\2\u010c\u010a"+
-		"\3\2\2\2\u010d\61\3\2\2\2\20<IZiz\u0094\u00a1\u00b1\u00bf\u00da\u00dc"+
-		"\u00ee\u00fb\u010c";
+		"\7\24\u00df\n\24\f\24\16\24\u00e2\13\24\3\25\3\25\3\25\3\25\3\25\3\25"+
+		"\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\7\25\u00f2\n\25\f\25\16\25\u00f5"+
+		"\13\25\3\26\3\26\3\26\3\26\3\26\3\26\3\26\3\26\3\26\3\26\3\26\3\26\3\26"+
+		"\3\26\3\26\3\26\3\26\3\26\3\26\7\26\u010a\n\26\f\26\16\26\u010d\13\26"+
+		"\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27"+
+		"\3\27\5\27\u011e\n\27\3\30\3\30\3\30\3\31\3\31\3\31\3\31\3\31\3\31\3\31"+
+		"\3\31\5\31\u012b\n\31\3\32\3\32\3\32\3\33\3\33\3\33\3\33\3\33\3\33\3\33"+
+		"\3\33\3\33\3\33\3\33\3\33\5\33\u013c\n\33\3\33\2\t\f\26\"$&(*\34\2\4\6"+
+		"\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\2\2\u0140\2@\3\2\2"+
+		"\2\4B\3\2\2\2\6M\3\2\2\2\bO\3\2\2\2\nR\3\2\2\2\fU\3\2\2\2\16a\3\2\2\2"+
+		"\20m\3\2\2\2\22o\3\2\2\2\24r\3\2\2\2\26u\3\2\2\2\30\u0081\3\2\2\2\32\u0098"+
+		"\3\2\2\2\34\u009a\3\2\2\2\36\u00a5\3\2\2\2 \u00a7\3\2\2\2\"\u00aa\3\2"+
+		"\2\2$\u00b8\3\2\2\2&\u00c6\3\2\2\2(\u00e3\3\2\2\2*\u00f6\3\2\2\2,\u011d"+
+		"\3\2\2\2.\u011f\3\2\2\2\60\u012a\3\2\2\2\62\u012c\3\2\2\2\64\u013b\3\2"+
+		"\2\2\66\67\7\27\2\2\678\5\4\3\289\5\n\6\29:\5\24\13\2:;\b\2\1\2;A\3\2"+
+		"\2\2<=\5\n\6\2=>\5\24\13\2>?\b\2\1\2?A\3\2\2\2@\66\3\2\2\2@<\3\2\2\2A"+
+		"\3\3\2\2\2BC\5\6\4\2CD\b\3\1\2D\5\3\2\2\2EF\5\b\5\2FG\b\4\1\2GN\3\2\2"+
+		"\2HI\5\b\5\2IJ\7\3\2\2JK\5\6\4\2KL\b\4\1\2LN\3\2\2\2ME\3\2\2\2MH\3\2\2"+
+		"\2N\7\3\2\2\2OP\7\32\2\2PQ\b\5\1\2Q\t\3\2\2\2RS\5\f\7\2ST\b\6\1\2T\13"+
+		"\3\2\2\2UV\b\7\1\2VW\b\7\1\2W^\3\2\2\2XY\f\3\2\2YZ\5\16\b\2Z[\b\7\1\2"+
+		"[]\3\2\2\2\\X\3\2\2\2]`\3\2\2\2^\\\3\2\2\2^_\3\2\2\2_\r\3\2\2\2`^\3\2"+
+		"\2\2ab\7\26\2\2bc\5\20\t\2cd\b\b\1\2d\17\3\2\2\2ef\5\22\n\2fg\b\t\1\2"+
+		"gn\3\2\2\2hi\5\22\n\2ij\7\3\2\2jk\5\20\t\2kl\b\t\1\2ln\3\2\2\2me\3\2\2"+
+		"\2mh\3\2\2\2n\21\3\2\2\2op\7\32\2\2pq\b\n\1\2q\23\3\2\2\2rs\5\26\f\2s"+
+		"t\b\13\1\2t\25\3\2\2\2uv\b\f\1\2vw\b\f\1\2w~\3\2\2\2xy\f\3\2\2yz\5\30"+
+		"\r\2z{\b\f\1\2{}\3\2\2\2|x\3\2\2\2}\u0080\3\2\2\2~|\3\2\2\2~\177\3\2\2"+
+		"\2\177\27\3\2\2\2\u0080~\3\2\2\2\u0081\u0082\7\24\2\2\u0082\u0083\5\32"+
+		"\16\2\u0083\u0084\b\r\1\2\u0084\31\3\2\2\2\u0085\u0086\7\32\2\2\u0086"+
+		"\u0099\b\16\1\2\u0087\u0088\7\32\2\2\u0088\u0089\7\4\2\2\u0089\u008a\5"+
+		"\34\17\2\u008a\u008b\b\16\1\2\u008b\u0099\3\2\2\2\u008c\u008d\7\32\2\2"+
+		"\u008d\u008e\7\5\2\2\u008e\u008f\5\"\22\2\u008f\u0090\b\16\1\2\u0090\u0099"+
+		"\3\2\2\2\u0091\u0092\7\32\2\2\u0092\u0093\7\4\2\2\u0093\u0094\5\34\17"+
+		"\2\u0094\u0095\7\5\2\2\u0095\u0096\5\"\22\2\u0096\u0097\b\16\1\2\u0097"+
+		"\u0099\3\2\2\2\u0098\u0085\3\2\2\2\u0098\u0087\3\2\2\2\u0098\u008c\3\2"+
+		"\2\2\u0098\u0091\3\2\2\2\u0099\33\3\2\2\2\u009a\u009b\5\36\20\2\u009b"+
+		"\u009c\b\17\1\2\u009c\35\3\2\2\2\u009d\u009e\5 \21\2\u009e\u009f\b\20"+
+		"\1\2\u009f\u00a6\3\2\2\2\u00a0\u00a1\5 \21\2\u00a1\u00a2\7\3\2\2\u00a2"+
+		"\u00a3\5\36\20\2\u00a3\u00a4\b\20\1\2\u00a4\u00a6\3\2\2\2\u00a5\u009d"+
+		"\3\2\2\2\u00a5\u00a0\3\2\2\2\u00a6\37\3\2\2\2\u00a7\u00a8\7\32\2\2\u00a8"+
+		"\u00a9\b\21\1\2\u00a9!\3\2\2\2\u00aa\u00ab\b\22\1\2\u00ab\u00ac\5$\23"+
+		"\2\u00ac\u00ad\b\22\1\2\u00ad\u00b5\3\2\2\2\u00ae\u00af\f\4\2\2\u00af"+
+		"\u00b0\7\6\2\2\u00b0\u00b1\5$\23\2\u00b1\u00b2\b\22\1\2\u00b2\u00b4\3"+
+		"\2\2\2\u00b3\u00ae\3\2\2\2\u00b4\u00b7\3\2\2\2\u00b5\u00b3\3\2\2\2\u00b5"+
+		"\u00b6\3\2\2\2\u00b6#\3\2\2\2\u00b7\u00b5\3\2\2\2\u00b8\u00b9\b\23\1\2"+
+		"\u00b9\u00ba\5&\24\2\u00ba\u00bb\b\23\1\2\u00bb\u00c3\3\2\2\2\u00bc\u00bd"+
+		"\f\4\2\2\u00bd\u00be\7\7\2\2\u00be\u00bf\5&\24\2\u00bf\u00c0\b\23\1\2"+
+		"\u00c0\u00c2\3\2\2\2\u00c1\u00bc\3\2\2\2\u00c2\u00c5\3\2\2\2\u00c3\u00c1"+
+		"\3\2\2\2\u00c3\u00c4\3\2\2\2\u00c4%\3\2\2\2\u00c5\u00c3\3\2\2\2\u00c6"+
+		"\u00c7\b\24\1\2\u00c7\u00c8\5(\25\2\u00c8\u00c9\b\24\1\2\u00c9\u00e0\3"+
+		"\2\2\2\u00ca\u00cb\f\7\2\2\u00cb\u00cc\7\b\2\2\u00cc\u00cd\5(\25\2\u00cd"+
+		"\u00ce\b\24\1\2\u00ce\u00df\3\2\2\2\u00cf\u00d0\f\6\2\2\u00d0\u00d1\7"+
+		"\t\2\2\u00d1\u00d2\5(\25\2\u00d2\u00d3\b\24\1\2\u00d3\u00df\3\2\2\2\u00d4"+
+		"\u00d5\f\5\2\2\u00d5\u00d6\7\n\2\2\u00d6\u00d7\5(\25\2\u00d7\u00d8\b\24"+
+		"\1\2\u00d8\u00df\3\2\2\2\u00d9\u00da\f\4\2\2\u00da\u00db\7\13\2\2\u00db"+
+		"\u00dc\5(\25\2\u00dc\u00dd\b\24\1\2\u00dd\u00df\3\2\2\2\u00de\u00ca\3"+
+		"\2\2\2\u00de\u00cf\3\2\2\2\u00de\u00d4\3\2\2\2\u00de\u00d9\3\2\2\2\u00df"+
+		"\u00e2\3\2\2\2\u00e0\u00de\3\2\2\2\u00e0\u00e1\3\2\2\2\u00e1\'\3\2\2\2"+
+		"\u00e2\u00e0\3\2\2\2\u00e3\u00e4\b\25\1\2\u00e4\u00e5\5*\26\2\u00e5\u00e6"+
+		"\b\25\1\2\u00e6\u00f3\3\2\2\2\u00e7\u00e8\f\5\2\2\u00e8\u00e9\7\f\2\2"+
+		"\u00e9\u00ea\5*\26\2\u00ea\u00eb\b\25\1\2\u00eb\u00f2\3\2\2\2\u00ec\u00ed"+
+		"\f\4\2\2\u00ed\u00ee\7\r\2\2\u00ee\u00ef\5*\26\2\u00ef\u00f0\b\25\1\2"+
+		"\u00f0\u00f2\3\2\2\2\u00f1\u00e7\3\2\2\2\u00f1\u00ec\3\2\2\2\u00f2\u00f5"+
+		"\3\2\2\2\u00f3\u00f1\3\2\2\2\u00f3\u00f4\3\2\2\2\u00f4)\3\2\2\2\u00f5"+
+		"\u00f3\3\2\2\2\u00f6\u00f7\b\26\1\2\u00f7\u00f8\5,\27\2\u00f8\u00f9\b"+
+		"\26\1\2\u00f9\u010b\3\2\2\2\u00fa\u00fb\f\6\2\2\u00fb\u00fc\7\16\2\2\u00fc"+
+		"\u00fd\5,\27\2\u00fd\u00fe\b\26\1\2\u00fe\u010a\3\2\2\2\u00ff\u0100\f"+
+		"\5\2\2\u0100\u0101\7\17\2\2\u0101\u0102\5,\27\2\u0102\u0103\b\26\1\2\u0103"+
+		"\u010a\3\2\2\2\u0104\u0105\f\4\2\2\u0105\u0106\7\20\2\2\u0106\u0107\5"+
+		",\27\2\u0107\u0108\b\26\1\2\u0108\u010a\3\2\2\2\u0109\u00fa\3\2\2\2\u0109"+
+		"\u00ff\3\2\2\2\u0109\u0104\3\2\2\2\u010a\u010d\3\2\2\2\u010b\u0109\3\2"+
+		"\2\2\u010b\u010c\3\2\2\2\u010c+\3\2\2\2\u010d\u010b\3\2\2\2\u010e\u010f"+
+		"\7\21\2\2\u010f\u0110\5,\27\2\u0110\u0111\b\27\1\2\u0111\u011e\3\2\2\2"+
+		"\u0112\u0113\5.\30\2\u0113\u0114\b\27\1\2\u0114\u011e\3\2\2\2\u0115\u0116"+
+		"\5\64\33\2\u0116\u0117\b\27\1\2\u0117\u011e\3\2\2\2\u0118\u0119\7\22\2"+
+		"\2\u0119\u011a\5\"\22\2\u011a\u011b\7\23\2\2\u011b\u011c\b\27\1\2\u011c"+
+		"\u011e\3\2\2\2\u011d\u010e\3\2\2\2\u011d\u0112\3\2\2\2\u011d\u0115\3\2"+
+		"\2\2\u011d\u0118\3\2\2\2\u011e-\3\2\2\2\u011f\u0120\5\60\31\2\u0120\u0121"+
+		"\b\30\1\2\u0121/\3\2\2\2\u0122\u0123\5\62\32\2\u0123\u0124\b\31\1\2\u0124"+
+		"\u012b\3\2\2\2\u0125\u0126\5\62\32\2\u0126\u0127\7\3\2\2\u0127\u0128\5"+
+		"\60\31\2\u0128\u0129\b\31\1\2\u0129\u012b\3\2\2\2\u012a\u0122\3\2\2\2"+
+		"\u012a\u0125\3\2\2\2\u012b\61\3\2\2\2\u012c\u012d\7\32\2\2\u012d\u012e"+
+		"\b\32\1\2\u012e\63\3\2\2\2\u012f\u0130\7\35\2\2\u0130\u013c\b\33\1\2\u0131"+
+		"\u0132\7\31\2\2\u0132\u013c\b\33\1\2\u0133\u0134\7\30\2\2\u0134\u013c"+
+		"\b\33\1\2\u0135\u0136\7\25\2\2\u0136\u013c\b\33\1\2\u0137\u0138\7\33\2"+
+		"\2\u0138\u013c\b\33\1\2\u0139\u013a\7\34\2\2\u013a\u013c\b\33\1\2\u013b"+
+		"\u012f\3\2\2\2\u013b\u0131\3\2\2\2\u013b\u0133\3\2\2\2\u013b\u0135\3\2"+
+		"\2\2\u013b\u0137\3\2\2\2\u013b\u0139\3\2\2\2\u013c\65\3\2\2\2\24@M^m~"+
+		"\u0098\u00a5\u00b5\u00c3\u00de\u00e0\u00f1\u00f3\u0109\u010b\u011d\u012a"+
+		"\u013b";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

@@ -3,11 +3,13 @@ package org.fujure.fbc.parse.bnfc
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.ValueReference
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AdditionExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterEqualExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DivisionExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserEqualExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserExpr
@@ -15,7 +17,10 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ModuloExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiplicationExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SubtractionExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef
@@ -60,6 +65,26 @@ internal object ExprParseTree2AstVisitor :
         return Expr.GreaterEqual(
                 greaterEqualExpr.expr_1.accept(this, arg),
                 greaterEqualExpr.expr_2.accept(this, arg))
+    }
+
+    override fun visit(additionExpr: AdditionExpr, arg: Unit): Expr {
+        throw UnsupportedOperationException()
+    }
+
+    override fun visit(subtractionExpr: SubtractionExpr, arg: Unit): Expr {
+        throw UnsupportedOperationException()
+    }
+
+    override fun visit(multiplicationExpr: MultiplicationExpr, arg: Unit): Expr {
+        throw UnsupportedOperationException()
+    }
+
+    override fun visit(divisionExpr: DivisionExpr, arg: Unit): Expr {
+        throw UnsupportedOperationException()
+    }
+
+    override fun visit(moduloExpr: ModuloExpr, arg: Unit): Expr {
+        throw UnsupportedOperationException()
     }
 
     override fun visit(notExpr: NotExpr, arg: Unit): Expr {
