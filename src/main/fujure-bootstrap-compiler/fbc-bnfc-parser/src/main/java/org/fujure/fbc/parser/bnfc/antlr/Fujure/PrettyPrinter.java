@@ -605,19 +605,45 @@ public class PrettyPrinter
 
   private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr foo, int _i_)
   {
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr)
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr _orexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_orexpr.expr_1, 0);
+       render("||");
+       pp(_orexpr.expr_2, 1);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr _andexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr) foo;
+       if (_i_ > 1) render(_L_PAREN);
+       pp(_andexpr.expr_1, 1);
+       render("&&");
+       pp(_andexpr.expr_2, 2);
+       if (_i_ > 1) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr _notexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr) foo;
+       if (_i_ > 2) render(_L_PAREN);
+       render("!");
+       pp(_notexpr.expr_, 2);
+       if (_i_ > 2) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr _variableexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr) foo;
-       if (_i_ > 0) render(_L_PAREN);
+       if (_i_ > 2) render(_L_PAREN);
        pp(_variableexpr.valref_, 0);
-       if (_i_ > 0) render(_R_PAREN);
+       if (_i_ > 2) render(_R_PAREN);
     }
     else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr _literalexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr) foo;
-       if (_i_ > 0) render(_L_PAREN);
+       if (_i_ > 2) render(_L_PAREN);
        pp(_literalexpr.literal_, 0);
-       if (_i_ > 0) render(_R_PAREN);
+       if (_i_ > 2) render(_R_PAREN);
     }
   }
 
@@ -935,6 +961,32 @@ public class PrettyPrinter
 
   private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr foo)
   {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr _orexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr) foo;
+       render("(");
+       render("OrExpr");
+       sh(_orexpr.expr_1);
+       sh(_orexpr.expr_2);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr _andexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr) foo;
+       render("(");
+       render("AndExpr");
+       sh(_andexpr.expr_1);
+       sh(_andexpr.expr_2);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr _notexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr) foo;
+       render("(");
+       render("NotExpr");
+       sh(_notexpr.expr_);
+       render(")");
+    }
     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr _variableexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr) foo;

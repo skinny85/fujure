@@ -8,12 +8,17 @@ fragment DIGIT   : [0-9] ;
 Surrogate_id_SYMB_0 : '.' ;
 Surrogate_id_SYMB_1 : ':' ;
 Surrogate_id_SYMB_2 : '=' ;
-Surrogate_id_SYMB_3 : 'def' ;
-Surrogate_id_SYMB_4 : 'false' ;
-Surrogate_id_SYMB_5 : 'import' ;
-Surrogate_id_SYMB_6 : 'package' ;
-Surrogate_id_SYMB_7 : 'true' ;
-Surrogate_id_SYMB_8 : 'unit' ;
+Surrogate_id_SYMB_3 : '||' ;
+Surrogate_id_SYMB_4 : '&&' ;
+Surrogate_id_SYMB_5 : '!' ;
+Surrogate_id_SYMB_6 : '(' ;
+Surrogate_id_SYMB_7 : ')' ;
+Surrogate_id_SYMB_8 : 'def' ;
+Surrogate_id_SYMB_9 : 'false' ;
+Surrogate_id_SYMB_10 : 'import' ;
+Surrogate_id_SYMB_11 : 'package' ;
+Surrogate_id_SYMB_12 : 'true' ;
+Surrogate_id_SYMB_13 : 'unit' ;
 
 
 JID : ('_'|'$'|LETTER)('_'|'$'|LETTER|DIGIT)*;

@@ -130,7 +130,21 @@ public class ComposVisitor<A> implements
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment(jid_);
     }
 /* Expr */
-    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr p, A arg)
+    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr p, A arg)
+    {
+      Expr expr_1 = p.expr_1.accept(this, arg);
+      Expr expr_2 = p.expr_2.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr(expr_1, expr_2);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr p, A arg)
+    {
+      Expr expr_1 = p.expr_1.accept(this, arg);
+      Expr expr_2 = p.expr_2.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr(expr_1, expr_2);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr p, A arg)
+    {
+      Expr expr_ = p.expr_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr(expr_);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr p, A arg)
     {
       ValRef valref_ = p.valref_.accept(this, arg);
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr(valref_);

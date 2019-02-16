@@ -26,8 +26,12 @@ TypeSpecifier . TypeSpec ::= [TypeSpecFragm] ;
 separator nonempty TypeSpecFragm "." ;
 TypeSpecFragment . TypeSpecFragm ::= JID ;
 
-VariableExpr      . Expr ::= ValRef ;
-LiteralExpr       . Expr ::= Literal ;
+OrExpr             . Expr   ::= Expr "||" Expr1 ;
+AndExpr            . Expr1  ::= Expr1 "&&" Expr2 ;
+NotExpr            . Expr2  ::= "!" Expr2 ;
+VariableExpr       . Expr2  ::= ValRef ;
+LiteralExpr        . Expr2  ::= Literal ;
+coercions Expr 2 ;
 
 ValueRef . ValRef ::= [ValRefFragm] ;
 separator nonempty ValRefFragm "." ;

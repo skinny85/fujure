@@ -2,12 +2,15 @@ package org.fujure.fbc.parse.bnfc
 
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.ValueReference
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef
@@ -19,6 +22,18 @@ internal object ExprParseTree2AstVisitor :
         AbsynExpr.Visitor<Expr, Unit>,
         ValRef.Visitor<List<String>, Unit>,
         Literal.Visitor<Expr, Unit> {
+    override fun visit(orExpr: OrExpr, arg: Unit): Expr {
+        throw UnsupportedOperationException()
+    }
+
+    override fun visit(andExpr: AndExpr, arg: Unit): Expr {
+        throw UnsupportedOperationException()
+    }
+
+    override fun visit(notExpr: NotExpr, arg: Unit): Expr {
+        throw UnsupportedOperationException()
+    }
+
     override fun visit(variableExpr: VariableExpr, arg: Unit): Expr {
         return Expr.ValueReferenceExpr(ValueReference(
                 variableExpr.valref_.accept(this, Unit)))
