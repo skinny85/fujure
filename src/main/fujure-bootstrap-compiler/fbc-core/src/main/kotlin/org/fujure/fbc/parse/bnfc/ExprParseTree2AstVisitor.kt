@@ -68,23 +68,33 @@ internal object ExprParseTree2AstVisitor :
     }
 
     override fun visit(additionExpr: AdditionExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Addition(
+                additionExpr.expr_1.accept(this, arg),
+                additionExpr.expr_2.accept(this, arg))
     }
 
     override fun visit(subtractionExpr: SubtractionExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Subtraction(
+                subtractionExpr.expr_1.accept(this, arg),
+                subtractionExpr.expr_2.accept(this, arg))
     }
 
     override fun visit(multiplicationExpr: MultiplicationExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Multiplication(
+                multiplicationExpr.expr_1.accept(this, arg),
+                multiplicationExpr.expr_2.accept(this, arg))
     }
 
     override fun visit(divisionExpr: DivisionExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Division(
+                divisionExpr.expr_1.accept(this, arg),
+                divisionExpr.expr_2.accept(this, arg))
     }
 
     override fun visit(moduloExpr: ModuloExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Modulus(
+                moduloExpr.expr_1.accept(this, arg),
+                moduloExpr.expr_2.accept(this, arg))
     }
 
     override fun visit(notExpr: NotExpr, arg: Unit): Expr {

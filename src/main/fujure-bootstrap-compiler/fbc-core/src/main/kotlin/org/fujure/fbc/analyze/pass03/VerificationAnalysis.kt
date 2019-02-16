@@ -182,6 +182,7 @@ object VerificationAnalysis {
                     valName, chain, { left, right -> AExpr.AGreater(left, right) })
             is Expr.GreaterEqual -> handleComparisonOperator(expr.leftOperand, expr.rightOperand, symbolTable, module,
                     valName, chain, { left, right -> AExpr.AGreaterEqual(left, right) })
+            else -> TODO()
         }
     }
 
