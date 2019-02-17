@@ -78,13 +78,13 @@ object VerificationAnalysis {
                 if (def.initializer == null) {
                     errors.add(SemanticError.MissingInitializer(context))
                 } else {
-                    val annotatedExprOrError = astExpr2AastExpr(def.initializer, symbolTable, def.id, module)
-                    when (annotatedExprOrError) {
+                    val annotatedExprOrErrors = astExpr2AastExpr(def.initializer, symbolTable, def.id, module)
+                    when (annotatedExprOrErrors) {
                         is Disjunction.Left -> {
-                            errors.add(annotatedExprOrError.value)
+                            errors.addAll(annotatedExprOrErrors.value)
                         }
                         is Disjunction.Right -> {
-                            val initializerExpr = annotatedExprOrError.value
+                            val initializerExpr = annotatedExprOrErrors.value
                             if (initializerExpr != null) {
                                 val initializerType = initializerExpr.type()
                                 if (declaredQualifiedType != null && declaredQualifiedType != initializerType) {
@@ -106,11 +106,11 @@ object VerificationAnalysis {
     }
 
     private fun astExpr2AastExpr(expr: Expr, symbolTable: Pass03SymbolTable, valName: String, module: Module):
-            Disjunction<SemanticError, AExpr?> =
+            Disjunction<List<SemanticError>, AExpr?> =
         astExpr2AastExpr(expr, symbolTable, module, valName, listOf(ValueCoordinates(module.packageName, module.moduleName, valName)))
 
     fun astExpr2AastExpr(expr: Expr, symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>):
-            Disjunction<SemanticError, AExpr?> = when (expr)  {
+            Disjunction<List<SemanticError>, AExpr?> = when (expr)  {
         is Expr.IntLiteral -> Disjunction.Right(AExpr.AIntLiteral(expr.value))
         is Expr.UnitLiteral -> Disjunction.Right(AExpr.AUnitLiteral)
         is Expr.BoolLiteral -> Disjunction.Right(if (expr is Expr.BoolLiteral.True)
@@ -125,13 +125,13 @@ object VerificationAnalysis {
             val lookupResult = symbolTable.lookup(expr.ref, module, valName, chain)
             when (lookupResult) {
                 is Pass03SymbolTable.LookupResult.RefNotFound ->
-                    Disjunction.Left(SemanticError.UnresolvedReference(context, expr.ref))
+                    Disjunction.Left(listOf(SemanticError.UnresolvedReference(context, expr.ref)))
                 is Pass03SymbolTable.LookupResult.ForwardReference ->
-                    Disjunction.Left(SemanticError.IllegalForwardReference(context, lookupResult.name))
+                    Disjunction.Left(listOf(SemanticError.IllegalForwardReference(context, lookupResult.name)))
                 is Pass03SymbolTable.LookupResult.SelfReference ->
-                    Disjunction.Left(SemanticError.IllegalSelfReference(context))
+                    Disjunction.Left(listOf(SemanticError.IllegalSelfReference(context)))
                 is Pass03SymbolTable.LookupResult.CyclicReference ->
-                    Disjunction.Left(SemanticError.CyclicDefinition(context, lookupResult.cycle))
+                    Disjunction.Left(listOf(SemanticError.CyclicDefinition(context, lookupResult.cycle)))
                 is Pass03SymbolTable.LookupResult.RefFound -> {
                     val qualifiedType = lookupResult.qualifiedType
                     Disjunction.Right(if (qualifiedType == null)
