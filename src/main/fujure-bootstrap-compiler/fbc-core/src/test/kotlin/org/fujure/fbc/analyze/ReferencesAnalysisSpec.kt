@@ -129,6 +129,30 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 }
             }
 
+            it.describes("called with an invalid name and referencing that invalid name in a definition of a different type") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def interface = 2
+
+                                def c: Char = interface
+                            """)
+                            .analyzed()
+                }
+
+                it.should("report an InvalidName error") {
+                    assertThat(file1Errors()).contains(
+                            SemanticError.InvalidName("interface"))
+                }
+
+                it.should("also report a TypeMismatch error") {
+                    assertThat(file1Errors()).contains(
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("c"),
+                                    BuiltInTypes.Char, BuiltInTypes.Int))
+                }
+            }
+
             it.describes("called with a module referencing a value from another module in the default package") {
                 it.beginsAll {
                     AnalysisBuilder
