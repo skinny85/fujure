@@ -4,6 +4,7 @@ import org.fujure.fbc.ProblematicFile.SemanticFileIssue
 import org.fujure.fbc.aast.ADef
 import org.fujure.fbc.aast.AExpr
 import org.fujure.fbc.aast.AFileContents
+import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.ast.Def
@@ -110,38 +111,61 @@ object VerificationAnalysis {
         astExpr2AastExpr(expr, symbolTable, module, valName, listOf(ValueCoordinates(module.packageName, module.moduleName, valName)))
 
     fun astExpr2AastExpr(expr: Expr, symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>):
-            Disjunction<List<SemanticError>, AExpr?> = when (expr)  {
-        is Expr.IntLiteral -> Disjunction.Right(AExpr.AIntLiteral(expr.value))
-        is Expr.UnitLiteral -> Disjunction.Right(AExpr.AUnitLiteral)
-        is Expr.BoolLiteral -> Disjunction.Right(if (expr is Expr.BoolLiteral.True)
-            AExpr.ABoolLiteral.True
-        else
-            AExpr.ABoolLiteral.False
-        )
-        is Expr.CharLiteral -> Disjunction.Right(AExpr.ACharLiteral(expr.value))
-        is Expr.StringLiteral -> Disjunction.Right(AExpr.AStringLiteral(expr.value))
-        is Expr.ValueReferenceExpr -> {
-            val context = ErrorContext.ValueDefinition(valName)
-            val lookupResult = symbolTable.lookup(expr.ref, module, valName, chain)
-            when (lookupResult) {
-                is Pass03SymbolTable.LookupResult.RefNotFound ->
-                    Disjunction.Left(listOf(SemanticError.UnresolvedReference(context, expr.ref)))
-                is Pass03SymbolTable.LookupResult.ForwardReference ->
-                    Disjunction.Left(listOf(SemanticError.IllegalForwardReference(context, lookupResult.name)))
-                is Pass03SymbolTable.LookupResult.SelfReference ->
-                    Disjunction.Left(listOf(SemanticError.IllegalSelfReference(context)))
-                is Pass03SymbolTable.LookupResult.CyclicReference ->
-                    Disjunction.Left(listOf(SemanticError.CyclicDefinition(context, lookupResult.cycle)))
-                is Pass03SymbolTable.LookupResult.RefFound -> {
-                    val qualifiedType = lookupResult.qualifiedType
-                    Disjunction.Right(if (qualifiedType == null)
-                        null
-                    else
-                        AExpr.AValueReferenceExpr(lookupResult.module, expr.ref.variable(), qualifiedType)
-                    )
+            Disjunction<List<SemanticError>, AExpr?> {
+        val context = ErrorContext.ValueDefinition(valName)
+
+        return when (expr)  {
+            is Expr.IntLiteral -> Disjunction.Right(AExpr.AIntLiteral(expr.value))
+            is Expr.UnitLiteral -> Disjunction.Right(AExpr.AUnitLiteral)
+            is Expr.BoolLiteral -> Disjunction.Right(if (expr is Expr.BoolLiteral.True)
+                AExpr.ABoolLiteral.True
+            else
+                AExpr.ABoolLiteral.False
+            )
+            is Expr.CharLiteral -> Disjunction.Right(AExpr.ACharLiteral(expr.value))
+            is Expr.StringLiteral -> Disjunction.Right(AExpr.AStringLiteral(expr.value))
+            is Expr.ValueReferenceExpr -> {
+                val lookupResult = symbolTable.lookup(expr.ref, module, valName, chain)
+                when (lookupResult) {
+                    is Pass03SymbolTable.LookupResult.RefNotFound ->
+                        Disjunction.Left(listOf(SemanticError.UnresolvedReference(context, expr.ref)))
+                    is Pass03SymbolTable.LookupResult.ForwardReference ->
+                        Disjunction.Left(listOf(SemanticError.IllegalForwardReference(context, lookupResult.name)))
+                    is Pass03SymbolTable.LookupResult.SelfReference ->
+                        Disjunction.Left(listOf(SemanticError.IllegalSelfReference(context)))
+                    is Pass03SymbolTable.LookupResult.CyclicReference ->
+                        Disjunction.Left(listOf(SemanticError.CyclicDefinition(context, lookupResult.cycle)))
+                    is Pass03SymbolTable.LookupResult.RefFound -> {
+                        val qualifiedType = lookupResult.qualifiedType
+                        Disjunction.Right(if (qualifiedType == null)
+                            null
+                        else
+                            AExpr.AValueReferenceExpr(lookupResult.module, expr.ref.variable(), qualifiedType)
+                        )
+                    }
                 }
             }
+            is Expr.Negation -> {
+                val operandAastOrErrors = astExpr2AastExpr(expr.operand, symbolTable, module, valName, chain)
+                when (operandAastOrErrors) {
+                    is Disjunction.Left -> operandAastOrErrors
+                    is Disjunction.Right -> {
+                        val operandAast = operandAastOrErrors.value
+                        val operandType = operandAast?.type()
+                        if (operandType == null) {
+                            Disjunction.Right(null)
+                        } else {
+                            if (operandType != BuiltInTypes.Bool) {
+                                Disjunction.Left(listOf(SemanticError.TypeMismatch(context, BuiltInTypes.Bool, operandType)))
+                            } else {
+                                Disjunction.Right(AExpr.ANegation(operandAast))
+                            }
+                        }
+                    }
+                }
+            }
+            is Expr.Disjunction -> TODO()
+            is Expr.Conjunction -> TODO()
         }
-        else -> throw UnsupportedOperationException()
     }
 }

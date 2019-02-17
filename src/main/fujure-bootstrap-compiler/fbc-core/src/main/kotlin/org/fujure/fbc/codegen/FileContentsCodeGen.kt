@@ -61,6 +61,7 @@ object FileContentsCodeGen {
                     format = "\$T.${simpleValueDef.initializer.reference}"
                 }
             }
+            else -> TODO()
         }
         return FieldSpec.builder(variableType, simpleValueDef.id,
                 Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)

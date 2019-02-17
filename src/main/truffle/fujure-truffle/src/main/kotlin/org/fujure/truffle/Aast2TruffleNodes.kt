@@ -39,6 +39,7 @@ object Aast2TruffleNodes {
             is AExpr.AIntLiteral -> IntLiteralExprNode(aExpr.value)
             is AExpr.AStringLiteral -> StringLiteralExprNode(aExpr.value)
             is AExpr.AValueReferenceExpr -> ReferenceExprNode(aExpr.targetModule, aExpr.reference, fujureTruffleLanguage)
+            else -> TODO()
         }
     }
 

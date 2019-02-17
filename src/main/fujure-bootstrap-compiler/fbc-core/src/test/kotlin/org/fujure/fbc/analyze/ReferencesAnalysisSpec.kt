@@ -111,9 +111,11 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                             .file("""
                                 def x: Bool = 1
                                 def y: a.B.C = true
+                                def z = !! 2
 
                                 def a: Bool = x
                                 def b: Bool = y
+                                def c: Int = z
                             """)
                             .analyzed()
                 }
@@ -125,7 +127,13 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     BuiltInTypes.Bool, BuiltInTypes.Int),
                             SemanticError.TypeNotFound(
                                     ValueDefinition("y"),
-                                    TypeReference("a", "B", "C")))
+                                    TypeReference("a", "B", "C")),
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("z"),
+                                    BuiltInTypes.Bool, BuiltInTypes.Int))
+                            // notice no error in definition of c -
+                            // z has not been typed as Bool in this case
+                            // (perhaps it should?)
                 }
             }
 

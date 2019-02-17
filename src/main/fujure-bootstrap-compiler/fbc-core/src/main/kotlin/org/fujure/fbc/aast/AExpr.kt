@@ -20,6 +20,8 @@ sealed class AExpr {
     data class ACharLiteral(val value: String) : AExpr()
     data class AStringLiteral(val value: String) : AExpr()
 
+    data class ANegation(val operand: AExpr) : AExpr()
+
     fun type(): QualifiedType = when (this) {
         is AIntLiteral -> BuiltInTypes.Int
         is AUnitLiteral -> BuiltInTypes.Unit
@@ -27,5 +29,6 @@ sealed class AExpr {
         is ACharLiteral -> BuiltInTypes.Char
         is AStringLiteral -> BuiltInTypes.String
         is AValueReferenceExpr -> this.type
+        is ANegation -> BuiltInTypes.Bool
     }
 }
