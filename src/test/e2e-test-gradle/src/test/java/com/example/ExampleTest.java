@@ -37,7 +37,7 @@ public class ExampleTest {
 
     @Test
     public void test_falsy_ref() {
-        assertThat(Example.falsyRef).isTrue();
+        assertThat(Example.falsyRef).isFalse();
     }
 
     @Test

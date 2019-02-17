@@ -1,6 +1,7 @@
 package org.fujure.fbc.codegen
 
 import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.CodeBlock
 import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
@@ -33,39 +34,10 @@ object FileContentsCodeGen {
 
     private fun generateField(simpleValueDef: ADef.AValueDef.ASimpleValueDef, module: Module): FieldSpec {
         val variableType = toJavaType(simpleValueDef.type)!!
-
-        var format = "\$L"
-        val initializer: Any
-        when (simpleValueDef.initializer) {
-            is AExpr.AIntLiteral -> {
-                initializer = simpleValueDef.initializer.value
-            }
-            is AExpr.AUnitLiteral -> {
-                initializer = "null"
-            }
-            is AExpr.ABoolLiteral -> {
-                initializer = simpleValueDef.initializer == AExpr.ABoolLiteral.True
-            }
-            is AExpr.ACharLiteral -> {
-                initializer = simpleValueDef.initializer.value
-            }
-            is AExpr.AStringLiteral -> {
-                initializer = """"${simpleValueDef.initializer.value}""""
-            }
-            is AExpr.AValueReferenceExpr -> {
-                if (simpleValueDef.initializer.targetModule == module) {
-                    initializer = simpleValueDef.initializer.reference
-                } else {
-                    initializer = ClassName.get(simpleValueDef.initializer.targetModule.packageName,
-                            simpleValueDef.initializer.targetModule.moduleName)
-                    format = "\$T.${simpleValueDef.initializer.reference}"
-                }
-            }
-            else -> TODO()
-        }
+        val initializerCodeBlock = aExpr2CodeBlock(simpleValueDef.initializer, module)
         return FieldSpec.builder(variableType, simpleValueDef.id,
                 Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                .initializer(format, initializer)
+                .initializer(initializerCodeBlock)
                 .build()
     }
 
@@ -78,5 +50,44 @@ object FileContentsCodeGen {
             BuiltInTypes.String -> java.lang.String::class.java
             else -> null
         }
+    }
+
+    private fun aExpr2CodeBlock(aExpr: AExpr, module: Module): CodeBlock {
+        return when (aExpr) {
+            is AExpr.AIntLiteral -> {
+                literalCodeBlock(aExpr.value)
+            }
+            is AExpr.AUnitLiteral -> {
+                literalCodeBlock("null")
+            }
+            is AExpr.ABoolLiteral -> {
+                literalCodeBlock(aExpr == AExpr.ABoolLiteral.True)
+            }
+            is AExpr.ACharLiteral -> {
+                literalCodeBlock(aExpr.value)
+            }
+            is AExpr.AStringLiteral -> {
+                literalCodeBlock(""""${aExpr.value}"""")
+            }
+            is AExpr.AValueReferenceExpr -> {
+                if (aExpr.targetModule == module) {
+                    literalCodeBlock(aExpr.reference)
+                } else {
+                    val className = ClassName.get(aExpr.targetModule.packageName, aExpr.targetModule.moduleName)
+                    CodeBlock.of("\$T.${aExpr.reference}", className)
+                }
+            }
+            is AExpr.ANegation -> {
+                val operandCode = aExpr2CodeBlock(aExpr.operand, module)
+                CodeBlock.builder()
+                        .add("!")
+                        .add(operandCode)
+                        .build()
+            }
+        }
+    }
+
+    private fun literalCodeBlock(value: Any): CodeBlock {
+        return CodeBlock.of("\$L", value)
     }
 }
