@@ -197,6 +197,27 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
             }
         }
 
+        it.describes("when evaluating code with expressions") {
+            it.beginsAll {
+                evalFujure("""
+                    def b: Bool = ! true
+                """)
+            }
+
+            lateinit var moduleBindings: Value
+
+            it.beginsAll {
+                assertNoException()
+                moduleBindings = fujureBindings.getMember("Unnamed")
+                assertThat(moduleBindings).isNotNull()
+            }
+
+            it.should("correctly evaluate the Boolean expression") {
+                val b = moduleBindings.getMember("b")
+                assertThat(b.asBoolean()).isFalse()
+            }
+        }
+
         it.describes("when evaluating syntactically incorrect code") {
             it.beginsAll {
                 evalFujure("1 + 2")
