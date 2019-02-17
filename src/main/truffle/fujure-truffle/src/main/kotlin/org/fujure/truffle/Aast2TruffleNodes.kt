@@ -41,6 +41,7 @@ object Aast2TruffleNodes {
             is AExpr.AStringLiteral -> StringLiteralExprNode(aExpr.value)
             is AExpr.AValueReferenceExpr -> ReferenceExprNode(aExpr.targetModule, aExpr.reference, fujureTruffleLanguage)
             is AExpr.ANegation -> NegationExprNodeGen.create(translateExpr(aExpr.operand, fujureTruffleLanguage))
+            else -> TODO()
         }
     }
 

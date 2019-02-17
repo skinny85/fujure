@@ -84,6 +84,9 @@ object FileContentsCodeGen {
                         .add(operandCode)
                         .build()
             }
+            else -> {
+                TODO()
+            }
         }
     }
 

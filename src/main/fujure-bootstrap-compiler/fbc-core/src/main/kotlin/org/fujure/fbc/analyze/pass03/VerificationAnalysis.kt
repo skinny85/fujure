@@ -164,8 +164,52 @@ object VerificationAnalysis {
                     }
                 }
             }
-            is Expr.Disjunction -> TODO()
-            is Expr.Conjunction -> TODO()
+            is Expr.Disjunction -> handleBinaryBoolOperation(expr.leftDisjunct, expr.rightDisjunct, symbolTable, module,
+                    valName, chain, { left, right -> AExpr.ADisjunction(left, right) })
+            is Expr.Conjunction -> handleBinaryBoolOperation(expr.leftConjunct, expr.rightConjunct, symbolTable, module,
+                    valName, chain, { left, right -> AExpr.AConjunction(left, right) })
+        }
+    }
+
+    private fun handleBinaryBoolOperation(leftExpr: Expr, rightExpr: Expr, symbolTable: Pass03SymbolTable, module: Module,
+            valName: String, chain: List<ValueCoordinates>, cons: (AExpr, AExpr) -> AExpr): Disjunction<List<SemanticError>, AExpr?> {
+        val errors = mutableListOf<SemanticError>()
+
+        val leftOperandAastOrErrors = astExpr2AastExpr(leftExpr, symbolTable, module, valName, chain)
+        val rightOperandAastOrErrors = astExpr2AastExpr(rightExpr, symbolTable, module, valName, chain)
+
+        val leftOperandAast: AExpr? = when (leftOperandAastOrErrors) {
+            is Disjunction.Left -> {
+                errors.addAll(leftOperandAastOrErrors.value)
+                null
+            }
+            is Disjunction.Right -> {
+                leftOperandAastOrErrors.value
+            }
+        }
+        if (leftOperandAast != null && leftOperandAast.type() != BuiltInTypes.Bool) {
+            errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), BuiltInTypes.Bool,
+                    leftOperandAast.type()))
+        }
+
+        val rightOperandAast: AExpr? = when (rightOperandAastOrErrors) {
+            is Disjunction.Left -> {
+                errors.addAll(rightOperandAastOrErrors.value)
+                null
+            }
+            is Disjunction.Right -> {
+                rightOperandAastOrErrors.value
+            }
+        }
+        if (rightOperandAast != null && rightOperandAast.type() != BuiltInTypes.Bool) {
+            errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), BuiltInTypes.Bool,
+                    rightOperandAast.type()))
+        }
+
+        return if (errors.isEmpty()) {
+            Disjunction.Right(cons(leftOperandAast!!, rightOperandAast!!))
+        } else {
+            Disjunction.Left(errors)
         }
     }
 }

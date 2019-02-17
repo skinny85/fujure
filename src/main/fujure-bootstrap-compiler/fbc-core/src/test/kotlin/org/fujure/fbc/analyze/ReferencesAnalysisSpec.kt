@@ -245,7 +245,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                     AnalysisBuilder
                             .file("""
                                 def a: Bool = x
-                                def x: Bool = true
+                                def x: Bool = true || false
                             """)
                             .analyzed()
                 }
@@ -307,11 +307,60 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 }
             }
 
+            it.describes("called with a definition containing multiple cycles") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def a = File2.x || File2.y
+                            """)
+                            .file("""
+                                def x = File1.a
+                                def y = File1.a
+                            """)
+                            .analyzed()
+                }
+
+                it.should("detect all cycles in the first file") {
+                    assertThat(file1Errors()).containsExactly(
+                            SemanticError.CyclicDefinition(
+                                    ValueDefinition("a"),
+                                    listOf(
+                                            ValueCoordinates("", "File1", "a"),
+                                            ValueCoordinates("", "File2", "x"),
+                                            ValueCoordinates("", "File1", "a"))),
+                            SemanticError.CyclicDefinition(
+                                    ValueDefinition("a"),
+                                    listOf(
+                                            ValueCoordinates("", "File1", "a"),
+                                            ValueCoordinates("", "File2", "y"),
+                                            ValueCoordinates("", "File1", "a"))))
+                }
+
+                it.should("detect all cycles in the second file") {
+                    assertThat(file2Errors()).hasSize(2)
+
+                    assertThat(file2Errors()[0]).isEqualTo(
+                            SemanticError.CyclicDefinition(
+                                    ValueDefinition("x"),
+                                    listOf(
+                                            ValueCoordinates("", "File2", "x"),
+                                            ValueCoordinates("", "File1", "a"),
+                                            ValueCoordinates("", "File2", "x"))))
+
+                    val yCycle = file2Errors()[1]
+                    assertThat(yCycle).isInstanceOf(SemanticError.CyclicDefinition::class.java)
+                    yCycle as SemanticError.CyclicDefinition
+                    assertThat(yCycle.context).isEqualTo(ValueDefinition("y"))
+                    assertThat(yCycle.cycle.size).isGreaterThan(1)
+                    assertThat(yCycle.cycle[0]).isEqualTo(ValueCoordinates("", "File2", "y"))
+                }
+            }
+
             it.describes("called with a value referencing itself in its initializer") {
                 it.beginsAll {
                     AnalysisBuilder
                             .file("""
-                                def a: Bool = a
+                                def a: Bool = a && true
                             """)
                             .analyzed()
                 }
