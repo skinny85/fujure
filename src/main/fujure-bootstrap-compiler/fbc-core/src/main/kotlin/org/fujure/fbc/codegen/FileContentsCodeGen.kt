@@ -79,18 +79,59 @@ object FileContentsCodeGen {
             }
             is AExpr.ANegation -> {
                 val operandCode = aExpr2CodeBlock(aExpr.operand, module)
-                CodeBlock.builder()
-                        .add("!")
-                        .add(operandCode)
-                        .build()
+
+                val code = CodeBlock.builder().add("!")
+
+                if (aExpr.operand.precedence < aExpr.precedence) {
+                    code
+                            .add("(")
+                            .add(operandCode)
+                            .add(")")
+                } else {
+                    code.add(operandCode)
+                }
+                code.build()
             }
-            else -> {
-                TODO()
+            is AExpr.ADisjunction -> {
+                handleBinaryOperation(aExpr.leftDisjunct, aExpr.rightDisjunct, module, "||", aExpr.precedence)
+            }
+            is AExpr.AConjunction -> {
+                handleBinaryOperation(aExpr.leftConjunct, aExpr.rightConjunct, module, "&&", aExpr.precedence)
             }
         }
     }
 
     private fun literalCodeBlock(value: Any): CodeBlock {
         return CodeBlock.of("\$L", value)
+    }
+
+    private fun handleBinaryOperation(leftOperand: AExpr, rightOperand: AExpr, module: Module, operator: String,
+            outerPrecedence: Int): CodeBlock {
+        val leftOperandCode = aExpr2CodeBlock(leftOperand, module)
+        val rightOperandCode = aExpr2CodeBlock(rightOperand, module)
+
+        val code = CodeBlock.builder()
+
+        if (leftOperand.precedence < outerPrecedence) {
+            code
+                    .add("(")
+                    .add(leftOperandCode)
+                    .add(")")
+        } else {
+            code.add(leftOperandCode)
+        }
+
+        code.add(" $operator ")
+
+        if (rightOperand.precedence < outerPrecedence) {
+            code
+                    .add("(")
+                    .add(rightOperandCode)
+                    .add(")")
+        } else {
+            code.add(rightOperandCode)
+        }
+
+        return code.build()
     }
 }

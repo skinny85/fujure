@@ -10,7 +10,6 @@ import org.fujure.truffle.nodes.DefNode
 import org.fujure.truffle.nodes.ExprNode
 import org.fujure.truffle.nodes.IntLiteralExprNode
 import org.fujure.truffle.nodes.ModuleNonRootNode
-import org.fujure.truffle.nodes.NegationExprNodeGen
 import org.fujure.truffle.nodes.ReferenceExprNode
 import org.fujure.truffle.nodes.SimpleValueDefNode
 import org.fujure.truffle.nodes.StringLiteralExprNode
@@ -40,7 +39,7 @@ object Aast2TruffleNodes {
             is AExpr.AIntLiteral -> IntLiteralExprNode(aExpr.value)
             is AExpr.AStringLiteral -> StringLiteralExprNode(aExpr.value)
             is AExpr.AValueReferenceExpr -> ReferenceExprNode(aExpr.targetModule, aExpr.reference, fujureTruffleLanguage)
-            is AExpr.ANegation -> NegationExprNodeGen.create(translateExpr(aExpr.operand, fujureTruffleLanguage))
+            is AExpr.ANegation -> NodesFactory.createNegationExprNode(translateExpr(aExpr.operand, fujureTruffleLanguage))
             else -> TODO()
         }
     }

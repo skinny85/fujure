@@ -35,4 +35,16 @@ sealed class AExpr {
         is AConjunction -> BuiltInTypes.Bool
         is ADisjunction -> BuiltInTypes.Bool
     }
+
+    val precedence: Int get() = when (this) {
+        is ADisjunction -> 0
+        is AConjunction -> 1
+        is ANegation -> 2
+        is AIntLiteral -> 2
+        is AUnitLiteral -> 2
+        is ABoolLiteral -> 2
+        is ACharLiteral -> 2
+        is AStringLiteral -> 2
+        is AValueReferenceExpr -> 2
+    }
 }
