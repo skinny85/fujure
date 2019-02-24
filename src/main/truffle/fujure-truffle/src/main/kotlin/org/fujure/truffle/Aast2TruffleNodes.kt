@@ -6,7 +6,9 @@ import org.fujure.fbc.aast.AExpr
 import org.fujure.fbc.aast.AFileContents
 import org.fujure.truffle.nodes.BoolLiteralExprNode
 import org.fujure.truffle.nodes.CharLiteralExprNode
+import org.fujure.truffle.nodes.ConjunctionExprNode
 import org.fujure.truffle.nodes.DefNode
+import org.fujure.truffle.nodes.DisjunctionExprNode
 import org.fujure.truffle.nodes.ExprNode
 import org.fujure.truffle.nodes.IntLiteralExprNode
 import org.fujure.truffle.nodes.ModuleNonRootNode
@@ -40,7 +42,12 @@ object Aast2TruffleNodes {
             is AExpr.AStringLiteral -> StringLiteralExprNode(aExpr.value)
             is AExpr.AValueReferenceExpr -> ReferenceExprNode(aExpr.targetModule, aExpr.reference, fujureTruffleLanguage)
             is AExpr.ANegation -> NodesFactory.createNegationExprNode(translateExpr(aExpr.operand, fujureTruffleLanguage))
-            else -> TODO()
+            is AExpr.ADisjunction -> DisjunctionExprNode(
+                    translateExpr(aExpr.leftDisjunct, fujureTruffleLanguage),
+                    translateExpr(aExpr.rightDisjunct, fujureTruffleLanguage))
+            is AExpr.AConjunction -> ConjunctionExprNode(
+                    translateExpr(aExpr.leftConjunct, fujureTruffleLanguage),
+                    translateExpr(aExpr.rightConjunct, fujureTruffleLanguage))
         }
     }
 

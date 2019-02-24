@@ -106,13 +106,13 @@ object FileContentsCodeGen {
     }
 
     private fun handleBinaryOperation(leftOperand: AExpr, rightOperand: AExpr, module: Module, operator: String,
-            outerPrecedence: Int): CodeBlock {
+            operatorPrecedence: Int): CodeBlock {
         val leftOperandCode = aExpr2CodeBlock(leftOperand, module)
         val rightOperandCode = aExpr2CodeBlock(rightOperand, module)
 
         val code = CodeBlock.builder()
 
-        if (leftOperand.precedence < outerPrecedence) {
+        if (leftOperand.precedence < operatorPrecedence) {
             code
                     .add("(")
                     .add(leftOperandCode)
@@ -123,7 +123,7 @@ object FileContentsCodeGen {
 
         code.add(" $operator ")
 
-        if (rightOperand.precedence < outerPrecedence) {
+        if (rightOperand.precedence < operatorPrecedence) {
             code
                     .add("(")
                     .add(rightOperandCode)
