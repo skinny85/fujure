@@ -82,7 +82,7 @@ object FileContentsCodeGen {
 
                 val code = CodeBlock.builder().add("!")
 
-                if (aExpr.operand.precedence < aExpr.precedence) {
+                if (aExpr.operand.precedence() < aExpr.precedence()) {
                     code
                             .add("(")
                             .add(operandCode)
@@ -93,10 +93,10 @@ object FileContentsCodeGen {
                 code.build()
             }
             is AExpr.ADisjunction -> {
-                handleBinaryOperation(aExpr.leftDisjunct, aExpr.rightDisjunct, module, "||", aExpr.precedence)
+                handleBinaryOperation(aExpr.leftDisjunct, aExpr.rightDisjunct, module, "||", aExpr.precedence())
             }
             is AExpr.AConjunction -> {
-                handleBinaryOperation(aExpr.leftConjunct, aExpr.rightConjunct, module, "&&", aExpr.precedence)
+                handleBinaryOperation(aExpr.leftConjunct, aExpr.rightConjunct, module, "&&", aExpr.precedence())
             }
         }
     }
@@ -112,7 +112,7 @@ object FileContentsCodeGen {
 
         val code = CodeBlock.builder()
 
-        if (leftOperand.precedence < operatorPrecedence) {
+        if (leftOperand.precedence() < operatorPrecedence) {
             code
                     .add("(")
                     .add(leftOperandCode)
@@ -123,7 +123,7 @@ object FileContentsCodeGen {
 
         code.add(" $operator ")
 
-        if (rightOperand.precedence < operatorPrecedence) {
+        if (rightOperand.precedence() < operatorPrecedence) {
             code
                     .add("(")
                     .add(rightOperandCode)
@@ -133,5 +133,17 @@ object FileContentsCodeGen {
         }
 
         return code.build()
+    }
+
+    private fun AExpr.precedence(): Int = when (this) {
+        is AExpr.ADisjunction -> 0
+        is AExpr.AConjunction -> 1
+        is AExpr.ANegation -> 2
+        is AExpr.AIntLiteral -> 2
+        is AExpr.AUnitLiteral -> 2
+        is AExpr.ABoolLiteral -> 2
+        is AExpr.ACharLiteral -> 2
+        is AExpr.AStringLiteral -> 2
+        is AExpr.AValueReferenceExpr -> 2
     }
 }
