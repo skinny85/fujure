@@ -6,6 +6,7 @@ import org.fujure.fbc.aast.AExpr
 import org.fujure.fbc.aast.AFileContents
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.ErrorContext
+import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
@@ -79,20 +80,22 @@ object VerificationAnalysis {
                 if (def.initializer == null) {
                     errors.add(SemanticError.MissingInitializer(context))
                 } else {
-                    val annotatedExprOrErrors = astExpr2AastExpr(def.initializer, symbolTable, def.id, module)
-                    when (annotatedExprOrErrors) {
-                        is Disjunction.Left -> {
-                            errors.addAll(annotatedExprOrErrors.value)
+                    val initializerAnalysisResult = analyzeExpr(def.initializer, symbolTable, def.id, module)
+                    when (initializerAnalysisResult) {
+                        is ExprAnalysisResult.Failure -> {
+                            errors.addAll(initializerAnalysisResult.errors)
                         }
-                        is Disjunction.Right -> {
-                            val initializerExpr = annotatedExprOrErrors.value
-                            if (initializerExpr != null) {
-                                val initializerType = initializerExpr.type()
-                                if (declaredQualifiedType != null && declaredQualifiedType != initializerType) {
-                                    errors.add(SemanticError.TypeMismatch(context, declaredQualifiedType, initializerType))
-                                } else {
-                                    aDef = ADef.AValueDef.ASimpleValueDef(def.id, initializerType, initializerExpr)
-                                }
+                        is ExprAnalysisResult.Success -> {
+                            val initializerType = initializerAnalysisResult.qualifiedType
+                            if (initializerType != null && declaredQualifiedType != null &&
+                                    declaredQualifiedType != initializerType) {
+                                errors.add(SemanticError.TypeMismatch(context, declaredQualifiedType, initializerType))
+                            }
+
+                            val initializerExpr = initializerAnalysisResult.aExpr
+                            val valueType = declaredQualifiedType ?: initializerType
+                            if (valueType != null && initializerExpr != null) {
+                                aDef = ADef.AValueDef.ASimpleValueDef(def.id, valueType, initializerExpr)
                             }
                         }
                     }
@@ -106,38 +109,38 @@ object VerificationAnalysis {
             Disjunction.Left(errors)
     }
 
-    private fun astExpr2AastExpr(expr: Expr, symbolTable: Pass03SymbolTable, valName: String, module: Module):
-            Disjunction<List<SemanticError>, AExpr?> =
-        astExpr2AastExpr(expr, symbolTable, module, valName, listOf(ValueCoordinates(module.packageName, module.moduleName, valName)))
+    private fun analyzeExpr(expr: Expr, symbolTable: Pass03SymbolTable, valName: String, module: Module):
+            ExprAnalysisResult =
+        analyzeExpr(expr, symbolTable, module, valName, listOf(ValueCoordinates(module.packageName, module.moduleName, valName)))
 
-    fun astExpr2AastExpr(expr: Expr, symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>):
-            Disjunction<List<SemanticError>, AExpr?> {
+    fun analyzeExpr(expr: Expr, symbolTable: Pass03SymbolTable, module: Module, valName: String,
+            chain: List<ValueCoordinates>): ExprAnalysisResult {
         val context = ErrorContext.ValueDefinition(valName)
 
         return when (expr)  {
-            is Expr.IntLiteral -> Disjunction.Right(AExpr.AIntLiteral(expr.value))
-            is Expr.UnitLiteral -> Disjunction.Right(AExpr.AUnitLiteral)
-            is Expr.BoolLiteral -> Disjunction.Right(if (expr is Expr.BoolLiteral.True)
+            is Expr.IntLiteral -> ExprAnalysisResult.Success(BuiltInTypes.Int, AExpr.AIntLiteral(expr.value))
+            is Expr.UnitLiteral -> ExprAnalysisResult.Success(BuiltInTypes.Unit, AExpr.AUnitLiteral)
+            is Expr.BoolLiteral -> ExprAnalysisResult.Success(BuiltInTypes.Bool, if (expr is Expr.BoolLiteral.True)
                 AExpr.ABoolLiteral.True
             else
                 AExpr.ABoolLiteral.False
             )
-            is Expr.CharLiteral -> Disjunction.Right(AExpr.ACharLiteral(expr.value))
-            is Expr.StringLiteral -> Disjunction.Right(AExpr.AStringLiteral(expr.value))
+            is Expr.CharLiteral -> ExprAnalysisResult.Success(BuiltInTypes.Char, AExpr.ACharLiteral(expr.value))
+            is Expr.StringLiteral -> ExprAnalysisResult.Success(BuiltInTypes.String, AExpr.AStringLiteral(expr.value))
             is Expr.ValueReferenceExpr -> {
                 val lookupResult = symbolTable.lookup(expr.ref, module, valName, chain)
                 when (lookupResult) {
                     is Pass03SymbolTable.LookupResult.RefNotFound ->
-                        Disjunction.Left(listOf(SemanticError.UnresolvedReference(context, expr.ref)))
+                        ExprAnalysisResult.Failure(SemanticError.UnresolvedReference(context, expr.ref))
                     is Pass03SymbolTable.LookupResult.ForwardReference ->
-                        Disjunction.Left(listOf(SemanticError.IllegalForwardReference(context, lookupResult.name)))
+                        ExprAnalysisResult.Failure(SemanticError.IllegalForwardReference(context, lookupResult.name))
                     is Pass03SymbolTable.LookupResult.SelfReference ->
-                        Disjunction.Left(listOf(SemanticError.IllegalSelfReference(context)))
+                        ExprAnalysisResult.Failure(SemanticError.IllegalSelfReference(context))
                     is Pass03SymbolTable.LookupResult.CyclicReference ->
-                        Disjunction.Left(listOf(SemanticError.CyclicDefinition(context, lookupResult.cycle)))
+                        ExprAnalysisResult.Failure(SemanticError.CyclicDefinition(context, lookupResult.cycle))
                     is Pass03SymbolTable.LookupResult.RefFound -> {
                         val qualifiedType = lookupResult.qualifiedType
-                        Disjunction.Right(if (qualifiedType == null)
+                        ExprAnalysisResult.Success(qualifiedType, if (qualifiedType == null)
                             null
                         else
                             AExpr.AValueReferenceExpr(lookupResult.module, expr.ref.variable(), qualifiedType)
@@ -146,23 +149,26 @@ object VerificationAnalysis {
                 }
             }
             is Expr.Negation -> {
-                val operandAastOrErrors = astExpr2AastExpr(expr.operand, symbolTable, module, valName, chain)
-                when (operandAastOrErrors) {
-                    is Disjunction.Left -> operandAastOrErrors
-                    is Disjunction.Right -> {
-                        val operandAast = operandAastOrErrors.value
-                        val operandType = operandAast?.type()
-                        if (operandType == null) {
-                            Disjunction.Right(null)
-                        } else {
-                            if (operandType != BuiltInTypes.Bool) {
-                                Disjunction.Left(listOf(SemanticError.TypeMismatch(context, BuiltInTypes.Bool, operandType)))
-                            } else {
-                                Disjunction.Right(AExpr.ANegation(operandAast))
-                            }
-                        }
+                val errors = mutableListOf<SemanticError>()
+                val operandAnalysisResult = analyzeExpr(expr.operand, symbolTable, module, valName, chain)
+                val operandAast: AExpr? = when (operandAnalysisResult) {
+                    is ExprAnalysisResult.Failure -> {
+                        errors.addAll(operandAnalysisResult.errors)
+                        null
+                    }
+                    is ExprAnalysisResult.Success -> {
+                        operandAnalysisResult.aExpr
                     }
                 }
+                val operandType = operandAnalysisResult.qualifiedType
+                if (operandType != null && operandType != BuiltInTypes.Bool) {
+                    errors.add(SemanticError.TypeMismatch(context, BuiltInTypes.Bool, operandType))
+                }
+                if (errors.isEmpty())
+                    ExprAnalysisResult.Success(BuiltInTypes.Bool, if (operandAast == null) null else
+                        AExpr.ANegation(operandAast))
+                else
+                    ExprAnalysisResult.Failure(BuiltInTypes.Bool, errors)
             }
             is Expr.Disjunction -> handleBinaryBoolOperation(expr.leftDisjunct, expr.rightDisjunct, symbolTable, module,
                     valName, chain, { left, right -> AExpr.ADisjunction(left, right) })
@@ -172,44 +178,59 @@ object VerificationAnalysis {
     }
 
     private fun handleBinaryBoolOperation(leftExpr: Expr, rightExpr: Expr, symbolTable: Pass03SymbolTable, module: Module,
-            valName: String, chain: List<ValueCoordinates>, cons: (AExpr, AExpr) -> AExpr): Disjunction<List<SemanticError>, AExpr?> {
+            valName: String, chain: List<ValueCoordinates>, cons: (AExpr, AExpr) -> AExpr): ExprAnalysisResult {
         val errors = mutableListOf<SemanticError>()
 
-        val leftOperandAastOrErrors = astExpr2AastExpr(leftExpr, symbolTable, module, valName, chain)
-        val rightOperandAastOrErrors = astExpr2AastExpr(rightExpr, symbolTable, module, valName, chain)
+        val leftOperandAnalysisResult = analyzeExpr(leftExpr, symbolTable, module, valName, chain)
+        val rightOperandAnalysisResult = analyzeExpr(rightExpr, symbolTable, module, valName, chain)
 
-        val leftOperandAast: AExpr? = when (leftOperandAastOrErrors) {
-            is Disjunction.Left -> {
-                errors.addAll(leftOperandAastOrErrors.value)
+        val leftOperandAast: AExpr? = when (leftOperandAnalysisResult) {
+            is ExprAnalysisResult.Failure -> {
+                errors.addAll(leftOperandAnalysisResult.errors)
                 null
             }
-            is Disjunction.Right -> {
-                leftOperandAastOrErrors.value
+            is ExprAnalysisResult.Success -> {
+                leftOperandAnalysisResult.aExpr
             }
         }
-        if (leftOperandAast != null && leftOperandAast.type() != BuiltInTypes.Bool) {
+        val leftOperandType = leftOperandAnalysisResult.qualifiedType
+        if (leftOperandType != null && leftOperandType != BuiltInTypes.Bool) {
             errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), BuiltInTypes.Bool,
-                    leftOperandAast.type()))
+                    leftOperandType))
         }
 
-        val rightOperandAast: AExpr? = when (rightOperandAastOrErrors) {
-            is Disjunction.Left -> {
-                errors.addAll(rightOperandAastOrErrors.value)
+        val rightOperandAast: AExpr? = when (rightOperandAnalysisResult) {
+            is ExprAnalysisResult.Failure -> {
+                errors.addAll(rightOperandAnalysisResult.errors)
                 null
             }
-            is Disjunction.Right -> {
-                rightOperandAastOrErrors.value
+            is ExprAnalysisResult.Success -> {
+                rightOperandAnalysisResult.aExpr
             }
         }
-        if (rightOperandAast != null && rightOperandAast.type() != BuiltInTypes.Bool) {
+        val rightOperandType = rightOperandAnalysisResult.qualifiedType
+        if (rightOperandType != null && rightOperandType != BuiltInTypes.Bool) {
             errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), BuiltInTypes.Bool,
-                    rightOperandAast.type()))
+                    rightOperandType))
         }
 
         return if (errors.isEmpty()) {
-            Disjunction.Right(cons(leftOperandAast!!, rightOperandAast!!))
+            ExprAnalysisResult.Success(BuiltInTypes.Bool, if (leftOperandAast != null && rightOperandAast != null)
+                cons(leftOperandAast, rightOperandAast)
+            else
+                null)
         } else {
-            Disjunction.Left(errors)
+            ExprAnalysisResult.Failure(BuiltInTypes.Bool, errors)
+        }
+    }
+
+    sealed class ExprAnalysisResult(open val qualifiedType: QualifiedType?) {
+        class Success(override val qualifiedType: QualifiedType?, val aExpr: AExpr?) :
+                ExprAnalysisResult(qualifiedType)
+
+        class Failure(override val qualifiedType: QualifiedType?, val errors: List<SemanticError>) :
+                ExprAnalysisResult(qualifiedType) {
+            constructor(error: SemanticError) : this(null, listOf(error))
         }
     }
 }

@@ -113,8 +113,8 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                 def y: a.B.C = true
                                 def z = !! 2
 
-                                def a: Bool = x
-                                def b: Bool = y
+                                def a: String = x
+                                def b: Char = y
                                 def c: Int = z
                             """)
                             .analyzed()
@@ -130,10 +130,13 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     TypeReference("a", "B", "C")),
                             SemanticError.TypeMismatch(
                                     ValueDefinition("z"),
-                                    BuiltInTypes.Bool, BuiltInTypes.Int))
-                            // notice no error in definition of c -
-                            // z has not been typed as Bool in this case
-                            // (perhaps it should?)
+                                    BuiltInTypes.Bool, BuiltInTypes.Int),
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("a"),
+                                    BuiltInTypes.String, BuiltInTypes.Bool),
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("c"),
+                                    BuiltInTypes.Int, BuiltInTypes.Bool))
                 }
             }
 

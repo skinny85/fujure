@@ -155,17 +155,17 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
                     }
 
                     // if not, infer the type from the initializer, failing if that contains a cycle
-                    val annotatedExprOrErrors = VerificationAnalysis.astExpr2AastExpr(this.initializer, symbolTable, module, valName, chain)
-                    when (annotatedExprOrErrors) {
-                        is Disjunction.Left -> {
-                            val semanticErrors = annotatedExprOrErrors.value
+                    val exprAnalysisResult = VerificationAnalysis.analyzeExpr(this.initializer, symbolTable, module, valName, chain)
+                    when (exprAnalysisResult) {
+                        is VerificationAnalysis.ExprAnalysisResult.Failure -> {
+                            val semanticErrors = exprAnalysisResult.errors
                             val cyclicError = semanticErrors.find { it is SemanticError.CyclicDefinition }
                             if (cyclicError == null)
-                                null
+                                exprAnalysisResult.qualifiedType
                             else
                                 throw CyclicReferenceException((cyclicError as SemanticError.CyclicDefinition).cycle)
                         }
-                        is Disjunction.Right -> annotatedExprOrErrors.value?.type()
+                        is VerificationAnalysis.ExprAnalysisResult.Success -> exprAnalysisResult.qualifiedType
                     }
                 }
             }
