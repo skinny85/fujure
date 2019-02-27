@@ -10,15 +10,19 @@ Surrogate_id_SYMB_1 : ':' ;
 Surrogate_id_SYMB_2 : '=' ;
 Surrogate_id_SYMB_3 : '||' ;
 Surrogate_id_SYMB_4 : '&&' ;
-Surrogate_id_SYMB_5 : '!' ;
-Surrogate_id_SYMB_6 : '(' ;
-Surrogate_id_SYMB_7 : ')' ;
-Surrogate_id_SYMB_8 : 'def' ;
-Surrogate_id_SYMB_9 : 'false' ;
-Surrogate_id_SYMB_10 : 'import' ;
-Surrogate_id_SYMB_11 : 'package' ;
-Surrogate_id_SYMB_12 : 'true' ;
-Surrogate_id_SYMB_13 : 'unit' ;
+Surrogate_id_SYMB_5 : '<' ;
+Surrogate_id_SYMB_6 : '<=' ;
+Surrogate_id_SYMB_7 : '>' ;
+Surrogate_id_SYMB_8 : '>=' ;
+Surrogate_id_SYMB_9 : '!' ;
+Surrogate_id_SYMB_10 : '(' ;
+Surrogate_id_SYMB_11 : ')' ;
+Surrogate_id_SYMB_12 : 'def' ;
+Surrogate_id_SYMB_13 : 'false' ;
+Surrogate_id_SYMB_14 : 'import' ;
+Surrogate_id_SYMB_15 : 'package' ;
+Surrogate_id_SYMB_16 : 'true' ;
+Surrogate_id_SYMB_17 : 'unit' ;
 
 
 JID : ('_'|'$'|LETTER)('_'|'$'|LETTER|DIGIT)*;

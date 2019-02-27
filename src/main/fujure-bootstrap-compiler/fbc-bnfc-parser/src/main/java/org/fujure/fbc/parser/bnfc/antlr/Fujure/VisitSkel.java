@@ -137,6 +137,26 @@ public class VisitSkel
       p.expr_1.accept(new ExprVisitor<R,A>(), arg);
       p.expr_2.accept(new ExprVisitor<R,A>(), arg);
       return null;
+    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserExpr p, A arg)
+    { /* Code For LesserExpr Goes Here */
+      p.expr_1.accept(new ExprVisitor<R,A>(), arg);
+      p.expr_2.accept(new ExprVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserEqualExpr p, A arg)
+    { /* Code For LesserEqualExpr Goes Here */
+      p.expr_1.accept(new ExprVisitor<R,A>(), arg);
+      p.expr_2.accept(new ExprVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterExpr p, A arg)
+    { /* Code For GreaterExpr Goes Here */
+      p.expr_1.accept(new ExprVisitor<R,A>(), arg);
+      p.expr_2.accept(new ExprVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterEqualExpr p, A arg)
+    { /* Code For GreaterEqualExpr Goes Here */
+      p.expr_1.accept(new ExprVisitor<R,A>(), arg);
+      p.expr_2.accept(new ExprVisitor<R,A>(), arg);
+      return null;
     }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr p, A arg)
     { /* Code For NotExpr Goes Here */
       p.expr_.accept(new ExprVisitor<R,A>(), arg);

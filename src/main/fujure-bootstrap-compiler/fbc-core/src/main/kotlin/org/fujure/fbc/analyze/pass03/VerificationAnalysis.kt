@@ -127,7 +127,7 @@ object VerificationAnalysis {
             )
             is Expr.CharLiteral -> ExprAnalysisResult.Success(BuiltInTypes.Char, AExpr.ACharLiteral(expr.value))
             is Expr.StringLiteral -> ExprAnalysisResult.Success(BuiltInTypes.String, AExpr.AStringLiteral(expr.value))
-            is Expr.ValueReferenceExpr -> {
+            is Expr.ValueReference -> {
                 val lookupResult = symbolTable.lookup(expr.ref, module, valName, chain)
                 when (lookupResult) {
                     is Pass03SymbolTable.LookupResult.RefNotFound ->
@@ -143,7 +143,7 @@ object VerificationAnalysis {
                         ExprAnalysisResult.Success(qualifiedType, if (qualifiedType == null)
                             null
                         else
-                            AExpr.AValueReferenceExpr(lookupResult.module, expr.ref.variable(), qualifiedType)
+                            AExpr.AValueReference(lookupResult.module, expr.ref.variable(), qualifiedType)
                         )
                     }
                 }
@@ -174,6 +174,7 @@ object VerificationAnalysis {
                     valName, chain, { left, right -> AExpr.ADisjunction(left, right) })
             is Expr.Conjunction -> handleBinaryBoolOperation(expr.leftConjunct, expr.rightConjunct, symbolTable, module,
                     valName, chain, { left, right -> AExpr.AConjunction(left, right) })
+            else -> TODO()
         }
     }
 

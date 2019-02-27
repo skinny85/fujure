@@ -69,7 +69,7 @@ object FileContentsCodeGen {
             is AExpr.AStringLiteral -> {
                 literalCodeBlock(""""${aExpr.value}"""")
             }
-            is AExpr.AValueReferenceExpr -> {
+            is AExpr.AValueReference -> {
                 if (aExpr.targetModule == module) {
                     literalCodeBlock(aExpr.reference)
                 } else {
@@ -144,6 +144,6 @@ object FileContentsCodeGen {
         is AExpr.ABoolLiteral -> 2
         is AExpr.ACharLiteral -> 2
         is AExpr.AStringLiteral -> 2
-        is AExpr.AValueReferenceExpr -> 2
+        is AExpr.AValueReference -> 2
     }
 }

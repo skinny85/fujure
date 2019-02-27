@@ -364,6 +364,66 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterLesserEqualExpr(FujureParser.LesserEqualExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLesserEqualExpr(FujureParser.LesserEqualExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGreaterExpr(FujureParser.GreaterExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGreaterExpr(FujureParser.GreaterExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLesserExpr(FujureParser.LesserExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLesserExpr(FujureParser.LesserExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGreaterEqualExpr(FujureParser.GreaterEqualExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGreaterEqualExpr(FujureParser.GreaterEqualExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCoercion_Expr2(FujureParser.Coercion_Expr2Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCoercion_Expr2(FujureParser.Coercion_Expr2Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterNotExpr(FujureParser.NotExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -400,13 +460,13 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCoercion_Expr2(FujureParser.Coercion_Expr2Context ctx) { }
+	@Override public void enterCoercion_Expr3(FujureParser.Coercion_Expr3Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCoercion_Expr2(FujureParser.Coercion_Expr2Context ctx) { }
+	@Override public void exitCoercion_Expr3(FujureParser.Coercion_Expr3Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

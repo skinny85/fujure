@@ -5,7 +5,7 @@ import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.ast.Module
 
 sealed class AExpr {
-    data class AValueReferenceExpr(val targetModule: Module,
+    data class AValueReference(val targetModule: Module,
             val reference: String, val type: QualifiedType): AExpr()
 
     data class AIntLiteral(val value: Int) : AExpr()

@@ -356,41 +356,53 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitCoercion_Expr1(FujureParser.Coercion_Expr1Context ctx);
 	/**
-	 * Enter a parse tree produced by the {@code NotExpr}
+	 * Enter a parse tree produced by the {@code LesserEqualExpr}
 	 * labeled alternative in {@link FujureParser#expr2}.
 	 * @param ctx the parse tree
 	 */
-	void enterNotExpr(FujureParser.NotExprContext ctx);
+	void enterLesserEqualExpr(FujureParser.LesserEqualExprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code NotExpr}
+	 * Exit a parse tree produced by the {@code LesserEqualExpr}
 	 * labeled alternative in {@link FujureParser#expr2}.
 	 * @param ctx the parse tree
 	 */
-	void exitNotExpr(FujureParser.NotExprContext ctx);
+	void exitLesserEqualExpr(FujureParser.LesserEqualExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code VariableExpr}
+	 * Enter a parse tree produced by the {@code GreaterExpr}
 	 * labeled alternative in {@link FujureParser#expr2}.
 	 * @param ctx the parse tree
 	 */
-	void enterVariableExpr(FujureParser.VariableExprContext ctx);
+	void enterGreaterExpr(FujureParser.GreaterExprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code VariableExpr}
+	 * Exit a parse tree produced by the {@code GreaterExpr}
 	 * labeled alternative in {@link FujureParser#expr2}.
 	 * @param ctx the parse tree
 	 */
-	void exitVariableExpr(FujureParser.VariableExprContext ctx);
+	void exitGreaterExpr(FujureParser.GreaterExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code LiteralExpr}
+	 * Enter a parse tree produced by the {@code LesserExpr}
 	 * labeled alternative in {@link FujureParser#expr2}.
 	 * @param ctx the parse tree
 	 */
-	void enterLiteralExpr(FujureParser.LiteralExprContext ctx);
+	void enterLesserExpr(FujureParser.LesserExprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LiteralExpr}
+	 * Exit a parse tree produced by the {@code LesserExpr}
 	 * labeled alternative in {@link FujureParser#expr2}.
 	 * @param ctx the parse tree
 	 */
-	void exitLiteralExpr(FujureParser.LiteralExprContext ctx);
+	void exitLesserExpr(FujureParser.LesserExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code GreaterEqualExpr}
+	 * labeled alternative in {@link FujureParser#expr2}.
+	 * @param ctx the parse tree
+	 */
+	void enterGreaterEqualExpr(FujureParser.GreaterEqualExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code GreaterEqualExpr}
+	 * labeled alternative in {@link FujureParser#expr2}.
+	 * @param ctx the parse tree
+	 */
+	void exitGreaterEqualExpr(FujureParser.GreaterEqualExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code Coercion_Expr2}
 	 * labeled alternative in {@link FujureParser#expr2}.
@@ -403,6 +415,54 @@ public interface FujureParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCoercion_Expr2(FujureParser.Coercion_Expr2Context ctx);
+	/**
+	 * Enter a parse tree produced by the {@code NotExpr}
+	 * labeled alternative in {@link FujureParser#expr3}.
+	 * @param ctx the parse tree
+	 */
+	void enterNotExpr(FujureParser.NotExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code NotExpr}
+	 * labeled alternative in {@link FujureParser#expr3}.
+	 * @param ctx the parse tree
+	 */
+	void exitNotExpr(FujureParser.NotExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code VariableExpr}
+	 * labeled alternative in {@link FujureParser#expr3}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableExpr(FujureParser.VariableExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code VariableExpr}
+	 * labeled alternative in {@link FujureParser#expr3}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableExpr(FujureParser.VariableExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code LiteralExpr}
+	 * labeled alternative in {@link FujureParser#expr3}.
+	 * @param ctx the parse tree
+	 */
+	void enterLiteralExpr(FujureParser.LiteralExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code LiteralExpr}
+	 * labeled alternative in {@link FujureParser#expr3}.
+	 * @param ctx the parse tree
+	 */
+	void exitLiteralExpr(FujureParser.LiteralExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Coercion_Expr3}
+	 * labeled alternative in {@link FujureParser#expr3}.
+	 * @param ctx the parse tree
+	 */
+	void enterCoercion_Expr3(FujureParser.Coercion_Expr3Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Coercion_Expr3}
+	 * labeled alternative in {@link FujureParser#expr3}.
+	 * @param ctx the parse tree
+	 */
+	void exitCoercion_Expr3(FujureParser.Coercion_Expr3Context ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ValueRef}
 	 * labeled alternative in {@link FujureParser#valRef}.

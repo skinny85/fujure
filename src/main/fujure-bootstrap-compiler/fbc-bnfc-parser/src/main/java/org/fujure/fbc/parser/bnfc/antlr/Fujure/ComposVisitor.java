@@ -140,6 +140,26 @@ public class ComposVisitor<A> implements
       Expr expr_1 = p.expr_1.accept(this, arg);
       Expr expr_2 = p.expr_2.accept(this, arg);
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr(expr_1, expr_2);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserExpr p, A arg)
+    {
+      Expr expr_1 = p.expr_1.accept(this, arg);
+      Expr expr_2 = p.expr_2.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserExpr(expr_1, expr_2);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserEqualExpr p, A arg)
+    {
+      Expr expr_1 = p.expr_1.accept(this, arg);
+      Expr expr_2 = p.expr_2.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserEqualExpr(expr_1, expr_2);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterExpr p, A arg)
+    {
+      Expr expr_1 = p.expr_1.accept(this, arg);
+      Expr expr_2 = p.expr_2.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterExpr(expr_1, expr_2);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterEqualExpr p, A arg)
+    {
+      Expr expr_1 = p.expr_1.accept(this, arg);
+      Expr expr_2 = p.expr_2.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterEqualExpr(expr_1, expr_2);
     }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr p, A arg)
     {
       Expr expr_ = p.expr_.accept(this, arg);

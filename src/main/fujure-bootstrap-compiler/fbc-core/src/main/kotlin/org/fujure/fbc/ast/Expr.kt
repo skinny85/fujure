@@ -1,7 +1,7 @@
 package org.fujure.fbc.ast
 
 sealed class Expr {
-    data class ValueReferenceExpr(val ref: ValueReference): Expr()
+    data class ValueReference(val ref: org.fujure.fbc.ast.ValueReference): Expr()
 
     data class IntLiteral(val value: Int) : Expr()
 
@@ -18,4 +18,9 @@ sealed class Expr {
     data class Disjunction(val leftDisjunct: Expr, val rightDisjunct: Expr) : Expr()
     data class Conjunction(val leftConjunct: Expr, val rightConjunct: Expr) : Expr()
     data class Negation(val operand: Expr) : Expr()
+
+    data class Lesser(val leftOperand: Expr, val rightOperand: Expr) : Expr()
+    data class LesserEqual(val leftOperand: Expr, val rightOperand: Expr) : Expr()
+    data class Greater(val leftOperand: Expr, val rightOperand: Expr) : Expr()
+    data class GreaterEqual(val leftOperand: Expr, val rightOperand: Expr) : Expr()
 }

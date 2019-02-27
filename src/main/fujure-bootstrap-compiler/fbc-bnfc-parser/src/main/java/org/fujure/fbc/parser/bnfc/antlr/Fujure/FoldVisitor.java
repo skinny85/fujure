@@ -135,6 +135,30 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
       r = combine(p.expr_2.accept(this, arg), r, arg);
       return r;
     }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserExpr p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.expr_1.accept(this, arg), r, arg);
+      r = combine(p.expr_2.accept(this, arg), r, arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserEqualExpr p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.expr_1.accept(this, arg), r, arg);
+      r = combine(p.expr_2.accept(this, arg), r, arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterExpr p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.expr_1.accept(this, arg), r, arg);
+      r = combine(p.expr_2.accept(this, arg), r, arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterEqualExpr p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.expr_1.accept(this, arg), r, arg);
+      r = combine(p.expr_2.accept(this, arg), r, arg);
+      return r;
+    }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr p, A arg) {
       R r = leaf(arg);
       r = combine(p.expr_.accept(this, arg), r, arg);

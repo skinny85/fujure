@@ -66,6 +66,11 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
 
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr p, A arg) { return visitDefault(p, arg); }
 
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserExpr p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserEqualExpr p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterExpr p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterEqualExpr p, A arg) { return visitDefault(p, arg); }
+
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr p, A arg) { return visitDefault(p, arg); }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr p, A arg) { return visitDefault(p, arg); }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg) { return visitDefault(p, arg); }

@@ -41,7 +41,7 @@ object Aast2TruffleNodes {
             is AExpr.ACharLiteral -> CharLiteralExprNode(parseCharaLiteral(aExpr.value))
             is AExpr.AIntLiteral -> IntLiteralExprNode(aExpr.value)
             is AExpr.AStringLiteral -> StringLiteralExprNode(aExpr.value)
-            is AExpr.AValueReferenceExpr -> ReferenceExprNode(aExpr.targetModule, aExpr.reference, fujureTruffleLanguage)
+            is AExpr.AValueReference -> ReferenceExprNode(aExpr.targetModule, aExpr.reference, fujureTruffleLanguage)
             is AExpr.ANegation -> NegationExprNode.of(translateExpr(aExpr.operand, fujureTruffleLanguage))
             is AExpr.ADisjunction -> DisjunctionExprNode(
                     translateExpr(aExpr.leftDisjunct, fujureTruffleLanguage),

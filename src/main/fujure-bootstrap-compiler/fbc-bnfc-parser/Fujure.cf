@@ -28,10 +28,14 @@ TypeSpecFragment . TypeSpecFragm ::= JID ;
 
 OrExpr             . Expr   ::= Expr "||" Expr1 ;
 AndExpr            . Expr1  ::= Expr1 "&&" Expr2 ;
-NotExpr            . Expr2  ::= "!" Expr2 ;
-VariableExpr       . Expr2  ::= ValRef ;
-LiteralExpr        . Expr2  ::= Literal ;
-coercions Expr 2 ;
+LesserExpr         . Expr2  ::= Expr2 "<" Expr3 ;
+LesserEqualExpr    . Expr2  ::= Expr2 "<=" Expr3 ;
+GreaterExpr        . Expr2  ::= Expr2 ">" Expr3 ;
+GreaterEqualExpr   . Expr2  ::= Expr2 ">=" Expr3 ;
+NotExpr            . Expr3  ::= "!" Expr3 ;
+VariableExpr       . Expr3  ::= ValRef ;
+LiteralExpr        . Expr3  ::= Literal ;
+coercions Expr 3 ;
 
 ValueRef . ValRef ::= [ValRefFragm] ;
 separator nonempty ValRefFragm "." ;
