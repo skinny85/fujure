@@ -1,6 +1,5 @@
 package org.fujure.fbc.aast
 
-import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.ast.Module
 
@@ -23,4 +22,9 @@ sealed class AExpr {
     data class ANegation(val operand: AExpr) : AExpr()
     data class AConjunction(val leftConjunct: AExpr, val rightConjunct: AExpr) : AExpr()
     data class ADisjunction(val leftDisjunct: AExpr, val rightDisjunct: AExpr) : AExpr()
+
+    data class ALesser(val leftOperand: AExpr, val rightOperand: AExpr) : AExpr()
+    data class ALesserEqual(val leftOperand: AExpr, val rightOperand: AExpr) : AExpr()
+    data class AGreater(val leftOperand: AExpr, val rightOperand: AExpr) : AExpr()
+    data class AGreaterEqual(val leftOperand: AExpr, val rightOperand: AExpr) : AExpr()
 }

@@ -98,6 +98,7 @@ object FileContentsCodeGen {
             is AExpr.AConjunction -> {
                 handleBinaryOperation(aExpr.leftConjunct, aExpr.rightConjunct, module, "&&", aExpr.precedence())
             }
+            else -> TODO()
         }
     }
 
@@ -145,5 +146,6 @@ object FileContentsCodeGen {
         is AExpr.ACharLiteral -> 2
         is AExpr.AStringLiteral -> 2
         is AExpr.AValueReference -> 2
+        else -> TODO()
     }
 }

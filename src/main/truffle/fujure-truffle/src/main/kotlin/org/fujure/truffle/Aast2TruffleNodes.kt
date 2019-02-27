@@ -49,6 +49,7 @@ object Aast2TruffleNodes {
             is AExpr.AConjunction -> ConjunctionExprNode(
                     translateExpr(aExpr.leftConjunct, fujureTruffleLanguage),
                     translateExpr(aExpr.rightConjunct, fujureTruffleLanguage))
+            else -> TODO()
         }
     }
 

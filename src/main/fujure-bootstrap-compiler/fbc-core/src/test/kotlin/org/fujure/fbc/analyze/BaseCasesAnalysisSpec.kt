@@ -85,6 +85,26 @@ class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     BuiltInTypes.Int, BuiltInTypes.Bool))
                 }
             }
+
+            it.describes("when comparing a Char and a String with the 'less' operator") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def a = 'a' < "a"
+                            """)
+                            .analyzed()
+                }
+
+                it.should("report 2 TypeMismatch errors") {
+                    assertThat(file1Errors()).containsExactly(
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("a"),
+                                    BuiltInTypes.Int, BuiltInTypes.Char),
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("a"),
+                                    BuiltInTypes.Int, BuiltInTypes.String))
+                }
+            }
         }
     }
 }
