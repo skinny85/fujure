@@ -11,7 +11,7 @@ def truthy = true
 
 def falsy: Bool = false
 def falsyAgain = !(true || falsy && false)
-def falsyRef = !Ref.notTruthy
+def falsyRef = !Ref.truth
 def u = unit
 def c: Char = '\n'
 def s: String = "Hello, \nWorld!"

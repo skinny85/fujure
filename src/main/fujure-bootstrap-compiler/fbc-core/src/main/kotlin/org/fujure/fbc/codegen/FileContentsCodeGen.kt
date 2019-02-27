@@ -98,7 +98,18 @@ object FileContentsCodeGen {
             is AExpr.AConjunction -> {
                 handleBinaryOperation(aExpr.leftConjunct, aExpr.rightConjunct, module, "&&", aExpr.precedence())
             }
-            else -> TODO()
+            is AExpr.ALesser -> {
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "<", aExpr.precedence())
+            }
+            is AExpr.ALesserEqual -> {
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "<=", aExpr.precedence())
+            }
+            is AExpr.AGreater -> {
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, ">", aExpr.precedence())
+            }
+            is AExpr.AGreaterEqual -> {
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, ">=", aExpr.precedence())
+            }
         }
     }
 
@@ -139,13 +150,16 @@ object FileContentsCodeGen {
     private fun AExpr.precedence(): Int = when (this) {
         is AExpr.ADisjunction -> 0
         is AExpr.AConjunction -> 1
-        is AExpr.ANegation -> 2
-        is AExpr.AIntLiteral -> 2
-        is AExpr.AUnitLiteral -> 2
-        is AExpr.ABoolLiteral -> 2
-        is AExpr.ACharLiteral -> 2
-        is AExpr.AStringLiteral -> 2
-        is AExpr.AValueReference -> 2
-        else -> TODO()
+        is AExpr.ALesser -> 2
+        is AExpr.ALesserEqual -> 2
+        is AExpr.AGreater -> 2
+        is AExpr.AGreaterEqual -> 2
+        is AExpr.ANegation -> 3
+        is AExpr.AIntLiteral -> 3
+        is AExpr.AUnitLiteral -> 3
+        is AExpr.ABoolLiteral -> 3
+        is AExpr.ACharLiteral -> 3
+        is AExpr.AStringLiteral -> 3
+        is AExpr.AValueReference -> 3
     }
 }
