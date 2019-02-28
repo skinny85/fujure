@@ -202,6 +202,7 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                 evalFujure("""
                     def b: Bool = ! true
                     def b2 = !false || b && false
+                    def b3 = 2 >= 1 && 3 <= 1
                 """)
             }
 
@@ -219,8 +220,13 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
             }
 
             it.should("correctly evaluate the complex Boolean expression") {
-                val b = moduleBindings.getMember("b2")
-                assertThat(b.asBoolean()).isTrue()
+                val b2 = moduleBindings.getMember("b2")
+                assertThat(b2.asBoolean()).isTrue()
+            }
+
+            it.should("correctly evaluate the number comparison expression") {
+                val b3 = moduleBindings.getMember("b3")
+                assertThat(b3.asBoolean()).isFalse()
             }
         }
 

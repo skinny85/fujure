@@ -10,7 +10,11 @@ import org.fujure.truffle.nodes.ConjunctionExprNode
 import org.fujure.truffle.nodes.DefNode
 import org.fujure.truffle.nodes.DisjunctionExprNode
 import org.fujure.truffle.nodes.ExprNode
+import org.fujure.truffle.nodes.GreaterEqualExprNode
+import org.fujure.truffle.nodes.GreaterExprNode
 import org.fujure.truffle.nodes.IntLiteralExprNode
+import org.fujure.truffle.nodes.LesserEqualExprNode
+import org.fujure.truffle.nodes.LesserExprNode
 import org.fujure.truffle.nodes.ModuleNonRootNode
 import org.fujure.truffle.nodes.NegationExprNode
 import org.fujure.truffle.nodes.ReferenceExprNode
@@ -49,7 +53,19 @@ object Aast2TruffleNodes {
             is AExpr.AConjunction -> ConjunctionExprNode(
                     translateExpr(aExpr.leftConjunct, fujureTruffleLanguage),
                     translateExpr(aExpr.rightConjunct, fujureTruffleLanguage))
-            else -> TODO()
+            is AExpr.ALesser -> LesserExprNode.of(
+                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
+                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+            is AExpr.ALesserEqual -> LesserEqualExprNode.of(
+                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
+                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+            is AExpr.AGreater -> GreaterExprNode.of(
+                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
+                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+            is AExpr.AGreaterEqual -> GreaterEqualExprNode.of(
+                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
+                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+
         }
     }
 
