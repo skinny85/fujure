@@ -182,7 +182,16 @@ object VerificationAnalysis {
                     valName, chain, { left, right -> AExpr.AGreater(left, right) })
             is Expr.GreaterEqual -> handleComparisonOperator(expr.leftOperand, expr.rightOperand, symbolTable, module,
                     valName, chain, { left, right -> AExpr.AGreaterEqual(left, right) })
-            else -> TODO()
+            is Expr.Addition -> handleArithmeticOperation(expr.augend, expr.addend, symbolTable, module,
+                    valName, chain, { left, right -> AExpr.AAddition(left, right) })
+            is Expr.Subtraction -> handleArithmeticOperation(expr.minuend, expr.subtrahend, symbolTable, module,
+                    valName, chain, { left, right -> AExpr.ASubtraction(left, right) })
+            is Expr.Multiplication -> handleArithmeticOperation(expr.multiplicand, expr.multiplier, symbolTable, module,
+                    valName, chain, { left, right -> AExpr.AMultiplication(left, right) })
+            is Expr.Division-> handleArithmeticOperation(expr.dividend, expr.divisor, symbolTable, module,
+                    valName, chain, { left, right -> AExpr.ADivision(left, right) })
+            is Expr.Modulus-> handleArithmeticOperation(expr.dividend, expr.divisor, symbolTable, module,
+                    valName, chain, { left, right -> AExpr.AModulus(left, right) })
         }
     }
 
@@ -201,6 +210,19 @@ object VerificationAnalysis {
     private fun handleHomogeneousBinaryOperatorReturningBool(leftExpr: Expr, rightExpr: Expr, symbolTable: Pass03SymbolTable,
             module: Module, valName: String, chain: List<ValueCoordinates>, cons: (AExpr, AExpr) -> AExpr,
             expectedType: QualifiedType): ExprAnalysisResult {
+        return handleHomogeneousBinaryOperation(leftExpr, rightExpr, symbolTable, module, valName, chain, cons,
+                expectedType, BuiltInTypes.Bool)
+    }
+
+    private fun handleArithmeticOperation(leftExpr: Expr, rightExpr: Expr, symbolTable: Pass03SymbolTable, module: Module,
+            valName: String, chain: List<ValueCoordinates>, cons: (AExpr, AExpr) -> AExpr): ExprAnalysisResult {
+        return handleHomogeneousBinaryOperation(leftExpr, rightExpr, symbolTable, module, valName,
+                chain, cons, BuiltInTypes.Int, BuiltInTypes.Int)
+    }
+
+    private fun handleHomogeneousBinaryOperation(leftExpr: Expr, rightExpr: Expr, symbolTable: Pass03SymbolTable,
+            module: Module, valName: String, chain: List<ValueCoordinates>, cons: (AExpr, AExpr) -> AExpr,
+            expectedType: QualifiedType, returnType: QualifiedType): ExprAnalysisResult {
         val errors = mutableListOf<SemanticError>()
 
         val leftOperandAnalysisResult = analyzeExpr(leftExpr, symbolTable, module, valName, chain)
@@ -237,12 +259,12 @@ object VerificationAnalysis {
         }
 
         return if (errors.isEmpty()) {
-            ExprAnalysisResult.Success(BuiltInTypes.Bool, if (leftOperandAast != null && rightOperandAast != null)
+            ExprAnalysisResult.Success(returnType, if (leftOperandAast != null && rightOperandAast != null)
                 cons(leftOperandAast, rightOperandAast)
             else
                 null)
         } else {
-            ExprAnalysisResult.Failure(BuiltInTypes.Bool, errors)
+            ExprAnalysisResult.Failure(returnType, errors)
         }
     }
 

@@ -105,6 +105,26 @@ class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     BuiltInTypes.Int, BuiltInTypes.String))
                 }
             }
+
+            it.describes("when adding a String to a Char") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def a = 'a' + "a"
+                            """)
+                            .analyzed()
+                }
+
+                it.should("report 2 TypeMismatch errors") {
+                    assertThat(file1Errors()).containsExactly(
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("a"),
+                                    BuiltInTypes.Int, BuiltInTypes.Char),
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("a"),
+                                    BuiltInTypes.Int, BuiltInTypes.String))
+                }
+            }
         }
     }
 }

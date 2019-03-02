@@ -110,6 +110,7 @@ object FileContentsCodeGen {
             is AExpr.AGreaterEqual -> {
                 handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, ">=", aExpr.precedence())
             }
+            else -> TODO()
         }
     }
 
@@ -161,5 +162,6 @@ object FileContentsCodeGen {
         is AExpr.ACharLiteral -> 3
         is AExpr.AStringLiteral -> 3
         is AExpr.AValueReference -> 3
+        else -> TODO()
     }
 }

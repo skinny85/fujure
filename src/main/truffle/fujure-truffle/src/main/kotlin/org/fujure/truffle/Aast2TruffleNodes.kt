@@ -65,7 +65,7 @@ object Aast2TruffleNodes {
             is AExpr.AGreaterEqual -> GreaterEqualExprNode.of(
                     translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
                     translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
-
+            else -> TODO()
         }
     }
 

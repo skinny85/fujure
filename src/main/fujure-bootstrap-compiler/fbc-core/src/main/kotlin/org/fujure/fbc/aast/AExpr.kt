@@ -27,4 +27,10 @@ sealed class AExpr {
     data class ALesserEqual(val leftOperand: AExpr, val rightOperand: AExpr) : AExpr()
     data class AGreater(val leftOperand: AExpr, val rightOperand: AExpr) : AExpr()
     data class AGreaterEqual(val leftOperand: AExpr, val rightOperand: AExpr) : AExpr()
+
+    data class AAddition(val augend: AExpr, val addend: AExpr) : AExpr()
+    data class ASubtraction(val minuend: AExpr, val subtrahend: AExpr) : AExpr()
+    data class AMultiplication(val multiplicand: AExpr, val multiplier: AExpr) : AExpr()
+    data class ADivision(val dividend: AExpr, val divisor: AExpr) : AExpr()
+    data class AModulus(val dividend: AExpr, val divisor: AExpr) : AExpr()
 }
