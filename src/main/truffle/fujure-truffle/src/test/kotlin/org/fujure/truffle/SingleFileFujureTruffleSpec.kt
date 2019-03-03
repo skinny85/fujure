@@ -203,6 +203,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                     def b: Bool = ! true
                     def b2 = !false || b && false
                     def b3 = 2 >= 1 && 3 <= 1
+                    def intMax = 2147483647
+                    def i = 3 * (intMax - (intMax - 2))
                 """)
             }
 
@@ -227,6 +229,11 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
             it.should("correctly evaluate the number comparison expression") {
                 val b3 = moduleBindings.getMember("b3")
                 assertThat(b3.asBoolean()).isFalse()
+            }
+
+            it.should("correctly evaluate the integer expression") {
+                val i = moduleBindings.getMember("i")
+                assertThat(i.asInt()).isEqualTo(6)
             }
         }
 

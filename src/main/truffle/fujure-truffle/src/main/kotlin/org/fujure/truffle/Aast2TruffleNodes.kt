@@ -4,11 +4,13 @@ import org.apache.commons.text.StringEscapeUtils
 import org.fujure.fbc.aast.ADef
 import org.fujure.fbc.aast.AExpr
 import org.fujure.fbc.aast.AFileContents
+import org.fujure.truffle.nodes.AdditionExprNode
 import org.fujure.truffle.nodes.BoolLiteralExprNode
 import org.fujure.truffle.nodes.CharLiteralExprNode
 import org.fujure.truffle.nodes.ConjunctionExprNode
 import org.fujure.truffle.nodes.DefNode
 import org.fujure.truffle.nodes.DisjunctionExprNode
+import org.fujure.truffle.nodes.DivisionExprNode
 import org.fujure.truffle.nodes.ExprNode
 import org.fujure.truffle.nodes.GreaterEqualExprNode
 import org.fujure.truffle.nodes.GreaterExprNode
@@ -16,10 +18,13 @@ import org.fujure.truffle.nodes.IntLiteralExprNode
 import org.fujure.truffle.nodes.LesserEqualExprNode
 import org.fujure.truffle.nodes.LesserExprNode
 import org.fujure.truffle.nodes.ModuleNonRootNode
+import org.fujure.truffle.nodes.ModulusExprNode
+import org.fujure.truffle.nodes.MultiplicationExprNode
 import org.fujure.truffle.nodes.NegationExprNode
 import org.fujure.truffle.nodes.ReferenceExprNode
 import org.fujure.truffle.nodes.SimpleValueDefNode
 import org.fujure.truffle.nodes.StringLiteralExprNode
+import org.fujure.truffle.nodes.SubtractionExprNode
 import org.fujure.truffle.nodes.UnitLiteralExprNode
 
 object Aast2TruffleNodes {
@@ -65,7 +70,21 @@ object Aast2TruffleNodes {
             is AExpr.AGreaterEqual -> GreaterEqualExprNode.of(
                     translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
                     translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
-            else -> TODO()
+            is AExpr.AAddition -> AdditionExprNode.of(
+                    translateExpr(aExpr.augend, fujureTruffleLanguage),
+                    translateExpr(aExpr.addend, fujureTruffleLanguage))
+            is AExpr.ASubtraction -> SubtractionExprNode.of(
+                    translateExpr(aExpr.minuend, fujureTruffleLanguage),
+                    translateExpr(aExpr.subtrahend, fujureTruffleLanguage))
+            is AExpr.AMultiplication -> MultiplicationExprNode.of(
+                    translateExpr(aExpr.multiplicand, fujureTruffleLanguage),
+                    translateExpr(aExpr.multiplier, fujureTruffleLanguage))
+            is AExpr.ADivision -> DivisionExprNode.of(
+                    translateExpr(aExpr.dividend, fujureTruffleLanguage),
+                    translateExpr(aExpr.divisor, fujureTruffleLanguage))
+            is AExpr.AModulus -> ModulusExprNode.of(
+                    translateExpr(aExpr.dividend, fujureTruffleLanguage),
+                    translateExpr(aExpr.divisor, fujureTruffleLanguage))
         }
     }
 
