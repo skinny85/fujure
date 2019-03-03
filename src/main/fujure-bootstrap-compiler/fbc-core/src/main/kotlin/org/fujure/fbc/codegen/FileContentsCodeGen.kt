@@ -114,16 +114,16 @@ object FileContentsCodeGen {
                 handleBinaryOperation(aExpr.augend, aExpr.addend, module, "+", aExpr.precedence())
             }
             is AExpr.ASubtraction -> {
-                handleBinaryOperation(aExpr.minuend, aExpr.subtrahend, module, "-", aExpr.precedence(), false)
+                handleBinaryOperation(aExpr.minuend, aExpr.subtrahend, module, "-", aExpr.precedence())
             }
             is AExpr.AMultiplication -> {
                 handleBinaryOperation(aExpr.multiplicand, aExpr.multiplier, module, "*", aExpr.precedence())
             }
             is AExpr.ADivision -> {
-                handleBinaryOperation(aExpr.dividend, aExpr.divisor, module, "/", aExpr.precedence(), false)
+                handleBinaryOperation(aExpr.dividend, aExpr.divisor, module, "/", aExpr.precedence())
             }
             is AExpr.AModulus -> {
-                handleBinaryOperation(aExpr.dividend, aExpr.divisor, module, "%", aExpr.precedence(), false)
+                handleBinaryOperation(aExpr.dividend, aExpr.divisor, module, "%", aExpr.precedence())
             }
         }
     }
@@ -133,7 +133,7 @@ object FileContentsCodeGen {
     }
 
     private fun handleBinaryOperation(leftOperand: AExpr, rightOperand: AExpr, module: Module, operator: String,
-            operatorPrecedence: Int, associativeOperation: Boolean = true): CodeBlock {
+            operatorPrecedence: Int): CodeBlock {
         val leftOperandCode = aExpr2CodeBlock(leftOperand, module)
         val rightOperandCode = aExpr2CodeBlock(rightOperand, module)
 
@@ -150,11 +150,7 @@ object FileContentsCodeGen {
 
         code.add(" $operator ")
 
-        val needsRightParentheses = if (associativeOperation)
-            rightOperand.precedence() < operatorPrecedence
-        else
-            rightOperand.precedence() <= operatorPrecedence
-        if (needsRightParentheses) {
+        if (rightOperand.precedence() <= operatorPrecedence) {
             code
                     .add("(")
                     .add(rightOperandCode)
