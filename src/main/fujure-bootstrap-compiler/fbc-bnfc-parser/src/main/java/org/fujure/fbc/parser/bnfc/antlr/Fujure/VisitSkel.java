@@ -137,6 +137,16 @@ public class VisitSkel
       p.expr_1.accept(new ExprVisitor<R,A>(), arg);
       p.expr_2.accept(new ExprVisitor<R,A>(), arg);
       return null;
+    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.EqualityExpr p, A arg)
+    { /* Code For EqualityExpr Goes Here */
+      p.expr_1.accept(new ExprVisitor<R,A>(), arg);
+      p.expr_2.accept(new ExprVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.InequalityExpr p, A arg)
+    { /* Code For InequalityExpr Goes Here */
+      p.expr_1.accept(new ExprVisitor<R,A>(), arg);
+      p.expr_2.accept(new ExprVisitor<R,A>(), arg);
+      return null;
     }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserExpr p, A arg)
     { /* Code For LesserExpr Goes Here */
       p.expr_1.accept(new ExprVisitor<R,A>(), arg);

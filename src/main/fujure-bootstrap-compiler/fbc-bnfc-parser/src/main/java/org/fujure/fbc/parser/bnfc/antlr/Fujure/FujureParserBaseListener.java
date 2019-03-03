@@ -364,6 +364,42 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterEqualityExpr(FujureParser.EqualityExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEqualityExpr(FujureParser.EqualityExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInequalityExpr(FujureParser.InequalityExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInequalityExpr(FujureParser.InequalityExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCoercion_Expr2(FujureParser.Coercion_Expr2Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCoercion_Expr2(FujureParser.Coercion_Expr2Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterLesserEqualExpr(FujureParser.LesserEqualExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -412,13 +448,13 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCoercion_Expr2(FujureParser.Coercion_Expr2Context ctx) { }
+	@Override public void enterCoercion_Expr3(FujureParser.Coercion_Expr3Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCoercion_Expr2(FujureParser.Coercion_Expr2Context ctx) { }
+	@Override public void exitCoercion_Expr3(FujureParser.Coercion_Expr3Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -448,13 +484,13 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCoercion_Expr3(FujureParser.Coercion_Expr3Context ctx) { }
+	@Override public void enterCoercion_Expr4(FujureParser.Coercion_Expr4Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCoercion_Expr3(FujureParser.Coercion_Expr3Context ctx) { }
+	@Override public void exitCoercion_Expr4(FujureParser.Coercion_Expr4Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -484,18 +520,6 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCoercion_Expr4(FujureParser.Coercion_Expr4Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCoercion_Expr4(FujureParser.Coercion_Expr4Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterMultiplicationExpr(FujureParser.MultiplicationExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -503,6 +527,18 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitMultiplicationExpr(FujureParser.MultiplicationExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCoercion_Expr5(FujureParser.Coercion_Expr5Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCoercion_Expr5(FujureParser.Coercion_Expr5Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -544,13 +580,13 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCoercion_Expr5(FujureParser.Coercion_Expr5Context ctx) { }
+	@Override public void enterCoercion_Expr6(FujureParser.Coercion_Expr6Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCoercion_Expr5(FujureParser.Coercion_Expr5Context ctx) { }
+	@Override public void exitCoercion_Expr6(FujureParser.Coercion_Expr6Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
