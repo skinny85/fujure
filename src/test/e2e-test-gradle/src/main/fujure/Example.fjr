@@ -5,7 +5,7 @@ import com.example.inner.Ref
 
 def val1 = 342
 
-def val2: Int = 23
+def val2: Int = 1 + 10 % 7 - (3 * 1 - 9 * 5 / 2)
 
 def truthy = true
 

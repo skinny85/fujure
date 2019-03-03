@@ -110,7 +110,21 @@ object FileContentsCodeGen {
             is AExpr.AGreaterEqual -> {
                 handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, ">=", aExpr.precedence())
             }
-            else -> TODO()
+            is AExpr.AAddition -> {
+                handleBinaryOperation(aExpr.augend, aExpr.addend, module, "+", aExpr.precedence())
+            }
+            is AExpr.ASubtraction -> {
+                handleBinaryOperation(aExpr.minuend, aExpr.subtrahend, module, "-", aExpr.precedence(), false)
+            }
+            is AExpr.AMultiplication -> {
+                handleBinaryOperation(aExpr.multiplicand, aExpr.multiplier, module, "*", aExpr.precedence())
+            }
+            is AExpr.ADivision -> {
+                handleBinaryOperation(aExpr.dividend, aExpr.divisor, module, "/", aExpr.precedence(), false)
+            }
+            is AExpr.AModulus -> {
+                handleBinaryOperation(aExpr.dividend, aExpr.divisor, module, "%", aExpr.precedence(), false)
+            }
         }
     }
 
@@ -119,7 +133,7 @@ object FileContentsCodeGen {
     }
 
     private fun handleBinaryOperation(leftOperand: AExpr, rightOperand: AExpr, module: Module, operator: String,
-            operatorPrecedence: Int): CodeBlock {
+            operatorPrecedence: Int, associativeOperation: Boolean = true): CodeBlock {
         val leftOperandCode = aExpr2CodeBlock(leftOperand, module)
         val rightOperandCode = aExpr2CodeBlock(rightOperand, module)
 
@@ -136,7 +150,11 @@ object FileContentsCodeGen {
 
         code.add(" $operator ")
 
-        if (rightOperand.precedence() < operatorPrecedence) {
+        val needsRightParentheses = if (associativeOperation)
+            rightOperand.precedence() < operatorPrecedence
+        else
+            rightOperand.precedence() <= operatorPrecedence
+        if (needsRightParentheses) {
             code
                     .add("(")
                     .add(rightOperandCode)
@@ -155,13 +173,17 @@ object FileContentsCodeGen {
         is AExpr.ALesserEqual -> 2
         is AExpr.AGreater -> 2
         is AExpr.AGreaterEqual -> 2
-        is AExpr.ANegation -> 3
-        is AExpr.AIntLiteral -> 3
-        is AExpr.AUnitLiteral -> 3
-        is AExpr.ABoolLiteral -> 3
-        is AExpr.ACharLiteral -> 3
-        is AExpr.AStringLiteral -> 3
-        is AExpr.AValueReference -> 3
-        else -> TODO()
+        is AExpr.AAddition -> 3
+        is AExpr.ASubtraction -> 3
+        is AExpr.AMultiplication -> 4
+        is AExpr.ADivision -> 4
+        is AExpr.AModulus -> 4
+        is AExpr.ANegation -> 5
+        is AExpr.AIntLiteral -> 5
+        is AExpr.AUnitLiteral -> 5
+        is AExpr.ABoolLiteral -> 5
+        is AExpr.ACharLiteral -> 5
+        is AExpr.AStringLiteral -> 5
+        is AExpr.AValueReference -> 5
     }
 }
