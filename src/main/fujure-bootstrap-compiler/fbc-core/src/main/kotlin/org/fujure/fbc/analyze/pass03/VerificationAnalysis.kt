@@ -174,13 +174,13 @@ object VerificationAnalysis {
                     valName, chain, { left, right -> AExpr.ADisjunction(left, right) })
             is Expr.Conjunction -> handleBinaryBoolOperation(expr.leftConjunct, expr.rightConjunct, symbolTable, module,
                     valName, chain, { left, right -> AExpr.AConjunction(left, right) })
-            is Expr.Lesser -> handleComparisonOperator(expr.leftOperand, expr.rightOperand, symbolTable, module,
+            is Expr.Lesser -> handleOrderingOperation(expr.leftOperand, expr.rightOperand, symbolTable, module,
                     valName, chain, { left, right -> AExpr.ALesser(left, right) })
-            is Expr.LesserEqual -> handleComparisonOperator(expr.leftOperand, expr.rightOperand, symbolTable, module,
+            is Expr.LesserEqual -> handleOrderingOperation(expr.leftOperand, expr.rightOperand, symbolTable, module,
                     valName, chain, { left, right -> AExpr.ALesserEqual(left, right) })
-            is Expr.Greater -> handleComparisonOperator(expr.leftOperand, expr.rightOperand, symbolTable, module,
+            is Expr.Greater -> handleOrderingOperation(expr.leftOperand, expr.rightOperand, symbolTable, module,
                     valName, chain, { left, right -> AExpr.AGreater(left, right) })
-            is Expr.GreaterEqual -> handleComparisonOperator(expr.leftOperand, expr.rightOperand, symbolTable, module,
+            is Expr.GreaterEqual -> handleOrderingOperation(expr.leftOperand, expr.rightOperand, symbolTable, module,
                     valName, chain, { left, right -> AExpr.AGreaterEqual(left, right) })
             is Expr.Addition -> handleArithmeticOperation(expr.augend, expr.addend, symbolTable, module,
                     valName, chain, { left, right -> AExpr.AAddition(left, right) })
@@ -192,6 +192,12 @@ object VerificationAnalysis {
                     valName, chain, { left, right -> AExpr.ADivision(left, right) })
             is Expr.Modulus-> handleArithmeticOperation(expr.dividend, expr.divisor, symbolTable, module,
                     valName, chain, { left, right -> AExpr.AModulus(left, right) })
+            is Expr.Equality -> handleComparisonOperation(expr.leftOperand, expr.rightOperand, symbolTable, module,
+                    valName, chain, { left, right -> AExpr.AStringEquality(left, right) },
+                    { left, right -> AExpr.APrimitiveEquality(left, right) })
+            is Expr.Inequality -> handleComparisonOperation(expr.leftOperand, expr.rightOperand, symbolTable, module,
+                    valName, chain, { left, right -> AExpr.AStringInequality(left, right) },
+                    { left, right -> AExpr.APrimitiveInequality(left, right) })
         }
     }
 
@@ -201,7 +207,7 @@ object VerificationAnalysis {
                 chain, cons, BuiltInTypes.Bool)
     }
 
-    private fun handleComparisonOperator(leftExpr: Expr, rightExpr: Expr, symbolTable: Pass03SymbolTable, module: Module,
+    private fun handleOrderingOperation(leftExpr: Expr, rightExpr: Expr, symbolTable: Pass03SymbolTable, module: Module,
             valName: String, chain: List<ValueCoordinates>, cons: (AExpr, AExpr) -> AExpr): ExprAnalysisResult {
         return handleHomogeneousBinaryOperatorReturningBool(leftExpr, rightExpr, symbolTable, module, valName,
                 chain, cons, BuiltInTypes.Int)
@@ -265,6 +271,55 @@ object VerificationAnalysis {
                 null)
         } else {
             ExprAnalysisResult.Failure(returnType, errors)
+        }
+    }
+
+    private fun handleComparisonOperation(leftExpr: Expr, rightExpr: Expr, symbolTable: Pass03SymbolTable,
+            module: Module, valName: String, chain: List<ValueCoordinates>, consIfString: (AExpr, AExpr) -> AExpr,
+            consIfPrimitive: (AExpr, AExpr) -> AExpr): ExprAnalysisResult {
+        val errors = mutableListOf<SemanticError>()
+
+        val leftOperandAnalysisResult = analyzeExpr(leftExpr, symbolTable, module, valName, chain)
+        val rightOperandAnalysisResult = analyzeExpr(rightExpr, symbolTable, module, valName, chain)
+
+        val leftOperandAast: AExpr? = when (leftOperandAnalysisResult) {
+            is ExprAnalysisResult.Failure -> {
+                errors.addAll(leftOperandAnalysisResult.errors)
+                null
+            }
+            is ExprAnalysisResult.Success -> {
+                leftOperandAnalysisResult.aExpr
+            }
+        }
+        val rightOperandAast: AExpr? = when (rightOperandAnalysisResult) {
+            is ExprAnalysisResult.Failure -> {
+                errors.addAll(rightOperandAnalysisResult.errors)
+                null
+            }
+            is ExprAnalysisResult.Success -> {
+                rightOperandAnalysisResult.aExpr
+            }
+        }
+
+        val leftOperandType = leftOperandAnalysisResult.qualifiedType
+        val rightOperandType = rightOperandAnalysisResult.qualifiedType
+        if (leftOperandType != null && rightOperandType != null &&
+                leftOperandType != rightOperandType) {
+            errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName),
+                    leftOperandType, rightOperandType))
+        }
+
+        return if (errors.isEmpty()) {
+            ExprAnalysisResult.Success(BuiltInTypes.Bool, if (leftOperandAast != null && rightOperandAast != null) {
+                if (leftOperandType == BuiltInTypes.String)
+                    consIfString(leftOperandAast, rightOperandAast)
+                else
+                    consIfPrimitive(leftOperandAast, rightOperandAast)
+            } else {
+                null
+            })
+        } else {
+            ExprAnalysisResult.Failure(BuiltInTypes.Bool, errors)
         }
     }
 

@@ -85,6 +85,7 @@ object Aast2TruffleNodes {
             is AExpr.AModulus -> ModulusExprNode.of(
                     translateExpr(aExpr.dividend, fujureTruffleLanguage),
                     translateExpr(aExpr.divisor, fujureTruffleLanguage))
+            else -> TODO()
         }
     }
 

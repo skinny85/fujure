@@ -33,4 +33,9 @@ sealed class AExpr {
     data class AMultiplication(val multiplicand: AExpr, val multiplier: AExpr) : AExpr()
     data class ADivision(val dividend: AExpr, val divisor: AExpr) : AExpr()
     data class AModulus(val dividend: AExpr, val divisor: AExpr) : AExpr()
+
+    data class APrimitiveEquality(val leftOperand: AExpr, val rightOperand: AExpr) : AExpr()
+    data class AStringEquality(val leftOperand: AExpr, val rightOperand: AExpr) : AExpr()
+    data class APrimitiveInequality(val leftOperand: AExpr, val rightOperand: AExpr) : AExpr()
+    data class AStringInequality(val leftOperand: AExpr, val rightOperand: AExpr) : AExpr()
 }

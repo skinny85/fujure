@@ -125,6 +125,7 @@ object FileContentsCodeGen {
             is AExpr.AModulus -> {
                 handleBinaryOperation(aExpr.dividend, aExpr.divisor, module, "%", aExpr.precedence())
             }
+            else -> TODO()
         }
     }
 
@@ -181,5 +182,6 @@ object FileContentsCodeGen {
         is AExpr.ACharLiteral -> 5
         is AExpr.AStringLiteral -> 5
         is AExpr.AValueReference -> 5
+        else -> TODO()
     }
 }

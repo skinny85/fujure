@@ -19,6 +19,9 @@ sealed class Expr {
     data class Conjunction(val leftConjunct: Expr, val rightConjunct: Expr) : Expr()
     data class Negation(val operand: Expr) : Expr()
 
+    data class Equality(val leftOperand: Expr, val rightOperand: Expr) : Expr()
+    data class Inequality(val leftOperand: Expr, val rightOperand: Expr) : Expr()
+
     data class Lesser(val leftOperand: Expr, val rightOperand: Expr) : Expr()
     data class LesserEqual(val leftOperand: Expr, val rightOperand: Expr) : Expr()
     data class Greater(val leftOperand: Expr, val rightOperand: Expr) : Expr()

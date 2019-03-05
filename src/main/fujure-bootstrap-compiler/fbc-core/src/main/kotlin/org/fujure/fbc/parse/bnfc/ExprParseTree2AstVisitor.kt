@@ -46,11 +46,15 @@ internal object ExprParseTree2AstVisitor :
     }
 
     override fun visit(equalityExpr: EqualityExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Equality(
+                equalityExpr.expr_1.accept(this, arg),
+                equalityExpr.expr_2.accept(this, arg))
     }
 
     override fun visit(inequalityExpr: InequalityExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Inequality(
+                inequalityExpr.expr_1.accept(this, arg),
+                inequalityExpr.expr_2.accept(this, arg))
     }
 
     override fun visit(lesserExpr: LesserExpr, arg: Unit): Expr {
