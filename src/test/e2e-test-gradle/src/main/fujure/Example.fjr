@@ -10,7 +10,7 @@ def val2: Int = 1 + 10 % 7 - (3 * 1 - 9 * 5 / 2)
 
 def truthy = true
 
-def falsy: Bool = false
+def falsy: Bool = !("a" != "b") == true
 def falsyAgain = !(true || falsy && false)
 def falsyRef = !Ref.truth
 def u = unit

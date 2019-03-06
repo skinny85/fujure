@@ -125,7 +125,18 @@ object FileContentsCodeGen {
             is AExpr.AModulus -> {
                 handleBinaryOperation(aExpr.dividend, aExpr.divisor, module, "%", aExpr.precedence())
             }
-            else -> TODO()
+            is AExpr.APrimitiveEquality -> {
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "==", aExpr.precedence())
+            }
+            is AExpr.APrimitiveInequality -> {
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!=", aExpr.precedence())
+            }
+            is AExpr.AStringEquality -> {
+                handleEqualityOperation(aExpr.leftOperand, aExpr.rightOperand, module, "", aExpr.precedence())
+            }
+            is AExpr.AStringInequality -> {
+                handleEqualityOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!", aExpr.precedence())
+            }
         }
     }
 
@@ -163,25 +174,56 @@ object FileContentsCodeGen {
         return code.build()
     }
 
+    private fun handleEqualityOperation(leftExpr: AExpr, rightExpr: AExpr, module: Module, prolog: String,
+            operatorPrecedence: Int): CodeBlock {
+        val leftOperandCode = aExpr2CodeBlock(leftExpr, module)
+        val rightOperandCode = aExpr2CodeBlock(rightExpr, module)
+
+        val code = CodeBlock.builder()
+
+        code.add(prolog)
+
+        if (leftExpr.precedence() < operatorPrecedence) {
+            code
+                    .add("(")
+                    .add(leftOperandCode)
+                    .add(")")
+        } else {
+            code.add(leftOperandCode)
+        }
+
+        code
+                .add(".equals(")
+                .add(rightOperandCode)
+                .add(")")
+
+        return code.build()
+    }
+
     private fun AExpr.precedence(): Int = when (this) {
         is AExpr.ADisjunction -> 0
         is AExpr.AConjunction -> 1
-        is AExpr.ALesser -> 2
-        is AExpr.ALesserEqual -> 2
-        is AExpr.AGreater -> 2
-        is AExpr.AGreaterEqual -> 2
-        is AExpr.AAddition -> 3
-        is AExpr.ASubtraction -> 3
-        is AExpr.AMultiplication -> 4
-        is AExpr.ADivision -> 4
-        is AExpr.AModulus -> 4
-        is AExpr.ANegation -> 5
-        is AExpr.AIntLiteral -> 5
-        is AExpr.AUnitLiteral -> 5
-        is AExpr.ABoolLiteral -> 5
-        is AExpr.ACharLiteral -> 5
-        is AExpr.AStringLiteral -> 5
-        is AExpr.AValueReference -> 5
-        else -> TODO()
+        is AExpr.APrimitiveEquality -> 2
+        is AExpr.APrimitiveInequality -> 2
+        is AExpr.ALesser -> 3
+        is AExpr.ALesserEqual -> 3
+        is AExpr.AGreater -> 3
+        is AExpr.AGreaterEqual -> 3
+        is AExpr.AAddition -> 4
+        is AExpr.ASubtraction -> 4
+        is AExpr.AMultiplication -> 5
+        is AExpr.ADivision -> 5
+        is AExpr.AModulus -> 5
+        is AExpr.ANegation -> 6
+        // because String inequality is implemented as !s1.equals(s2),
+        // it has the same precedence as negation
+        is AExpr.AStringInequality -> 6
+        is AExpr.AStringEquality -> 7
+        is AExpr.AIntLiteral -> 8
+        is AExpr.AUnitLiteral -> 8
+        is AExpr.ABoolLiteral -> 8
+        is AExpr.ACharLiteral -> 8
+        is AExpr.AStringLiteral -> 8
+        is AExpr.AValueReference -> 8
     }
 }
