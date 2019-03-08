@@ -132,10 +132,10 @@ object FileContentsCodeGen {
                 handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!=", aExpr.precedence())
             }
             is AExpr.AStringEquality -> {
-                handleEqualityOperation(aExpr.leftOperand, aExpr.rightOperand, module, "", aExpr.precedence())
+                handleComparisonOperation(aExpr.leftOperand, aExpr.rightOperand, module, "", aExpr.precedence())
             }
             is AExpr.AStringInequality -> {
-                handleEqualityOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!", aExpr.precedence())
+                handleComparisonOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!", aExpr.precedence())
             }
         }
     }
@@ -174,7 +174,7 @@ object FileContentsCodeGen {
         return code.build()
     }
 
-    private fun handleEqualityOperation(leftExpr: AExpr, rightExpr: AExpr, module: Module, prolog: String,
+    private fun handleComparisonOperation(leftExpr: AExpr, rightExpr: AExpr, module: Module, prolog: String,
             operatorPrecedence: Int): CodeBlock {
         val leftOperandCode = aExpr2CodeBlock(leftExpr, module)
         val rightOperandCode = aExpr2CodeBlock(rightExpr, module)

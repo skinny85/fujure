@@ -11,9 +11,11 @@ import org.fujure.truffle.nodes.ConjunctionExprNode
 import org.fujure.truffle.nodes.DefNode
 import org.fujure.truffle.nodes.DisjunctionExprNode
 import org.fujure.truffle.nodes.DivisionExprNode
+import org.fujure.truffle.nodes.EqualityExprNode
 import org.fujure.truffle.nodes.ExprNode
 import org.fujure.truffle.nodes.GreaterEqualExprNode
 import org.fujure.truffle.nodes.GreaterExprNode
+import org.fujure.truffle.nodes.InequalityExprNode
 import org.fujure.truffle.nodes.IntLiteralExprNode
 import org.fujure.truffle.nodes.LesserEqualExprNode
 import org.fujure.truffle.nodes.LesserExprNode
@@ -85,7 +87,18 @@ object Aast2TruffleNodes {
             is AExpr.AModulus -> ModulusExprNode.of(
                     translateExpr(aExpr.dividend, fujureTruffleLanguage),
                     translateExpr(aExpr.divisor, fujureTruffleLanguage))
-            else -> TODO()
+            is AExpr.APrimitiveEquality -> EqualityExprNode.of(
+                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
+                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+            is AExpr.AStringEquality -> EqualityExprNode.of(
+                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
+                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+            is AExpr.APrimitiveInequality -> InequalityExprNode.of(
+                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
+                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+            is AExpr.AStringInequality -> InequalityExprNode.of(
+                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
+                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
         }
     }
 

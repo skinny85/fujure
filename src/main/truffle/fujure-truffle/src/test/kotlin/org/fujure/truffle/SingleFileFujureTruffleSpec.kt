@@ -204,7 +204,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                     def b2 = !false || b && false
                     def b3 = 2 >= 1 && 3 <= 1
                     def intMax = 2147483647
-                    def i = 3 * (intMax - (intMax - 2))
+                    def i = 3 + (intMax - (intMax - 2))
+                    def b4 = !("a" == "b") != true
                 """)
             }
 
@@ -226,14 +227,19 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                 assertThat(b2.asBoolean()).isTrue()
             }
 
-            it.should("correctly evaluate the number comparison expression") {
+            it.should("correctly evaluate the number ordering expression") {
                 val b3 = moduleBindings.getMember("b3")
                 assertThat(b3.asBoolean()).isFalse()
             }
 
-            it.should("correctly evaluate the integer expression") {
+            it.should("correctly evaluate the integer arithmetic expression") {
                 val i = moduleBindings.getMember("i")
-                assertThat(i.asInt()).isEqualTo(6)
+                assertThat(i.asInt()).isEqualTo(5)
+            }
+
+            it.should("correctly evaluate the comparison expression") {
+                val b4 = moduleBindings.getMember("b4")
+                assertThat(b4.asBoolean()).isFalse()
             }
         }
 
