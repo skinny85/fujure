@@ -137,6 +137,7 @@ object FileContentsCodeGen {
             is AExpr.AStringInequality -> {
                 handleComparisonOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!", aExpr.precedence())
             }
+            else -> TODO()
         }
     }
 
@@ -225,5 +226,6 @@ object FileContentsCodeGen {
         is AExpr.ACharLiteral -> 8
         is AExpr.AStringLiteral -> 8
         is AExpr.AValueReference -> 8
+        else -> TODO()
     }
 }

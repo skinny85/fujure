@@ -182,8 +182,8 @@ object VerificationAnalysis {
                     valName, chain, { left, right -> AExpr.AGreater(left, right) })
             is Expr.GreaterEqual -> handleOrderingOperation(expr.leftOperand, expr.rightOperand, symbolTable, module,
                     valName, chain, { left, right -> AExpr.AGreaterEqual(left, right) })
-            is Expr.Addition -> handleArithmeticOperation(expr.augend, expr.addend, symbolTable, module,
-                    valName, chain, { left, right -> AExpr.AAddition(left, right) })
+            is Expr.Addition -> handleIntAdditionOrStringConcatenation(expr.augend, expr.addend, symbolTable, module,
+                    valName, chain)
             is Expr.Subtraction -> handleArithmeticOperation(expr.minuend, expr.subtrahend, symbolTable, module,
                     valName, chain, { left, right -> AExpr.ASubtraction(left, right) })
             is Expr.Multiplication -> handleArithmeticOperation(expr.multiplicand, expr.multiplier, symbolTable, module,
@@ -320,6 +320,61 @@ object VerificationAnalysis {
             })
         } else {
             ExprAnalysisResult.Failure(BuiltInTypes.Bool, errors)
+        }
+    }
+
+    private fun handleIntAdditionOrStringConcatenation(leftExpr: Expr, rightExpr: Expr, symbolTable: Pass03SymbolTable,
+            module: Module, valName: String, chain: List<ValueCoordinates>): ExprAnalysisResult {
+        val errors = mutableListOf<SemanticError>()
+
+        val leftOperandAnalysisResult = analyzeExpr(leftExpr, symbolTable, module, valName, chain)
+        val rightOperandAnalysisResult = analyzeExpr(rightExpr, symbolTable, module, valName, chain)
+
+        val leftOperandAast: AExpr? = when (leftOperandAnalysisResult) {
+            is ExprAnalysisResult.Failure -> {
+                errors.addAll(leftOperandAnalysisResult.errors)
+                null
+            }
+            is ExprAnalysisResult.Success -> {
+                leftOperandAnalysisResult.aExpr
+            }
+        }
+        val leftOperandType = leftOperandAnalysisResult.qualifiedType
+
+        val rightOperandAast: AExpr? = when (rightOperandAnalysisResult) {
+            is ExprAnalysisResult.Failure -> {
+                errors.addAll(rightOperandAnalysisResult.errors)
+                null
+            }
+            is ExprAnalysisResult.Success -> {
+                rightOperandAnalysisResult.aExpr
+            }
+        }
+        val rightOperandType = rightOperandAnalysisResult.qualifiedType
+
+        val errorContext = ErrorContext.ValueDefinition(valName)
+        val exprIsStringConcatenation = leftOperandType == BuiltInTypes.String && rightOperandType != BuiltInTypes.Int ||
+                rightOperandType == BuiltInTypes.String && leftOperandType != BuiltInTypes.Int
+        val exprType = if (exprIsStringConcatenation) BuiltInTypes.String else BuiltInTypes.Int
+
+        if (leftOperandType != null && leftOperandType != exprType) {
+            errors.add(SemanticError.TypeMismatch(errorContext, exprType, leftOperandType))
+        }
+        if (rightOperandType != null && rightOperandType != exprType) {
+            errors.add(SemanticError.TypeMismatch(errorContext, exprType, rightOperandType))
+        }
+
+        return if (errors.isEmpty()) {
+            ExprAnalysisResult.Success(exprType, if (leftOperandAast != null && rightOperandAast != null) {
+                if (leftOperandType == BuiltInTypes.String)
+                    AExpr.AStringConcatenation(leftOperandAast, rightOperandAast)
+                else
+                    AExpr.AAddition(leftOperandAast, rightOperandAast)
+            } else {
+                null
+            })
+        } else {
+            ExprAnalysisResult.Failure(exprType, errors)
         }
     }
 

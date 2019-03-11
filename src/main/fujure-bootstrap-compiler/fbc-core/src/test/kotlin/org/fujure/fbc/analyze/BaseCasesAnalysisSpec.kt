@@ -115,14 +115,48 @@ class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                             .analyzed()
                 }
 
+                it.should("report one 'expecting String, got Char' TypeMismatch error") {
+                    assertThat(file1Errors()).containsExactly(
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("a"),
+                                    BuiltInTypes.String, BuiltInTypes.Char))
+                }
+            }
+
+            it.describes("when adding an Int to a String") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def a = "a" + 3
+                            """)
+                            .analyzed()
+                }
+
+                it.should("report one 'expecting Int, got String' TypeMismatch error") {
+                    assertThat(file1Errors()).containsExactly(
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("a"),
+                                    BuiltInTypes.Int, BuiltInTypes.String))
+                }
+            }
+
+            it.describes("when adding a Char to a Bool") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def a = true + 'a'
+                            """)
+                            .analyzed()
+                }
+
                 it.should("report 2 TypeMismatch errors") {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.TypeMismatch(
                                     ValueDefinition("a"),
-                                    BuiltInTypes.Int, BuiltInTypes.Char),
+                                    BuiltInTypes.Int, BuiltInTypes.Bool),
                             SemanticError.TypeMismatch(
                                     ValueDefinition("a"),
-                                    BuiltInTypes.Int, BuiltInTypes.String))
+                                    BuiltInTypes.Int, BuiltInTypes.Char))
                 }
             }
 
