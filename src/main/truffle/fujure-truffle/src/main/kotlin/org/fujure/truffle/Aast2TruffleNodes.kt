@@ -4,7 +4,7 @@ import org.apache.commons.text.StringEscapeUtils
 import org.fujure.fbc.aast.ADef
 import org.fujure.fbc.aast.AExpr
 import org.fujure.fbc.aast.AFileContents
-import org.fujure.truffle.nodes.AdditionExprNode
+import org.fujure.truffle.nodes.AdditionOrConcatenationExprNode
 import org.fujure.truffle.nodes.BoolLiteralExprNode
 import org.fujure.truffle.nodes.CharLiteralExprNode
 import org.fujure.truffle.nodes.ConjunctionExprNode
@@ -72,9 +72,12 @@ object Aast2TruffleNodes {
             is AExpr.AGreaterEqual -> GreaterEqualExprNode.of(
                     translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
                     translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
-            is AExpr.AAddition -> AdditionExprNode.of(
+            is AExpr.AAddition -> AdditionOrConcatenationExprNode.of(
                     translateExpr(aExpr.augend, fujureTruffleLanguage),
                     translateExpr(aExpr.addend, fujureTruffleLanguage))
+            is AExpr.AStringConcatenation -> AdditionOrConcatenationExprNode.of(
+                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
+                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
             is AExpr.ASubtraction -> SubtractionExprNode.of(
                     translateExpr(aExpr.minuend, fujureTruffleLanguage),
                     translateExpr(aExpr.subtrahend, fujureTruffleLanguage))
@@ -99,7 +102,6 @@ object Aast2TruffleNodes {
             is AExpr.AStringInequality -> InequalityExprNode.of(
                     translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
                     translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
-            else -> TODO()
         }
     }
 

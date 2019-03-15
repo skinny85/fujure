@@ -22,4 +22,8 @@ public abstract class ExprNode extends Node {
     public int executeInteger(VirtualFrame frame) throws UnexpectedResultException {
         return FujureTypeSystemGen.expectInteger(this.executeGeneric(frame));
     }
+
+    public String executeString(VirtualFrame frame) throws UnexpectedResultException {
+        return FujureTypeSystemGen.expectString(this.executeGeneric(frame));
+    }
 }
