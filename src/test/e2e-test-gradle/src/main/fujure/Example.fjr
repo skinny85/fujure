@@ -15,4 +15,4 @@ def falsyAgain = !(true || falsy && false)
 def falsyRef = !Ref.truth
 def u = unit
 def c: Char = '\n'
-def s: String = "Hello, \nWorld!"
+def s: String = "Hello, \n" + "World!"

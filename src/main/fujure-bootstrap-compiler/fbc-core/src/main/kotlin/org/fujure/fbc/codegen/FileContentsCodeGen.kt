@@ -113,6 +113,9 @@ object FileContentsCodeGen {
             is AExpr.AAddition -> {
                 handleBinaryOperation(aExpr.augend, aExpr.addend, module, "+", aExpr.precedence())
             }
+            is AExpr.AStringConcatenation -> {
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "+", aExpr.precedence())
+            }
             is AExpr.ASubtraction -> {
                 handleBinaryOperation(aExpr.minuend, aExpr.subtrahend, module, "-", aExpr.precedence())
             }
@@ -137,7 +140,6 @@ object FileContentsCodeGen {
             is AExpr.AStringInequality -> {
                 handleComparisonOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!", aExpr.precedence())
             }
-            else -> TODO()
         }
     }
 
@@ -211,6 +213,8 @@ object FileContentsCodeGen {
         is AExpr.AGreater -> 3
         is AExpr.AGreaterEqual -> 3
         is AExpr.AAddition -> 4
+        // String concatenation is the same as addition
+        is AExpr.AStringConcatenation -> 4
         is AExpr.ASubtraction -> 4
         is AExpr.AMultiplication -> 5
         is AExpr.ADivision -> 5
@@ -226,6 +230,5 @@ object FileContentsCodeGen {
         is AExpr.ACharLiteral -> 8
         is AExpr.AStringLiteral -> 8
         is AExpr.AValueReference -> 8
-        else -> TODO()
     }
 }
