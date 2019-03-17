@@ -127,7 +127,13 @@ public class VisitSkel
   }
   public class ExprVisitor<R,A> implements Expr.Visitor<R,A>
   {
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr p, A arg)
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr p, A arg)
+    { /* Code For LetExpr Goes Here */
+      for (LetDef x: p.listletdef_)
+      { /* ... */ }
+      p.expr_.accept(new ExprVisitor<R,A>(), arg);
+      return null;
+    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr p, A arg)
     { /* Code For OrExpr Goes Here */
       p.expr_1.accept(new ExprVisitor<R,A>(), arg);
       p.expr_2.accept(new ExprVisitor<R,A>(), arg);
@@ -205,6 +211,14 @@ public class VisitSkel
       p.literal_.accept(new LiteralVisitor<R,A>(), arg);
       return null;
     }    
+  }
+  public class LetDefVisitor<R,A> implements LetDef.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDefinition p, A arg)
+    { /* Code For LetDefinition Goes Here */
+      p.binding_.accept(new BindingVisitor<R,A>(), arg);
+      return null;
+    }
   }
   public class ValRefVisitor<R,A> implements ValRef.Visitor<R,A>
   {

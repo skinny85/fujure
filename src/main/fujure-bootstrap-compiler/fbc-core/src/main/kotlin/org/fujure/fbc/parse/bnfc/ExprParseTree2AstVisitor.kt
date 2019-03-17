@@ -15,6 +15,7 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.InequalityExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserEqualExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr
@@ -33,6 +34,10 @@ internal object ExprParseTree2AstVisitor :
         AbsynExpr.Visitor<Expr, Unit>,
         ValRef.Visitor<List<String>, Unit>,
         Literal.Visitor<Expr, Unit> {
+    override fun visit(letExpr: LetExpr, arg: Unit): Expr {
+        throw UnsupportedOperationException()
+    }
+
     override fun visit(orExpr: OrExpr, arg: Unit): Expr {
         return Expr.Disjunction(
                 orExpr.expr_1.accept(this, arg),

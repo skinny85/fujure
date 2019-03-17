@@ -16,6 +16,7 @@ public class ComposVisitor<A> implements
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpec.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpec,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDef.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDef,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRefFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRefFragm,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal,A>
@@ -130,7 +131,16 @@ public class ComposVisitor<A> implements
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment(jid_);
     }
 /* Expr */
-    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr p, A arg)
+    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr p, A arg)
+    {
+      ListLetDef listletdef_ = new ListLetDef();
+      for (LetDef x : p.listletdef_)
+      {
+        listletdef_.add(x.accept(this,arg));
+      }
+      Expr expr_ = p.expr_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr(listletdef_, expr_);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr p, A arg)
     {
       Expr expr_1 = p.expr_1.accept(this, arg);
       Expr expr_2 = p.expr_2.accept(this, arg);
@@ -207,6 +217,12 @@ public class ComposVisitor<A> implements
     {
       Literal literal_ = p.literal_.accept(this, arg);
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr(literal_);
+    }
+/* LetDef */
+    public LetDef visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDefinition p, A arg)
+    {
+      Binding binding_ = p.binding_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDefinition(binding_);
     }
 /* ValRef */
     public ValRef visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef p, A arg)
