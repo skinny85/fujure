@@ -35,7 +35,9 @@ internal object ExprParseTree2AstVisitor :
         ValRef.Visitor<List<String>, Unit>,
         Literal.Visitor<Expr, Unit> {
     override fun visit(letExpr: LetExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Let(letExpr.listletdef_.map { letDef ->
+            letDef.accept(DefsParseTree2AstExtractor, arg)
+        }, letExpr.expr_.accept(this, arg))
     }
 
     override fun visit(orExpr: OrExpr, arg: Unit): Expr {

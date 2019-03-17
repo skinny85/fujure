@@ -198,6 +198,7 @@ object VerificationAnalysis {
             is Expr.Inequality -> handleComparisonOperation(expr.leftOperand, expr.rightOperand, symbolTable, module,
                     valName, chain, { left, right -> AExpr.AStringInequality(left, right) },
                     { left, right -> AExpr.APrimitiveInequality(left, right) })
+            is Expr.Let -> TODO()
         }
     }
 

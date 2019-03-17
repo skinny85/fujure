@@ -1,7 +1,9 @@
 package org.fujure.fbc.ast
 
+import org.fujure.fbc.ast.ValueReference as ValueRef
+
 sealed class Expr {
-    data class ValueReference(val ref: org.fujure.fbc.ast.ValueReference): Expr()
+    data class ValueReference(val ref: ValueRef): Expr()
 
     data class IntLiteral(val value: Int) : Expr()
 
@@ -32,4 +34,6 @@ sealed class Expr {
     data class Multiplication(val multiplicand: Expr, val multiplier: Expr) : Expr()
     data class Division(val dividend: Expr, val divisor: Expr) : Expr()
     data class Modulus(val dividend: Expr, val divisor: Expr) : Expr()
+
+    data class Let(val defs: List<Def.ValueDef>, val expr: Expr) : Expr()
 }
