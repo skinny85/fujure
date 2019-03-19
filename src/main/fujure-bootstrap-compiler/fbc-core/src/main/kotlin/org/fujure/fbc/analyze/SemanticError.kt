@@ -86,6 +86,6 @@ sealed class ErrorContext {
 
     fun humanReadableMsg(): String = when (this) {
         is ErrorContext.ValueDefinition ->
-            "in declaration of ${this.name}"
+            "in definition of ${this.name}"
     }
 }

@@ -62,25 +62,36 @@ object VerificationAnalysis {
 
     private fun analyzeDefinition(def: Def, symbolTable: Pass03SymbolTable, module: Module):
             Disjunction<List<SemanticError>, ADef?> {
-        val errors = mutableListOf<SemanticError>()
-        var aDef: ADef? = null
-
-        when (def) {
+        return when (def) {
             is Def.ValueDef.SimpleValueDef -> {
-                val context = ErrorContext.ValueDefinition(def.id)
-                val declaredQualifiedType = if (def.declaredType == null) {
+                analyzeValueDeclaration(def, symbolTable, module, def.id,
+                        listOf(ValueCoordinates(module.packageName, module.moduleName, def.id)))
+            }
+        }
+    }
+
+    private fun analyzeValueDeclaration(valueDeclaration: Def.ValueDef, symbolTable: Pass03SymbolTable, module: Module,
+            valName: String, chain: List<ValueCoordinates>): Disjunction<List<SemanticError>, ADef.AValueDef?> {
+        val errors = mutableListOf<SemanticError>()
+        var aDef: ADef.AValueDef? = null
+
+        when (valueDeclaration) {
+            is Def.ValueDef.SimpleValueDef -> {
+                val context = ErrorContext.ValueDefinition(valName)
+                val declaredQualifiedType = if (valueDeclaration.declaredType == null) {
                     null
                 } else {
-                    symbolTable.findType(def.declaredType)
+                    symbolTable.findType(valueDeclaration.declaredType)
                 }
-                if (def.declaredType != null && declaredQualifiedType == null) {
-                    errors.add(SemanticError.TypeNotFound(context, def.declaredType))
+                if (valueDeclaration.declaredType != null && declaredQualifiedType == null) {
+                    errors.add(SemanticError.TypeNotFound(context, valueDeclaration.declaredType))
                 }
 
-                if (def.initializer == null) {
+                if (valueDeclaration.initializer == null) {
                     errors.add(SemanticError.MissingInitializer(context))
                 } else {
-                    val initializerAnalysisResult = analyzeExpr(def.initializer, symbolTable, def.id, module)
+                    val initializerAnalysisResult = analyzeExpr(valueDeclaration.initializer, symbolTable, module,
+                            valName, chain)
                     when (initializerAnalysisResult) {
                         is ExprAnalysisResult.Failure -> {
                             errors.addAll(initializerAnalysisResult.errors)
@@ -95,7 +106,7 @@ object VerificationAnalysis {
                             val initializerExpr = initializerAnalysisResult.aExpr
                             val valueType = declaredQualifiedType ?: initializerType
                             if (valueType != null && initializerExpr != null) {
-                                aDef = ADef.AValueDef.ASimpleValueDef(def.id, valueType, initializerExpr)
+                                aDef = ADef.AValueDef.ASimpleValueDef(valueDeclaration.id, valueType, initializerExpr)
                             }
                         }
                     }
@@ -108,10 +119,6 @@ object VerificationAnalysis {
         else
             Disjunction.Left(errors)
     }
-
-    private fun analyzeExpr(expr: Expr, symbolTable: Pass03SymbolTable, valName: String, module: Module):
-            ExprAnalysisResult =
-        analyzeExpr(expr, symbolTable, module, valName, listOf(ValueCoordinates(module.packageName, module.moduleName, valName)))
 
     fun analyzeExpr(expr: Expr, symbolTable: Pass03SymbolTable, module: Module, valName: String,
             chain: List<ValueCoordinates>): ExprAnalysisResult {
@@ -198,7 +205,7 @@ object VerificationAnalysis {
             is Expr.Inequality -> handleComparisonOperation(expr.leftOperand, expr.rightOperand, symbolTable, module,
                     valName, chain, { left, right -> AExpr.AStringInequality(left, right) },
                     { left, right -> AExpr.APrimitiveInequality(left, right) })
-            is Expr.Let -> TODO()
+            is Expr.Let -> handleLetExpression(expr, symbolTable, module, valName, chain)
         }
     }
 
@@ -376,6 +383,48 @@ object VerificationAnalysis {
             })
         } else {
             ExprAnalysisResult.Failure(exprType, errors)
+        }
+    }
+
+    private fun handleLetExpression(letExpr: Expr.Let, symbolTable: Pass03SymbolTable, module: Module, valName: String,
+            chain: List<ValueCoordinates>): ExprAnalysisResult {
+        // 1. Create a new scope in symbolTable
+        // 2. For each declaration:
+        //   - analyze it, reporting any errors
+        //   - add it to the new scope, reporting an error if it's a duplicate
+        // 3. Analyze the expression, taking into account the new scope
+
+        // ToDo we actually don't have the concept of a scope in the SymbolTable - add it
+
+        val errors = mutableListOf<SemanticError>()
+        val declarations = mutableListOf<ADef.AValueDef>()
+        var aExpr: AExpr? = null
+
+        for (declaration in letExpr.declarations) {
+            val result = analyzeValueDeclaration(declaration, symbolTable, module, valName, chain)
+            when (result) {
+                is Disjunction.Left -> errors.addAll(result.value)
+                is Disjunction.Right -> {
+                    val aValueDeclaration = result.value
+                    if (aValueDeclaration != null)
+                        declarations.add(aValueDeclaration)
+                }
+            }
+        }
+
+        val result = analyzeExpr(letExpr.expr, symbolTable, module, valName, chain)
+        when (result) {
+            is ExprAnalysisResult.Failure -> errors.addAll(result.errors)
+            is ExprAnalysisResult.Success -> aExpr = result.aExpr
+        }
+
+        return if (errors.isEmpty()) {
+            ExprAnalysisResult.Success(result.qualifiedType, if (aExpr == null)
+                null
+            else
+                AExpr.ALet(declarations, aExpr))
+        } else {
+            ExprAnalysisResult.Failure(result.qualifiedType, errors)
         }
     }
 

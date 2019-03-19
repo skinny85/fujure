@@ -140,6 +140,7 @@ object FileContentsCodeGen {
             is AExpr.AStringInequality -> {
                 handleComparisonOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!", aExpr.precedence())
             }
+            is AExpr.ALet -> TODO()
         }
     }
 
@@ -204,6 +205,7 @@ object FileContentsCodeGen {
     }
 
     private fun AExpr.precedence(): Int = when (this) {
+        is AExpr.ALet -> TODO()
         is AExpr.ADisjunction -> 0
         is AExpr.AConjunction -> 1
         is AExpr.APrimitiveEquality -> 2

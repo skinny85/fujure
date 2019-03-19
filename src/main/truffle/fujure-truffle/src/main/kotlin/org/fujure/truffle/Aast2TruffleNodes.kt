@@ -102,6 +102,7 @@ object Aast2TruffleNodes {
             is AExpr.AStringInequality -> InequalityExprNode.of(
                     translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
                     translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+            is AExpr.ALet -> TODO()
         }
     }
 
