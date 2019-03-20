@@ -9,7 +9,6 @@ import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
-import org.funktionale.either.Disjunction
 
 class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         private val symbolTable: SymbolTable?) {
@@ -155,9 +154,9 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
                     }
 
                     // if not, infer the type from the initializer, failing if that contains a cycle
-                    val exprAnalysisResult = VerificationAnalysis.analyzeExpr(this.initializer, symbolTable, module, valName, chain)
+                    val exprAnalysisResult = ExprVerifier(symbolTable, module, valName, chain).analyzeExpr(this.initializer)
                     when (exprAnalysisResult) {
-                        is VerificationAnalysis.ExprAnalysisResult.Failure -> {
+                        is ExprVerificationResult.Failure -> {
                             val semanticErrors = exprAnalysisResult.errors
                             val cyclicError = semanticErrors.find { it is SemanticError.CyclicDefinition }
                             if (cyclicError == null)
@@ -165,7 +164,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
                             else
                                 throw CyclicReferenceException((cyclicError as SemanticError.CyclicDefinition).cycle)
                         }
-                        is VerificationAnalysis.ExprAnalysisResult.Success -> exprAnalysisResult.qualifiedType
+                        is ExprVerificationResult.Success -> exprAnalysisResult.qualifiedType
                     }
                 }
             }
