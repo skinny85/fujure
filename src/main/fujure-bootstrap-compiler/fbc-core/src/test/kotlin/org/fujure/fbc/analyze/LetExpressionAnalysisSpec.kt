@@ -59,5 +59,21 @@ class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                                         ValueCoordinates("", "File2", "b"))))
             }
         }
+
+        it.describes("when the local value does not have an initializer") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a = let b in 2
+                        """)
+                        .analyzed()
+            }
+
+            it.should("report a MissingInitializer error in the top-level declaration") {
+                assertThat(file1Errors()).containsExactly(
+                        SemanticError.MissingInitializer(
+                                ErrorContext.ValueDefinition("a")))
+            }
+        }
     }
 }}

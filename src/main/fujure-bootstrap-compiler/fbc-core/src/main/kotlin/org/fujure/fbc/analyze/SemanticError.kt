@@ -69,7 +69,7 @@ sealed class SemanticError {
                     "Illegal self reference"
         is SemanticError.MissingInitializer ->
             "Error ${this.context.humanReadableMsg()}: " +
-                    "a top-level value must be initialized when defined"
+                    "a non-abstract value declaration must have an initializer"
         is SemanticError.CyclicDefinition ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Cycle detected, ${this.cycle.map { it.inStringForm() }.joinToString(" -> ")}"
