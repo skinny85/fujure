@@ -75,5 +75,23 @@ class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                                 ErrorContext.ValueDefinition("a")))
             }
         }
+
+        it.describes("with a simple, correct one-variable variant, using the new variable") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a =
+                                let
+                                    b = 1
+                                in
+                                    b  + 2
+                        """)
+                        .analyzed()
+            }
+
+            it.should("analyze correctly") {
+                assertAnalysisSucceeded()
+            }
+        }
     }
 }}

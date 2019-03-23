@@ -50,9 +50,9 @@ object VerificationAnalysis {
         }
 
         return if (errors.isEmpty())
-            Disjunction.right(AFileContents(parsedFile.inputFile, module, aDefs))
+            Disjunction.Right(AFileContents(parsedFile.inputFile, module, aDefs))
         else
-            Disjunction.left(SemanticFileIssue(parsedFile.inputFile.userProvidedFilePath, errors))
+            Disjunction.Left(SemanticFileIssue(parsedFile.inputFile.userProvidedFilePath, errors))
     }
 
     private fun analyzeDefinition(def: Def, symbolTable: Pass03SymbolTable, module: Module):

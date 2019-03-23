@@ -28,6 +28,8 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                     errors.add(SemanticError.TypeNotFound(context, valueDeclaration.declaredType))
                 }
 
+                // ToDo we need to move name validation here
+
                 if (valueDeclaration.initializer == null) {
                     errors.add(SemanticError.MissingInitializer(context))
                 } else {

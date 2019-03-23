@@ -9,6 +9,8 @@ import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
+import org.funktionale.option.Option
+import java.util.Stack
 
 class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         private val symbolTable: SymbolTable?) {
@@ -51,6 +53,18 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         }
     }
 
+    fun pushNewScope(module: Module) {
+        modules[module]!!.pushNewScope()
+    }
+
+    fun addToLatestScope(module: Module, id: String, qualifiedType: QualifiedType?): Boolean {
+        return modules[module]!!.addToLatestScope(id, qualifiedType)
+    }
+
+    fun popLatestScope(module: Module) {
+        modules[module]!!.popLatestScope()
+    }
+
     sealed class LookupResult {
         object RefNotFound : LookupResult()
         data class ForwardReference(val name: String) : LookupResult()
@@ -66,6 +80,8 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
         ValueTypeHolder(pair.first, pair.second)
     }
 
+    private val scopes = Stack<Scope>()
+
     fun candidateModule(moduleName: String, currentModule: Module): Module? {
         return if (imports.containsKey(moduleName)) {
             imports[moduleName]
@@ -74,10 +90,30 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
         }
     }
 
+    fun pushNewScope() {
+        scopes.push(Scope())
+    }
+
+    fun addToLatestScope(id: String, qualifiedType: QualifiedType?): Boolean {
+        return scopes.peek().add(id, qualifiedType)
+    }
+
+    fun popLatestScope() {
+        scopes.pop()
+    }
+
     fun lookupVariable(id: String, module: Module, anchor: String?, symbolTable: Pass03SymbolTable, chain: List<ValueCoordinates>):
             Pass03SymbolTable.LookupResult {
         if (id == anchor)
             return Pass03SymbolTable.LookupResult.SelfReference(id)
+
+        // checks local scopes first
+        for (scope in scopes) {
+            val result = scope.find(id)
+            if (result.nonEmpty()) {
+                return Pass03SymbolTable.LookupResult.RefFound(result.get(), module)
+            }
+        }
 
         var seenAnchor = false
         var ret: Pass03SymbolTable.LookupResult = Pass03SymbolTable.LookupResult.RefNotFound
@@ -102,6 +138,27 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
         }
 
         return ret
+    }
+
+    private class Scope {
+        private val values = mutableMapOf<String, QualifiedType?>()
+
+        fun add(id: String, qualifiedType: QualifiedType?): Boolean {
+            return if (values.containsKey(id)) {
+                false
+            } else {
+                values[id] = qualifiedType
+                true
+            }
+        }
+
+        fun find(id: String): Option<QualifiedType?> {
+            return if (values.containsKey(id)) {
+                Option.Some(values[id])
+            } else {
+                Option.None
+            }
+        }
     }
 
     internal class ValueTypeHolder(declaredType: TypeReference?, initializer: Expr?) {

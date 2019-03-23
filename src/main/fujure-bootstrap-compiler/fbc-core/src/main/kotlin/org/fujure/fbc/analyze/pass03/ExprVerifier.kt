@@ -6,6 +6,7 @@ import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
+import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.ValueCoordinates
@@ -303,29 +304,40 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
         //   - add it to the new scope, reporting an error if it's a duplicate
         // 3. Analyze the expression, taking into account the new scope
 
-        // ToDo we actually don't have the concept of a scope in the SymbolTable - add it
-
         val errors = mutableListOf<SemanticError>()
         val declarations = mutableListOf<ADef.AValueDef>()
-        var aExpr: AExpr? = null
 
+        symbolTable.pushNewScope(module)
         for (declaration in letExpr.declarations) {
+            var aValueDeclaration: ADef.AValueDef? = null
+
             val result = ValueDeclarationVerifier(symbolTable, module, valName, chain).analyzeValueDeclaration(declaration)
             when (result) {
                 is Disjunction.Left -> errors.addAll(result.value)
                 is Disjunction.Right -> {
-                    val aValueDeclaration = result.value
+                    aValueDeclaration = result.value
                     if (aValueDeclaration != null)
                         declarations.add(aValueDeclaration)
                 }
             }
+
+            val id = when (declaration) {
+                is Def.ValueDef.SimpleValueDef -> declaration.id
+            }
+            symbolTable.addToLatestScope(module, id, when (aValueDeclaration) {
+                is ADef.AValueDef.ASimpleValueDef -> aValueDeclaration.type
+                else -> null
+            })
         }
 
+        var aExpr: AExpr? = null
         val result = analyzeExpr(letExpr.expr)
         when (result) {
             is ExprVerificationResult.Failure -> errors.addAll(result.errors)
             is ExprVerificationResult.Success -> aExpr = result.aExpr
         }
+
+        symbolTable.popLatestScope(module)
 
         return if (errors.isEmpty()) {
             ExprVerificationResult.Success(result.qualifiedType, if (aExpr == null)
