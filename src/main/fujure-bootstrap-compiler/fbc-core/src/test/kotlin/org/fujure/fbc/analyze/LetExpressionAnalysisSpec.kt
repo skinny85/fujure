@@ -23,7 +23,7 @@ class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             }
         }
 
-        it.describes("with a cycle in the let declaration") {
+        it.describes("with a cycle in the 'let' declaration") {
             it.beginsAll {
                 AnalysisBuilder
                         .file("""
@@ -90,6 +90,24 @@ class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             }
 
             it.should("analyze correctly") {
+                assertAnalysisSucceeded()
+            }
+        }
+
+        it.describes("with 2 nested 'let's, declaring the same variable") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a: Int =
+                                let
+                                    b = true
+                                in
+                                    let b = 2 in b
+                        """)
+                        .analyzed()
+            }
+
+            it.should("analyze correctly - the second 'let' shadows the first's variable") {
                 assertAnalysisSucceeded()
             }
         }

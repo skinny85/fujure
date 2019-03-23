@@ -80,7 +80,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
         ValueTypeHolder(pair.first, pair.second)
     }
 
-    private val scopes = Stack<Scope>()
+    private val scopes = mutableListOf<Scope>()
 
     fun candidateModule(moduleName: String, currentModule: Module): Module? {
         return if (imports.containsKey(moduleName)) {
@@ -91,15 +91,15 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
     }
 
     fun pushNewScope() {
-        scopes.push(Scope())
+        scopes.add(0, Scope())
     }
 
     fun addToLatestScope(id: String, qualifiedType: QualifiedType?): Boolean {
-        return scopes.peek().add(id, qualifiedType)
+        return scopes[0].add(id, qualifiedType)
     }
 
     fun popLatestScope() {
-        scopes.pop()
+        scopes.removeAt(0)
     }
 
     fun lookupVariable(id: String, module: Module, anchor: String?, symbolTable: Pass03SymbolTable, chain: List<ValueCoordinates>):
