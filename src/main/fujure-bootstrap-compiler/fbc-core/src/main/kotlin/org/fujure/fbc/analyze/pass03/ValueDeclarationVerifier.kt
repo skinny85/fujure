@@ -6,6 +6,7 @@ import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.ValueCoordinates
+import org.fujure.fbc.common.NameValidator
 import org.funktionale.either.Disjunction
 
 class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
@@ -19,6 +20,11 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
         when (valueDeclaration) {
             is Def.ValueDef.SimpleValueDef -> {
                 val context = ErrorContext.ValueDefinition(valName)
+
+                if (!NameValidator.validValueName(valueDeclaration.id)) {
+                    errors.add(SemanticError.InvalidName(valueDeclaration.id))
+                }
+
                 val declaredQualifiedType = if (valueDeclaration.declaredType == null) {
                     null
                 } else {
@@ -27,8 +33,6 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                 if (valueDeclaration.declaredType != null && declaredQualifiedType == null) {
                     errors.add(SemanticError.TypeNotFound(context, valueDeclaration.declaredType))
                 }
-
-                // ToDo we need to move name validation here
 
                 if (valueDeclaration.initializer == null) {
                     errors.add(SemanticError.MissingInitializer(context))

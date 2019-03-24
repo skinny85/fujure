@@ -84,7 +84,7 @@ class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                                 let
                                     b = 1
                                 in
-                                    b  + 2
+                                    b + 2
                         """)
                         .analyzed()
             }
@@ -109,6 +109,26 @@ class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
 
             it.should("analyze correctly - the second 'let' shadows the first's variable") {
                 assertAnalysisSucceeded()
+            }
+        }
+
+        it.describes("when a 'let' variable has an illegal name") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a: Int =
+                                let
+                                    ${'$'}b = 1, class = 2
+                                in
+                                    3
+                        """)
+                        .analyzed()
+            }
+
+            it.should("report an InvalidName error for each variable with an illegal name") {
+                assertThat(file1Errors()).containsExactly(
+                        SemanticError.InvalidName("\$b"),
+                        SemanticError.InvalidName("class"))
             }
         }
     }

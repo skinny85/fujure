@@ -47,10 +47,9 @@ object SymbolsGatheringAnalysis {
             when (def) {
                 is Def.ValueDef.SimpleValueDef -> {
                     val id = def.id
-                    if (!NameValidator.validValueName(id))
-                        errors.add(SemanticError.InvalidName(id))
-                    if (simpleValues.putIfAbsent(id, Pair(def.declaredType, def.initializer)) != null)
+                    if (simpleValues.putIfAbsent(id, Pair(def.declaredType, def.initializer)) != null) {
                         errors.add(SemanticError.DuplicateDefinition(id))
+                    }
                 }
             }
         }
