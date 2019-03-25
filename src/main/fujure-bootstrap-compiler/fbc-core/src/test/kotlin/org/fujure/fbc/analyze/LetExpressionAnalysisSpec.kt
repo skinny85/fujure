@@ -173,5 +173,42 @@ class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                 assertAnalysisSucceeded()
             }
         }
+
+        it.describes("when an inner 'let' refers to the identically named variable in its initializer") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a: Bool =
+                                let
+                                    a = 1
+                                in
+                                    let a = a > 1 in a
+                        """)
+                        .analyzed()
+            }
+
+            it.should("analyze correctly") {
+                assertAnalysisSucceeded()
+            }
+        }
+
+        it.describes("when a 'let' variable refers to itself in the definition") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a: Int =
+                                let
+                                    b = b
+                                in
+                                    b
+                        """)
+                        .analyzed()
+            }
+
+            it.should("report an UnresolvedReference error") {
+                assertThat(file1Errors()).containsExactly(
+                        SemanticError.UnresolvedReference(ErrorContext.ValueDefinition("a"), ValueReference("b")))
+            }
+        }
     }
 }}
