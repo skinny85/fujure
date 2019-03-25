@@ -104,9 +104,6 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
 
     fun lookupVariable(id: String, module: Module, anchor: String?, symbolTable: Pass03SymbolTable, chain: List<ValueCoordinates>):
             Pass03SymbolTable.LookupResult {
-        if (id == anchor)
-            return Pass03SymbolTable.LookupResult.SelfReference(id)
-
         // checks local scopes first
         for (scope in scopes) {
             val result = scope.find(id)
@@ -114,6 +111,9 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
                 return Pass03SymbolTable.LookupResult.RefFound(result.get(), module)
             }
         }
+
+        if (id == anchor)
+            return Pass03SymbolTable.LookupResult.SelfReference(id)
 
         var seenAnchor = false
         var ret: Pass03SymbolTable.LookupResult = Pass03SymbolTable.LookupResult.RefNotFound

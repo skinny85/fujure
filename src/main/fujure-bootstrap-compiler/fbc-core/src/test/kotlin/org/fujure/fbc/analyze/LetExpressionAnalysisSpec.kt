@@ -152,5 +152,26 @@ class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                         SemanticError.DuplicateDefinition("b"))
             }
         }
+
+        it.describes("when 'let' variables have the same name as top-level definitions") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def b = true
+
+                            def a: Int =
+                                let
+                                    a = 1,
+                                    b = a
+                                in
+                                    a + b
+                        """)
+                        .analyzed()
+            }
+
+            it.should("analyze correctly - the 'let' variables shadow the top-level definitions") {
+                assertAnalysisSucceeded()
+            }
+        }
     }
 }}
