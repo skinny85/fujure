@@ -2,6 +2,7 @@ package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.ast.ValueCoordinates
+import org.fujure.fbc.ast.ValueReference
 
 class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
     describes("Let expressions in Semantic Analysis") {
@@ -129,6 +130,26 @@ class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                 assertThat(file1Errors()).containsExactly(
                         SemanticError.InvalidName("\$b"),
                         SemanticError.InvalidName("class"))
+            }
+        }
+
+        it.describes("with duplicate variable names in the same 'let'") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a: Int =
+                                let
+                                    b = 1, b: Bool = x
+                                in
+                                    b
+                        """)
+                        .analyzed()
+            }
+
+            it.should("report a DuplicateDefinition error") {
+                assertThat(file1Errors()).containsExactly(
+                        SemanticError.UnresolvedReference(ErrorContext.ValueDefinition("a"), ValueReference("x")),
+                        SemanticError.DuplicateDefinition("b"))
             }
         }
     }

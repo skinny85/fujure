@@ -324,10 +324,13 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             val id = when (declaration) {
                 is Def.ValueDef.SimpleValueDef -> declaration.id
             }
-            symbolTable.addToLatestScope(module, id, when (aValueDeclaration) {
+            val qualifiedType = when (aValueDeclaration) {
                 is ADef.AValueDef.ASimpleValueDef -> aValueDeclaration.type
                 else -> null
-            })
+            }
+            if (!symbolTable.addToLatestScope(module, id, qualifiedType)) {
+                errors.add(SemanticError.DuplicateDefinition(id))
+            }
         }
 
         var aExpr: AExpr? = null
