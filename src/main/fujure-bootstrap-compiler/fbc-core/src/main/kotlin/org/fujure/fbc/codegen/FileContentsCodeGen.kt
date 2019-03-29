@@ -14,7 +14,9 @@ import org.fujure.fbc.ast.Module
 import java.lang.reflect.Type
 import javax.lang.model.element.Modifier
 
-object FileContentsCodeGen {
+class FileContentsCodeGen {
+    private var staticInitializer: CodeBlock.Builder? = null
+
     fun generate(annotatedAst: AFileContents): JavaFile {
         val typeSpecBuilder = TypeSpec.classBuilder(annotatedAst.module.moduleName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
@@ -26,6 +28,11 @@ object FileContentsCodeGen {
             }
         }
 
+        val staticInitializer = staticInitializer
+        if (staticInitializer != null) {
+            typeSpecBuilder.addStaticBlock(staticInitializer.build())
+        }
+
         return JavaFile
                 .builder(annotatedAst.module.packageName, typeSpecBuilder.build())
                 .skipJavaLangImports(true)
@@ -33,12 +40,30 @@ object FileContentsCodeGen {
     }
 
     private fun generateField(simpleValueDef: ADef.AValueDef.ASimpleValueDef, module: Module): FieldSpec {
-        val variableType = toJavaType(simpleValueDef.type)!!
-        val initializerCodeBlock = aExpr2CodeBlock(simpleValueDef.initializer, module)
-        return FieldSpec.builder(variableType, simpleValueDef.id,
+        val fieldType = toJavaType(simpleValueDef.type)!!
+        val builder = FieldSpec.builder(fieldType, simpleValueDef.id,
                 Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                .initializer(initializerCodeBlock)
-                .build()
+
+        val initializerCodeBlock = aExpr2CodeBlock(simpleValueDef.initializer, module, simpleValueDef.type)
+        return when (initializerCodeBlock) {
+            is InitializerCode.InlineCode -> {
+                builder
+                        .initializer(initializerCodeBlock.code)
+                        .build()
+            }
+            is InitializerCode.BlockCode -> {
+                addToStaticInitializer(initializerCodeBlock.code)
+                addToStaticInitializer(CodeBlock.of("\$L = \$L;\n", simpleValueDef.id, initializerCodeBlock.variable))
+                builder.build()
+            }
+        }
+    }
+
+    private fun addToStaticInitializer(code: CodeBlock) {
+        if (staticInitializer == null)
+            staticInitializer = CodeBlock.builder()
+
+        staticInitializer!!.add(code)
     }
 
     private fun toJavaType(qualifiedType: QualifiedType?): Type? {
@@ -52,7 +77,12 @@ object FileContentsCodeGen {
         }
     }
 
-    private fun aExpr2CodeBlock(aExpr: AExpr, module: Module): CodeBlock {
+    private sealed class InitializerCode(open val code: CodeBlock) {
+        class InlineCode(override val code: CodeBlock) : InitializerCode(code)
+        class BlockCode(override val code: CodeBlock, val variable: String) : InitializerCode(code)
+    }
+
+    private fun aExpr2CodeBlock(aExpr: AExpr, module: Module, type: QualifiedType): InitializerCode {
         return when (aExpr) {
             is AExpr.AIntLiteral -> {
                 literalCodeBlock(aExpr.value)
@@ -74,88 +104,188 @@ object FileContentsCodeGen {
                     literalCodeBlock(aExpr.reference)
                 } else {
                     val className = ClassName.get(aExpr.targetModule.packageName, aExpr.targetModule.moduleName)
-                    CodeBlock.of("\$T.${aExpr.reference}", className)
+                    InitializerCode.InlineCode(CodeBlock.of("\$T.${aExpr.reference}", className))
                 }
             }
             is AExpr.ANegation -> {
-                val operandCode = aExpr2CodeBlock(aExpr.operand, module)
+                val operandCode = aExpr2CodeBlock(aExpr.operand, module, BuiltInTypes.Bool)
 
-                val code = CodeBlock.builder().add("!")
+                when (operandCode) {
+                    is InitializerCode.InlineCode -> {
+                        val code = CodeBlock.builder().add("!")
 
-                if (aExpr.operand.precedence() < aExpr.precedence()) {
-                    code
-                            .add("(")
-                            .add(operandCode)
-                            .add(")")
-                } else {
-                    code.add(operandCode)
+                        if (aExpr.operand.precedence() < aExpr.precedence()) {
+                            code
+                                    .add("(")
+                                    .add(operandCode.code)
+                                    .add(")")
+                        } else {
+                            code.add(operandCode.code)
+                        }
+                        InitializerCode.InlineCode(code.build())
+                    }
+                    is InitializerCode.BlockCode -> {
+                        val code = CodeBlock.builder()
+                                .add(operandCode.code)
+
+                        val tmpVar = generateTemporary()
+                        code.addStatement("boolean $tmpVar = !\$L", operandCode.variable)
+
+                        InitializerCode.BlockCode(code.build(), tmpVar)
+                    }
                 }
-                code.build()
             }
             is AExpr.ADisjunction -> {
-                handleBinaryOperation(aExpr.leftDisjunct, aExpr.rightDisjunct, module, "||", aExpr.precedence())
+                handleBinaryOperation(aExpr.leftDisjunct, aExpr.rightDisjunct, module, "||", aExpr.precedence(),
+                        BuiltInTypes.Bool, BuiltInTypes.Bool)
             }
             is AExpr.AConjunction -> {
-                handleBinaryOperation(aExpr.leftConjunct, aExpr.rightConjunct, module, "&&", aExpr.precedence())
+                handleBinaryOperation(aExpr.leftConjunct, aExpr.rightConjunct, module, "&&", aExpr.precedence(),
+                        BuiltInTypes.Bool, BuiltInTypes.Bool)
             }
             is AExpr.ALesser -> {
-                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "<", aExpr.precedence())
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "<", aExpr.precedence(),
+                        BuiltInTypes.Bool, BuiltInTypes.Int)
             }
             is AExpr.ALesserEqual -> {
-                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "<=", aExpr.precedence())
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "<=", aExpr.precedence(),
+                        BuiltInTypes.Bool, BuiltInTypes.Int)
             }
             is AExpr.AGreater -> {
-                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, ">", aExpr.precedence())
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, ">", aExpr.precedence(),
+                        BuiltInTypes.Bool, BuiltInTypes.Int)
             }
             is AExpr.AGreaterEqual -> {
-                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, ">=", aExpr.precedence())
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, ">=", aExpr.precedence(),
+                        BuiltInTypes.Bool, BuiltInTypes.Int)
             }
             is AExpr.AAddition -> {
-                handleBinaryOperation(aExpr.augend, aExpr.addend, module, "+", aExpr.precedence())
+                handleBinaryOperation(aExpr.augend, aExpr.addend, module, "+", aExpr.precedence(),
+                        BuiltInTypes.Int, BuiltInTypes.Int)
             }
             is AExpr.AStringConcatenation -> {
-                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "+", aExpr.precedence())
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "+", aExpr.precedence(),
+                        BuiltInTypes.String, BuiltInTypes.String)
             }
             is AExpr.ASubtraction -> {
-                handleBinaryOperation(aExpr.minuend, aExpr.subtrahend, module, "-", aExpr.precedence())
+                handleBinaryOperation(aExpr.minuend, aExpr.subtrahend, module, "-", aExpr.precedence(),
+                        BuiltInTypes.Int, BuiltInTypes.Int)
             }
             is AExpr.AMultiplication -> {
-                handleBinaryOperation(aExpr.multiplicand, aExpr.multiplier, module, "*", aExpr.precedence())
+                handleBinaryOperation(aExpr.multiplicand, aExpr.multiplier, module, "*", aExpr.precedence(),
+                        BuiltInTypes.Int, BuiltInTypes.Int)
             }
             is AExpr.ADivision -> {
-                handleBinaryOperation(aExpr.dividend, aExpr.divisor, module, "/", aExpr.precedence())
+                handleBinaryOperation(aExpr.dividend, aExpr.divisor, module, "/", aExpr.precedence(),
+                        BuiltInTypes.Int, BuiltInTypes.Int)
             }
             is AExpr.AModulus -> {
-                handleBinaryOperation(aExpr.dividend, aExpr.divisor, module, "%", aExpr.precedence())
+                handleBinaryOperation(aExpr.dividend, aExpr.divisor, module, "%", aExpr.precedence(),
+                        BuiltInTypes.Int, BuiltInTypes.Int)
             }
             is AExpr.APrimitiveEquality -> {
-                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "==", aExpr.precedence())
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "==", aExpr.precedence(),
+                        BuiltInTypes.Bool, type) // TODO this is incorrect!
             }
             is AExpr.APrimitiveInequality -> {
-                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!=", aExpr.precedence())
+                handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!=", aExpr.precedence(),
+                        BuiltInTypes.Bool, type)
             }
             is AExpr.AStringEquality -> {
-                handleComparisonOperation(aExpr.leftOperand, aExpr.rightOperand, module, "", aExpr.precedence())
+                handleComparisonOperation(aExpr.leftOperand, aExpr.rightOperand, module, "", aExpr.precedence(),
+                        BuiltInTypes.String)
             }
             is AExpr.AStringInequality -> {
-                handleComparisonOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!", aExpr.precedence())
+                handleComparisonOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!", aExpr.precedence(),
+                        BuiltInTypes.String)
             }
-            is AExpr.ALet -> TODO()
+            is AExpr.ALet -> {
+                val code = CodeBlock.builder()
+                val tmpVar = generateTemporary()
+                code
+                        .addStatement("\$T \$L", toJavaType(type), tmpVar)
+                        .add("{\n")
+                        .indent()
+
+                // handle the declarations
+                for (decl in aExpr.declarations) {
+                    val exprCode = when (decl) {
+                        is ADef.AValueDef.ASimpleValueDef ->
+                            aExpr2CodeBlock(decl.initializer, module, decl.type)
+                    }
+                    val type = decl.type
+                    val id =  decl.id
+                    code
+                            .add("\$T \$L = ", toJavaType(type), id)
+                            .add(exprCode.code) // ToDo for now...
+                            .add(";\n")
+                }
+
+                // handle the expression
+                val exprCode = aExpr2CodeBlock(aExpr.expr, module, type)
+                code
+                        .add("\$L = ", tmpVar)
+                        .add(exprCode.code) // ToDo for now...
+                        .add(";\n")
+
+                code.endControlFlow()
+
+                InitializerCode.BlockCode(code.build(), tmpVar)
+            }
         }
     }
 
-    private fun literalCodeBlock(value: Any): CodeBlock {
-        return CodeBlock.of("\$L", value)
+    private fun literalCodeBlock(value: Any): InitializerCode {
+        return InitializerCode.InlineCode(CodeBlock.of("\$L", value))
     }
 
-    private fun handleBinaryOperation(leftOperand: AExpr, rightOperand: AExpr, module: Module, operator: String,
-            operatorPrecedence: Int): CodeBlock {
-        val leftOperandCode = aExpr2CodeBlock(leftOperand, module)
-        val rightOperandCode = aExpr2CodeBlock(rightOperand, module)
+    private fun handleBinaryOperation(leftExpr: AExpr, rightExpr: AExpr, module: Module, operator: String,
+            operatorPrecedence: Int, resultType: QualifiedType, operandType: QualifiedType): InitializerCode {
+        val leftOperandInitializer = aExpr2CodeBlock(leftExpr, module, operandType)
+        val rightOperandInitializer = aExpr2CodeBlock(rightExpr, module, operandType)
 
         val code = CodeBlock.builder()
+        var anySideIsBlock = false
 
-        if (leftOperand.precedence() < operatorPrecedence) {
+        val leftPrecedence: Int
+        val leftOperandCode: CodeBlock
+        when (leftOperandInitializer) {
+            is InitializerCode.InlineCode -> {
+                leftPrecedence = leftExpr.precedence()
+                leftOperandCode = leftOperandInitializer.code
+            }
+            is InitializerCode.BlockCode -> {
+                code.add(leftOperandInitializer.code)
+                anySideIsBlock = true
+                leftPrecedence = AExpr.AUnitLiteral.precedence()
+                leftOperandCode = CodeBlock.of("\$L", leftOperandInitializer.variable)
+            }
+        }
+
+        val rightPrecedence: Int
+        val rightOperandCode: CodeBlock
+        when (rightOperandInitializer) {
+            is InitializerCode.InlineCode -> {
+                rightPrecedence = rightExpr.precedence()
+                rightOperandCode = rightOperandInitializer.code
+            }
+            is InitializerCode.BlockCode -> {
+                code.add(rightOperandInitializer.code)
+                anySideIsBlock = true
+                rightPrecedence = AExpr.AUnitLiteral.precedence()
+                rightOperandCode = CodeBlock.of("\$L", rightOperandInitializer.variable)
+            }
+        }
+
+        val tmpVar: String?
+        if (anySideIsBlock) {
+            tmpVar = generateTemporary()
+            code.add("\$T $tmpVar = ", toJavaType(resultType))
+        } else {
+            tmpVar = null
+        }
+
+        if (leftPrecedence < operatorPrecedence) {
             code
                     .add("(")
                     .add(leftOperandCode)
@@ -166,7 +296,7 @@ object FileContentsCodeGen {
 
         code.add(" $operator ")
 
-        if (rightOperand.precedence() <= operatorPrecedence) {
+        if (rightPrecedence <= operatorPrecedence) {
             code
                     .add("(")
                     .add(rightOperandCode)
@@ -175,19 +305,58 @@ object FileContentsCodeGen {
             code.add(rightOperandCode)
         }
 
-        return code.build()
+        return if (tmpVar == null)
+            InitializerCode.InlineCode(code.build())
+        else
+            InitializerCode.BlockCode(code.build(), tmpVar)
     }
 
     private fun handleComparisonOperation(leftExpr: AExpr, rightExpr: AExpr, module: Module, prolog: String,
-            operatorPrecedence: Int): CodeBlock {
-        val leftOperandCode = aExpr2CodeBlock(leftExpr, module)
-        val rightOperandCode = aExpr2CodeBlock(rightExpr, module)
+            operatorPrecedence: Int, operandType: QualifiedType): InitializerCode {
+        val leftOperandInitializer = aExpr2CodeBlock(leftExpr, module, operandType)
+        val rightOperandInitializer = aExpr2CodeBlock(rightExpr, module, operandType)
 
         val code = CodeBlock.builder()
+        var anySideIsBlock = false
+
+        val leftPrecedence: Int
+        val leftOperandCode: CodeBlock
+        when (leftOperandInitializer) {
+            is InitializerCode.InlineCode -> {
+                leftPrecedence = leftExpr.precedence()
+                leftOperandCode = leftOperandInitializer.code
+            }
+            is InitializerCode.BlockCode -> {
+                code.add(leftOperandInitializer.code)
+                anySideIsBlock = true
+                leftPrecedence = AExpr.AUnitLiteral.precedence()
+                leftOperandCode = CodeBlock.of("\$L", leftOperandInitializer.variable)
+            }
+        }
+
+        val rightOperandCode: CodeBlock
+        when (rightOperandInitializer) {
+            is InitializerCode.InlineCode -> {
+                rightOperandCode = rightOperandInitializer.code
+            }
+            is InitializerCode.BlockCode -> {
+                code.add(rightOperandInitializer.code)
+                anySideIsBlock = true
+                rightOperandCode = CodeBlock.of("\$L", rightOperandInitializer.variable)
+            }
+        }
+
+        val tmpVar: String?
+        if (anySideIsBlock) {
+            tmpVar = generateTemporary()
+            code.add("boolean $tmpVar = ")
+        } else {
+            tmpVar = null
+        }
 
         code.add(prolog)
 
-        if (leftExpr.precedence() < operatorPrecedence) {
+        if (leftPrecedence < operatorPrecedence) {
             code
                     .add("(")
                     .add(leftOperandCode)
@@ -201,36 +370,47 @@ object FileContentsCodeGen {
                 .add(rightOperandCode)
                 .add(")")
 
-        return code.build()
+        return if (tmpVar == null)
+            InitializerCode.InlineCode(code.build())
+        else
+            InitializerCode.BlockCode(code.build(), tmpVar)
+    }
+
+    private var counter: Int = 0;
+
+    private fun generateTemporary(): String {
+        val ret = counter
+        counter += 1
+        return "\$tmp$ret"
     }
 
     private fun AExpr.precedence(): Int = when (this) {
-        is AExpr.ALet -> TODO()
-        is AExpr.ADisjunction -> 0
-        is AExpr.AConjunction -> 1
-        is AExpr.APrimitiveEquality -> 2
-        is AExpr.APrimitiveInequality -> 2
-        is AExpr.ALesser -> 3
-        is AExpr.ALesserEqual -> 3
-        is AExpr.AGreater -> 3
-        is AExpr.AGreaterEqual -> 3
-        is AExpr.AAddition -> 4
+        is AExpr.ALet -> 0
+        is AExpr.ADisjunction -> 1
+        is AExpr.AConjunction -> 2
+        is AExpr.APrimitiveEquality -> 3
+        is AExpr.APrimitiveInequality -> 3
+        is AExpr.ALesser -> 4
+        is AExpr.ALesserEqual -> 4
+        is AExpr.AGreater -> 4
+        is AExpr.AGreaterEqual -> 4
+        is AExpr.AAddition -> 5
         // String concatenation is the same as addition
-        is AExpr.AStringConcatenation -> 4
-        is AExpr.ASubtraction -> 4
-        is AExpr.AMultiplication -> 5
-        is AExpr.ADivision -> 5
-        is AExpr.AModulus -> 5
-        is AExpr.ANegation -> 6
+        is AExpr.AStringConcatenation -> 5
+        is AExpr.ASubtraction -> 5
+        is AExpr.AMultiplication -> 6
+        is AExpr.ADivision -> 6
+        is AExpr.AModulus -> 6
+        is AExpr.ANegation -> 7
         // because String inequality is implemented as !s1.equals(s2),
         // it has the same precedence as negation
-        is AExpr.AStringInequality -> 6
-        is AExpr.AStringEquality -> 7
-        is AExpr.AIntLiteral -> 8
-        is AExpr.AUnitLiteral -> 8
-        is AExpr.ABoolLiteral -> 8
-        is AExpr.ACharLiteral -> 8
-        is AExpr.AStringLiteral -> 8
-        is AExpr.AValueReference -> 8
+        is AExpr.AStringInequality -> 7
+        is AExpr.AStringEquality -> 8
+        is AExpr.AIntLiteral -> 9
+        is AExpr.AUnitLiteral -> 9
+        is AExpr.ABoolLiteral -> 9
+        is AExpr.ACharLiteral -> 9
+        is AExpr.AStringLiteral -> 9
+        is AExpr.AValueReference -> 9
     }
 }

@@ -3,8 +3,7 @@ package com.
 
 import com.example.inner.Ref
 
-def intMax = 2147483647
-def val1 = 340 + (intMax - (intMax - 2))
+def val1 = let intMax = 2147483647 in 340 + (intMax - (intMax - 2))
 
 def val2: Int = 1 + 10 % 7 - (3 * 1 - 9 * 5 / 2)
 
