@@ -52,6 +52,7 @@ class FileContentsCodeGen {
                         .build()
             }
             is InitializerCode.BlockCode -> {
+                addToStaticInitializer(CodeBlock.of("// initialization code for field \$L\n", simpleValueDef.id))
                 addToStaticInitializer(initializerCodeBlock.code)
                 addToStaticInitializer(CodeBlock.of("\$L = \$L;\n", simpleValueDef.id, initializerCodeBlock.variable))
                 builder.build()
@@ -129,7 +130,7 @@ class FileContentsCodeGen {
                                 .add(operandCode.code)
 
                         val tmpVar = generateTemporary()
-                        code.addStatement("boolean $tmpVar = !\$L", operandCode.variable)
+                        code.addStatement("boolean \$L = !\$L", tmpVar, operandCode.variable)
 
                         InitializerCode.BlockCode(code.build(), tmpVar)
                     }
@@ -185,11 +186,11 @@ class FileContentsCodeGen {
             }
             is AExpr.APrimitiveEquality -> {
                 handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "==", aExpr.precedence(),
-                        BuiltInTypes.Bool, type) // TODO this is incorrect!
+                        BuiltInTypes.Bool, aExpr.leftOperand.type())
             }
             is AExpr.APrimitiveInequality -> {
                 handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!=", aExpr.precedence(),
-                        BuiltInTypes.Bool, type)
+                        BuiltInTypes.Bool, aExpr.leftOperand.type())
             }
             is AExpr.AStringEquality -> {
                 handleComparisonOperation(aExpr.leftOperand, aExpr.rightOperand, module, "", aExpr.precedence(),
@@ -213,10 +214,8 @@ class FileContentsCodeGen {
                         is ADef.AValueDef.ASimpleValueDef ->
                             aExpr2CodeBlock(decl.initializer, module, decl.type)
                     }
-                    val type = decl.type
-                    val id =  decl.id
                     code
-                            .add("\$T \$L = ", toJavaType(type), id)
+                            .add("\$T \$L = ", toJavaType(decl.type), decl.id)
                             .add(exprCode.code) // ToDo for now...
                             .add(";\n")
                 }
@@ -280,7 +279,7 @@ class FileContentsCodeGen {
         val tmpVar: String?
         if (anySideIsBlock) {
             tmpVar = generateTemporary()
-            code.add("\$T $tmpVar = ", toJavaType(resultType))
+            code.add("\$T \$L = ", toJavaType(resultType), tmpVar)
         } else {
             tmpVar = null
         }
@@ -303,6 +302,10 @@ class FileContentsCodeGen {
                     .add(")")
         } else {
             code.add(rightOperandCode)
+        }
+
+        if (anySideIsBlock) {
+            code.add(";\n")
         }
 
         return if (tmpVar == null)
@@ -349,7 +352,7 @@ class FileContentsCodeGen {
         val tmpVar: String?
         if (anySideIsBlock) {
             tmpVar = generateTemporary()
-            code.add("boolean $tmpVar = ")
+            code.add("boolean \$L = ", tmpVar)
         } else {
             tmpVar = null
         }
@@ -369,6 +372,10 @@ class FileContentsCodeGen {
                 .add(".equals(")
                 .add(rightOperandCode)
                 .add(")")
+
+        if (anySideIsBlock) {
+            code.add(";\n")
+        }
 
         return if (tmpVar == null)
             InitializerCode.InlineCode(code.build())
@@ -412,5 +419,32 @@ class FileContentsCodeGen {
         is AExpr.ACharLiteral -> 9
         is AExpr.AStringLiteral -> 9
         is AExpr.AValueReference -> 9
+    }
+
+    private fun AExpr.type(): QualifiedType = when (this) {
+        is AExpr.ADisjunction -> BuiltInTypes.Bool
+        is AExpr.AConjunction -> BuiltInTypes.Bool
+        is AExpr.APrimitiveEquality -> BuiltInTypes.Bool
+        is AExpr.APrimitiveInequality -> BuiltInTypes.Bool
+        is AExpr.ALesser -> BuiltInTypes.Bool
+        is AExpr.ALesserEqual -> BuiltInTypes.Bool
+        is AExpr.AGreater -> BuiltInTypes.Bool
+        is AExpr.AGreaterEqual -> BuiltInTypes.Bool
+        is AExpr.AAddition -> BuiltInTypes.Int
+        is AExpr.AStringConcatenation -> BuiltInTypes.String
+        is AExpr.ASubtraction -> BuiltInTypes.Int
+        is AExpr.AMultiplication -> BuiltInTypes.Int
+        is AExpr.ADivision -> BuiltInTypes.Int
+        is AExpr.AModulus -> BuiltInTypes.Int
+        is AExpr.ANegation -> BuiltInTypes.Bool
+        is AExpr.AStringInequality -> BuiltInTypes.Bool
+        is AExpr.AStringEquality -> BuiltInTypes.Bool
+        is AExpr.AIntLiteral -> BuiltInTypes.Int
+        is AExpr.AUnitLiteral -> BuiltInTypes.Unit
+        is AExpr.ABoolLiteral -> BuiltInTypes.Bool
+        is AExpr.ACharLiteral -> BuiltInTypes.Char
+        is AExpr.AStringLiteral -> BuiltInTypes.String
+        is AExpr.AValueReference -> this.type
+        is AExpr.ALet -> this.expr.type()
     }
 }
