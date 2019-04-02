@@ -78,9 +78,9 @@ class FileContentsCodeGen {
         }
     }
 
-    private sealed class InitializerCode(open val code: CodeBlock) {
-        class InlineCode(override val code: CodeBlock) : InitializerCode(code)
-        class BlockCode(override val code: CodeBlock, val variable: String) : InitializerCode(code)
+    private sealed class InitializerCode() {
+        class InlineCode(val code: CodeBlock) : InitializerCode()
+        class BlockCode(val code: CodeBlock, val variable: String) : InitializerCode()
     }
 
     private fun aExpr2CodeBlock(aExpr: AExpr, module: Module, type: QualifiedType): InitializerCode {
@@ -202,6 +202,8 @@ class FileContentsCodeGen {
             }
             is AExpr.ALet -> {
                 val code = CodeBlock.builder()
+
+                // declare a temporary for the result of the expression
                 val tmpVar = generateTemporary()
                 code
                         .addStatement("\$T \$L", toJavaType(type), tmpVar)
@@ -210,22 +212,40 @@ class FileContentsCodeGen {
 
                 // handle the declarations
                 for (decl in aExpr.declarations) {
-                    val exprCode = when (decl) {
+                    val initCode = when (decl) {
                         is ADef.AValueDef.ASimpleValueDef ->
                             aExpr2CodeBlock(decl.initializer, module, decl.type)
                     }
-                    code
-                            .add("\$T \$L = ", toJavaType(decl.type), decl.id)
-                            .add(exprCode.code) // ToDo for now...
-                            .add(";\n")
+                    when (initCode) {
+                        is InitializerCode.InlineCode -> {
+                            code
+                                    .add("\$T \$L = ", toJavaType(decl.type), decl.id)
+                                    .add(initCode.code)
+                                    .add(";\n")
+                        }
+                        is InitializerCode.BlockCode -> {
+                            code
+                                    .add(initCode.code)
+                                    .addStatement("\$T \$L = \$L", toJavaType(decl.type), decl.id, initCode.variable)
+                        }
+                    }
                 }
 
                 // handle the expression
                 val exprCode = aExpr2CodeBlock(aExpr.expr, module, type)
-                code
-                        .add("\$L = ", tmpVar)
-                        .add(exprCode.code) // ToDo for now...
-                        .add(";\n")
+                when (exprCode) {
+                    is InitializerCode.InlineCode -> {
+                        code
+                                .add("\$L = ", tmpVar)
+                                .add(exprCode.code)
+                                .add(";\n")
+                    }
+                    is InitializerCode.BlockCode -> {
+                        code
+                                .add(exprCode.code)
+                                .addStatement("\$L = \$L", tmpVar, exprCode.variable)
+                    }
+                }
 
                 code.endControlFlow()
 
@@ -383,7 +403,7 @@ class FileContentsCodeGen {
             InitializerCode.BlockCode(code.build(), tmpVar)
     }
 
-    private var counter: Int = 0;
+    private var counter: Int = 0
 
     private fun generateTemporary(): String {
         val ret = counter
