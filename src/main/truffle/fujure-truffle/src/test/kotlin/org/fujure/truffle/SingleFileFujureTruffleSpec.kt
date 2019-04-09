@@ -207,6 +207,7 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                     def i = 3 + (intMax - (intMax - 2))
                     def b4 = !("a" == "b") != true
                     def b5 = "b" + "5"
+                    def b6 = let b6 = false in !b6
                 """)
             }
 
@@ -246,6 +247,11 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
             it.should("correctly evaluate the String concatenation expression") {
                 val b5 = moduleBindings.getMember("b5")
                 assertThat(b5.asString()).isEqualTo("b5")
+            }
+
+            it.should("correctly evaluate the 'let' expression") {
+                val b6 = moduleBindings.getMember("b6")
+                assertThat(b6.asBoolean()).isTrue()
             }
         }
 

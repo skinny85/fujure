@@ -46,7 +46,7 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
                         symbolTable = analysisResults.symbolTable
                         Truffle.getRuntime().createCallTarget(RootModuleNode(
                             this,
-                            Aast2TruffleNodes.translate(analysisResults.aasts.first(), this)
+                            Aast2TruffleNodes(analysisResults.aasts.first(), this).translate()
                         ))
                     }
                 }
