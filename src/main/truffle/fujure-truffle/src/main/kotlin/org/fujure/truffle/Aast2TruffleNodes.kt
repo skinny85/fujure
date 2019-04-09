@@ -19,6 +19,10 @@ import org.fujure.truffle.nodes.InequalityExprNode
 import org.fujure.truffle.nodes.IntLiteralExprNode
 import org.fujure.truffle.nodes.LesserEqualExprNode
 import org.fujure.truffle.nodes.LesserExprNode
+import org.fujure.truffle.nodes.LetExprNode
+import org.fujure.truffle.nodes.LocalReferenceExprNode
+import org.fujure.truffle.nodes.LocalSimpleValueDefNode
+import org.fujure.truffle.nodes.LocalValueDefNode
 import org.fujure.truffle.nodes.ModuleNonRootNode
 import org.fujure.truffle.nodes.ModulusExprNode
 import org.fujure.truffle.nodes.MultiplicationExprNode
@@ -28,21 +32,31 @@ import org.fujure.truffle.nodes.SimpleValueDefNode
 import org.fujure.truffle.nodes.StringLiteralExprNode
 import org.fujure.truffle.nodes.SubtractionExprNode
 import org.fujure.truffle.nodes.UnitLiteralExprNode
+import org.fujure.truffle.nodes.ValueDefNode
 
-object Aast2TruffleNodes {
-    fun translate(annotatedAst: AFileContents, fujureTruffleLanguage: FujureTruffleLanguage): ModuleNonRootNode {
-        return ModuleNonRootNode(annotatedAst.module,
-                annotatedAst.defs.map { translate(it, fujureTruffleLanguage) })
+class Aast2TruffleNodes(
+        private val aFileContents: AFileContents,
+        private val fujureTruffleLanguage: FujureTruffleLanguage) {
+    private val module = aFileContents.module
+
+    fun translate(): ModuleNonRootNode {
+        return ModuleNonRootNode(module, aFileContents.defs.map { translate(it) })
     }
 
-    private fun translate(aDef: ADef, fujureTruffleLanguage: FujureTruffleLanguage): DefNode {
+    private fun translate(aDef: ADef): DefNode {
         return when (aDef) {
-            is ADef.AValueDef.ASimpleValueDef -> SimpleValueDefNode(
-                    aDef.id, translateExpr(aDef.initializer, fujureTruffleLanguage))
+            is ADef.AValueDef -> translate(aDef)
         }
     }
 
-    private fun translateExpr(aExpr: AExpr, fujureTruffleLanguage: FujureTruffleLanguage): ExprNode {
+    private fun translate(aDef: ADef.AValueDef): ValueDefNode {
+        return when (aDef) {
+            is ADef.AValueDef.ASimpleValueDef ->
+                SimpleValueDefNode(aDef.id, translateExpr(aDef.initializer))
+        }
+    }
+
+    private fun translateExpr(aExpr: AExpr): ExprNode {
         return when (aExpr) {
             is AExpr.AUnitLiteral -> UnitLiteralExprNode()
             is AExpr.ABoolLiteral -> BoolLiteralExprNode(when (aExpr) {
@@ -52,57 +66,94 @@ object Aast2TruffleNodes {
             is AExpr.ACharLiteral -> CharLiteralExprNode(parseCharaLiteral(aExpr.value))
             is AExpr.AIntLiteral -> IntLiteralExprNode(aExpr.value)
             is AExpr.AStringLiteral -> StringLiteralExprNode(aExpr.value)
-            is AExpr.AValueReference -> ReferenceExprNode(aExpr.targetModule, aExpr.reference, fujureTruffleLanguage)
-            is AExpr.ANegation -> NegationExprNode.of(translateExpr(aExpr.operand, fujureTruffleLanguage))
+            is AExpr.ANegation -> NegationExprNode.of(translateExpr(aExpr.operand))
             is AExpr.ADisjunction -> DisjunctionExprNode(
-                    translateExpr(aExpr.leftDisjunct, fujureTruffleLanguage),
-                    translateExpr(aExpr.rightDisjunct, fujureTruffleLanguage))
+                    translateExpr(aExpr.leftDisjunct),
+                    translateExpr(aExpr.rightDisjunct))
             is AExpr.AConjunction -> ConjunctionExprNode(
-                    translateExpr(aExpr.leftConjunct, fujureTruffleLanguage),
-                    translateExpr(aExpr.rightConjunct, fujureTruffleLanguage))
+                    translateExpr(aExpr.leftConjunct),
+                    translateExpr(aExpr.rightConjunct))
             is AExpr.ALesser -> LesserExprNode.of(
-                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
-                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+                    translateExpr(aExpr.leftOperand),
+                    translateExpr(aExpr.rightOperand))
             is AExpr.ALesserEqual -> LesserEqualExprNode.of(
-                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
-                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+                    translateExpr(aExpr.leftOperand),
+                    translateExpr(aExpr.rightOperand))
             is AExpr.AGreater -> GreaterExprNode.of(
-                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
-                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+                    translateExpr(aExpr.leftOperand),
+                    translateExpr(aExpr.rightOperand))
             is AExpr.AGreaterEqual -> GreaterEqualExprNode.of(
-                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
-                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+                    translateExpr(aExpr.leftOperand),
+                    translateExpr(aExpr.rightOperand))
             is AExpr.AAddition -> AdditionOrConcatenationExprNode.of(
-                    translateExpr(aExpr.augend, fujureTruffleLanguage),
-                    translateExpr(aExpr.addend, fujureTruffleLanguage))
+                    translateExpr(aExpr.augend),
+                    translateExpr(aExpr.addend))
             is AExpr.AStringConcatenation -> AdditionOrConcatenationExprNode.of(
-                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
-                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+                    translateExpr(aExpr.leftOperand),
+                    translateExpr(aExpr.rightOperand))
             is AExpr.ASubtraction -> SubtractionExprNode.of(
-                    translateExpr(aExpr.minuend, fujureTruffleLanguage),
-                    translateExpr(aExpr.subtrahend, fujureTruffleLanguage))
+                    translateExpr(aExpr.minuend),
+                    translateExpr(aExpr.subtrahend))
             is AExpr.AMultiplication -> MultiplicationExprNode.of(
-                    translateExpr(aExpr.multiplicand, fujureTruffleLanguage),
-                    translateExpr(aExpr.multiplier, fujureTruffleLanguage))
+                    translateExpr(aExpr.multiplicand),
+                    translateExpr(aExpr.multiplier))
             is AExpr.ADivision -> DivisionExprNode.of(
-                    translateExpr(aExpr.dividend, fujureTruffleLanguage),
-                    translateExpr(aExpr.divisor, fujureTruffleLanguage))
+                    translateExpr(aExpr.dividend),
+                    translateExpr(aExpr.divisor))
             is AExpr.AModulus -> ModulusExprNode.of(
-                    translateExpr(aExpr.dividend, fujureTruffleLanguage),
-                    translateExpr(aExpr.divisor, fujureTruffleLanguage))
+                    translateExpr(aExpr.dividend),
+                    translateExpr(aExpr.divisor))
             is AExpr.APrimitiveEquality -> EqualityExprNode.of(
-                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
-                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+                    translateExpr(aExpr.leftOperand),
+                    translateExpr(aExpr.rightOperand))
             is AExpr.AStringEquality -> EqualityExprNode.of(
-                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
-                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+                    translateExpr(aExpr.leftOperand),
+                    translateExpr(aExpr.rightOperand))
             is AExpr.APrimitiveInequality -> InequalityExprNode.of(
-                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
-                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
+                    translateExpr(aExpr.leftOperand),
+                    translateExpr(aExpr.rightOperand))
             is AExpr.AStringInequality -> InequalityExprNode.of(
-                    translateExpr(aExpr.leftOperand, fujureTruffleLanguage),
-                    translateExpr(aExpr.rightOperand, fujureTruffleLanguage))
-            is AExpr.ALet -> TODO()
+                    translateExpr(aExpr.leftOperand),
+                    translateExpr(aExpr.rightOperand))
+            is AExpr.ALet -> {
+                val bindings = FujureTruffleBindings.ModuleBindings()
+                val context = fujureTruffleLanguage.contextReference.get()
+                context.enterNewLocalScope(bindings)
+
+                val localValues = aExpr.declarations.map { translateLocalDeclaration(it, bindings) }
+
+                val expr = translateExpr(aExpr.expr)
+
+                context.leaveLatestLocalScope()
+
+                LetExprNode(localValues, expr)
+            }
+            is AExpr.AValueReference -> {
+                if (aExpr.targetModule == module) {
+                    val localFind = fujureTruffleLanguage.contextReference.get().findInLocalScopes(aExpr.reference)
+                    when (localFind) {
+                        is FujureTruffleContext.LocalSearchResult.Hit -> {
+                            LocalReferenceExprNode(aExpr.reference, localFind.bindings)
+                        }
+                        is FujureTruffleContext.LocalSearchResult.Miss -> {
+                            ReferenceExprNode(aExpr.targetModule, aExpr.reference, fujureTruffleLanguage)
+                        }
+                    }
+                } else {
+                    ReferenceExprNode(aExpr.targetModule, aExpr.reference, fujureTruffleLanguage)
+                }
+            }
+        }
+    }
+
+    private fun translateLocalDeclaration(aDeclaration: ADef.AValueDef,
+            bindings: FujureTruffleBindings.ModuleBindings): LocalValueDefNode {
+        return when (aDeclaration) {
+            is ADef.AValueDef.ASimpleValueDef -> {
+                val initializer = translateExpr(aDeclaration.initializer)
+                bindings.reserve(aDeclaration.id)
+                LocalSimpleValueDefNode(aDeclaration.id, bindings, initializer)
+            }
         }
     }
 
