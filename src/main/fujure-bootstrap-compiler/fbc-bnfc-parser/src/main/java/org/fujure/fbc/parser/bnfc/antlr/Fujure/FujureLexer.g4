@@ -26,13 +26,16 @@ Surrogate_id_SYMB_17 : '!' ;
 Surrogate_id_SYMB_18 : '(' ;
 Surrogate_id_SYMB_19 : ')' ;
 Surrogate_id_SYMB_20 : 'def' ;
-Surrogate_id_SYMB_21 : 'false' ;
-Surrogate_id_SYMB_22 : 'import' ;
-Surrogate_id_SYMB_23 : 'in' ;
-Surrogate_id_SYMB_24 : 'let' ;
-Surrogate_id_SYMB_25 : 'package' ;
-Surrogate_id_SYMB_26 : 'true' ;
-Surrogate_id_SYMB_27 : 'unit' ;
+Surrogate_id_SYMB_21 : 'else' ;
+Surrogate_id_SYMB_22 : 'false' ;
+Surrogate_id_SYMB_23 : 'if' ;
+Surrogate_id_SYMB_24 : 'import' ;
+Surrogate_id_SYMB_25 : 'in' ;
+Surrogate_id_SYMB_26 : 'let' ;
+Surrogate_id_SYMB_27 : 'package' ;
+Surrogate_id_SYMB_28 : 'then' ;
+Surrogate_id_SYMB_29 : 'true' ;
+Surrogate_id_SYMB_30 : 'unit' ;
 
 
 JID : ('_'|'$'|LETTER)('_'|'$'|LETTER|DIGIT)*;

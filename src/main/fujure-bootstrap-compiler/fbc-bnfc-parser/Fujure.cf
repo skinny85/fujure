@@ -27,6 +27,7 @@ separator nonempty TypeSpecFragm "." ;
 TypeSpecFragment . TypeSpecFragm ::= JID ;
 
 LetExpr            . Expr   ::= "let" [LetDef] "in" Expr ;
+IfExpr             . Expr   ::= "if" Expr "then" Expr "else" Expr ;
 LetDefinition . LetDef ::= Binding ;
 separator nonempty LetDef "," ;
 OrExpr             . Expr1  ::= Expr1 "||" Expr2 ;

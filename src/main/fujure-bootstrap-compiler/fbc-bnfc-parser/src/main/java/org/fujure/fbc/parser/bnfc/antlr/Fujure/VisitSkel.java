@@ -133,6 +133,12 @@ public class VisitSkel
       { /* ... */ }
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr p, A arg)
+    { /* Code For IfExpr Goes Here */
+      p.expr_1.accept(new ExprVisitor<R,A>(), arg);
+      p.expr_2.accept(new ExprVisitor<R,A>(), arg);
+      p.expr_3.accept(new ExprVisitor<R,A>(), arg);
+      return null;
     }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr p, A arg)
     { /* Code For OrExpr Goes Here */
       p.expr_1.accept(new ExprVisitor<R,A>(), arg);

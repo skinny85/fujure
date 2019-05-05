@@ -320,6 +320,18 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitLetExpr(FujureParser.LetExprContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code IfExpr}
+	 * labeled alternative in {@link FujureParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfExpr(FujureParser.IfExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code IfExpr}
+	 * labeled alternative in {@link FujureParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfExpr(FujureParser.IfExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code Coercion_Expr}
 	 * labeled alternative in {@link FujureParser#expr}.
 	 * @param ctx the parse tree
