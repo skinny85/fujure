@@ -10,4 +10,5 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 install: true # nothing to do for install
-script: ./travis.sh
+script:
+  - ./gradlew build publish && cd src/test/e2e-test-gradle && ../../../gradlew build
