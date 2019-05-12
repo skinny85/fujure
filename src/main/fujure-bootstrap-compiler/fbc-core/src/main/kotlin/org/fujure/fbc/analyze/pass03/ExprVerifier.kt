@@ -125,6 +125,9 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             is Expr.Let -> {
                 handleLetExpression(expr)
             }
+            is Expr.If -> {
+                handleIfExpression(expr)
+            }
         }
     }
 
@@ -294,6 +297,72 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             })
         } else {
             ExprVerificationResult.Failure(exprType, errors)
+        }
+    }
+
+    private fun handleIfExpression(ifExpr: Expr.If): ExprVerificationResult {
+        val conditionAnalysisResult = analyzeExpr(ifExpr.conditionExpr)
+        val thenAnalysisResult = analyzeExpr(ifExpr.thenExpr)
+        val elseAnalysisResult = analyzeExpr(ifExpr.elseExpr)
+
+        val errors = mutableListOf<SemanticError>()
+
+        val conditionAast: AExpr? = when (conditionAnalysisResult) {
+            is ExprVerificationResult.Failure -> {
+                errors.addAll(conditionAnalysisResult.errors)
+                null
+            }
+            is ExprVerificationResult.Success -> {
+                conditionAnalysisResult.aExpr
+            }
+        }
+        val conditionType = conditionAnalysisResult.qualifiedType
+
+        val thenAast: AExpr? = when (thenAnalysisResult) {
+            is ExprVerificationResult.Failure -> {
+                errors.addAll(thenAnalysisResult.errors)
+                null
+            }
+            is ExprVerificationResult.Success -> {
+                thenAnalysisResult.aExpr
+            }
+        }
+        val thenType = thenAnalysisResult.qualifiedType
+
+        val elseAast: AExpr? = when (elseAnalysisResult) {
+            is ExprVerificationResult.Failure -> {
+                errors.addAll(elseAnalysisResult.errors)
+                null
+            }
+            is ExprVerificationResult.Success -> {
+                elseAnalysisResult.aExpr
+            }
+        }
+        val elseType = elseAnalysisResult.qualifiedType
+
+        val errorContext = ErrorContext.ValueDefinition(valName)
+        if (conditionType != null && conditionType != BuiltInTypes.Bool) {
+            errors.add(SemanticError.TypeMismatch(errorContext,
+                    BuiltInTypes.Bool, conditionType))
+        }
+        if (thenType != null && elseType != null && thenType != elseType) {
+            errors.add(SemanticError.TypeMismatch(errorContext,
+                    thenType, elseType))
+        }
+        val returnType: QualifiedType? = if (thenType != null)
+            thenType
+        else if (elseType != null)
+            elseType
+        else
+            null
+
+        return if (errors.isEmpty()) {
+            ExprVerificationResult.Success(returnType, if (conditionAast != null && thenAast != null && elseAast != null)
+                AExpr.AIf(conditionAast, thenAast, elseAast)
+            else
+                null)
+        } else {
+            ExprVerificationResult.Failure(returnType, errors)
         }
     }
 

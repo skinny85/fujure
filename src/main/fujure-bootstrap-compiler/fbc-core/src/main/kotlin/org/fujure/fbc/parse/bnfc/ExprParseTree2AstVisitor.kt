@@ -42,7 +42,9 @@ internal object ExprParseTree2AstVisitor :
     }
 
     override fun visit(ifExpr: IfExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.If(ifExpr.expr_1.accept(this, arg),
+            ifExpr.expr_2.accept(this, arg),
+            ifExpr.expr_3.accept(this, arg))
     }
 
     override fun visit(orExpr: OrExpr, arg: Unit): Expr {

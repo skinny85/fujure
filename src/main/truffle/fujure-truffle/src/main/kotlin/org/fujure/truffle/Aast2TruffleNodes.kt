@@ -115,6 +115,9 @@ class Aast2TruffleNodes(
             is AExpr.AStringInequality -> InequalityExprNode.of(
                     translateExpr(aExpr.leftOperand),
                     translateExpr(aExpr.rightOperand))
+            is AExpr.AIf -> {
+                TODO()
+            }
             is AExpr.ALet -> {
                 val bindings = FujureTruffleBindings.ModuleBindings()
                 val context = fujureTruffleLanguage.contextReference.get()

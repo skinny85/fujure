@@ -41,4 +41,5 @@ sealed class AExpr {
     data class AStringInequality(val leftOperand: AExpr, val rightOperand: AExpr) : AExpr()
 
     data class ALet(val declarations: List<ADef.AValueDef>, val expr: AExpr) : AExpr()
+    data class AIf(val conditionExpr: AExpr, val thenExpr: AExpr, val elseExpr: AExpr) : AExpr()
 }

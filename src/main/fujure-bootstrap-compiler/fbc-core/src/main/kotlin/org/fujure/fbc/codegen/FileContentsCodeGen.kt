@@ -251,6 +251,9 @@ class FileContentsCodeGen {
 
                 InitializerCode.BlockCode(code.build(), tmpVar)
             }
+            is AExpr.AIf -> {
+                TODO()
+            }
         }
     }
 
@@ -413,6 +416,7 @@ class FileContentsCodeGen {
 
     private fun AExpr.precedence(): Int = when (this) {
         is AExpr.ALet -> 0
+        is AExpr.AIf -> TODO()
         is AExpr.ADisjunction -> 1
         is AExpr.AConjunction -> 2
         is AExpr.APrimitiveEquality -> 3
@@ -466,5 +470,6 @@ class FileContentsCodeGen {
         is AExpr.AStringLiteral -> BuiltInTypes.String
         is AExpr.AValueReference -> this.type
         is AExpr.ALet -> this.expr.type()
+        is AExpr.AIf -> TODO()
     }
 }

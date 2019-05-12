@@ -36,4 +36,5 @@ sealed class Expr {
     data class Modulus(val dividend: Expr, val divisor: Expr) : Expr()
 
     data class Let(val declarations: List<Def.ValueDef>, val expr: Expr) : Expr()
+    data class If(val conditionExpr: Expr, val thenExpr: Expr, val elseExpr: Expr) : Expr()
 }
