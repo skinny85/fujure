@@ -17,5 +17,5 @@ def falsy: Bool = let
 def falsyAgain = !(true || falsy && false)
 def falsyRef = !Ref.truth
 def u = unit
-def c: Char = '\n'
+def c: Char = if let f = false in !f then '\n' else 'n'
 def s: String = "Hello, \n" + "World!"

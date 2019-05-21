@@ -79,6 +79,8 @@ class FileContentsCodeGen {
     }
 
     private sealed class InitializerCode() {
+        val isCodeABlock = this is InitializerCode.BlockCode
+
         class InlineCode(val code: CodeBlock) : InitializerCode()
         class BlockCode(val code: CodeBlock, val variable: String) : InitializerCode()
     }
@@ -252,7 +254,80 @@ class FileContentsCodeGen {
                 InitializerCode.BlockCode(code.build(), tmpVar)
             }
             is AExpr.AIf -> {
-                TODO()
+                val conditionBlock = aExpr2CodeBlock(aExpr.conditionExpr, module, aExpr.conditionExpr.type())
+                val thenBlock = aExpr2CodeBlock(aExpr.thenExpr, module, aExpr.thenExpr.type())
+                val elseBlock = aExpr2CodeBlock(aExpr.elseExpr, module, aExpr.elseExpr.type())
+
+                val tmpVar = if (conditionBlock.isCodeABlock ||
+                        thenBlock.isCodeABlock ||
+                        elseBlock.isCodeABlock)
+                    generateTemporary()
+                else
+                    null
+
+                val code = CodeBlock.builder()
+
+                if (tmpVar != null) {
+                    code
+                            .addStatement("\$T \$L", toJavaType(type), tmpVar)
+                            .add("{\n")
+                            .indent()
+                }
+
+                val conditionCode = CodeBlock.builder()
+                when (conditionBlock) {
+                    is InitializerCode.InlineCode -> {
+                        conditionCode.add(conditionBlock.code)
+                    }
+                    is InitializerCode.BlockCode -> {
+                        code.add(conditionBlock.code)
+                        conditionCode.add("\$L", conditionBlock.variable)
+                    }
+                }
+                val thenCode = CodeBlock.builder()
+                when (thenBlock) {
+                    is InitializerCode.InlineCode -> {
+                        thenCode.add(thenBlock.code)
+                    }
+                    is InitializerCode.BlockCode -> {
+                        code.add(thenBlock.code)
+                        thenCode.add("\$L", thenBlock.variable)
+                    }
+                }
+                val elseCode = CodeBlock.builder()
+                when (elseBlock) {
+                    is InitializerCode.InlineCode -> {
+                        elseCode.add(elseBlock.code)
+                    }
+                    is InitializerCode.BlockCode -> {
+                        code.add(elseBlock.code)
+                        elseCode.add("\$L", elseBlock.variable)
+                    }
+                }
+
+                if (tmpVar != null) {
+                    code
+                            .add("\$L = ", tmpVar)
+                }
+
+                code
+                        .add(conditionCode.build())
+                        .add(" ? ")
+                        .add(thenCode.build())
+                        .add(" : ")
+                        .add(elseCode.build())
+
+                if (tmpVar != null) {
+                    code
+                            .add(";\n")
+                            .endControlFlow()
+                }
+
+                if (tmpVar == null) {
+                    InitializerCode.InlineCode(code.build())
+                } else {
+                    InitializerCode.BlockCode(code.build(), tmpVar)
+                }
             }
         }
     }
@@ -416,7 +491,7 @@ class FileContentsCodeGen {
 
     private fun AExpr.precedence(): Int = when (this) {
         is AExpr.ALet -> 0
-        is AExpr.AIf -> TODO()
+        is AExpr.AIf -> 0
         is AExpr.ADisjunction -> 1
         is AExpr.AConjunction -> 2
         is AExpr.APrimitiveEquality -> 3
@@ -470,6 +545,6 @@ class FileContentsCodeGen {
         is AExpr.AStringLiteral -> BuiltInTypes.String
         is AExpr.AValueReference -> this.type
         is AExpr.ALet -> this.expr.type()
-        is AExpr.AIf -> TODO()
+        is AExpr.AIf -> this.thenExpr.type()
     }
 }
