@@ -15,6 +15,7 @@ import org.fujure.truffle.nodes.EqualityExprNode
 import org.fujure.truffle.nodes.ExprNode
 import org.fujure.truffle.nodes.GreaterEqualExprNode
 import org.fujure.truffle.nodes.GreaterExprNode
+import org.fujure.truffle.nodes.IfExprNode
 import org.fujure.truffle.nodes.InequalityExprNode
 import org.fujure.truffle.nodes.IntLiteralExprNode
 import org.fujure.truffle.nodes.LesserEqualExprNode
@@ -115,9 +116,10 @@ class Aast2TruffleNodes(
             is AExpr.AStringInequality -> InequalityExprNode.of(
                     translateExpr(aExpr.leftOperand),
                     translateExpr(aExpr.rightOperand))
-            is AExpr.AIf -> {
-                TODO()
-            }
+            is AExpr.AIf -> IfExprNode(
+                    translateExpr(aExpr.conditionExpr),
+                    translateExpr(aExpr.thenExpr),
+                    translateExpr(aExpr.elseExpr))
             is AExpr.ALet -> {
                 val bindings = FujureTruffleBindings.ModuleBindings()
                 val context = fujureTruffleLanguage.contextReference.get()

@@ -208,6 +208,7 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                     def b4 = !("a" == "b") != true
                     def b5 = "b" + "5"
                     def b6 = let b6 = false in !b6
+                    def i2 = if b6 then 23 else 45
                 """)
             }
 
@@ -252,6 +253,11 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
             it.should("correctly evaluate the 'let' expression") {
                 val b6 = moduleBindings.getMember("b6")
                 assertThat(b6.asBoolean()).isTrue()
+            }
+
+            it.should("correctly evaluate the 'if' expression") {
+                val b6 = moduleBindings.getMember("i2")
+                assertThat(b6.asInt()).isEqualTo(23)
             }
         }
 
