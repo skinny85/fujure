@@ -348,6 +348,36 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListCallArg foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListCallArg foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
   public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef foo)
   {
     pp(foo, 0);
@@ -635,17 +665,7 @@ public class PrettyPrinter
 
   private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr foo, int _i_)
   {
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr)
-    {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr _letexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("let");
-       pp(_letexpr.listletdef_, 0);
-       render("in");
-       pp(_letexpr.expr_, 0);
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr)
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr _ifexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr) foo;
        if (_i_ > 0) render(_L_PAREN);
@@ -655,6 +675,16 @@ public class PrettyPrinter
        pp(_ifexpr.expr_2, 0);
        render("else");
        pp(_ifexpr.expr_3, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr _letexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("let");
+       pp(_letexpr.listletdef_, 0);
+       render("in");
+       pp(_letexpr.expr_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
     else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr)
@@ -774,6 +804,16 @@ public class PrettyPrinter
        pp(_moduloexpr.expr_2, 7);
        if (_i_ > 6) render(_R_PAREN);
     }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr _funcallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr) foo;
+       if (_i_ > 7) render(_L_PAREN);
+       pp(_funcallexpr.jid_, 0);
+       render("(");
+       pp(_funcallexpr.listcallarg_, 0);
+       render(")");
+       if (_i_ > 7) render(_R_PAREN);
+    }
     else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr _notexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr) foo;
@@ -812,6 +852,29 @@ public class PrettyPrinter
   private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListLetDef foo, int _i_)
   {
      for (java.util.Iterator<LetDef> it = foo.iterator(); it.hasNext();)
+     {
+       pp(it.next(), _i_);
+       if (it.hasNext()) {
+         render(",");
+       } else {
+         render("");
+       }
+     }  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg _exprcallarg = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_exprcallarg.expr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListCallArg foo, int _i_)
+  {
+     for (java.util.Iterator<CallArg> it = foo.iterator(); it.hasNext();)
      {
        pp(it.next(), _i_);
        if (it.hasNext()) {
@@ -1135,6 +1198,16 @@ public class PrettyPrinter
 
   private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr foo)
   {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr _ifexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr) foo;
+       render("(");
+       render("IfExpr");
+       sh(_ifexpr.expr_1);
+       sh(_ifexpr.expr_2);
+       sh(_ifexpr.expr_3);
+       render(")");
+    }
     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr _letexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr) foo;
@@ -1144,16 +1217,6 @@ public class PrettyPrinter
        sh(_letexpr.listletdef_);
        render("]");
        sh(_letexpr.expr_);
-       render(")");
-    }
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr)
-    {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr _ifexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr) foo;
-       render("(");
-       render("IfExpr");
-       sh(_ifexpr.expr_1);
-       sh(_ifexpr.expr_2);
-       sh(_ifexpr.expr_3);
        render(")");
     }
     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr)
@@ -1273,6 +1336,17 @@ public class PrettyPrinter
        sh(_moduloexpr.expr_2);
        render(")");
     }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr _funcallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr) foo;
+       render("(");
+       render("FunCallExpr");
+       sh(_funcallexpr.jid_);
+       render("[");
+       sh(_funcallexpr.listcallarg_);
+       render("]");
+       render(")");
+    }
     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr _notexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr) foo;
@@ -1314,6 +1388,28 @@ public class PrettyPrinter
   private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListLetDef foo)
   {
      for (java.util.Iterator<LetDef> it = foo.iterator(); it.hasNext();)
+     {
+       sh(it.next());
+       if (it.hasNext())
+         render(",");
+     }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg foo)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg _exprcallarg = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg) foo;
+       render("(");
+       render("ExprCallArg");
+       sh(_exprcallarg.expr_);
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListCallArg foo)
+  {
+     for (java.util.Iterator<CallArg> it = foo.iterator(); it.hasNext();)
      {
        sh(it.next());
        if (it.hasNext())

@@ -127,17 +127,17 @@ public class VisitSkel
   }
   public class ExprVisitor<R,A> implements Expr.Visitor<R,A>
   {
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr p, A arg)
-    { /* Code For LetExpr Goes Here */
-      for (LetDef x: p.listletdef_)
-      { /* ... */ }
-      p.expr_.accept(new ExprVisitor<R,A>(), arg);
-      return null;
-    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr p, A arg)
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr p, A arg)
     { /* Code For IfExpr Goes Here */
       p.expr_1.accept(new ExprVisitor<R,A>(), arg);
       p.expr_2.accept(new ExprVisitor<R,A>(), arg);
       p.expr_3.accept(new ExprVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr p, A arg)
+    { /* Code For LetExpr Goes Here */
+      for (LetDef x: p.listletdef_)
+      { /* ... */ }
+      p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
     }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr p, A arg)
     { /* Code For OrExpr Goes Here */
@@ -204,7 +204,13 @@ public class VisitSkel
       p.expr_1.accept(new ExprVisitor<R,A>(), arg);
       p.expr_2.accept(new ExprVisitor<R,A>(), arg);
       return null;
-    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr p, A arg)
+    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr p, A arg)
+    { /* Code For FunCallExpr Goes Here */
+      //p.jid_;
+      for (CallArg x: p.listcallarg_)
+      { /* ... */ }
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr p, A arg)
     { /* Code For NotExpr Goes Here */
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
@@ -223,6 +229,14 @@ public class VisitSkel
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDefinition p, A arg)
     { /* Code For LetDefinition Goes Here */
       p.binding_.accept(new BindingVisitor<R,A>(), arg);
+      return null;
+    }
+  }
+  public class CallArgVisitor<R,A> implements CallArg.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg p, A arg)
+    { /* Code For ExprCallArg Goes Here */
+      p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
     }
   }

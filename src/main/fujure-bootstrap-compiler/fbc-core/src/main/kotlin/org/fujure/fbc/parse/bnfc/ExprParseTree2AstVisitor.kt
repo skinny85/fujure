@@ -11,6 +11,7 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterEqualExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DivisionExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.EqualityExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.InequalityExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral
@@ -35,16 +36,16 @@ internal object ExprParseTree2AstVisitor :
         AbsynExpr.Visitor<Expr, Unit>,
         ValRef.Visitor<List<String>, Unit>,
         Literal.Visitor<Expr, Unit> {
-    override fun visit(letExpr: LetExpr, arg: Unit): Expr {
-        return Expr.Let(letExpr.listletdef_.map { letDef ->
-            letDef.accept(DefsParseTree2AstExtractor, arg)
-        }, letExpr.expr_.accept(this, arg))
-    }
-
     override fun visit(ifExpr: IfExpr, arg: Unit): Expr {
         return Expr.If(ifExpr.expr_1.accept(this, arg),
             ifExpr.expr_2.accept(this, arg),
             ifExpr.expr_3.accept(this, arg))
+    }
+
+    override fun visit(letExpr: LetExpr, arg: Unit): Expr {
+        return Expr.Let(letExpr.listletdef_.map { letDef ->
+            letDef.accept(DefsParseTree2AstExtractor, arg)
+        }, letExpr.expr_.accept(this, arg))
     }
 
     override fun visit(orExpr: OrExpr, arg: Unit): Expr {
@@ -123,6 +124,10 @@ internal object ExprParseTree2AstVisitor :
         return Expr.Modulus(
                 moduloExpr.expr_1.accept(this, arg),
                 moduloExpr.expr_2.accept(this, arg))
+    }
+
+    override fun visit(funCallExpr: FunCallExpr, arg: Unit): Expr {
+        throw UnsupportedOperationException()
     }
 
     override fun visit(notExpr: NotExpr, arg: Unit): Expr {

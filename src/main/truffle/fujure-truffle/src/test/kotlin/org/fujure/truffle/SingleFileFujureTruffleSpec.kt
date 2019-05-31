@@ -256,8 +256,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
             }
 
             it.should("correctly evaluate the 'if' expression") {
-                val b6 = moduleBindings.getMember("i2")
-                assertThat(b6.asInt()).isEqualTo(23)
+                val i2 = moduleBindings.getMember("i2")
+                assertThat(i2.asInt()).isEqualTo(23)
             }
         }
 

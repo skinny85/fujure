@@ -17,6 +17,7 @@ public class ComposVisitor<A> implements
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDef.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDef,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRefFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRefFragm,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal,A>
@@ -131,7 +132,13 @@ public class ComposVisitor<A> implements
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment(jid_);
     }
 /* Expr */
-    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr p, A arg)
+    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr p, A arg)
+    {
+      Expr expr_1 = p.expr_1.accept(this, arg);
+      Expr expr_2 = p.expr_2.accept(this, arg);
+      Expr expr_3 = p.expr_3.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr(expr_1, expr_2, expr_3);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr p, A arg)
     {
       ListLetDef listletdef_ = new ListLetDef();
       for (LetDef x : p.listletdef_)
@@ -140,12 +147,6 @@ public class ComposVisitor<A> implements
       }
       Expr expr_ = p.expr_.accept(this, arg);
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr(listletdef_, expr_);
-    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr p, A arg)
-    {
-      Expr expr_1 = p.expr_1.accept(this, arg);
-      Expr expr_2 = p.expr_2.accept(this, arg);
-      Expr expr_3 = p.expr_3.accept(this, arg);
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr(expr_1, expr_2, expr_3);
     }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr p, A arg)
     {
       Expr expr_1 = p.expr_1.accept(this, arg);
@@ -211,6 +212,15 @@ public class ComposVisitor<A> implements
       Expr expr_1 = p.expr_1.accept(this, arg);
       Expr expr_2 = p.expr_2.accept(this, arg);
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ModuloExpr(expr_1, expr_2);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr p, A arg)
+    {
+      String jid_ = p.jid_;
+      ListCallArg listcallarg_ = new ListCallArg();
+      for (CallArg x : p.listcallarg_)
+      {
+        listcallarg_.add(x.accept(this,arg));
+      }
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr(jid_, listcallarg_);
     }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr p, A arg)
     {
       Expr expr_ = p.expr_.accept(this, arg);
@@ -229,6 +239,12 @@ public class ComposVisitor<A> implements
     {
       Binding binding_ = p.binding_.accept(this, arg);
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDefinition(binding_);
+    }
+/* CallArg */
+    public CallArg visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg p, A arg)
+    {
+      Expr expr_ = p.expr_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg(expr_);
     }
 /* ValRef */
     public ValRef visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef p, A arg)
