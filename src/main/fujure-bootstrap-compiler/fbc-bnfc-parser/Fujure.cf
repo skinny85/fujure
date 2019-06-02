@@ -43,12 +43,12 @@ SubtractionExpr    . Expr5  ::= Expr5 "-"  Expr6 ;
 MultiplicationExpr . Expr6  ::= Expr6 "*"  Expr7 ;
 DivisionExpr       . Expr6  ::= Expr6 "/"  Expr7 ;
 ModuloExpr     	   . Expr6  ::= Expr6 "%"  Expr7 ;
-FunCallExpr        . Expr7  ::= JID "(" [CallArg] ")" ;
+NotExpr            . Expr7  ::= "!" Expr7 ;
+LiteralExpr        . Expr7  ::= Literal ;
+VariableExpr       . Expr7  ::= ValRef ;
+FunCallExpr        . Expr7  ::= ValRef "(" [CallArg] ")" ;
 ExprCallArg . CallArg ::= Expr ;
 separator CallArg "," ;
-NotExpr            . Expr7  ::= "!" Expr7 ;
-VariableExpr       . Expr7  ::= ValRef ;
-LiteralExpr        . Expr7  ::= Literal ;
 coercions Expr 7 ;
 
 ValueRef . ValRef ::= [ValRefFragm] ;

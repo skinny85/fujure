@@ -608,18 +608,6 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitMultiplicationExpr(FujureParser.MultiplicationExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code FunCallExpr}
-	 * labeled alternative in {@link FujureParser#expr7}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunCallExpr(FujureParser.FunCallExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code FunCallExpr}
-	 * labeled alternative in {@link FujureParser#expr7}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunCallExpr(FujureParser.FunCallExprContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code NotExpr}
 	 * labeled alternative in {@link FujureParser#expr7}.
 	 * @param ctx the parse tree
@@ -631,6 +619,18 @@ public interface FujureParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitNotExpr(FujureParser.NotExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code LiteralExpr}
+	 * labeled alternative in {@link FujureParser#expr7}.
+	 * @param ctx the parse tree
+	 */
+	void enterLiteralExpr(FujureParser.LiteralExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code LiteralExpr}
+	 * labeled alternative in {@link FujureParser#expr7}.
+	 * @param ctx the parse tree
+	 */
+	void exitLiteralExpr(FujureParser.LiteralExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code VariableExpr}
 	 * labeled alternative in {@link FujureParser#expr7}.
@@ -644,17 +644,17 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitVariableExpr(FujureParser.VariableExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code LiteralExpr}
+	 * Enter a parse tree produced by the {@code FunCallExpr}
 	 * labeled alternative in {@link FujureParser#expr7}.
 	 * @param ctx the parse tree
 	 */
-	void enterLiteralExpr(FujureParser.LiteralExprContext ctx);
+	void enterFunCallExpr(FujureParser.FunCallExprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LiteralExpr}
+	 * Exit a parse tree produced by the {@code FunCallExpr}
 	 * labeled alternative in {@link FujureParser#expr7}.
 	 * @param ctx the parse tree
 	 */
-	void exitLiteralExpr(FujureParser.LiteralExprContext ctx);
+	void exitFunCallExpr(FujureParser.FunCallExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code Coercion_Expr7}
 	 * labeled alternative in {@link FujureParser#expr7}.

@@ -48,8 +48,8 @@ public class FujureParser extends Parser {
 
 	private static final String[] _LITERAL_NAMES = {
 		null, "'.'", "':'", "'='", "','", "'||'", "'&&'", "'=='", "'!='", "'<'", 
-		"'<='", "'>'", "'>='", "'+'", "'-'", "'*'", "'/'", "'%'", "'('", "')'", 
-		"'!'", "'def'", "'else'", "'false'", "'if'", "'import'", "'in'", "'let'", 
+		"'<='", "'>'", "'>='", "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'('", 
+		"')'", "'def'", "'else'", "'false'", "'if'", "'import'", "'in'", "'let'", 
 		"'package'", "'then'", "'true'", "'unit'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
@@ -1433,7 +1433,7 @@ public class FujureParser extends Parser {
 				}
 				break;
 			case Surrogate_id_SYMB_17:
-			case Surrogate_id_SYMB_19:
+			case Surrogate_id_SYMB_18:
 			case Surrogate_id_SYMB_22:
 			case Surrogate_id_SYMB_29:
 			case Surrogate_id_SYMB_30:
@@ -2557,8 +2557,8 @@ public class FujureParser extends Parser {
 	}
 	public static class Coercion_Expr7Context extends Expr7Context {
 		public ExprContext p_5_2;
-		public TerminalNode Surrogate_id_SYMB_17() { return getToken(FujureParser.Surrogate_id_SYMB_17, 0); }
 		public TerminalNode Surrogate_id_SYMB_18() { return getToken(FujureParser.Surrogate_id_SYMB_18, 0); }
+		public TerminalNode Surrogate_id_SYMB_19() { return getToken(FujureParser.Surrogate_id_SYMB_19, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -2573,11 +2573,13 @@ public class FujureParser extends Parser {
 		}
 	}
 	public static class FunCallExprContext extends Expr7Context {
-		public Token p_1_1;
-		public ListCallArgContext p_1_3;
-		public TerminalNode Surrogate_id_SYMB_17() { return getToken(FujureParser.Surrogate_id_SYMB_17, 0); }
+		public ValRefContext p_4_1;
+		public ListCallArgContext p_4_3;
 		public TerminalNode Surrogate_id_SYMB_18() { return getToken(FujureParser.Surrogate_id_SYMB_18, 0); }
-		public TerminalNode JID() { return getToken(FujureParser.JID, 0); }
+		public TerminalNode Surrogate_id_SYMB_19() { return getToken(FujureParser.Surrogate_id_SYMB_19, 0); }
+		public ValRefContext valRef() {
+			return getRuleContext(ValRefContext.class,0);
+		}
 		public ListCallArgContext listCallArg() {
 			return getRuleContext(ListCallArgContext.class,0);
 		}
@@ -2592,7 +2594,7 @@ public class FujureParser extends Parser {
 		}
 	}
 	public static class LiteralExprContext extends Expr7Context {
-		public LiteralContext p_4_1;
+		public LiteralContext p_2_1;
 		public LiteralContext literal() {
 			return getRuleContext(LiteralContext.class,0);
 		}
@@ -2622,8 +2624,8 @@ public class FujureParser extends Parser {
 		}
 	}
 	public static class NotExprContext extends Expr7Context {
-		public Expr7Context p_2_2;
-		public TerminalNode Surrogate_id_SYMB_19() { return getToken(FujureParser.Surrogate_id_SYMB_19, 0); }
+		public Expr7Context p_1_2;
+		public TerminalNode Surrogate_id_SYMB_17() { return getToken(FujureParser.Surrogate_id_SYMB_17, 0); }
 		public Expr7Context expr7() {
 			return getRuleContext(Expr7Context.class,0);
 		}
@@ -2645,47 +2647,47 @@ public class FujureParser extends Parser {
 			setState(352);
 			switch ( getInterpreter().adaptivePredict(_input,19,_ctx) ) {
 			case 1:
-				_localctx = new FunCallExprContext(_localctx);
+				_localctx = new NotExprContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(331);
-				((FunCallExprContext)_localctx).p_1_1 = match(JID);
-				setState(332);
 				match(Surrogate_id_SYMB_17);
-				setState(333);
-				((FunCallExprContext)_localctx).p_1_3 = listCallArg();
-				setState(334);
-				match(Surrogate_id_SYMB_18);
-				 ((FunCallExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr(((FunCallExprContext)_localctx).p_1_1.getText(),((FunCallExprContext)_localctx).p_1_3.result); 
+				setState(332);
+				((NotExprContext)_localctx).p_1_2 = expr7();
+				 ((NotExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr(((NotExprContext)_localctx).p_1_2.result); 
 				}
 				break;
 			case 2:
-				_localctx = new NotExprContext(_localctx);
+				_localctx = new LiteralExprContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(337);
-				match(Surrogate_id_SYMB_19);
-				setState(338);
-				((NotExprContext)_localctx).p_2_2 = expr7();
-				 ((NotExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr(((NotExprContext)_localctx).p_2_2.result); 
+				setState(335);
+				((LiteralExprContext)_localctx).p_2_1 = literal();
+				 ((LiteralExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr(((LiteralExprContext)_localctx).p_2_1.result); 
 				}
 				break;
 			case 3:
 				_localctx = new VariableExprContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(341);
+				setState(338);
 				((VariableExprContext)_localctx).p_3_1 = valRef();
 				 ((VariableExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr(((VariableExprContext)_localctx).p_3_1.result); 
 				}
 				break;
 			case 4:
-				_localctx = new LiteralExprContext(_localctx);
+				_localctx = new FunCallExprContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
+				setState(341);
+				((FunCallExprContext)_localctx).p_4_1 = valRef();
+				setState(342);
+				match(Surrogate_id_SYMB_18);
+				setState(343);
+				((FunCallExprContext)_localctx).p_4_3 = listCallArg();
 				setState(344);
-				((LiteralExprContext)_localctx).p_4_1 = literal();
-				 ((LiteralExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr(((LiteralExprContext)_localctx).p_4_1.result); 
+				match(Surrogate_id_SYMB_19);
+				 ((FunCallExprContext)_localctx).result =  new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr(((FunCallExprContext)_localctx).p_4_1.result,((FunCallExprContext)_localctx).p_4_3.result); 
 				}
 				break;
 			case 5:
@@ -2693,11 +2695,11 @@ public class FujureParser extends Parser {
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(347);
-				match(Surrogate_id_SYMB_17);
+				match(Surrogate_id_SYMB_18);
 				setState(348);
 				((Coercion_Expr7Context)_localctx).p_5_2 = expr();
 				setState(349);
-				match(Surrogate_id_SYMB_18);
+				match(Surrogate_id_SYMB_19);
 				 ((Coercion_Expr7Context)_localctx).result =  ((Coercion_Expr7Context)_localctx).p_5_2.result; 
 				}
 				break;
@@ -3435,30 +3437,30 @@ public class FujureParser extends Parser {
 		"\64\33\2\u0146\u0147\b\32\1\2\u0147\u0149\3\2\2\2\u0148\u0139\3\2\2\2"+
 		"\u0148\u013e\3\2\2\2\u0148\u0143\3\2\2\2\u0149\u014c\3\2\2\2\u014a\u0148"+
 		"\3\2\2\2\u014a\u014b\3\2\2\2\u014b\63\3\2\2\2\u014c\u014a\3\2\2\2\u014d"+
-		"\u014e\7\"\2\2\u014e\u014f\7\24\2\2\u014f\u0150\58\35\2\u0150\u0151\7"+
-		"\25\2\2\u0151\u0152\b\33\1\2\u0152\u0163\3\2\2\2\u0153\u0154\7\26\2\2"+
-		"\u0154\u0155\5\64\33\2\u0155\u0156\b\33\1\2\u0156\u0163\3\2\2\2\u0157"+
-		"\u0158\5:\36\2\u0158\u0159\b\33\1\2\u0159\u0163\3\2\2\2\u015a\u015b\5"+
-		"@!\2\u015b\u015c\b\33\1\2\u015c\u0163\3\2\2\2\u015d\u015e\7\24\2\2\u015e"+
-		"\u015f\5\"\22\2\u015f\u0160\7\25\2\2\u0160\u0161\b\33\1\2\u0161\u0163"+
-		"\3\2\2\2\u0162\u014d\3\2\2\2\u0162\u0153\3\2\2\2\u0162\u0157\3\2\2\2\u0162"+
-		"\u015a\3\2\2\2\u0162\u015d\3\2\2\2\u0163\65\3\2\2\2\u0164\u0165\5\"\22"+
-		"\2\u0165\u0166\b\34\1\2\u0166\67\3\2\2\2\u0167\u0171\b\35\1\2\u0168\u0169"+
-		"\5\66\34\2\u0169\u016a\b\35\1\2\u016a\u0171\3\2\2\2\u016b\u016c\5\66\34"+
-		"\2\u016c\u016d\7\6\2\2\u016d\u016e\58\35\2\u016e\u016f\b\35\1\2\u016f"+
-		"\u0171\3\2\2\2\u0170\u0167\3\2\2\2\u0170\u0168\3\2\2\2\u0170\u016b\3\2"+
-		"\2\2\u01719\3\2\2\2\u0172\u0173\5<\37\2\u0173\u0174\b\36\1\2\u0174;\3"+
-		"\2\2\2\u0175\u0176\5> \2\u0176\u0177\b\37\1\2\u0177\u017e\3\2\2\2\u0178"+
-		"\u0179\5> \2\u0179\u017a\7\3\2\2\u017a\u017b\5<\37\2\u017b\u017c\b\37"+
-		"\1\2\u017c\u017e\3\2\2\2\u017d\u0175\3\2\2\2\u017d\u0178\3\2\2\2\u017e"+
-		"=\3\2\2\2\u017f\u0180\7\"\2\2\u0180\u0181\b \1\2\u0181?\3\2\2\2\u0182"+
-		"\u0183\7%\2\2\u0183\u018f\b!\1\2\u0184\u0185\7!\2\2\u0185\u018f\b!\1\2"+
-		"\u0186\u0187\7 \2\2\u0187\u018f\b!\1\2\u0188\u0189\7\31\2\2\u0189\u018f"+
-		"\b!\1\2\u018a\u018b\7#\2\2\u018b\u018f\b!\1\2\u018c\u018d\7$\2\2\u018d"+
-		"\u018f\b!\1\2\u018e\u0182\3\2\2\2\u018e\u0184\3\2\2\2\u018e\u0186\3\2"+
-		"\2\2\u018e\u0188\3\2\2\2\u018e\u018a\3\2\2\2\u018e\u018c\3\2\2\2\u018f"+
-		"A\3\2\2\2\31LYjy\u008a\u00a4\u00b1\u00c7\u00d4\u00e1\u00ef\u0100\u0102"+
-		"\u011d\u011f\u0130\u0132\u0148\u014a\u0162\u0170\u017d\u018e";
+		"\u014e\7\24\2\2\u014e\u014f\5\64\33\2\u014f\u0150\b\33\1\2\u0150\u0163"+
+		"\3\2\2\2\u0151\u0152\5@!\2\u0152\u0153\b\33\1\2\u0153\u0163\3\2\2\2\u0154"+
+		"\u0155\5:\36\2\u0155\u0156\b\33\1\2\u0156\u0163\3\2\2\2\u0157\u0158\5"+
+		":\36\2\u0158\u0159\7\25\2\2\u0159\u015a\58\35\2\u015a\u015b\7\26\2\2\u015b"+
+		"\u015c\b\33\1\2\u015c\u0163\3\2\2\2\u015d\u015e\7\25\2\2\u015e\u015f\5"+
+		"\"\22\2\u015f\u0160\7\26\2\2\u0160\u0161\b\33\1\2\u0161\u0163\3\2\2\2"+
+		"\u0162\u014d\3\2\2\2\u0162\u0151\3\2\2\2\u0162\u0154\3\2\2\2\u0162\u0157"+
+		"\3\2\2\2\u0162\u015d\3\2\2\2\u0163\65\3\2\2\2\u0164\u0165\5\"\22\2\u0165"+
+		"\u0166\b\34\1\2\u0166\67\3\2\2\2\u0167\u0171\b\35\1\2\u0168\u0169\5\66"+
+		"\34\2\u0169\u016a\b\35\1\2\u016a\u0171\3\2\2\2\u016b\u016c\5\66\34\2\u016c"+
+		"\u016d\7\6\2\2\u016d\u016e\58\35\2\u016e\u016f\b\35\1\2\u016f\u0171\3"+
+		"\2\2\2\u0170\u0167\3\2\2\2\u0170\u0168\3\2\2\2\u0170\u016b\3\2\2\2\u0171"+
+		"9\3\2\2\2\u0172\u0173\5<\37\2\u0173\u0174\b\36\1\2\u0174;\3\2\2\2\u0175"+
+		"\u0176\5> \2\u0176\u0177\b\37\1\2\u0177\u017e\3\2\2\2\u0178\u0179\5> "+
+		"\2\u0179\u017a\7\3\2\2\u017a\u017b\5<\37\2\u017b\u017c\b\37\1\2\u017c"+
+		"\u017e\3\2\2\2\u017d\u0175\3\2\2\2\u017d\u0178\3\2\2\2\u017e=\3\2\2\2"+
+		"\u017f\u0180\7\"\2\2\u0180\u0181\b \1\2\u0181?\3\2\2\2\u0182\u0183\7%"+
+		"\2\2\u0183\u018f\b!\1\2\u0184\u0185\7!\2\2\u0185\u018f\b!\1\2\u0186\u0187"+
+		"\7 \2\2\u0187\u018f\b!\1\2\u0188\u0189\7\31\2\2\u0189\u018f\b!\1\2\u018a"+
+		"\u018b\7#\2\2\u018b\u018f\b!\1\2\u018c\u018d\7$\2\2\u018d\u018f\b!\1\2"+
+		"\u018e\u0182\3\2\2\2\u018e\u0184\3\2\2\2\u018e\u0186\3\2\2\2\u018e\u0188"+
+		"\3\2\2\2\u018e\u018a\3\2\2\2\u018e\u018c\3\2\2\2\u018fA\3\2\2\2\31LYj"+
+		"y\u008a\u00a4\u00b1\u00c7\u00d4\u00e1\u00ef\u0100\u0102\u011d\u011f\u0130"+
+		"\u0132\u0148\u014a\u0162\u0170\u017d\u018e";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

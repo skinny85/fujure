@@ -616,18 +616,6 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunCallExpr(FujureParser.FunCallExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFunCallExpr(FujureParser.FunCallExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterNotExpr(FujureParser.NotExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -635,6 +623,18 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitNotExpr(FujureParser.NotExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLiteralExpr(FujureParser.LiteralExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLiteralExpr(FujureParser.LiteralExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -652,13 +652,13 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralExpr(FujureParser.LiteralExprContext ctx) { }
+	@Override public void enterFunCallExpr(FujureParser.FunCallExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralExpr(FujureParser.LiteralExprContext ctx) { }
+	@Override public void exitFunCallExpr(FujureParser.FunCallExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

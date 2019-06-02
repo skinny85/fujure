@@ -804,22 +804,19 @@ public class PrettyPrinter
        pp(_moduloexpr.expr_2, 7);
        if (_i_ > 6) render(_R_PAREN);
     }
-    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr)
-    {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr _funcallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr) foo;
-       if (_i_ > 7) render(_L_PAREN);
-       pp(_funcallexpr.jid_, 0);
-       render("(");
-       pp(_funcallexpr.listcallarg_, 0);
-       render(")");
-       if (_i_ > 7) render(_R_PAREN);
-    }
     else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr _notexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr) foo;
        if (_i_ > 7) render(_L_PAREN);
        render("!");
        pp(_notexpr.expr_, 7);
+       if (_i_ > 7) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr _literalexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr) foo;
+       if (_i_ > 7) render(_L_PAREN);
+       pp(_literalexpr.literal_, 0);
        if (_i_ > 7) render(_R_PAREN);
     }
     else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr)
@@ -829,11 +826,14 @@ public class PrettyPrinter
        pp(_variableexpr.valref_, 0);
        if (_i_ > 7) render(_R_PAREN);
     }
-    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr)
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr)
     {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr _literalexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr) foo;
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr _funcallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr) foo;
        if (_i_ > 7) render(_L_PAREN);
-       pp(_literalexpr.literal_, 0);
+       pp(_funcallexpr.valref_, 0);
+       render("(");
+       pp(_funcallexpr.listcallarg_, 0);
+       render(")");
        if (_i_ > 7) render(_R_PAREN);
     }
   }
@@ -1336,23 +1336,20 @@ public class PrettyPrinter
        sh(_moduloexpr.expr_2);
        render(")");
     }
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr)
-    {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr _funcallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr) foo;
-       render("(");
-       render("FunCallExpr");
-       sh(_funcallexpr.jid_);
-       render("[");
-       sh(_funcallexpr.listcallarg_);
-       render("]");
-       render(")");
-    }
     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr _notexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr) foo;
        render("(");
        render("NotExpr");
        sh(_notexpr.expr_);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr _literalexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr) foo;
+       render("(");
+       render("LiteralExpr");
+       sh(_literalexpr.literal_);
        render(")");
     }
     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr)
@@ -1363,12 +1360,15 @@ public class PrettyPrinter
        sh(_variableexpr.valref_);
        render(")");
     }
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr)
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr)
     {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr _literalexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr) foo;
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr _funcallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr) foo;
        render("(");
-       render("LiteralExpr");
-       sh(_literalexpr.literal_);
+       render("FunCallExpr");
+       sh(_funcallexpr.valref_);
+       render("[");
+       sh(_funcallexpr.listcallarg_);
+       render("]");
        render(")");
     }
   }

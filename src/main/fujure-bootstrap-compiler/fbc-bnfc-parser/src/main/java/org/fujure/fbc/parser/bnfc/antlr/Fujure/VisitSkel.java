@@ -204,23 +204,23 @@ public class VisitSkel
       p.expr_1.accept(new ExprVisitor<R,A>(), arg);
       p.expr_2.accept(new ExprVisitor<R,A>(), arg);
       return null;
-    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr p, A arg)
-    { /* Code For FunCallExpr Goes Here */
-      //p.jid_;
-      for (CallArg x: p.listcallarg_)
-      { /* ... */ }
-      return null;
-    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr p, A arg)
+    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr p, A arg)
     { /* Code For NotExpr Goes Here */
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg)
+    { /* Code For LiteralExpr Goes Here */
+      p.literal_.accept(new LiteralVisitor<R,A>(), arg);
       return null;
     }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr p, A arg)
     { /* Code For VariableExpr Goes Here */
       p.valref_.accept(new ValRefVisitor<R,A>(), arg);
       return null;
-    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg)
-    { /* Code For LiteralExpr Goes Here */
-      p.literal_.accept(new LiteralVisitor<R,A>(), arg);
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr p, A arg)
+    { /* Code For FunCallExpr Goes Here */
+      p.valref_.accept(new ValRefVisitor<R,A>(), arg);
+      for (CallArg x: p.listcallarg_)
+      { /* ... */ }
       return null;
     }    
   }
