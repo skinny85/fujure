@@ -10,10 +10,30 @@ import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
 import org.funktionale.option.Option
-import java.util.Stack
 
-class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
+class Pass03SymbolTable(_modules: Map<Module, Pass03ModuleSymbols>,
         private val symbolTable: SymbolTable?) {
+    val modules = _modules + mapOf(
+            Module("fujure", "Int") to Pass03ModuleSymbols(
+                    mapOf(), mapOf(
+                        "minInt" to (TypeReference("Int") to null),
+                        "maxInt" to (TypeReference("Int") to null)
+                    )
+            ),
+            Module("fujure", "Unit") to Pass03ModuleSymbols(
+                    mapOf(), mapOf()
+            ),
+            Module("fujure", "Bool") to Pass03ModuleSymbols(
+                    mapOf(), mapOf()
+            ),
+            Module("fujure", "Char") to Pass03ModuleSymbols(
+                    mapOf(), mapOf()
+            ),
+            Module("fujure", "String") to Pass03ModuleSymbols(
+                    mapOf(), mapOf()
+            )
+    )
+
     fun findType(typeReference: TypeReference): QualifiedType? {
         if (typeReference.ids.size != 1) {
             return null
@@ -83,11 +103,16 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
     private val scopes = mutableListOf<Scope>()
 
     fun candidateModule(moduleName: String, currentModule: Module): Module? {
-        return if (imports.containsKey(moduleName)) {
-            imports[moduleName]
-        } else {
-            Module(currentModule.packageName, moduleName)
-        }
+        // if there is an import of this name, return it
+        if (imports.containsKey(moduleName))
+            return imports[moduleName]
+
+        // if it's one of the implicitly imported, built-in modules, return that
+        if (IMPLICIT_IMPORTS.containsKey(moduleName))
+            return IMPLICIT_IMPORTS[moduleName]
+
+        // otherwise, the fallback is a module in the same package with the given name
+        return Module(currentModule.packageName, moduleName)
     }
 
     fun pushNewScope() {
@@ -138,6 +163,15 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
         }
 
         return ret
+    }
+
+    private companion object {
+        val IMPLICIT_IMPORTS = mapOf(
+                "Int" to Module("fujure", "Int"),
+                "Unit" to Module("fujure", "Unit"),
+                "Bool" to Module("fujure", "Bool"),
+                "Char" to Module("fujure", "Char"),
+                "String" to Module("fujure", "String"))
     }
 
     private class Scope {

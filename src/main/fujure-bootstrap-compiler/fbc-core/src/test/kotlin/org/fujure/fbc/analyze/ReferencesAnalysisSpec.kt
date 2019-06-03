@@ -436,6 +436,20 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     ValueDefinition("a")))
                 }
             }
+
+            it.describes("called with a module referencing built-in values of the Int type") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def a: Int = Int.minInt + Int.maxInt
+                            """)
+                            .analyzed()
+                }
+
+                it.should("succeed") {
+                    assertAnalysisSucceeded()
+                }
+            }
         }
     }
 }
