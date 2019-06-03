@@ -436,6 +436,21 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     ValueDefinition("a")))
                 }
             }
+
+            it.xdescribes("function call") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def i: Int = max(1, 2)
+                                def i: Int = Int.max(1, 2)
+                            """)
+                            .analyzed()
+                }
+
+                it.should("succeed") {
+                    assertAnalysisSucceeded()
+                }
+            }
         }
     }
 }

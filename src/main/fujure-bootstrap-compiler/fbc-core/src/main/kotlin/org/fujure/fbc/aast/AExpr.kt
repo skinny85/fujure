@@ -42,4 +42,5 @@ sealed class AExpr {
 
     data class ALet(val declarations: List<ADef.AValueDef>, val expr: AExpr) : AExpr()
     data class AIf(val conditionExpr: AExpr, val thenExpr: AExpr, val elseExpr: AExpr) : AExpr()
+//    data class AFunCall(val ref: ValueRef, val arguments: List<AExpr>) : AExpr()
 }

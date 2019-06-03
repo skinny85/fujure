@@ -1,13 +1,23 @@
 package org.fujure.fbc.analyze
 
-data class QualifiedType(val packageName: String, val typeName: String) {
-    fun inStringForm(): String = "$packageName.$typeName"
+interface QualifiedType {
+    fun inStringForm(): String
+}
+
+private data class SimpleType(val packageName: String, val typeName: String) : QualifiedType {
+    override fun inStringForm() = "$packageName.$typeName"
+}
+
+private data class FunctionType(val returnType: QualifiedType, val argumentTypes: List<QualifiedType>) : QualifiedType {
+    override fun inStringForm(): String {
+        return "(${argumentTypes.map { it.inStringForm() }.joinToString()}) -> ${returnType.inStringForm()}"
+    }
 }
 
 object BuiltInTypes {
-    val Int = QualifiedType("fujure", "Int")
-    val Unit = QualifiedType("fujure", "Unit")
-    val Bool = QualifiedType("fujure", "Bool")
-    val Char = QualifiedType("fujure", "Char")
-    val String = QualifiedType("fujure", "String")
+    val Int: QualifiedType = SimpleType("fujure", "Int")
+    val Unit: QualifiedType = SimpleType("fujure", "Unit")
+    val Bool: QualifiedType = SimpleType("fujure", "Bool")
+    val Char: QualifiedType = SimpleType("fujure", "Char")
+    val String: QualifiedType = SimpleType("fujure", "String")
 }

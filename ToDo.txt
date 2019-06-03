@@ -52,8 +52,8 @@ And there are files:
      def x = true
      def y = false
 
-Does the import above import the member c from module b.fjr,
-or does it import module c.fjr?
+Does the import above import the member `c` from module `b.fjr`,
+or does it import module `c.fjr`?
 
 Possible behaviors:
 
@@ -69,7 +69,7 @@ and so reporting an error here seems very frustrating.
 This has the problem of completely shadowing the c.fjr module.
 So, just the existence of the a/b.fjr module with member c
 makes module c.fjr inaccessible
-(perhaps our dev actually wanted to import c.fjr all along - but they can't!
+(perhaps our dev actually wanted to import `c.fjr` all along - but they can't!
 At best, they can say `import a.b.c.(x, y)`).
 
 3. Import the c.fjr module.

@@ -128,6 +128,9 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             is Expr.If -> {
                 handleIfExpression(expr)
             }
+            is Expr.FunCall -> {
+                handleFunCallExpression(expr)
+            }
         }
     }
 
@@ -419,5 +422,34 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
         } else {
             ExprVerificationResult.Failure(result.qualifiedType, errors)
         }
+    }
+
+    private fun handleFunCallExpression(funCallExpr: Expr.FunCall): ExprVerificationResult {
+//        val context = ErrorContext.ValueDefinition(valName)
+//        val errors = mutableListOf<SemanticError>()
+//
+//        val lookupResult = symbolTable.lookup(funCallExpr.ref, module, valName, chain)
+//        when (lookupResult) {
+//            is Pass03SymbolTable.LookupResult.RefNotFound ->
+//                errors.add(SemanticError.UnresolvedReference(context, funCallExpr.ref))
+//            is Pass03SymbolTable.LookupResult.RefFound -> {
+//                val qualifiedType = lookupResult.qualifiedType
+//                ExprVerificationResult.Success(qualifiedType, if (qualifiedType == null)
+//                    null
+//                else
+//                    AExpr.AValueReference(lookupResult.module, funCallExpr.ref.variable(), qualifiedType)
+//                )
+//            }
+//        }
+//
+//        return if (errors.isEmpty()) {
+//            ExprVerificationResult.Success(lookupResult.qualifiedType, if (aExpr == null)
+//                null
+//            else
+//                AExpr.ALet(declarations, aExpr))
+//        } else {
+//            ExprVerificationResult.Failure(result.qualifiedType, errors)
+//        }
+        TODO()
     }
 }

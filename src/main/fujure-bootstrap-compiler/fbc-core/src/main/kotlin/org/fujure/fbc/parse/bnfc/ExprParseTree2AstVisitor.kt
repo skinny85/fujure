@@ -6,11 +6,13 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AdditionExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterEqualExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DivisionExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.EqualityExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.InequalityExpr
@@ -34,7 +36,8 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr as AbsynExpr
 
 internal object ExprParseTree2AstVisitor :
         AbsynExpr.Visitor<Expr, Unit>,
-        ValRef.Visitor<List<String>, Unit>,
+        CallArg.Visitor<Expr, Unit>,
+        ValRef.Visitor<ValueReference, Unit>,
         Literal.Visitor<Expr, Unit> {
     override fun visit(ifExpr: IfExpr, arg: Unit): Expr {
         return Expr.If(ifExpr.expr_1.accept(this, arg),
@@ -127,7 +130,13 @@ internal object ExprParseTree2AstVisitor :
     }
 
     override fun visit(funCallExpr: FunCallExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.FunCall(funCallExpr.valref_.accept(this, arg), funCallExpr.listcallarg_.map {
+            it.accept(this, arg)
+        })
+    }
+
+    override fun visit(exprCallArg: ExprCallArg, arg: Unit): Expr {
+        return exprCallArg.expr_.accept(this, arg)
     }
 
     override fun visit(notExpr: NotExpr, arg: Unit): Expr {
@@ -135,15 +144,14 @@ internal object ExprParseTree2AstVisitor :
     }
 
     override fun visit(variableExpr: VariableExpr, arg: Unit): Expr {
-        return Expr.ValueReference(ValueReference(
-                variableExpr.valref_.accept(this, arg)))
+        return Expr.ValueReference(variableExpr.valref_.accept(this, arg))
     }
 
-    override fun visit(valueRef: ValueRef, arg: Unit): List<String> {
-        return valueRef.listvalreffragm_.map { valRefFragm ->
+    override fun visit(valueRef: ValueRef, arg: Unit): ValueReference {
+        return ValueReference(valueRef.listvalreffragm_.map { valRefFragm ->
             valRefFragm.accept({ valueRefFragment, _ ->
                 valueRefFragment.jid_}, arg)
-        }
+        })
     }
 
     override fun visit(exprLiteral: LiteralExpr, arg: Unit): Expr {
