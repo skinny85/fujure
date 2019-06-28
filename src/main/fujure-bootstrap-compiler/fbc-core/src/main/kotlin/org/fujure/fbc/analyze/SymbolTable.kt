@@ -8,16 +8,25 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols>) {
     }
 
     fun lookup(targetModule: Module, name: String): QualifiedType {
-        return modules[targetModule]!!.lookup(name)
+        val moduleSymbols = modules[targetModule]
+        if (moduleSymbols != null) {
+            val qualifiedType = moduleSymbols.lookup(name)
+            if (qualifiedType != null)
+                return qualifiedType
+        }
+        throw NotFound(targetModule, name)
     }
 
     fun merge(symbolTable: SymbolTable): SymbolTable {
         return SymbolTable(modules + symbolTable.modules)
     }
+
+    class NotFound(val targetModule: Module, val name: String) :
+            Exception("Name '$name' not found in target module: $targetModule")
 }
 
 class ModuleSymbols(private val simpleValues: Map<String, QualifiedType>) {
-    fun lookup(name: String): QualifiedType {
-        return simpleValues[name]!!
+    fun lookup(name: String): QualifiedType? {
+        return simpleValues[name]
     }
 }
