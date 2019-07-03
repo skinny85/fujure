@@ -79,6 +79,27 @@ If we ever need the c member of b.fjr,
 we can always say: `import a.b`, and then `b.c` -
 so, we're not blocking access to any modules in this way.
 
+Interesting links
+-----------------
+
+###### Hackett (Racket + Haskell):
+* https://lexi-lambda.github.io/blog/2017/05/27/realizing-hackett-a-metaprogrammable-haskell
+
+###### Frank (Do Be Do Be Do):
+* http://lambda-the-ultimate.org/node/5401
+
+###### Parsing in Java - tools and libraries:
+* https://www.reddit.com/r/java/comments/6emiqp/parsing_in_java_all_the_tools_and_libraries_you
+
+###### Koka language:
+* https://www.microsoft.com/en-us/research/project/koka/#
+
+###### Eff language:
+* http://www.eff-lang.org
+
+###### Monad transformers:
+* https://blog.buildo.io/monad-transformers-for-the-working-programmer-aa7e981190e7
+
 Fujure guiding principles
 -------------------------
 - 100% purely functional
