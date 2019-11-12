@@ -43,7 +43,7 @@ class AnalysisBuilder private constructor() {
                         "current parsed files: $parsedFiles")
         }
 
-        return SimpleSemanticAnalyzer.analyze(parsedFiles)
+        return SimpleSemanticAnalyzer.analyze(parsedFiles, SymbolTable())
     }
 
     fun incrementallyAnalyze(): Disjunction<List<SemanticFileIssue>, SymbolTable> {
@@ -55,7 +55,7 @@ class AnalysisBuilder private constructor() {
             val parsingResult = BnfcParser.parse(openedFile)
             val success = Assumption.assume(parsingResult).isA<Disjunction.Right<ParsingFileIssue, ParsedFile>>()
 
-            val analysisResult = SimpleSemanticAnalyzer.analyze(setOf(success.value), symbolTable)
+            val analysisResult = SimpleSemanticAnalyzer.analyze(setOf(success.value), symbolTable ?: SymbolTable())
             when (analysisResult) {
                 is SemanticAnalysisResult.Failure -> {
                     invalidFiles.addAll(analysisResult.issues)

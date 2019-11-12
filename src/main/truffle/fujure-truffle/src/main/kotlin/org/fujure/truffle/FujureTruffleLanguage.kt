@@ -37,7 +37,7 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
             }
             is Disjunction.Right -> {
                 val parsedFile = parsingResult.value
-                val analysisResults = SimpleSemanticAnalyzer.analyze(setOf(parsedFile), symbolTable)
+                val analysisResults = SimpleSemanticAnalyzer.analyze(setOf(parsedFile), symbolTable ?: SymbolTable())
                 when (analysisResults) {
                     is SemanticAnalysisResult.Failure -> {
                         throw FujureTruffleSemanticException(analysisResults.issues.first())

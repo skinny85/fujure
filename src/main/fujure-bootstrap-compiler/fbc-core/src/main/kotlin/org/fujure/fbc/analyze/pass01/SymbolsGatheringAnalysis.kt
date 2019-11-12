@@ -9,11 +9,10 @@ import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.TypeReference
-import org.fujure.fbc.common.NameValidator
 import org.fujure.fbc.parse.ParsedFile
 
 object SymbolsGatheringAnalysis {
-    fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable?):
+    fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable):
             Pair<Pass02SymbolTable, List<SemanticFileIssue>> {
         val modules = mutableMapOf<Module, Pass02ModuleSymbols>()
         val issues = mutableListOf<SemanticFileIssue>()

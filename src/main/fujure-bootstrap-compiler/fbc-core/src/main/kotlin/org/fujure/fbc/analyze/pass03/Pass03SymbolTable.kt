@@ -11,29 +11,8 @@ import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
 import org.funktionale.option.Option
 
-class Pass03SymbolTable(_modules: Map<Module, Pass03ModuleSymbols>,
-        private val symbolTable: SymbolTable?) {
-    val modules = _modules + mapOf(
-            Module("fujure", "Int") to Pass03ModuleSymbols(
-                    mapOf(), mapOf(
-                        "minInt" to (TypeReference("Int") to null),
-                        "maxInt" to (TypeReference("Int") to null)
-                    )
-            ),
-            Module("fujure", "Unit") to Pass03ModuleSymbols(
-                    mapOf(), mapOf()
-            ),
-            Module("fujure", "Bool") to Pass03ModuleSymbols(
-                    mapOf(), mapOf()
-            ),
-            Module("fujure", "Char") to Pass03ModuleSymbols(
-                    mapOf(), mapOf()
-            ),
-            Module("fujure", "String") to Pass03ModuleSymbols(
-                    mapOf(), mapOf()
-            )
-    )
-
+class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
+        private val symbolTable: SymbolTable) {
     fun findType(typeReference: TypeReference): QualifiedType? {
         if (typeReference.ids.size != 1) {
             return null

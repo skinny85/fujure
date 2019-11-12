@@ -16,18 +16,18 @@ sealed class SemanticAnalysisResult {
 }
 
 interface SemanticAnalyzer {
-    fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable? = null): SemanticAnalysisResult
+    fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable): SemanticAnalysisResult
 }
 
 object SimpleSemanticAnalyzer : SemanticAnalyzer {
-    override fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable?): SemanticAnalysisResult {
+    override fun analyze(parsedFiles: Set<ParsedFile>, symbolTable: SymbolTable): SemanticAnalysisResult {
         val (secondPassSymbolTable, firstPassErrors) = SymbolsGatheringAnalysis.analyze(parsedFiles, symbolTable)
         val (thirdPassSymbolTable, secondPassErrors) = ImportsGatheringAnalysis.analyze(parsedFiles, secondPassSymbolTable)
         val (annotatedAsts, thirdPassErrors) = VerificationAnalysis.analyze(parsedFiles, thirdPassSymbolTable)
         val errors = combine(combine(firstPassErrors, secondPassErrors), thirdPassErrors)
         return if (errors.isEmpty()) {
             val newSymbolTable = buildSymbolTable(thirdPassSymbolTable)
-            SemanticAnalysisResult.Success(annotatedAsts, symbolTable?.merge(newSymbolTable) ?: newSymbolTable)
+            SemanticAnalysisResult.Success(annotatedAsts, symbolTable.merge(newSymbolTable))
         } else {
             SemanticAnalysisResult.Failure(errors)
         }

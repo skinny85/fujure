@@ -7,10 +7,10 @@ import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.TypeReference
 
 class Pass02SymbolTable(internal val modules: Map<Module, Pass02ModuleSymbols>,
-        internal val symbolTable: SymbolTable?) {
+        internal val symbolTable: SymbolTable) {
     fun hasModule(module: Module): Boolean {
         return modules.containsKey(module) ||
-                (symbolTable?.hasModule(module) ?: false)
+                symbolTable.hasModule(module)
     }
 }
 

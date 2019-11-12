@@ -30,7 +30,7 @@ class BootstrapCompiler(private val fileOpener: FileOpener,
     }
 
     fun compileParsedFiles(compileOptions: CompileOptions, parsedFiles: Set<ParsedFile>): CompilationResults {
-        val semanticAnalysisResult = semanticAnalyzer.analyze(parsedFiles)
+        val semanticAnalysisResult = semanticAnalyzer.analyze(parsedFiles, SymbolTable())
         return when (semanticAnalysisResult) {
             is SemanticAnalysisResult.Failure ->
                     CompilationResults.CompilationNotAttempted(semanticAnalysisResult.issues)
