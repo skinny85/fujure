@@ -39,17 +39,15 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         val candidateModuleSymbols = modules[candidateModule]
         if (candidateModuleSymbols != null) {
             return candidateModuleSymbols.lookupVariable(ref.variable(), candidateModule, anchor, this, chain)
-        } else if (symbolTable != null) {
-            val qualifiedType: QualifiedType
-            try {
-                qualifiedType = symbolTable.lookup(candidateModule, ref.variable())
-            } catch (e: SymbolTable.NotFound) {
-                return LookupResult.RefNotFound
-            }
-            return LookupResult.RefFound(qualifiedType, candidateModule)
-        } else {
+        }
+
+        val qualifiedType: QualifiedType
+        try {
+            qualifiedType = symbolTable.lookup(candidateModule, ref.variable())
+        } catch (e: SymbolTable.NotFound) {
             return LookupResult.RefNotFound
         }
+        return LookupResult.RefFound(qualifiedType, candidateModule)
     }
 
     fun pushNewScope(module: Module) {
