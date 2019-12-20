@@ -21,7 +21,19 @@ public final class FujureTruffleBindings implements TruffleObject {
         return obj instanceof FujureTruffleBindings;
     }
 
-    private final Map<String, ModuleBindings> modulesBindings = new HashMap<>();
+    private final Map<String, ModuleBindings> modulesBindings;
+
+    public FujureTruffleBindings() {
+        this.modulesBindings = new HashMap<>();
+
+        /* *** add the built-in modules, with values *** */
+
+        // fujure.Int
+        ModuleBindings intBindings = new ModuleBindings();
+        intBindings.register("minInt", Integer.MIN_VALUE);
+        intBindings.register("maxInt", Integer.MAX_VALUE);
+        this.modulesBindings.put("fujure.Int", intBindings);
+    }
 
     public void resetModule(Module module) {
         modulesBindings.put(module.getFullyQualifiedName(), new ModuleBindings());
@@ -32,7 +44,12 @@ public final class FujureTruffleBindings implements TruffleObject {
     }
 
     public Object find(Module targetModule, String reference) {
-        return modulesBindings.get(targetModule.getFullyQualifiedName()).find(reference);
+        ModuleBindings bindingsForTargetModule = modulesBindings.get(targetModule.getFullyQualifiedName());
+        if (bindingsForTargetModule == null) {
+            throw new RuntimeException("Module '" + targetModule.getFullyQualifiedName() + "' not found (reference: '" +
+                    reference + "')");
+        }
+        return bindingsForTargetModule.find(reference);
     }
 
     @Override
