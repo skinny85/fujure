@@ -10,6 +10,7 @@ import org.graalvm.polyglot.Value
 import org.junit.runner.RunWith
 import org.specnaz.kotlin.SpecnazKotlin
 import org.specnaz.kotlin.junit.SpecnazKotlinJUnitRunner
+import java.util.regex.Pattern
 
 @RunWith(SpecnazKotlinJUnitRunner::class)
 abstract class AbstractTruffleSpec : SpecnazKotlin {
@@ -44,5 +45,22 @@ abstract class AbstractTruffleSpec : SpecnazKotlin {
             null
         else
             exception)
+    }
+
+    fun Value.userDefinedMemberKeys(): Set<String> {
+        val ret = mutableSetOf<String>()
+        for (key in this.memberKeys) {
+            if (!keyIsBuiltIn(key))
+                ret.add(key)
+        }
+        return ret
+    }
+
+    private fun keyIsBuiltIn(key: String): Boolean {
+        return BUILT_IN_KEY_REGEX.matcher(key).matches()
+    }
+
+    private companion object {
+        val BUILT_IN_KEY_REGEX: Pattern = Pattern.compile("""^fujure\.\w+$""")
     }
 }

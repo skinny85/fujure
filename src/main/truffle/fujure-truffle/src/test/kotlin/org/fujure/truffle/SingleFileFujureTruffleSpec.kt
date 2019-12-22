@@ -28,9 +28,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                     assertThat(fujureBindings.hasArrayElements()).isFalse()
                 }
 
-                it.should("have members, containing only 'Unnamed'") {
-                    assertThat(fujureBindings.hasMembers()).isTrue()
-                    assertThat(fujureBindings.memberKeys).containsOnly("Unnamed")
+                it.should("have user-defined members, containing only 'Unnamed'") {
+                    assertThat(fujureBindings.userDefinedMemberKeys()).containsOnly("Unnamed")
                     assertThat(fujureBindings.hasMember("Unnamed")).isTrue()
                 }
 
@@ -120,9 +119,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                     assertThat(fujureBindings.hasArrayElements()).isFalse()
                 }
 
-                it.should("have members, containing only 'com.example.Unnamed'") {
-                    assertThat(fujureBindings.hasMembers()).isTrue()
-                    assertThat(fujureBindings.memberKeys).containsOnly("com.example.Unnamed")
+                it.should("have user-defined members, containing only 'com.example.Unnamed'") {
+                    assertThat(fujureBindings.userDefinedMemberKeys()).containsOnly("com.example.Unnamed")
                     assertThat(fujureBindings.hasMember("com.example.Unnamed")).isTrue()
                 }
 
@@ -276,8 +274,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                 assertThatPolyglot().isGuestSyntaxError()
             }
 
-            it.should("not add the incorrect module's bindings to Fujure's bindings") {
-                assertThat(fujureBindings.memberKeys).isEmpty()
+            it.should("not add the incorrect module's bindings to Fujure's user-defined bindings") {
+                assertThat(fujureBindings.userDefinedMemberKeys()).isEmpty()
             }
         }
 
@@ -325,8 +323,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                         .doesNotContain("c:")
             }
 
-            it.should("not add the incorrect module's bindings to Fujure's bindings") {
-                assertThat(fujureBindings.memberKeys).isEmpty()
+            it.should("not add the incorrect module's bindings to Fujure's user-defined bindings") {
+                assertThat(fujureBindings.userDefinedMemberKeys()).isEmpty()
             }
         }
 
@@ -345,8 +343,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                         .hasMessageContaining("String")
             }
 
-            it.should("not add the incorrect module's bindings to Fujure's bindings") {
-                assertThat(fujureBindings.memberKeys).isEmpty()
+            it.should("not add the incorrect module's bindings to Fujure's user-defined bindings") {
+                assertThat(fujureBindings.userDefinedMemberKeys()).isEmpty()
             }
         }
 
@@ -366,8 +364,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                         .contains("'x'")
             }
 
-            it.should("not add the incorrect module's bindings to Fujure's bindings") {
-                assertThat(fujureBindings.memberKeys).isEmpty()
+            it.should("not add the incorrect module's bindings to Fujure's user-defined bindings") {
+                assertThat(fujureBindings.userDefinedMemberKeys()).isEmpty()
             }
         }
 
@@ -386,8 +384,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                         .hasMessageContaining("Char")
             }
 
-            it.should("not add the incorrect module's bindings to Fujure's bindings") {
-                assertThat(fujureBindings.memberKeys).isEmpty()
+            it.should("not add the incorrect module's bindings to Fujure's user-defined bindings") {
+                assertThat(fujureBindings.userDefinedMemberKeys()).isEmpty()
             }
         }
     }
