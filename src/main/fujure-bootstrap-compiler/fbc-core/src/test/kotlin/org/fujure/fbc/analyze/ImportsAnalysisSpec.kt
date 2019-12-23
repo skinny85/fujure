@@ -155,6 +155,22 @@ class ImportsAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     ValueReference("File1", "x")))
                 }
             }
+
+            it.describes("when importing a built-in module") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                import fujure.Int
+
+                                def x: Int = 3
+                            """)
+                            .analyzed()
+                }
+
+                it.should("succeed") {
+                    assertAnalysisSucceeded()
+                }
+            }
         }
     }
 }
