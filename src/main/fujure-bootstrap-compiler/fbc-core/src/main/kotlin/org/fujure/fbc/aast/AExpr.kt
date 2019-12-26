@@ -42,4 +42,8 @@ sealed class AExpr {
 
     data class ALet(val declarations: List<ADef.AValueDef>, val expr: AExpr) : AExpr()
     data class AIf(val conditionExpr: AExpr, val thenExpr: AExpr, val elseExpr: AExpr) : AExpr()
+
+    data class ACall(val function: AFunctionReference, val arguments: List<AExpr>) : AExpr()
 }
+
+data class AFunctionReference(val targetModule: Module, val reference: String, val type: QualifiedType.FunctionType)

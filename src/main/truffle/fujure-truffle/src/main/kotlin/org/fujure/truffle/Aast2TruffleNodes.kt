@@ -148,6 +148,9 @@ class Aast2TruffleNodes(
                     ReferenceExprNode(aExpr.targetModule, aExpr.reference, fujureTruffleLanguage)
                 }
             }
+            is AExpr.ACall -> {
+                TODO()
+            }
         }
     }
 

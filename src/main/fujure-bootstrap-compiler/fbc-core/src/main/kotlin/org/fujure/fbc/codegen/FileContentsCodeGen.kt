@@ -329,6 +329,9 @@ class FileContentsCodeGen {
                     InitializerCode.BlockCode(code.build(), tmpVar)
                 }
             }
+            is AExpr.ACall -> {
+                throw Exception("Code generation for function calls has not been implemented yet")
+            }
         }
     }
 
@@ -518,6 +521,7 @@ class FileContentsCodeGen {
         is AExpr.ACharLiteral -> 9
         is AExpr.AStringLiteral -> 9
         is AExpr.AValueReference -> 9
+        is AExpr.ACall -> throw Exception("precedence() for function calls has not been implemented yet")
     }
 
     private fun AExpr.type(): QualifiedType = when (this) {
@@ -546,5 +550,6 @@ class FileContentsCodeGen {
         is AExpr.AValueReference -> this.type
         is AExpr.ALet -> this.expr.type()
         is AExpr.AIf -> this.thenExpr.type()
+        is AExpr.ACall -> throw Exception("type() for function calls has not been implemented yet")
     }
 }

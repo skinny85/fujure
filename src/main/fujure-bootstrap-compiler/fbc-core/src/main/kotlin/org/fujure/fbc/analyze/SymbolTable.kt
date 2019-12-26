@@ -36,7 +36,8 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols> = emptyMap()) 
         val BUILT_IN_MODULES = mapOf(
                 Module("fujure", "Int") to mapOf(
                         "minInt" to BuiltInTypes.Int,
-                        "maxInt" to BuiltInTypes.Int
+                        "maxInt" to BuiltInTypes.Int,
+                        "abs" to QualifiedType.FunctionType(BuiltInTypes.Int, listOf(BuiltInTypes.Int))
                 ),
                 Module("fujure", "Unit") to mapOf(
                 ),

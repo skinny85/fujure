@@ -41,6 +41,12 @@ sealed class SemanticError {
                             val actual: QualifiedType) :
             SemanticError()
 
+    data class NotInvokable(val context: ErrorContext, val found: QualifiedType) :
+            SemanticError()
+
+    data class ArgumentCountMismatch(val context: ErrorContext, val expected: Int, val actual: Int) :
+            SemanticError()
+
     fun humanReadableMsg(): String = when (this) {
         is SemanticError.DuplicateModule -> {
             val prefix = if (this.packageName.isEmpty()) "" else "${this.packageName}."
@@ -77,6 +83,12 @@ sealed class SemanticError {
             "Error ${this.context.humanReadableMsg()}: " +
                     "Type mismatch, expected: ${this.expected.inStringForm()} " +
                     "but got: ${this.actual.inStringForm()}"
+        is SemanticError.NotInvokable ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "Expression of type '${this.found.inStringForm()}' cannot be invoked as a function"
+        is SemanticError.ArgumentCountMismatch ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "Expected ${this.expected} arguments to function call, but received: ${this.actual}"
     }
 }
 

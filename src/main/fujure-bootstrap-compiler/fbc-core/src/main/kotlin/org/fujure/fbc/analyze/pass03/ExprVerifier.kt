@@ -2,6 +2,7 @@ package org.fujure.fbc.analyze.pass03
 
 import org.fujure.fbc.aast.ADef
 import org.fujure.fbc.aast.AExpr
+import org.fujure.fbc.aast.AFunctionReference
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.QualifiedType
@@ -10,6 +11,7 @@ import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.ValueCoordinates
+import org.fujure.fbc.ast.ValueReference
 import org.funktionale.either.Disjunction
 
 class ExprVerifier(private val symbolTable: Pass03SymbolTable,
@@ -39,25 +41,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 ExprVerificationResult.Success(BuiltInTypes.String, AExpr.AStringLiteral(expr.value))
             }
             is Expr.ValueReference -> {
-                val lookupResult = symbolTable.lookup(expr.ref, module, valName, chain)
-                when (lookupResult) {
-                    is Pass03SymbolTable.LookupResult.RefNotFound ->
-                        ExprVerificationResult.Failure(SemanticError.UnresolvedReference(context, expr.ref))
-                    is Pass03SymbolTable.LookupResult.ForwardReference ->
-                        ExprVerificationResult.Failure(SemanticError.IllegalForwardReference(context, lookupResult.name))
-                    is Pass03SymbolTable.LookupResult.SelfReference ->
-                        ExprVerificationResult.Failure(SemanticError.IllegalSelfReference(context))
-                    is Pass03SymbolTable.LookupResult.CyclicReference ->
-                        ExprVerificationResult.Failure(SemanticError.CyclicDefinition(context, lookupResult.cycle))
-                    is Pass03SymbolTable.LookupResult.RefFound -> {
-                        val qualifiedType = lookupResult.qualifiedType
-                        ExprVerificationResult.Success(qualifiedType, if (qualifiedType == null)
-                            null
-                        else
-                            AExpr.AValueReference(lookupResult.module, expr.ref.variable(), qualifiedType)
-                        )
-                    }
-                }
+                handleValueReference(expr.ref, context)
             }
             is Expr.Negation -> {
                 val errors = mutableListOf<SemanticError>()
@@ -127,6 +111,100 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             }
             is Expr.If -> {
                 handleIfExpression(expr)
+            }
+            is Expr.Call -> {
+                val errors = mutableListOf<SemanticError>()
+
+                // first, resolve the target of the call
+                val targetFunctionAnalysis = handleValueReference(expr.function, context)
+                if (targetFunctionAnalysis.qualifiedType != null &&
+                        targetFunctionAnalysis.qualifiedType !is QualifiedType.FunctionType) {
+                    // this means the type is not invokable
+                    errors.add(SemanticError.NotInvokable(context, targetFunctionAnalysis.qualifiedType))
+                }
+                val targetFunction: AFunctionReference? = when (targetFunctionAnalysis) {
+                    is ExprVerificationResult.Success -> {
+                        val referenceExpr = targetFunctionAnalysis.aExpr
+                        if (referenceExpr is AExpr.AValueReference) {
+                            if (referenceExpr.type is QualifiedType.FunctionType) {
+                                AFunctionReference(referenceExpr.targetModule, referenceExpr.reference,
+                                        referenceExpr.type)
+                            } else {
+                                null
+                            }
+                        } else {
+                            null
+                        }
+                    }
+                    is ExprVerificationResult.Failure -> {
+                        errors.addAll(targetFunctionAnalysis.errors)
+                        null
+                    }
+                }
+
+                // report an error about incorrect number of arguments
+                if (targetFunction != null &&
+                        targetFunction.type.argumentTypes.size != expr.arguments.size) {
+                    errors.add(SemanticError.ArgumentCountMismatch(context,
+                            targetFunction.type.argumentTypes.size, expr.arguments.size))
+                }
+
+                // then, handle the arguments
+                val args: List<AExpr?> = expr.arguments.mapIndexed { i, arg ->
+                    val argAnalysis = analyzeExpr(arg)
+                    // check whether the argument type for this index matches
+                    if (targetFunction != null && i < targetFunction.type.argumentTypes.size &&
+                            argAnalysis.qualifiedType != null &&
+                            argAnalysis.qualifiedType != targetFunction.type.argumentTypes[i]) {
+                        errors.add(SemanticError.TypeMismatch(context,
+                                targetFunction.type.argumentTypes[i],
+                                argAnalysis.qualifiedType))
+                    }
+
+                    when (argAnalysis) {
+                        is ExprVerificationResult.Failure -> {
+                            errors.addAll(argAnalysis.errors)
+                            null
+                        }
+                        is ExprVerificationResult.Success -> {
+                            argAnalysis.aExpr
+                        }
+                    }
+                }
+
+                if (errors.isEmpty()) {
+                    ExprVerificationResult.Success(targetFunction?.type?.returnType,
+                            if (targetFunction != null && args.all { it != null })
+                                AExpr.ACall(targetFunction, args.requireNoNulls())
+                            else
+                                null
+                    )
+                } else {
+                    ExprVerificationResult.Failure(targetFunction?.type?.returnType, errors)
+                }
+            }
+        }
+    }
+
+    private fun handleValueReference(ref: ValueReference, context: ErrorContext.ValueDefinition):
+            ExprVerificationResult {
+        val lookupResult = symbolTable.lookup(ref, module, valName, chain)
+        return when (lookupResult) {
+            is Pass03SymbolTable.LookupResult.RefNotFound ->
+                ExprVerificationResult.Failure(SemanticError.UnresolvedReference(context, ref))
+            is Pass03SymbolTable.LookupResult.ForwardReference ->
+                ExprVerificationResult.Failure(SemanticError.IllegalForwardReference(context, lookupResult.name))
+            is Pass03SymbolTable.LookupResult.SelfReference ->
+                ExprVerificationResult.Failure(SemanticError.IllegalSelfReference(context))
+            is Pass03SymbolTable.LookupResult.CyclicReference ->
+                ExprVerificationResult.Failure(SemanticError.CyclicDefinition(context, lookupResult.cycle))
+            is Pass03SymbolTable.LookupResult.RefFound -> {
+                val qualifiedType = lookupResult.qualifiedType
+                ExprVerificationResult.Success(qualifiedType, if (qualifiedType == null)
+                    null
+                else
+                    AExpr.AValueReference(lookupResult.module, ref.variable(), qualifiedType)
+                )
             }
         }
     }
@@ -349,12 +427,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             errors.add(SemanticError.TypeMismatch(errorContext,
                     thenType, elseType))
         }
-        val returnType: QualifiedType? = if (thenType != null)
-            thenType
-        else if (elseType != null)
-            elseType
-        else
-            null
+        val returnType = thenType ?: elseType
 
         return if (errors.isEmpty()) {
             ExprVerificationResult.Success(returnType, if (conditionAast != null && thenAast != null && elseAast != null)
