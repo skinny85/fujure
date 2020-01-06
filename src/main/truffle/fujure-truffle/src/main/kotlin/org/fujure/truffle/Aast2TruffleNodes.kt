@@ -6,6 +6,7 @@ import org.fujure.fbc.aast.AExpr
 import org.fujure.fbc.aast.AFileContents
 import org.fujure.truffle.nodes.AdditionOrConcatenationExprNode
 import org.fujure.truffle.nodes.BoolLiteralExprNode
+import org.fujure.truffle.nodes.CallExprNode
 import org.fujure.truffle.nodes.CharLiteralExprNode
 import org.fujure.truffle.nodes.ConjunctionExprNode
 import org.fujure.truffle.nodes.DefNode
@@ -149,7 +150,10 @@ class Aast2TruffleNodes(
                 }
             }
             is AExpr.ACall -> {
-                TODO()
+                CallExprNode(
+                        ReferenceExprNode(aExpr.function.targetModule, aExpr.function.reference, fujureTruffleLanguage),
+                        aExpr.arguments.map { translateExpr(it) }
+                )
             }
         }
     }

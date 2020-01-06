@@ -208,6 +208,7 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                     def b6 = let b6 = false in !b6
                     def i2 = if b6 then 23 else 45
                     def minusOne: Int = Int.minInt + Int.maxInt
+                    def three = Int.abs(3)
                 """)
             }
 
@@ -262,6 +263,11 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
             it.should("correctly evaluate the Int.minInt + Int.maxInt expression") {
                 val minusOne = moduleBindings.getMember("minusOne")
                 assertThat(minusOne.asInt()).isEqualTo(-1)
+            }
+
+            it.should("correctly evaluate the Int.abs(3) expression") {
+                val three = moduleBindings.getMember("three")
+                assertThat(three.asInt()).isEqualTo(3)
             }
         }
 

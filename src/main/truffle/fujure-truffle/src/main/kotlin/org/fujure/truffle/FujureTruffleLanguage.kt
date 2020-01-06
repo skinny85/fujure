@@ -4,24 +4,40 @@ import com.oracle.truffle.api.CallTarget
 import com.oracle.truffle.api.Scope
 import com.oracle.truffle.api.Truffle
 import com.oracle.truffle.api.TruffleLanguage
+import com.oracle.truffle.api.dsl.NodeFactory
+import com.oracle.truffle.api.frame.FrameDescriptor
 import org.fujure.fbc.analyze.SemanticAnalysisResult
 import org.fujure.fbc.analyze.SimpleSemanticAnalyzer
 import org.fujure.fbc.analyze.SymbolTable
 import org.fujure.fbc.ast.InputFile
+import org.fujure.fbc.ast.Module
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.read.OpenedFile
+import org.fujure.truffle.nodes.ExprNode
+import org.fujure.truffle.nodes.ReadFunctionArgExprNode
+import org.fujure.truffle.nodes.RootFunctionNode
 import org.fujure.truffle.nodes.RootModuleNode
+import org.fujure.truffle.nodes.builtins.BuiltInAbsFunctionBodyExpr
+import org.fujure.truffle.nodes.builtins.BuiltInFunctionBodyExpr
+import org.fujure.truffle.runtime.FujureFunctionObject
 import org.funktionale.either.Disjunction
 
 class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
     private var symbolTable: SymbolTable? = null
 
     override fun createContext(env: Env): FujureTruffleContext {
-        return FujureTruffleContext()
-    }
+        val context = FujureTruffleContext()
 
-    override fun isObjectOfLanguage(obj: Any): Boolean {
-        return false
+        /* *** add the built-in modules, with values *** */
+
+        // fujure.Int
+        val intModule = Module("fujure", "Int")
+        context.resetModule(intModule);
+        context.registerSimpleValue(intModule, "minInt", Integer.MIN_VALUE)
+        context.registerSimpleValue(intModule, "maxInt", Integer.MAX_VALUE)
+        registerBuiltInFunction(context, intModule, "abs", BuiltInAbsFunctionBodyExpr.getFactory())
+
+        return context
     }
 
     override fun parse(request: ParsingRequest): CallTarget {
@@ -56,6 +72,23 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
 
     override fun findTopScopes(context: FujureTruffleContext): Iterable<Scope> {
         return context.findTopScopes()
+    }
+
+    override fun isObjectOfLanguage(obj: Any): Boolean {
+        return false
+    }
+
+    private fun registerBuiltInFunction(context: FujureTruffleContext, module: Module, name: String,
+            functionBodyFactory: NodeFactory<out BuiltInFunctionBodyExpr>) {
+        val argumentCount = functionBodyFactory.executionSignature.size
+        val argumentNodes = arrayOfNulls<ExprNode>(argumentCount)
+        for (i in 0 until argumentCount) {
+            argumentNodes[i] = ReadFunctionArgExprNode(i)
+        }
+
+        context.registerSimpleValue(module, name,
+                FujureFunctionObject(Truffle.getRuntime().createCallTarget(
+                        RootFunctionNode(this, FrameDescriptor(), functionBodyFactory.createNode(argumentNodes)))))
     }
 
     companion object {

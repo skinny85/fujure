@@ -25,14 +25,6 @@ public final class FujureTruffleBindings implements TruffleObject {
 
     public FujureTruffleBindings() {
         this.modulesBindings = new HashMap<>();
-
-        /* *** add the built-in modules, with values *** */
-
-        // fujure.Int
-        ModuleBindings intBindings = new ModuleBindings();
-        intBindings.register("minInt", Integer.MIN_VALUE);
-        intBindings.register("maxInt", Integer.MAX_VALUE);
-        this.modulesBindings.put("fujure.Int", intBindings);
     }
 
     public void resetModule(Module module) {
@@ -46,8 +38,7 @@ public final class FujureTruffleBindings implements TruffleObject {
     public Object find(Module targetModule, String reference) {
         ModuleBindings bindingsForTargetModule = modulesBindings.get(targetModule.getFullyQualifiedName());
         if (bindingsForTargetModule == null) {
-            throw new RuntimeException("Module '" + targetModule.getFullyQualifiedName() + "' not found (reference: '" +
-                    reference + "')");
+            throw UnknownIdentifierException.raise(targetModule.getFullyQualifiedName());
         }
         return bindingsForTargetModule.find(reference);
     }
@@ -103,7 +94,11 @@ public final class FujureTruffleBindings implements TruffleObject {
         }
 
         public Object find(String reference) {
-            return moduleValues.get(reference);
+            Object ret = moduleValues.get(reference);
+            if (ret == null) {
+                throw UnknownIdentifierException.raise(reference);
+            }
+            return ret;
         }
 
         public void remove(String name) {
@@ -129,9 +124,7 @@ public final class FujureTruffleBindings implements TruffleObject {
             abstract static class ReadNode extends Node {
                 @CompilerDirectives.TruffleBoundary
                 public Object access(ModuleBindings moduleBindings, String name) {
-                    Object value = moduleBindings.moduleValues.get(name);
-                    if (value == null)
-                        throw UnknownIdentifierException.raise(name);
+                    Object value = moduleBindings.find(name);
 
                     // Truffle doesn't support returning chars from bindings,
                     // so we special case char and convert them to an int
