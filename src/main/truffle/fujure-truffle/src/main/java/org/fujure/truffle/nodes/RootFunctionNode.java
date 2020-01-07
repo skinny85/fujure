@@ -4,6 +4,7 @@ import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.RootNode;
 import org.fujure.truffle.FujureTruffleLanguage;
+import org.fujure.truffle.nodes.exprs.ExprNode;
 
 public final class RootFunctionNode extends RootNode {
     @Child

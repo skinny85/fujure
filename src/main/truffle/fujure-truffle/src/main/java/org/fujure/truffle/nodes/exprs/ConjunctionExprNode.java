@@ -1,4 +1,4 @@
-package org.fujure.truffle.nodes;
+package org.fujure.truffle.nodes.exprs;
 
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.UnsupportedSpecializationException;
@@ -6,16 +6,16 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
-public final class DisjunctionExprNode extends ExprNode {
+public final class ConjunctionExprNode extends ExprNode {
     @Child
-    private ExprNode leftDisjunct;
+    private ExprNode leftConjunct;
 
     @Child
-    private ExprNode rightDisjunct;
+    private ExprNode rightConjunct;
 
-    public DisjunctionExprNode(ExprNode leftDisjunct, ExprNode rightDisjunct) {
-        this.leftDisjunct = leftDisjunct;
-        this.rightDisjunct = rightDisjunct;
+    public ConjunctionExprNode(ExprNode leftConjunct, ExprNode rightConjunct) {
+        this.leftConjunct = leftConjunct;
+        this.rightConjunct = rightConjunct;
     }
 
     @Override
@@ -25,18 +25,18 @@ public final class DisjunctionExprNode extends ExprNode {
         } catch (UnexpectedResultException e) {
             // should not happen (Fujure is statically typed)
             CompilerDirectives.transferToInterpreterAndInvalidate();
-            throw new UnsupportedSpecializationException(this, new Node[]{ this.leftDisjunct, this.rightDisjunct }, e.getResult());
+            throw new UnsupportedSpecializationException(this, new Node[]{ this.leftConjunct, this.rightConjunct}, e.getResult());
         }
     }
 
     @Override
     public boolean executeBoolean(VirtualFrame frame) throws UnexpectedResultException {
-        boolean leftValue = leftDisjunct.executeBoolean(frame);
-        if (leftValue) {
+        boolean leftValue = leftConjunct.executeBoolean(frame);
+        if (!leftValue) {
             // short-circuit evaluation
-            return true;
+            return false;
         }
 
-        return rightDisjunct.executeBoolean(frame);
+        return rightConjunct.executeBoolean(frame);
     }
 }

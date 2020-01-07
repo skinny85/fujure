@@ -1,7 +1,9 @@
-package org.fujure.truffle.nodes;
+package org.fujure.truffle.nodes.exprs;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
+import org.fujure.truffle.nodes.DispatchNode;
+import org.fujure.truffle.nodes.DispatchNodeGen;
 
 import java.util.List;
 

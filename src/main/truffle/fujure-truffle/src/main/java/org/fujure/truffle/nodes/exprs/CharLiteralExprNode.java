@@ -1,11 +1,11 @@
-package org.fujure.truffle.nodes;
+package org.fujure.truffle.nodes.exprs;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-public final class IntLiteralExprNode extends ExprNode {
-    private final int value;
+public final class CharLiteralExprNode extends ExprNode {
+    private final char value;
 
-    public IntLiteralExprNode(int value) {
+    public CharLiteralExprNode(char value) {
         this.value = value;
     }
 
@@ -15,7 +15,7 @@ public final class IntLiteralExprNode extends ExprNode {
     }
 
     @Override
-    public int executeInteger(VirtualFrame frame) {
+    public char executeCharacter(VirtualFrame frame) {
         return value;
     }
 }

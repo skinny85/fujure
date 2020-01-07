@@ -1,4 +1,4 @@
-package org.fujure.truffle.nodes.builtins;
+package org.fujure.truffle.nodes.exprs.builtins;
 
 import com.oracle.truffle.api.dsl.NodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;

@@ -1,4 +1,4 @@
-package org.fujure.truffle.nodes;
+package org.fujure.truffle.nodes.exprs;
 
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.UnsupportedSpecializationException;

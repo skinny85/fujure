@@ -2,6 +2,7 @@ package org.fujure.truffle.nodes;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 import org.fujure.truffle.FujureTruffleBindings;
+import org.fujure.truffle.nodes.exprs.ExprNode;
 
 public final class LocalSimpleValueDefNode extends LocalValueDefNode {
     private final String id;

@@ -13,12 +13,12 @@ import org.fujure.fbc.ast.InputFile
 import org.fujure.fbc.ast.Module
 import org.fujure.fbc.parse.BnfcParser
 import org.fujure.fbc.read.OpenedFile
-import org.fujure.truffle.nodes.ExprNode
-import org.fujure.truffle.nodes.ReadFunctionArgExprNode
 import org.fujure.truffle.nodes.RootFunctionNode
 import org.fujure.truffle.nodes.RootModuleNode
-import org.fujure.truffle.nodes.builtins.BuiltInAbsFunctionBodyExpr
-import org.fujure.truffle.nodes.builtins.BuiltInFunctionBodyExpr
+import org.fujure.truffle.nodes.exprs.ExprNode
+import org.fujure.truffle.nodes.exprs.ReadFunctionArgExprNode
+import org.fujure.truffle.nodes.exprs.builtins.BuiltInAbsFunctionBodyExpr
+import org.fujure.truffle.nodes.exprs.builtins.BuiltInFunctionBodyExpr
 import org.fujure.truffle.runtime.FujureFunctionObject
 import org.funktionale.either.Disjunction
 
