@@ -628,6 +628,42 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterNegateExpr(FujureParser.NegateExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNegateExpr(FujureParser.NegateExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPositateExpr(FujureParser.PositateExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPositateExpr(FujureParser.PositateExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCoercion_Expr7(FujureParser.Coercion_Expr7Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCoercion_Expr7(FujureParser.Coercion_Expr7Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterLiteralExpr(FujureParser.LiteralExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -664,13 +700,13 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCoercion_Expr7(FujureParser.Coercion_Expr7Context ctx) { }
+	@Override public void enterCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCoercion_Expr7(FujureParser.Coercion_Expr7Context ctx) { }
+	@Override public void exitCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

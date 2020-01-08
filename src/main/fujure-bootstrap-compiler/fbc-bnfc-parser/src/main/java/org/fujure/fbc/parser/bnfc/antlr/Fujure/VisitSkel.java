@@ -208,7 +208,15 @@ public class VisitSkel
     { /* Code For NotExpr Goes Here */
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
-    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg)
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NegateExpr p, A arg)
+    { /* Code For NegateExpr Goes Here */
+      p.expr_.accept(new ExprVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PositateExpr p, A arg)
+    { /* Code For PositateExpr Goes Here */
+      p.expr_.accept(new ExprVisitor<R,A>(), arg);
+      return null;
+    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg)
     { /* Code For LiteralExpr Goes Here */
       p.literal_.accept(new LiteralVisitor<R,A>(), arg);
       return null;

@@ -26,6 +26,8 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ModuloExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiplicationExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NegateExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PositateExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SubtractionExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral
@@ -131,6 +133,14 @@ internal object ExprParseTree2AstVisitor :
 
     override fun visit(notExpr: NotExpr, arg: Unit): Expr {
         return Expr.Negation(notExpr.expr_.accept(this, arg))
+    }
+
+    override fun visit(negateExpr: NegateExpr, arg: Unit): Expr {
+        throw UnsupportedOperationException()
+    }
+
+    override fun visit(positateExpr: PositateExpr, arg: Unit): Expr {
+        throw UnsupportedOperationException()
     }
 
     override fun visit(variableExpr: VariableExpr, arg: Unit): Expr {

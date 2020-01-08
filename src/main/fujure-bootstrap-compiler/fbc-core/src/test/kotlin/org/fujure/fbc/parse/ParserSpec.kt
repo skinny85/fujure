@@ -196,4 +196,64 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
             assertParsingSucceeded()
         }
     }
+
+    it.describes("called with an expression with two consecutive '!'") {
+        it.beginsAll {
+            parse("""
+                def a = !!true
+            """)
+        }
+
+        it.should("fail to parse") {
+            assertParsingFailed()
+        }
+    }
+
+    it.describes("called with an expression with two '!' separated by open parens") {
+        it.beginsAll {
+            parse("""
+                def a = !(!true)
+            """)
+        }
+
+        it.should("parse successfully") {
+            assertParsingSucceeded()
+        }
+    }
+
+    it.describes("called with an expression with '!' followed by '-'") {
+        it.beginsAll {
+            parse("""
+                def a = !-3
+            """)
+        }
+
+        it.should("fail to parse") {
+            assertParsingFailed()
+        }
+    }
+
+    it.describes("called with an expression with '-' followed by '!'") {
+        it.beginsAll {
+            parse("""
+                def a = -!true
+            """)
+        }
+
+        it.should("fail to parse") {
+            assertParsingFailed()
+        }
+    }
+
+    it.describes("called with an expression with two consecutive '-'") {
+        it.beginsAll {
+            parse("""
+                def a = --b
+            """)
+        }
+
+        it.should("fail to parse") {
+            assertParsingFailed()
+        }
+    }
 })

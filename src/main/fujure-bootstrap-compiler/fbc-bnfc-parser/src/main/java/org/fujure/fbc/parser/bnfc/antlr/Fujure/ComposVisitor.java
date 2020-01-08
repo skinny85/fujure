@@ -216,6 +216,14 @@ public class ComposVisitor<A> implements
     {
       Expr expr_ = p.expr_.accept(this, arg);
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr(expr_);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NegateExpr p, A arg)
+    {
+      Expr expr_ = p.expr_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NegateExpr(expr_);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PositateExpr p, A arg)
+    {
+      Expr expr_ = p.expr_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PositateExpr(expr_);
     }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg)
     {
       Literal literal_ = p.literal_.accept(this, arg);

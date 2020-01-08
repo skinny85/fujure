@@ -102,7 +102,7 @@ Interesting links
 
 Fujure guiding principles
 -------------------------
-- 100% purely functional
+- purely functional. All impure capabilities are implemented through the host language
 - Syntax: readable and familiar, in that order
     - Conciseness is nice to have, but never at the expense of the above 2 traits - it's always 3rd in line
 - Eager by default, but laziness is built-in and easy
