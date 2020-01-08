@@ -20,6 +20,8 @@ sealed class Expr {
     data class Disjunction(val leftDisjunct: Expr, val rightDisjunct: Expr) : Expr()
     data class Conjunction(val leftConjunct: Expr, val rightConjunct: Expr) : Expr()
     data class Complement(val operand: Expr) : Expr()
+    data class Negation(val operand: Expr) : Expr()
+    data class Positation(val operand: Expr) : Expr()
 
     data class Equality(val leftOperand: Expr, val rightOperand: Expr) : Expr()
     data class Inequality(val leftOperand: Expr, val rightOperand: Expr) : Expr()

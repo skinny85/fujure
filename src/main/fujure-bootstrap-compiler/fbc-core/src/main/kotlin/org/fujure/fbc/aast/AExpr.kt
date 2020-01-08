@@ -20,6 +20,8 @@ sealed class AExpr {
     data class AStringLiteral(val value: String) : AExpr()
 
     data class AComplement(val operand: AExpr) : AExpr()
+    data class ANegation(val operand: AExpr) : AExpr()
+    data class APositation(val operand: AExpr) : AExpr()
     data class AConjunction(val leftConjunct: AExpr, val rightConjunct: AExpr) : AExpr()
     data class ADisjunction(val leftDisjunct: AExpr, val rightDisjunct: AExpr) : AExpr()
 

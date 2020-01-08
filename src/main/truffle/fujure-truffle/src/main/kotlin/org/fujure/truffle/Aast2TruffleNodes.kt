@@ -69,6 +69,8 @@ class Aast2TruffleNodes(
             is AExpr.AIntLiteral -> IntLiteralExprNode(aExpr.value)
             is AExpr.AStringLiteral -> StringLiteralExprNode(aExpr.value)
             is AExpr.AComplement -> ComplementExprNode.of(translateExpr(aExpr.operand))
+            is AExpr.ANegation -> TODO()
+            is AExpr.APositation -> TODO()
             is AExpr.ADisjunction -> DisjunctionExprNode(
                     translateExpr(aExpr.leftDisjunct),
                     translateExpr(aExpr.rightDisjunct))

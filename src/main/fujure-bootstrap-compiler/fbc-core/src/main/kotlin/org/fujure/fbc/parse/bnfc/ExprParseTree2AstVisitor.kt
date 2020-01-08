@@ -136,11 +136,11 @@ internal object ExprParseTree2AstVisitor :
     }
 
     override fun visit(negateExpr: NegateExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Negation(negateExpr.expr_.accept(this, arg))
     }
 
     override fun visit(positateExpr: PositateExpr, arg: Unit): Expr {
-        throw UnsupportedOperationException()
+        return Expr.Positation(positateExpr.expr_.accept(this, arg))
     }
 
     override fun visit(variableExpr: VariableExpr, arg: Unit): Expr {

@@ -332,6 +332,12 @@ class FileContentsCodeGen {
             is AExpr.ACall -> {
                 throw Exception("Code generation for function calls has not been implemented yet")
             }
+            is AExpr.ANegation -> {
+                throw Exception("Code generation for negation expressions has not been implemented yet")
+            }
+            is AExpr.APositation -> {
+                throw Exception("Code generation for positation expressions has not been implemented yet")
+            }
         }
     }
 
@@ -521,6 +527,8 @@ class FileContentsCodeGen {
         is AExpr.ACharLiteral -> 9
         is AExpr.AStringLiteral -> 9
         is AExpr.AValueReference -> 9
+        is AExpr.ANegation -> throw Exception("precedence() for negation expr has not been implemented yet")
+        is AExpr.APositation -> throw Exception("precedence() for positation expr has not been implemented yet")
         is AExpr.ACall -> throw Exception("precedence() for function calls has not been implemented yet")
     }
 
@@ -550,6 +558,8 @@ class FileContentsCodeGen {
         is AExpr.AValueReference -> this.type
         is AExpr.ALet -> this.expr.type()
         is AExpr.AIf -> this.thenExpr.type()
+        is AExpr.ANegation -> throw Exception("type() for negation expr has not been implemented yet")
+        is AExpr.APositation -> throw Exception("type() for positation expr has not been implemented yet")
         is AExpr.ACall -> throw Exception("type() for function calls has not been implemented yet")
     }
 }

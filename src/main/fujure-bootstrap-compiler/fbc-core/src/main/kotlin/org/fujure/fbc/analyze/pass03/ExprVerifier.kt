@@ -44,26 +44,13 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 handleValueReference(expr.ref, context)
             }
             is Expr.Complement -> {
-                val errors = mutableListOf<SemanticError>()
-                val operandAnalysisResult = analyzeExpr(expr.operand)
-                val operandAast: AExpr? = when (operandAnalysisResult) {
-                    is ExprVerificationResult.Failure -> {
-                        errors.addAll(operandAnalysisResult.errors)
-                        null
-                    }
-                    is ExprVerificationResult.Success -> {
-                        operandAnalysisResult.aExpr
-                    }
-                }
-                val operandType = operandAnalysisResult.qualifiedType
-                if (operandType != null && operandType != BuiltInTypes.Bool) {
-                    errors.add(SemanticError.TypeMismatch(context, BuiltInTypes.Bool, operandType))
-                }
-                if (errors.isEmpty())
-                    ExprVerificationResult.Success(BuiltInTypes.Bool, if (operandAast == null) null else
-                        AExpr.AComplement(operandAast))
-                else
-                    ExprVerificationResult.Failure(BuiltInTypes.Bool, errors)
+                handleUnaryOperation(expr.operand, BuiltInTypes.Bool, AExpr::AComplement)
+            }
+            is Expr.Negation -> {
+                handleUnaryOperation(expr.operand, BuiltInTypes.Int, AExpr::ANegation)
+            }
+            is Expr.Positation -> {
+                handleUnaryOperation(expr.operand, BuiltInTypes.Int, AExpr::APositation)
             }
             is Expr.Disjunction -> {
                 handleBinaryBoolOperation(expr.leftDisjunct, expr.rightDisjunct, { left, right -> AExpr.ADisjunction(left, right) })
@@ -207,6 +194,30 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 )
             }
         }
+    }
+
+    private fun handleUnaryOperation(operand: Expr, expectedType: QualifiedType, cons: (AExpr) -> AExpr):
+            ExprVerificationResult {
+        val errors = mutableListOf<SemanticError>()
+        val operandAnalysisResult = analyzeExpr(operand)
+        val operandAast: AExpr? = when (operandAnalysisResult) {
+            is ExprVerificationResult.Failure -> {
+                errors.addAll(operandAnalysisResult.errors)
+                null
+            }
+            is ExprVerificationResult.Success -> {
+                operandAnalysisResult.aExpr
+            }
+        }
+        val operandType = operandAnalysisResult.qualifiedType
+        if (operandType != null && operandType != expectedType) {
+            errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), expectedType, operandType))
+        }
+        return if (errors.isEmpty())
+            ExprVerificationResult.Success(expectedType, if (operandAast == null) null else
+                cons(operandAast))
+        else
+            ExprVerificationResult.Failure(expectedType, errors)
     }
 
     private fun handleBinaryBoolOperation(leftExpr: Expr, rightExpr: Expr, cons: (AExpr, AExpr) -> AExpr):

@@ -111,7 +111,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                             .file("""
                                 def x: Bool = 1
                                 def y: a.B.C = true
-                                def z = !! 2
+                                def z = ! 2
 
                                 def a: String = x
                                 def b: Char = y

@@ -176,6 +176,40 @@ class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     BuiltInTypes.Char, BuiltInTypes.String))
                 }
             }
+
+            it.describes("negating a Char") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def a = -'a'
+                            """)
+                            .analyzed()
+                }
+
+                it.should("report that it expected Int but got Char") {
+                    assertThat(file1Errors()).containsExactly(
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("a"),
+                                    BuiltInTypes.Int, BuiltInTypes.Char))
+                }
+            }
+
+            it.describes("positing a String") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def a = +"a"
+                            """)
+                            .analyzed()
+                }
+
+                it.should("report that it expected Int but got String") {
+                    assertThat(file1Errors()).containsExactly(
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("a"),
+                                    BuiltInTypes.Int, BuiltInTypes.String))
+                }
+            }
         }
     }
 }
