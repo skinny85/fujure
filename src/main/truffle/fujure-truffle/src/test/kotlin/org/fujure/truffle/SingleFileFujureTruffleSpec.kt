@@ -208,7 +208,7 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                     def b6 = let b6 = false in !b6
                     def i2 = if b6 then 23 else 45
                     def minusOne: Int = Int.minInt + Int.maxInt
-                    def three = Int.abs(3)
+                    def three = +Int.abs(-3)
                 """)
             }
 
