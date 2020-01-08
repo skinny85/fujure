@@ -132,7 +132,7 @@ internal object ExprParseTree2AstVisitor :
     }
 
     override fun visit(notExpr: NotExpr, arg: Unit): Expr {
-        return Expr.Negation(notExpr.expr_.accept(this, arg))
+        return Expr.Complement(notExpr.expr_.accept(this, arg))
     }
 
     override fun visit(negateExpr: NegateExpr, arg: Unit): Expr {

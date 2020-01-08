@@ -43,7 +43,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             is Expr.ValueReference -> {
                 handleValueReference(expr.ref, context)
             }
-            is Expr.Negation -> {
+            is Expr.Complement -> {
                 val errors = mutableListOf<SemanticError>()
                 val operandAnalysisResult = analyzeExpr(expr.operand)
                 val operandAast: AExpr? = when (operandAnalysisResult) {
@@ -61,7 +61,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
                 if (errors.isEmpty())
                     ExprVerificationResult.Success(BuiltInTypes.Bool, if (operandAast == null) null else
-                        AExpr.ANegation(operandAast))
+                        AExpr.AComplement(operandAast))
                 else
                     ExprVerificationResult.Failure(BuiltInTypes.Bool, errors)
             }

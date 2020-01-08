@@ -220,7 +220,7 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                 assertThat(moduleBindings).isNotNull()
             }
 
-            it.should("correctly evaluate the negation expression") {
+            it.should("correctly evaluate the complement expression") {
                 val b = moduleBindings.getMember("b")
                 assertThat(b.asBoolean()).isFalse()
             }

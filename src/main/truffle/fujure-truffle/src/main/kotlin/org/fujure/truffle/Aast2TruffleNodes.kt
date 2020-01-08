@@ -14,6 +14,7 @@ import org.fujure.truffle.nodes.exprs.AdditionOrConcatenationExprNode
 import org.fujure.truffle.nodes.exprs.BoolLiteralExprNode
 import org.fujure.truffle.nodes.exprs.CallExprNode
 import org.fujure.truffle.nodes.exprs.CharLiteralExprNode
+import org.fujure.truffle.nodes.exprs.ComplementExprNode
 import org.fujure.truffle.nodes.exprs.ConjunctionExprNode
 import org.fujure.truffle.nodes.exprs.DisjunctionExprNode
 import org.fujure.truffle.nodes.exprs.DivisionExprNode
@@ -30,7 +31,6 @@ import org.fujure.truffle.nodes.exprs.LetExprNode
 import org.fujure.truffle.nodes.exprs.LocalReferenceExprNode
 import org.fujure.truffle.nodes.exprs.ModulusExprNode
 import org.fujure.truffle.nodes.exprs.MultiplicationExprNode
-import org.fujure.truffle.nodes.exprs.NegationExprNode
 import org.fujure.truffle.nodes.exprs.ReferenceExprNode
 import org.fujure.truffle.nodes.exprs.StringLiteralExprNode
 import org.fujure.truffle.nodes.exprs.SubtractionExprNode
@@ -68,7 +68,7 @@ class Aast2TruffleNodes(
             is AExpr.ACharLiteral -> CharLiteralExprNode(parseCharaLiteral(aExpr.value))
             is AExpr.AIntLiteral -> IntLiteralExprNode(aExpr.value)
             is AExpr.AStringLiteral -> StringLiteralExprNode(aExpr.value)
-            is AExpr.ANegation -> NegationExprNode.of(translateExpr(aExpr.operand))
+            is AExpr.AComplement -> ComplementExprNode.of(translateExpr(aExpr.operand))
             is AExpr.ADisjunction -> DisjunctionExprNode(
                     translateExpr(aExpr.leftDisjunct),
                     translateExpr(aExpr.rightDisjunct))

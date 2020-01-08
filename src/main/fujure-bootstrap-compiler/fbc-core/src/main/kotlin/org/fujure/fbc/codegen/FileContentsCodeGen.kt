@@ -110,7 +110,7 @@ class FileContentsCodeGen {
                     InitializerCode.InlineCode(CodeBlock.of("\$T.${aExpr.reference}", className))
                 }
             }
-            is AExpr.ANegation -> {
+            is AExpr.AComplement -> {
                 val operandCode = aExpr2CodeBlock(aExpr.operand, module, BuiltInTypes.Bool)
 
                 when (operandCode) {
@@ -510,9 +510,9 @@ class FileContentsCodeGen {
         is AExpr.AMultiplication -> 6
         is AExpr.ADivision -> 6
         is AExpr.AModulus -> 6
-        is AExpr.ANegation -> 7
+        is AExpr.AComplement -> 7
         // because String inequality is implemented as !s1.equals(s2),
-        // it has the same precedence as negation
+        // it has the same precedence as logical complement
         is AExpr.AStringInequality -> 7
         is AExpr.AStringEquality -> 8
         is AExpr.AIntLiteral -> 9
@@ -539,7 +539,7 @@ class FileContentsCodeGen {
         is AExpr.AMultiplication -> BuiltInTypes.Int
         is AExpr.ADivision -> BuiltInTypes.Int
         is AExpr.AModulus -> BuiltInTypes.Int
-        is AExpr.ANegation -> BuiltInTypes.Bool
+        is AExpr.AComplement -> BuiltInTypes.Bool
         is AExpr.AStringInequality -> BuiltInTypes.Bool
         is AExpr.AStringEquality -> BuiltInTypes.Bool
         is AExpr.AIntLiteral -> BuiltInTypes.Int
