@@ -269,6 +269,25 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                 val three = moduleBindings.getMember("three")
                 assertThat(three.asInt()).isEqualTo(3)
             }
+
+            it.describes("when retrieving a built-in function value") {
+                lateinit var intModuleBindings: Value
+                lateinit var intAbsFunction: Value
+
+                it.beginsAll {
+                    intModuleBindings = fujureBindings.getMember("fujure.Int")
+                    intAbsFunction = intModuleBindings.getMember("abs")
+                }
+
+                it.should("be callable") {
+                    assertThat(intAbsFunction.canExecute()).isTrue()
+                }
+
+                it.should("return the correct value when called") {
+                    val ret = intAbsFunction.execute(-3)
+                    assertThat(ret.asInt()).isEqualTo(3)
+                }
+            }
         }
 
         it.describes("when evaluating syntactically incorrect code") {
