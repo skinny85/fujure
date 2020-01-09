@@ -115,7 +115,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         if (referenceExpr is AExpr.AValueReference) {
                             if (referenceExpr.type is QualifiedType.FunctionType) {
                                 AFunctionReference(referenceExpr.targetModule, referenceExpr.reference,
-                                        referenceExpr.type)
+                                        referenceExpr.type as QualifiedType.FunctionType)
                             } else {
                                 null
                             }

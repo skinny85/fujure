@@ -188,11 +188,11 @@ class FileContentsCodeGen {
             }
             is AExpr.APrimitiveEquality -> {
                 handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "==", aExpr.precedence(),
-                        BuiltInTypes.Bool, aExpr.leftOperand.type())
+                        BuiltInTypes.Bool, aExpr.leftOperand.type)
             }
             is AExpr.APrimitiveInequality -> {
                 handleBinaryOperation(aExpr.leftOperand, aExpr.rightOperand, module, "!=", aExpr.precedence(),
-                        BuiltInTypes.Bool, aExpr.leftOperand.type())
+                        BuiltInTypes.Bool, aExpr.leftOperand.type)
             }
             is AExpr.AStringEquality -> {
                 handleComparisonOperation(aExpr.leftOperand, aExpr.rightOperand, module, "", aExpr.precedence(),
@@ -254,9 +254,9 @@ class FileContentsCodeGen {
                 InitializerCode.BlockCode(code.build(), tmpVar)
             }
             is AExpr.AIf -> {
-                val conditionBlock = aExpr2CodeBlock(aExpr.conditionExpr, module, aExpr.conditionExpr.type())
-                val thenBlock = aExpr2CodeBlock(aExpr.thenExpr, module, aExpr.thenExpr.type())
-                val elseBlock = aExpr2CodeBlock(aExpr.elseExpr, module, aExpr.elseExpr.type())
+                val conditionBlock = aExpr2CodeBlock(aExpr.conditionExpr, module, aExpr.conditionExpr.type)
+                val thenBlock = aExpr2CodeBlock(aExpr.thenExpr, module, aExpr.thenExpr.type)
+                val elseBlock = aExpr2CodeBlock(aExpr.elseExpr, module, aExpr.elseExpr.type)
 
                 val tmpVar = if (conditionBlock.isCodeABlock ||
                         thenBlock.isCodeABlock ||
@@ -530,36 +530,5 @@ class FileContentsCodeGen {
         is AExpr.ANegation -> throw Exception("precedence() for negation expr has not been implemented yet")
         is AExpr.APositation -> throw Exception("precedence() for positation expr has not been implemented yet")
         is AExpr.ACall -> throw Exception("precedence() for function calls has not been implemented yet")
-    }
-
-    private fun AExpr.type(): QualifiedType = when (this) {
-        is AExpr.ADisjunction -> BuiltInTypes.Bool
-        is AExpr.AConjunction -> BuiltInTypes.Bool
-        is AExpr.APrimitiveEquality -> BuiltInTypes.Bool
-        is AExpr.APrimitiveInequality -> BuiltInTypes.Bool
-        is AExpr.ALesser -> BuiltInTypes.Bool
-        is AExpr.ALesserEqual -> BuiltInTypes.Bool
-        is AExpr.AGreater -> BuiltInTypes.Bool
-        is AExpr.AGreaterEqual -> BuiltInTypes.Bool
-        is AExpr.AAddition -> BuiltInTypes.Int
-        is AExpr.AStringConcatenation -> BuiltInTypes.String
-        is AExpr.ASubtraction -> BuiltInTypes.Int
-        is AExpr.AMultiplication -> BuiltInTypes.Int
-        is AExpr.ADivision -> BuiltInTypes.Int
-        is AExpr.AModulus -> BuiltInTypes.Int
-        is AExpr.AComplement -> BuiltInTypes.Bool
-        is AExpr.AStringInequality -> BuiltInTypes.Bool
-        is AExpr.AStringEquality -> BuiltInTypes.Bool
-        is AExpr.AIntLiteral -> BuiltInTypes.Int
-        is AExpr.AUnitLiteral -> BuiltInTypes.Unit
-        is AExpr.ABoolLiteral -> BuiltInTypes.Bool
-        is AExpr.ACharLiteral -> BuiltInTypes.Char
-        is AExpr.AStringLiteral -> BuiltInTypes.String
-        is AExpr.AValueReference -> this.type
-        is AExpr.ALet -> this.expr.type()
-        is AExpr.AIf -> this.thenExpr.type()
-        is AExpr.ANegation -> throw Exception("type() for negation expr has not been implemented yet")
-        is AExpr.APositation -> throw Exception("type() for positation expr has not been implemented yet")
-        is AExpr.ACall -> throw Exception("type() for function calls has not been implemented yet")
     }
 }
