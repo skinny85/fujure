@@ -42,7 +42,7 @@ public final class RootModuleNode extends RootNode {
         for (DefNode defNode : defs) {
             if (defNode instanceof SimpleValueDefNode) {
                 SimpleValueDefNode simpleValueDefNode = (SimpleValueDefNode) defNode;
-                contextReference.get().registerSimpleValue(module, simpleValueDefNode.id,
+                contextReference.get().registerValue(module, simpleValueDefNode.id,
                         simpleValueDefNode.execute(frame));
             }
         }

@@ -33,8 +33,8 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
         // fujure.Int
         val intModule = Module("fujure", "Int")
         context.resetModule(intModule);
-        context.registerSimpleValue(intModule, "minInt", Integer.MIN_VALUE)
-        context.registerSimpleValue(intModule, "maxInt", Integer.MAX_VALUE)
+        context.registerValue(intModule, "minInt", Integer.MIN_VALUE)
+        context.registerValue(intModule, "maxInt", Integer.MAX_VALUE)
         registerBuiltInFunction(context, intModule, "abs", BuiltInAbsFunctionBodyExpr.getFactory())
 
         return context
@@ -86,7 +86,7 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
             argumentNodes[i] = ReadFunctionArgExprNode(i)
         }
 
-        context.registerSimpleValue(module, name,
+        context.registerValue(module, name,
                 FujureFunctionObject(Truffle.getRuntime().createCallTarget(
                         RootFunctionNode(this, FrameDescriptor(), functionBodyFactory.createNode(argumentNodes)))))
     }

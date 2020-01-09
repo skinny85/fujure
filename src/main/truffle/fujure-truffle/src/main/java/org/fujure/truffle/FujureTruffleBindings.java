@@ -31,7 +31,7 @@ public final class FujureTruffleBindings implements TruffleObject {
         modulesBindings.put(module.getFullyQualifiedName(), new ModuleBindings());
     }
 
-    public void registerSimpleValue(Module module, String name, Object value) {
+    public void registerValue(Module module, String name, Object value) {
         modulesBindings.get(module.getFullyQualifiedName()).register(name, value);
     }
 

@@ -13,8 +13,8 @@ class FujureTruffleContext {
         fujureTruffleBindings.resetModule(module)
     }
 
-    fun registerSimpleValue(module: Module, name: String, value: Any) {
-        fujureTruffleBindings.registerSimpleValue(module, name, value)
+    fun registerValue(module: Module, name: String, value: Any) {
+        fujureTruffleBindings.registerValue(module, name, value)
     }
 
     fun find(targetModule: Module, reference: String): Any {
