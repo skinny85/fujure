@@ -17,7 +17,6 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef
-import org.fujure.fbc.ast.FileContents as AstFileContents
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def as AbsynDef
 
 internal object DefsParseTree2AstExtractor :
@@ -56,7 +55,7 @@ internal object DefsParseTree2AstExtractor :
     }
 
     override fun visit(binding: NameTypeBinding, arg: Unit): Def {
-        val declaredType = binding.typespec_.accept(TypeSpec2TypeReference, arg)
+        val declaredType = binding.typedesc_.accept(TypeDesc2TypeReference, arg)
         return toAstDefinition(binding.jid_, declaredType, null, arg)
     }
 
@@ -65,7 +64,7 @@ internal object DefsParseTree2AstExtractor :
     }
 
     override fun visit(binding: FullBinding, arg: Unit): Def {
-        val declaredType = binding.typespec_.accept(TypeSpec2TypeReference, arg)
+        val declaredType = binding.typedesc_.accept(TypeDesc2TypeReference, arg)
         return toAstDefinition(binding.jid_, declaredType, binding.expr_, arg)
     }
 

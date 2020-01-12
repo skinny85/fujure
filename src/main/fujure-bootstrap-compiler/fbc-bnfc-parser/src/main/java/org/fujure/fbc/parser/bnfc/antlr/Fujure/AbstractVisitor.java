@@ -51,14 +51,32 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
     public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
-/* TypeSpec */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecifier p, A arg) { return visitDefault(p, arg); }
-    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpec p, A arg) {
+/* TypeDesc */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeDesc p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeDesc p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeDesc p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
-/* TypeSpecFragm */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment p, A arg) { return visitDefault(p, arg); }
-    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm p, A arg) {
+/* FuncType */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ZeroArgFuncType p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiArgFuncType p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncType p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+/* FuncTypeFragm */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleFuncTypeFragm p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncFuncTypeFragm p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeFragm p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+/* SimpleType */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FragmSimpleType p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleType p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+/* SimpleTypeFragm */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IdSimpleTypeFragm p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeFragm p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* Expr */

@@ -260,53 +260,149 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitFullBinding(FujureParser.FullBindingContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code TypeSpecifier}
-	 * labeled alternative in {@link FujureParser#typeSpec}.
+	 * Enter a parse tree produced by the {@code SimpleTypeDesc}
+	 * labeled alternative in {@link FujureParser#typeDesc}.
 	 * @param ctx the parse tree
 	 */
-	void enterTypeSpecifier(FujureParser.TypeSpecifierContext ctx);
+	void enterSimpleTypeDesc(FujureParser.SimpleTypeDescContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code TypeSpecifier}
-	 * labeled alternative in {@link FujureParser#typeSpec}.
+	 * Exit a parse tree produced by the {@code SimpleTypeDesc}
+	 * labeled alternative in {@link FujureParser#typeDesc}.
 	 * @param ctx the parse tree
 	 */
-	void exitTypeSpecifier(FujureParser.TypeSpecifierContext ctx);
+	void exitSimpleTypeDesc(FujureParser.SimpleTypeDescContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ListTypeSpecFragm_AppendLast}
-	 * labeled alternative in {@link FujureParser#listTypeSpecFragm}.
+	 * Enter a parse tree produced by the {@code FuncTypeDesc}
+	 * labeled alternative in {@link FujureParser#typeDesc}.
 	 * @param ctx the parse tree
 	 */
-	void enterListTypeSpecFragm_AppendLast(FujureParser.ListTypeSpecFragm_AppendLastContext ctx);
+	void enterFuncTypeDesc(FujureParser.FuncTypeDescContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ListTypeSpecFragm_AppendLast}
-	 * labeled alternative in {@link FujureParser#listTypeSpecFragm}.
+	 * Exit a parse tree produced by the {@code FuncTypeDesc}
+	 * labeled alternative in {@link FujureParser#typeDesc}.
 	 * @param ctx the parse tree
 	 */
-	void exitListTypeSpecFragm_AppendLast(FujureParser.ListTypeSpecFragm_AppendLastContext ctx);
+	void exitFuncTypeDesc(FujureParser.FuncTypeDescContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ListTypeSpecFragm_PrependFirst}
-	 * labeled alternative in {@link FujureParser#listTypeSpecFragm}.
+	 * Enter a parse tree produced by the {@code ZeroArgFuncType}
+	 * labeled alternative in {@link FujureParser#funcType}.
 	 * @param ctx the parse tree
 	 */
-	void enterListTypeSpecFragm_PrependFirst(FujureParser.ListTypeSpecFragm_PrependFirstContext ctx);
+	void enterZeroArgFuncType(FujureParser.ZeroArgFuncTypeContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ListTypeSpecFragm_PrependFirst}
-	 * labeled alternative in {@link FujureParser#listTypeSpecFragm}.
+	 * Exit a parse tree produced by the {@code ZeroArgFuncType}
+	 * labeled alternative in {@link FujureParser#funcType}.
 	 * @param ctx the parse tree
 	 */
-	void exitListTypeSpecFragm_PrependFirst(FujureParser.ListTypeSpecFragm_PrependFirstContext ctx);
+	void exitZeroArgFuncType(FujureParser.ZeroArgFuncTypeContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code TypeSpecFragment}
-	 * labeled alternative in {@link FujureParser#typeSpecFragm}.
+	 * Enter a parse tree produced by the {@code MultiArgFuncType}
+	 * labeled alternative in {@link FujureParser#funcType}.
 	 * @param ctx the parse tree
 	 */
-	void enterTypeSpecFragment(FujureParser.TypeSpecFragmentContext ctx);
+	void enterMultiArgFuncType(FujureParser.MultiArgFuncTypeContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code TypeSpecFragment}
-	 * labeled alternative in {@link FujureParser#typeSpecFragm}.
+	 * Exit a parse tree produced by the {@code MultiArgFuncType}
+	 * labeled alternative in {@link FujureParser#funcType}.
 	 * @param ctx the parse tree
 	 */
-	void exitTypeSpecFragment(FujureParser.TypeSpecFragmentContext ctx);
+	void exitMultiArgFuncType(FujureParser.MultiArgFuncTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListFuncTypeFragm_AppendLast}
+	 * labeled alternative in {@link FujureParser#listFuncTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterListFuncTypeFragm_AppendLast(FujureParser.ListFuncTypeFragm_AppendLastContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListFuncTypeFragm_AppendLast}
+	 * labeled alternative in {@link FujureParser#listFuncTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitListFuncTypeFragm_AppendLast(FujureParser.ListFuncTypeFragm_AppendLastContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListFuncTypeFragm_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listFuncTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterListFuncTypeFragm_PrependFirst(FujureParser.ListFuncTypeFragm_PrependFirstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListFuncTypeFragm_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listFuncTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitListFuncTypeFragm_PrependFirst(FujureParser.ListFuncTypeFragm_PrependFirstContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code SimpleFuncTypeFragm}
+	 * labeled alternative in {@link FujureParser#funcTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterSimpleFuncTypeFragm(FujureParser.SimpleFuncTypeFragmContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code SimpleFuncTypeFragm}
+	 * labeled alternative in {@link FujureParser#funcTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitSimpleFuncTypeFragm(FujureParser.SimpleFuncTypeFragmContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code FuncFuncTypeFragm}
+	 * labeled alternative in {@link FujureParser#funcTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterFuncFuncTypeFragm(FujureParser.FuncFuncTypeFragmContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code FuncFuncTypeFragm}
+	 * labeled alternative in {@link FujureParser#funcTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitFuncFuncTypeFragm(FujureParser.FuncFuncTypeFragmContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code FragmSimpleType}
+	 * labeled alternative in {@link FujureParser#simpleType}.
+	 * @param ctx the parse tree
+	 */
+	void enterFragmSimpleType(FujureParser.FragmSimpleTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code FragmSimpleType}
+	 * labeled alternative in {@link FujureParser#simpleType}.
+	 * @param ctx the parse tree
+	 */
+	void exitFragmSimpleType(FujureParser.FragmSimpleTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListSimpleTypeFragm_AppendLast}
+	 * labeled alternative in {@link FujureParser#listSimpleTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterListSimpleTypeFragm_AppendLast(FujureParser.ListSimpleTypeFragm_AppendLastContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListSimpleTypeFragm_AppendLast}
+	 * labeled alternative in {@link FujureParser#listSimpleTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitListSimpleTypeFragm_AppendLast(FujureParser.ListSimpleTypeFragm_AppendLastContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListSimpleTypeFragm_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listSimpleTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterListSimpleTypeFragm_PrependFirst(FujureParser.ListSimpleTypeFragm_PrependFirstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListSimpleTypeFragm_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listSimpleTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitListSimpleTypeFragm_PrependFirst(FujureParser.ListSimpleTypeFragm_PrependFirstContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code IdSimpleTypeFragm}
+	 * labeled alternative in {@link FujureParser#simpleTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void enterIdSimpleTypeFragm(FujureParser.IdSimpleTypeFragmContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code IdSimpleTypeFragm}
+	 * labeled alternative in {@link FujureParser#simpleTypeFragm}.
+	 * @param ctx the parse tree
+	 */
+	void exitIdSimpleTypeFragm(FujureParser.IdSimpleTypeFragmContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code IfExpr}
 	 * labeled alternative in {@link FujureParser#expr}.

@@ -13,8 +13,11 @@ public class ComposVisitor<A> implements
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding,A>,
-  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpec.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpec,A>,
-  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragm,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeDesc.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeDesc,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncType.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncType,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeFragm,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleType.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleType,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeFragm,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDef.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDef,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg,A>,
@@ -101,8 +104,8 @@ public class ComposVisitor<A> implements
     }    public Binding visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding p, A arg)
     {
       String jid_ = p.jid_;
-      TypeSpec typespec_ = p.typespec_.accept(this, arg);
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding(jid_, typespec_);
+      TypeDesc typedesc_ = p.typedesc_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding(jid_, typedesc_);
     }    public Binding visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding p, A arg)
     {
       String jid_ = p.jid_;
@@ -111,25 +114,60 @@ public class ComposVisitor<A> implements
     }    public Binding visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding p, A arg)
     {
       String jid_ = p.jid_;
-      TypeSpec typespec_ = p.typespec_.accept(this, arg);
+      TypeDesc typedesc_ = p.typedesc_.accept(this, arg);
       Expr expr_ = p.expr_.accept(this, arg);
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding(jid_, typespec_, expr_);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding(jid_, typedesc_, expr_);
     }
-/* TypeSpec */
-    public TypeSpec visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecifier p, A arg)
+/* TypeDesc */
+    public TypeDesc visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeDesc p, A arg)
     {
-      ListTypeSpecFragm listtypespecfragm_ = new ListTypeSpecFragm();
-      for (TypeSpecFragm x : p.listtypespecfragm_)
-      {
-        listtypespecfragm_.add(x.accept(this,arg));
-      }
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecifier(listtypespecfragm_);
+      SimpleType simpletype_ = p.simpletype_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeDesc(simpletype_);
+    }    public TypeDesc visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeDesc p, A arg)
+    {
+      FuncType functype_ = p.functype_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeDesc(functype_);
     }
-/* TypeSpecFragm */
-    public TypeSpecFragm visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment p, A arg)
+/* FuncType */
+    public FuncType visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ZeroArgFuncType p, A arg)
+    {
+      FuncTypeFragm functypefragm_ = p.functypefragm_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ZeroArgFuncType(functypefragm_);
+    }    public FuncType visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiArgFuncType p, A arg)
+    {
+      FuncTypeFragm functypefragm_ = p.functypefragm_.accept(this, arg);
+      ListFuncTypeFragm listfunctypefragm_ = new ListFuncTypeFragm();
+      for (FuncTypeFragm x : p.listfunctypefragm_)
+      {
+        listfunctypefragm_.add(x.accept(this,arg));
+      }
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiArgFuncType(functypefragm_, listfunctypefragm_);
+    }
+/* FuncTypeFragm */
+    public FuncTypeFragm visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleFuncTypeFragm p, A arg)
+    {
+      SimpleType simpletype_ = p.simpletype_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleFuncTypeFragm(simpletype_);
+    }    public FuncTypeFragm visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncFuncTypeFragm p, A arg)
+    {
+      FuncType functype_ = p.functype_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncFuncTypeFragm(functype_);
+    }
+/* SimpleType */
+    public SimpleType visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FragmSimpleType p, A arg)
+    {
+      ListSimpleTypeFragm listsimpletypefragm_ = new ListSimpleTypeFragm();
+      for (SimpleTypeFragm x : p.listsimpletypefragm_)
+      {
+        listsimpletypefragm_.add(x.accept(this,arg));
+      }
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FragmSimpleType(listsimpletypefragm_);
+    }
+/* SimpleTypeFragm */
+    public SimpleTypeFragm visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IdSimpleTypeFragm p, A arg)
     {
       String jid_ = p.jid_;
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment(jid_);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IdSimpleTypeFragm(jid_);
     }
 /* Expr */
     public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr p, A arg)

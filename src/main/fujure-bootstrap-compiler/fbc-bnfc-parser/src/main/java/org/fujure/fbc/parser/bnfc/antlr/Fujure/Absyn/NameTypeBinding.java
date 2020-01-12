@@ -2,8 +2,8 @@ package org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn; // Java Package generated
 
 public class NameTypeBinding extends Binding {
   public final String jid_;
-  public final TypeSpec typespec_;
-  public NameTypeBinding(String p1, TypeSpec p2) { jid_ = p1; typespec_ = p2; }
+  public final TypeDesc typedesc_;
+  public NameTypeBinding(String p1, TypeDesc p2) { jid_ = p1; typedesc_ = p2; }
 
   public <R,A> R accept(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding.Visitor<R,A> v, A arg) { return v.visit(this, arg); }
 
@@ -11,13 +11,13 @@ public class NameTypeBinding extends Binding {
     if (this == o) return true;
     if (o instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding) {
       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding x = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding)o;
-      return this.jid_.equals(x.jid_) && this.typespec_.equals(x.typespec_);
+      return this.jid_.equals(x.jid_) && this.typedesc_.equals(x.typedesc_);
     }
     return false;
   }
 
   public int hashCode() {
-    return 37*(this.jid_.hashCode())+this.typespec_.hashCode();
+    return 37*(this.jid_.hashCode())+this.typedesc_.hashCode();
   }
 
 

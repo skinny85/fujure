@@ -2,9 +2,9 @@ package org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn; // Java Package generated
 
 public class FullBinding extends Binding {
   public final String jid_;
-  public final TypeSpec typespec_;
+  public final TypeDesc typedesc_;
   public final Expr expr_;
-  public FullBinding(String p1, TypeSpec p2, Expr p3) { jid_ = p1; typespec_ = p2; expr_ = p3; }
+  public FullBinding(String p1, TypeDesc p2, Expr p3) { jid_ = p1; typedesc_ = p2; expr_ = p3; }
 
   public <R,A> R accept(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding.Visitor<R,A> v, A arg) { return v.visit(this, arg); }
 
@@ -12,13 +12,13 @@ public class FullBinding extends Binding {
     if (this == o) return true;
     if (o instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding) {
       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding x = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding)o;
-      return this.jid_.equals(x.jid_) && this.typespec_.equals(x.typespec_) && this.expr_.equals(x.expr_);
+      return this.jid_.equals(x.jid_) && this.typedesc_.equals(x.typedesc_) && this.expr_.equals(x.expr_);
     }
     return false;
   }
 
   public int hashCode() {
-    return 37*(37*(this.jid_.hashCode())+this.typespec_.hashCode())+this.expr_.hashCode();
+    return 37*(37*(this.jid_.hashCode())+this.typedesc_.hashCode())+this.expr_.hashCode();
   }
 
 

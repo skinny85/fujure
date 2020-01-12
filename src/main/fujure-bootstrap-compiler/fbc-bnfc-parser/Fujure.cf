@@ -18,13 +18,20 @@ separator Def "" ;
 SimpleValueDef . Def ::= "def" Binding ;
 
 OnlyNameBinding . Binding ::= JID ;
-NameTypeBinding . Binding ::= JID ":" TypeSpec ;
+NameTypeBinding . Binding ::= JID ":" TypeDesc ;
 NameInitBinding . Binding ::= JID "=" Expr ;
-FullBinding     . Binding ::= JID ":" TypeSpec "=" Expr ;
+FullBinding     . Binding ::= JID ":" TypeDesc "=" Expr ;
 
-TypeSpecifier . TypeSpec ::= [TypeSpecFragm] ;
-separator nonempty TypeSpecFragm "." ;
-TypeSpecFragment . TypeSpecFragm ::= JID ;
+SimpleTypeDesc              . TypeDesc        ::= SimpleType ;
+FuncTypeDesc                . TypeDesc        ::= FuncType ;
+ZeroArgFuncType             . FuncType        ::= "(" ")" "->" FuncTypeFragm ;
+MultiArgFuncType            . FuncType        ::= FuncTypeFragm "->" [FuncTypeFragm] ;
+separator nonempty FuncTypeFragm "->" ;
+SimpleFuncTypeFragm         . FuncTypeFragm   ::= SimpleType ;
+FuncFuncTypeFragm           . FuncTypeFragm   ::= "(" FuncType ")" ;
+FragmSimpleType             . SimpleType      ::= [SimpleTypeFragm] ;
+separator nonempty SimpleTypeFragm "." ;
+IdSimpleTypeFragm           . SimpleTypeFragm ::= JID ;
 
 IfExpr             . Expr   ::= "if" Expr "then" Expr "else" Expr ;
 LetExpr            . Expr   ::= "let" [LetDef] "in" Expr ;

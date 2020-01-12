@@ -93,7 +93,7 @@ public class VisitSkel
     }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding p, A arg)
     { /* Code For NameTypeBinding Goes Here */
       //p.jid_;
-      p.typespec_.accept(new TypeSpecVisitor<R,A>(), arg);
+      p.typedesc_.accept(new TypeDescVisitor<R,A>(), arg);
       return null;
     }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding p, A arg)
     { /* Code For NameInitBinding Goes Here */
@@ -103,24 +103,62 @@ public class VisitSkel
     }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding p, A arg)
     { /* Code For FullBinding Goes Here */
       //p.jid_;
-      p.typespec_.accept(new TypeSpecVisitor<R,A>(), arg);
+      p.typedesc_.accept(new TypeDescVisitor<R,A>(), arg);
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
     }
   }
-  public class TypeSpecVisitor<R,A> implements TypeSpec.Visitor<R,A>
+  public class TypeDescVisitor<R,A> implements TypeDesc.Visitor<R,A>
   {
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecifier p, A arg)
-    { /* Code For TypeSpecifier Goes Here */
-      for (TypeSpecFragm x: p.listtypespecfragm_)
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeDesc p, A arg)
+    { /* Code For SimpleTypeDesc Goes Here */
+      p.simpletype_.accept(new SimpleTypeVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeDesc p, A arg)
+    { /* Code For FuncTypeDesc Goes Here */
+      p.functype_.accept(new FuncTypeVisitor<R,A>(), arg);
+      return null;
+    }
+  }
+  public class FuncTypeVisitor<R,A> implements FuncType.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ZeroArgFuncType p, A arg)
+    { /* Code For ZeroArgFuncType Goes Here */
+      p.functypefragm_.accept(new FuncTypeFragmVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiArgFuncType p, A arg)
+    { /* Code For MultiArgFuncType Goes Here */
+      p.functypefragm_.accept(new FuncTypeFragmVisitor<R,A>(), arg);
+      for (FuncTypeFragm x: p.listfunctypefragm_)
       { /* ... */ }
       return null;
     }
   }
-  public class TypeSpecFragmVisitor<R,A> implements TypeSpecFragm.Visitor<R,A>
+  public class FuncTypeFragmVisitor<R,A> implements FuncTypeFragm.Visitor<R,A>
   {
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment p, A arg)
-    { /* Code For TypeSpecFragment Goes Here */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleFuncTypeFragm p, A arg)
+    { /* Code For SimpleFuncTypeFragm Goes Here */
+      p.simpletype_.accept(new SimpleTypeVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncFuncTypeFragm p, A arg)
+    { /* Code For FuncFuncTypeFragm Goes Here */
+      p.functype_.accept(new FuncTypeVisitor<R,A>(), arg);
+      return null;
+    }
+  }
+  public class SimpleTypeVisitor<R,A> implements SimpleType.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FragmSimpleType p, A arg)
+    { /* Code For FragmSimpleType Goes Here */
+      for (SimpleTypeFragm x: p.listsimpletypefragm_)
+      { /* ... */ }
+      return null;
+    }
+  }
+  public class SimpleTypeFragmVisitor<R,A> implements SimpleTypeFragm.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IdSimpleTypeFragm p, A arg)
+    { /* Code For IdSimpleTypeFragm Goes Here */
       //p.jid_;
       return null;
     }

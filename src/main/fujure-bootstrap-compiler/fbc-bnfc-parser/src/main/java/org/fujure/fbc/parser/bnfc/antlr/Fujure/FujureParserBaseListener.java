@@ -268,49 +268,145 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypeSpecifier(FujureParser.TypeSpecifierContext ctx) { }
+	@Override public void enterSimpleTypeDesc(FujureParser.SimpleTypeDescContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypeSpecifier(FujureParser.TypeSpecifierContext ctx) { }
+	@Override public void exitSimpleTypeDesc(FujureParser.SimpleTypeDescContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterListTypeSpecFragm_AppendLast(FujureParser.ListTypeSpecFragm_AppendLastContext ctx) { }
+	@Override public void enterFuncTypeDesc(FujureParser.FuncTypeDescContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitListTypeSpecFragm_AppendLast(FujureParser.ListTypeSpecFragm_AppendLastContext ctx) { }
+	@Override public void exitFuncTypeDesc(FujureParser.FuncTypeDescContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterListTypeSpecFragm_PrependFirst(FujureParser.ListTypeSpecFragm_PrependFirstContext ctx) { }
+	@Override public void enterZeroArgFuncType(FujureParser.ZeroArgFuncTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitListTypeSpecFragm_PrependFirst(FujureParser.ListTypeSpecFragm_PrependFirstContext ctx) { }
+	@Override public void exitZeroArgFuncType(FujureParser.ZeroArgFuncTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypeSpecFragment(FujureParser.TypeSpecFragmentContext ctx) { }
+	@Override public void enterMultiArgFuncType(FujureParser.MultiArgFuncTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypeSpecFragment(FujureParser.TypeSpecFragmentContext ctx) { }
+	@Override public void exitMultiArgFuncType(FujureParser.MultiArgFuncTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListFuncTypeFragm_AppendLast(FujureParser.ListFuncTypeFragm_AppendLastContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListFuncTypeFragm_AppendLast(FujureParser.ListFuncTypeFragm_AppendLastContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListFuncTypeFragm_PrependFirst(FujureParser.ListFuncTypeFragm_PrependFirstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListFuncTypeFragm_PrependFirst(FujureParser.ListFuncTypeFragm_PrependFirstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSimpleFuncTypeFragm(FujureParser.SimpleFuncTypeFragmContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSimpleFuncTypeFragm(FujureParser.SimpleFuncTypeFragmContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFuncFuncTypeFragm(FujureParser.FuncFuncTypeFragmContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFuncFuncTypeFragm(FujureParser.FuncFuncTypeFragmContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFragmSimpleType(FujureParser.FragmSimpleTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFragmSimpleType(FujureParser.FragmSimpleTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListSimpleTypeFragm_AppendLast(FujureParser.ListSimpleTypeFragm_AppendLastContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListSimpleTypeFragm_AppendLast(FujureParser.ListSimpleTypeFragm_AppendLastContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListSimpleTypeFragm_PrependFirst(FujureParser.ListSimpleTypeFragm_PrependFirstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListSimpleTypeFragm_PrependFirst(FujureParser.ListSimpleTypeFragm_PrependFirstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIdSimpleTypeFragm(FujureParser.IdSimpleTypeFragmContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIdSimpleTypeFragm(FujureParser.IdSimpleTypeFragmContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

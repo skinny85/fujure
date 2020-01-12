@@ -91,7 +91,7 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
     }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding p, A arg) {
       R r = leaf(arg);
-      r = combine(p.typespec_.accept(this, arg), r, arg);
+      r = combine(p.typedesc_.accept(this, arg), r, arg);
       return r;
     }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding p, A arg) {
@@ -101,23 +101,63 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
     }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding p, A arg) {
       R r = leaf(arg);
-      r = combine(p.typespec_.accept(this, arg), r, arg);
+      r = combine(p.typedesc_.accept(this, arg), r, arg);
       r = combine(p.expr_.accept(this, arg), r, arg);
       return r;
     }
 
-/* TypeSpec */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecifier p, A arg) {
+/* TypeDesc */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeDesc p, A arg) {
       R r = leaf(arg);
-      for (TypeSpecFragm x : p.listtypespecfragm_)
+      r = combine(p.simpletype_.accept(this, arg), r, arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeDesc p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.functype_.accept(this, arg), r, arg);
+      return r;
+    }
+
+/* FuncType */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ZeroArgFuncType p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.functypefragm_.accept(this, arg), r, arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiArgFuncType p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.functypefragm_.accept(this, arg), r, arg);
+      for (FuncTypeFragm x : p.listfunctypefragm_)
       {
         r = combine(x.accept(this, arg), r, arg);
       }
       return r;
     }
 
-/* TypeSpecFragm */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeSpecFragment p, A arg) {
+/* FuncTypeFragm */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleFuncTypeFragm p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.simpletype_.accept(this, arg), r, arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncFuncTypeFragm p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.functype_.accept(this, arg), r, arg);
+      return r;
+    }
+
+/* SimpleType */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FragmSimpleType p, A arg) {
+      R r = leaf(arg);
+      for (SimpleTypeFragm x : p.listsimpletypefragm_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
+      return r;
+    }
+
+/* SimpleTypeFragm */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IdSimpleTypeFragm p, A arg) {
       R r = leaf(arg);
       return r;
     }
