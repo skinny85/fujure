@@ -2,6 +2,7 @@ package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.analyze.ErrorContext.ValueDefinition
+import org.fujure.fbc.ast.TypeReference
 
 class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
     init {
@@ -208,6 +209,26 @@ class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                             SemanticError.TypeMismatch(
                                     ValueDefinition("a"),
                                     BuiltInTypes.Int, BuiltInTypes.String))
+                }
+            }
+
+            it.describes("using a nonexistent type in the declaration of a function type") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def a: A -> Int -> B = 3
+                            """)
+                            .analyzed()
+                }
+
+                it.should("first report the error for the argument type, and then the return type") {
+                    assertThat(file1Errors()).containsExactly(
+                            SemanticError.TypeNotFound(
+                                    ValueDefinition("a"),
+                                    TypeReference.SimpleType("A")),
+                            SemanticError.TypeNotFound(
+                                    ValueDefinition("a"),
+                                    TypeReference.SimpleType("B")))
                 }
             }
         }

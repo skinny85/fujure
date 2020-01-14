@@ -6,12 +6,25 @@ sealed class QualifiedType {
     abstract fun inStringForm(): String
 
     data class SimpleType(val packageName: String, val typeName: String) : QualifiedType() {
-        override fun inStringForm(): String = "$packageName.$typeName"
+        override fun inStringForm(): String = if (packageName.isEmpty() || packageName == "fujure")
+            // we skip the 'fujure' prefix, as it's used for built-in types like Int, String, Double, etc.
+            typeName
+        else
+            "$packageName.$typeName"
     }
 
     data class FunctionType(val returnType: QualifiedType, val argumentTypes: List<QualifiedType>) : QualifiedType() {
         override fun inStringForm(): String {
-            return "(${argumentTypes.joinToString(", ") { it.inStringForm() }}) -> ${returnType.inStringForm()}"
+            val argumentsPart = if (argumentTypes.isEmpty())
+                "()"
+            else
+                argumentTypes.joinToString(" -> ") { renderTypeInFunction(it) }
+            return "$argumentsPart -> ${renderTypeInFunction(returnType)}"
+        }
+
+        private fun renderTypeInFunction(type: QualifiedType): String = when (type) {
+            is SimpleType -> type.inStringForm()
+            is FunctionType -> "(" + type.inStringForm() + ")"
         }
     }
 }

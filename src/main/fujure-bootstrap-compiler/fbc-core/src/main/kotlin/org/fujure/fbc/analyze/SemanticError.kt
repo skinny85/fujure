@@ -34,7 +34,7 @@ sealed class SemanticError {
     data class CyclicDefinition(val context: ErrorContext, val cycle: List<ValueCoordinates>) :
             SemanticError()
 
-    data class TypeNotFound(val context: ErrorContext, val typeReference: TypeReference) :
+    data class TypeNotFound(val context: ErrorContext, val typeReference: TypeReference.SimpleType) :
             SemanticError()
 
     data class TypeMismatch(val context: ErrorContext, val expected: QualifiedType,

@@ -101,7 +101,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     ValueReference("x")),
                             SemanticError.TypeNotFound(
                                     ValueDefinition("a"),
-                                    TypeReference("DoesNotExist")))
+                                    TypeReference.SimpleType("DoesNotExist")))
                 }
             }
 
@@ -127,7 +127,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     BuiltInTypes.Bool, BuiltInTypes.Int),
                             SemanticError.TypeNotFound(
                                     ValueDefinition("y"),
-                                    TypeReference("a", "B", "C")),
+                                    TypeReference.SimpleType("a", "B", "C")),
                             SemanticError.TypeMismatch(
                                     ValueDefinition("z"),
                                     BuiltInTypes.Bool, BuiltInTypes.Int),
@@ -431,7 +431,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.TypeNotFound(
                                     ValueDefinition("a"),
-                                    TypeReference("DoesNotExist")),
+                                    TypeReference.SimpleType("DoesNotExist")),
                             SemanticError.MissingInitializer(
                                     ValueDefinition("a")))
                 }
@@ -541,6 +541,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                             .file("""
                                 def a = Int.abs
                                 def b: Int = a(3)
+                                def c: Int -> Int = a
                             """)
                             .analyzed()
                 }

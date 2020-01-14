@@ -13,7 +13,20 @@ import org.funktionale.option.Option
 
 class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         private val symbolTable: SymbolTable) {
-    fun findType(typeReference: TypeReference): QualifiedType? {
+    fun findType(typeReference: TypeReference): QualifiedType?  = when (typeReference) {
+        is TypeReference.SimpleType -> findType(typeReference)
+        is TypeReference.FunctionType -> {
+            val returnType = findType(typeReference.returnType)
+            val argumentTypes = typeReference.argumentTypes.map { findType(it) }
+            if (returnType != null && argumentTypes.all { it != null }) {
+                QualifiedType.FunctionType(returnType, argumentTypes.requireNoNulls())
+            } else {
+                null
+            }
+        }
+    }
+
+    fun findType(typeReference: TypeReference.SimpleType): QualifiedType? {
         if (typeReference.ids.size != 1) {
             return null
         } else {

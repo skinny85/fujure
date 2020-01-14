@@ -1,7 +1,10 @@
 package org.fujure.fbc.ast
 
-data class TypeReference(val ids: List<String>) {
-    constructor(id: String, vararg ids: String) : this(listOf(id, *ids))
+sealed class TypeReference {
+    data class SimpleType(val ids: List<String>) : TypeReference() {
+        constructor(id: String, vararg ids: String) : this(listOf(id, *ids))
+        fun inStringForm(): String = ids.joinToString(".")
+    }
 
-    fun inStringForm(): String = ids.joinToString(".")
+    data class FunctionType(val returnType: TypeReference, val argumentTypes: List<TypeReference>) : TypeReference()
 }
