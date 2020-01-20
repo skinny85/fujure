@@ -164,17 +164,17 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitImportFragment(FujureParser.ImportFragmentContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code Definitions}
+	 * Enter a parse tree produced by the {@code DefListDefs}
 	 * labeled alternative in {@link FujureParser#defs}.
 	 * @param ctx the parse tree
 	 */
-	void enterDefinitions(FujureParser.DefinitionsContext ctx);
+	void enterDefListDefs(FujureParser.DefListDefsContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code Definitions}
+	 * Exit a parse tree produced by the {@code DefListDefs}
 	 * labeled alternative in {@link FujureParser#defs}.
 	 * @param ctx the parse tree
 	 */
-	void exitDefinitions(FujureParser.DefinitionsContext ctx);
+	void exitDefListDefs(FujureParser.DefListDefsContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ListDef_Empty}
 	 * labeled alternative in {@link FujureParser#listDef}.
@@ -211,6 +211,114 @@ public interface FujureParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSimpleValueDef(FujureParser.SimpleValueDefContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code FunctionValueDef}
+	 * labeled alternative in {@link FujureParser#def}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionValueDef(FujureParser.FunctionValueDefContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code FunctionValueDef}
+	 * labeled alternative in {@link FujureParser#def}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionValueDef(FujureParser.FunctionValueDefContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code AbstractTypelessFuncDecl}
+	 * labeled alternative in {@link FujureParser#funcDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterAbstractTypelessFuncDecl(FujureParser.AbstractTypelessFuncDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code AbstractTypelessFuncDecl}
+	 * labeled alternative in {@link FujureParser#funcDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitAbstractTypelessFuncDecl(FujureParser.AbstractTypelessFuncDeclContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code AbstractTypedFuncDecl}
+	 * labeled alternative in {@link FujureParser#funcDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterAbstractTypedFuncDecl(FujureParser.AbstractTypedFuncDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code AbstractTypedFuncDecl}
+	 * labeled alternative in {@link FujureParser#funcDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitAbstractTypedFuncDecl(FujureParser.AbstractTypedFuncDeclContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ConcreteTypelessFuncDecl}
+	 * labeled alternative in {@link FujureParser#funcDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterConcreteTypelessFuncDecl(FujureParser.ConcreteTypelessFuncDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ConcreteTypelessFuncDecl}
+	 * labeled alternative in {@link FujureParser#funcDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitConcreteTypelessFuncDecl(FujureParser.ConcreteTypelessFuncDeclContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ConcreteTypedFuncDecl}
+	 * labeled alternative in {@link FujureParser#funcDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterConcreteTypedFuncDecl(FujureParser.ConcreteTypedFuncDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ConcreteTypedFuncDecl}
+	 * labeled alternative in {@link FujureParser#funcDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitConcreteTypedFuncDecl(FujureParser.ConcreteTypedFuncDeclContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListParam_Empty}
+	 * labeled alternative in {@link FujureParser#listParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterListParam_Empty(FujureParser.ListParam_EmptyContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListParam_Empty}
+	 * labeled alternative in {@link FujureParser#listParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitListParam_Empty(FujureParser.ListParam_EmptyContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListParam_AppendLast}
+	 * labeled alternative in {@link FujureParser#listParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterListParam_AppendLast(FujureParser.ListParam_AppendLastContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListParam_AppendLast}
+	 * labeled alternative in {@link FujureParser#listParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitListParam_AppendLast(FujureParser.ListParam_AppendLastContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListParam_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterListParam_PrependFirst(FujureParser.ListParam_PrependFirstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListParam_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitListParam_PrependFirst(FujureParser.ListParam_PrependFirstContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code BindingParam}
+	 * labeled alternative in {@link FujureParser#param}.
+	 * @param ctx the parse tree
+	 */
+	void enterBindingParam(FujureParser.BindingParamContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code BindingParam}
+	 * labeled alternative in {@link FujureParser#param}.
+	 * @param ctx the parse tree
+	 */
+	void exitBindingParam(FujureParser.BindingParamContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code OnlyNameBinding}
 	 * labeled alternative in {@link FujureParser#binding}.

@@ -27,29 +27,41 @@ listImportFragm returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListImpo
 ;
 importFragm returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragm result ] : p_1_1=JID  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment($p_1_1.getText()); } # ImportFragment 
 ;
-defs returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs result ] : p_1_1=listDef  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions($p_1_1.result); } # Definitions 
+defs returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs result ] : p_1_1=listDef  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs($p_1_1.result); } # DefListDefs 
 ;
 listDef returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListDef result ] :  /* empty */  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListDef(); } # ListDef_Empty 
   | p_2_1=listDef p_2_2=def  { $result = $p_2_1.result; $result.addLast($p_2_2.result); } # ListDef_PrependFirst
 ;
 def returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def result ] : Surrogate_id_SYMB_21 p_1_2=binding  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef($p_1_2.result); } # SimpleValueDef 
+  | Surrogate_id_SYMB_21 p_2_2=funcDecl  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef($p_2_2.result); } # FunctionValueDef
+;
+funcDecl returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncDecl result ] : p_1_1=JID Surrogate_id_SYMB_1 p_1_3=listParam Surrogate_id_SYMB_2  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl($p_1_1.getText(),$p_1_3.result); } # AbstractTypelessFuncDecl 
+  | p_2_1=JID Surrogate_id_SYMB_1 p_2_3=listParam Surrogate_id_SYMB_2 Surrogate_id_SYMB_3 p_2_6=typeDesc  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl($p_2_1.getText(),$p_2_3.result,$p_2_6.result); } # AbstractTypedFuncDecl
+  | p_3_1=JID Surrogate_id_SYMB_1 p_3_3=listParam Surrogate_id_SYMB_2 Surrogate_id_SYMB_4 p_3_6=expr  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl($p_3_1.getText(),$p_3_3.result,$p_3_6.result); } # ConcreteTypelessFuncDecl
+  | p_4_1=JID Surrogate_id_SYMB_1 p_4_3=listParam Surrogate_id_SYMB_2 Surrogate_id_SYMB_3 p_4_6=typeDesc Surrogate_id_SYMB_4 p_4_8=expr  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl($p_4_1.getText(),$p_4_3.result,$p_4_6.result,$p_4_8.result); } # ConcreteTypedFuncDecl
+;
+listParam returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListParam result ] :  /* empty */  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListParam(); } # ListParam_Empty 
+  | p_2_1=param  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListParam(); $result.addLast($p_2_1.result); } # ListParam_AppendLast
+  | p_3_1=param Surrogate_id_SYMB_5 p_3_3=listParam  { $result = $p_3_3.result; $result.addFirst($p_3_1.result); } # ListParam_PrependFirst
+;
+param returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Param result ] : p_1_1=binding  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam($p_1_1.result); } # BindingParam 
 ;
 binding returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding result ] : p_1_1=JID  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding($p_1_1.getText()); } # OnlyNameBinding 
-  | p_2_1=JID Surrogate_id_SYMB_1 p_2_3=typeDesc  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding($p_2_1.getText(),$p_2_3.result); } # NameTypeBinding
-  | p_3_1=JID Surrogate_id_SYMB_2 p_3_3=expr  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding($p_3_1.getText(),$p_3_3.result); } # NameInitBinding
-  | p_4_1=JID Surrogate_id_SYMB_1 p_4_3=typeDesc Surrogate_id_SYMB_2 p_4_5=expr  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding($p_4_1.getText(),$p_4_3.result,$p_4_5.result); } # FullBinding
+  | p_2_1=JID Surrogate_id_SYMB_3 p_2_3=typeDesc  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding($p_2_1.getText(),$p_2_3.result); } # NameTypeBinding
+  | p_3_1=JID Surrogate_id_SYMB_4 p_3_3=expr  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding($p_3_1.getText(),$p_3_3.result); } # NameInitBinding
+  | p_4_1=JID Surrogate_id_SYMB_3 p_4_3=typeDesc Surrogate_id_SYMB_4 p_4_5=expr  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding($p_4_1.getText(),$p_4_3.result,$p_4_5.result); } # FullBinding
 ;
 typeDesc returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeDesc result ] : p_1_1=simpleType  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeDesc($p_1_1.result); } # SimpleTypeDesc 
   | p_2_1=funcType  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeDesc($p_2_1.result); } # FuncTypeDesc
 ;
-funcType returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncType result ] : Surrogate_id_SYMB_3 Surrogate_id_SYMB_4 Surrogate_id_SYMB_5 p_1_4=funcTypeFragm  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ZeroArgFuncType($p_1_4.result); } # ZeroArgFuncType 
-  | p_2_1=funcTypeFragm Surrogate_id_SYMB_5 p_2_3=listFuncTypeFragm  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiArgFuncType($p_2_1.result,$p_2_3.result); } # MultiArgFuncType
+funcType returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncType result ] : Surrogate_id_SYMB_1 Surrogate_id_SYMB_2 Surrogate_id_SYMB_6 p_1_4=funcTypeFragm  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ZeroArgFuncType($p_1_4.result); } # ZeroArgFuncType 
+  | p_2_1=funcTypeFragm Surrogate_id_SYMB_6 p_2_3=listFuncTypeFragm  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiArgFuncType($p_2_1.result,$p_2_3.result); } # MultiArgFuncType
 ;
 listFuncTypeFragm returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListFuncTypeFragm result ] : p_1_1=funcTypeFragm  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListFuncTypeFragm(); $result.addLast($p_1_1.result); } # ListFuncTypeFragm_AppendLast 
-  | p_2_1=funcTypeFragm Surrogate_id_SYMB_5 p_2_3=listFuncTypeFragm  { $result = $p_2_3.result; $result.addFirst($p_2_1.result); } # ListFuncTypeFragm_PrependFirst
+  | p_2_1=funcTypeFragm Surrogate_id_SYMB_6 p_2_3=listFuncTypeFragm  { $result = $p_2_3.result; $result.addFirst($p_2_1.result); } # ListFuncTypeFragm_PrependFirst
 ;
 funcTypeFragm returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeFragm result ] : p_1_1=simpleType  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleFuncTypeFragm($p_1_1.result); } # SimpleFuncTypeFragm 
-  | Surrogate_id_SYMB_3 p_2_2=funcType Surrogate_id_SYMB_4  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncFuncTypeFragm($p_2_2.result); } # FuncFuncTypeFragm
+  | Surrogate_id_SYMB_1 p_2_2=funcType Surrogate_id_SYMB_2  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncFuncTypeFragm($p_2_2.result); } # FuncFuncTypeFragm
 ;
 simpleType returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleType result ] : p_1_1=listSimpleTypeFragm  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FragmSimpleType($p_1_1.result); } # FragmSimpleType 
 ;
@@ -65,7 +77,7 @@ expr returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr result ] : Sur
 letDef returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDef result ] : p_1_1=binding  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDefinition($p_1_1.result); } # LetDefinition 
 ;
 listLetDef returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListLetDef result ] : p_1_1=letDef  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListLetDef(); $result.addLast($p_1_1.result); } # ListLetDef_AppendLast 
-  | p_2_1=letDef Surrogate_id_SYMB_6 p_2_3=listLetDef  { $result = $p_2_3.result; $result.addFirst($p_2_1.result); } # ListLetDef_PrependFirst
+  | p_2_1=letDef Surrogate_id_SYMB_5 p_2_3=listLetDef  { $result = $p_2_3.result; $result.addFirst($p_2_1.result); } # ListLetDef_PrependFirst
 ;
 expr1 returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr result ] : p_1_1=expr1 Surrogate_id_SYMB_7 p_1_3=expr2  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr($p_1_1.result,$p_1_3.result); } # OrExpr 
   | p_2_1=expr2  { $result = $p_2_1.result; } # Coercion_Expr1
@@ -99,14 +111,14 @@ expr7 returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr result ] : Su
 ;
 expr8 returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr result ] : p_1_1=literal  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr($p_1_1.result); } # LiteralExpr 
   | p_2_1=valRef  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr($p_2_1.result); } # VariableExpr
-  | p_3_1=valRef Surrogate_id_SYMB_3 p_3_3=listCallArg Surrogate_id_SYMB_4  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr($p_3_1.result,$p_3_3.result); } # FunCallExpr
-  | Surrogate_id_SYMB_3 p_4_2=expr Surrogate_id_SYMB_4  { $result = $p_4_2.result; } # Coercion_Expr8
+  | p_3_1=valRef Surrogate_id_SYMB_1 p_3_3=listCallArg Surrogate_id_SYMB_2  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr($p_3_1.result,$p_3_3.result); } # FunCallExpr
+  | Surrogate_id_SYMB_1 p_4_2=expr Surrogate_id_SYMB_2  { $result = $p_4_2.result; } # Coercion_Expr8
 ;
 callArg returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg result ] : p_1_1=expr  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg($p_1_1.result); } # ExprCallArg 
 ;
 listCallArg returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListCallArg result ] :  /* empty */  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListCallArg(); } # ListCallArg_Empty 
   | p_2_1=callArg  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListCallArg(); $result.addLast($p_2_1.result); } # ListCallArg_AppendLast
-  | p_3_1=callArg Surrogate_id_SYMB_6 p_3_3=listCallArg  { $result = $p_3_3.result; $result.addFirst($p_3_1.result); } # ListCallArg_PrependFirst
+  | p_3_1=callArg Surrogate_id_SYMB_5 p_3_3=listCallArg  { $result = $p_3_3.result; $result.addFirst($p_3_1.result); } # ListCallArg_PrependFirst
 ;
 valRef returns [ org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef result ] : p_1_1=listValRefFragm  { $result = new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef($p_1_1.result); } # ValueRef 
 ;

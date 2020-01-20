@@ -68,7 +68,7 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
     }
 
 /* Defs */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions p, A arg) {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs p, A arg) {
       R r = leaf(arg);
       for (Def x : p.listdef_)
       {
@@ -79,6 +79,56 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
 
 /* Def */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.binding_.accept(this, arg), r, arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.funcdecl_.accept(this, arg), r, arg);
+      return r;
+    }
+
+/* FuncDecl */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl p, A arg) {
+      R r = leaf(arg);
+      for (Param x : p.listparam_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl p, A arg) {
+      R r = leaf(arg);
+      for (Param x : p.listparam_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
+      r = combine(p.typedesc_.accept(this, arg), r, arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl p, A arg) {
+      R r = leaf(arg);
+      for (Param x : p.listparam_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
+      r = combine(p.expr_.accept(this, arg), r, arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl p, A arg) {
+      R r = leaf(arg);
+      for (Param x : p.listparam_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
+      r = combine(p.typedesc_.accept(this, arg), r, arg);
+      r = combine(p.expr_.accept(this, arg), r, arg);
+      return r;
+    }
+
+/* Param */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam p, A arg) {
       R r = leaf(arg);
       r = combine(p.binding_.accept(this, arg), r, arg);
       return r;

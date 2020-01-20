@@ -243,6 +243,51 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncDecl foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncDecl foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListParam foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListParam foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Param foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Param foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
   public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding foo)
   {
     pp(foo, 0);
@@ -616,11 +661,11 @@ public class PrettyPrinter
 
   private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs foo, int _i_)
   {
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions)
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs)
     {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions _definitions = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions) foo;
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs _deflistdefs = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs) foo;
        if (_i_ > 0) render(_L_PAREN);
-       pp(_definitions.listdef_, 0);
+       pp(_deflistdefs.listdef_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -645,6 +690,89 @@ public class PrettyPrinter
        if (_i_ > 0) render(_L_PAREN);
        render("def");
        pp(_simplevaluedef.binding_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef _functionvaluedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("def");
+       pp(_functionvaluedef.funcdecl_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncDecl foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl _abstracttypelessfuncdecl = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_abstracttypelessfuncdecl.jid_, 0);
+       render("(");
+       pp(_abstracttypelessfuncdecl.listparam_, 0);
+       render(")");
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl _abstracttypedfuncdecl = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_abstracttypedfuncdecl.jid_, 0);
+       render("(");
+       pp(_abstracttypedfuncdecl.listparam_, 0);
+       render(")");
+       render(":");
+       pp(_abstracttypedfuncdecl.typedesc_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl _concretetypelessfuncdecl = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_concretetypelessfuncdecl.jid_, 0);
+       render("(");
+       pp(_concretetypelessfuncdecl.listparam_, 0);
+       render(")");
+       render("=");
+       pp(_concretetypelessfuncdecl.expr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl _concretetypedfuncdecl = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_concretetypedfuncdecl.jid_, 0);
+       render("(");
+       pp(_concretetypedfuncdecl.listparam_, 0);
+       render(")");
+       render(":");
+       pp(_concretetypedfuncdecl.typedesc_, 0);
+       render("=");
+       pp(_concretetypedfuncdecl.expr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListParam foo, int _i_)
+  {
+     for (java.util.Iterator<Param> it = foo.iterator(); it.hasNext();)
+     {
+       pp(it.next(), _i_);
+       if (it.hasNext()) {
+         render(",");
+       } else {
+         render("");
+       }
+     }  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Param foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam _bindingparam = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_bindingparam.binding_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -1235,13 +1363,13 @@ public class PrettyPrinter
 
   private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs foo)
   {
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions)
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs)
     {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions _definitions = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions) foo;
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs _deflistdefs = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs) foo;
        render("(");
-       render("Definitions");
+       render("DefListDefs");
        render("[");
-       sh(_definitions.listdef_);
+       sh(_deflistdefs.listdef_);
        render("]");
        render(")");
     }
@@ -1265,6 +1393,88 @@ public class PrettyPrinter
        render("(");
        render("SimpleValueDef");
        sh(_simplevaluedef.binding_);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef _functionvaluedef = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef) foo;
+       render("(");
+       render("FunctionValueDef");
+       sh(_functionvaluedef.funcdecl_);
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncDecl foo)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl _abstracttypelessfuncdecl = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl) foo;
+       render("(");
+       render("AbstractTypelessFuncDecl");
+       sh(_abstracttypelessfuncdecl.jid_);
+       render("[");
+       sh(_abstracttypelessfuncdecl.listparam_);
+       render("]");
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl _abstracttypedfuncdecl = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl) foo;
+       render("(");
+       render("AbstractTypedFuncDecl");
+       sh(_abstracttypedfuncdecl.jid_);
+       render("[");
+       sh(_abstracttypedfuncdecl.listparam_);
+       render("]");
+       sh(_abstracttypedfuncdecl.typedesc_);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl _concretetypelessfuncdecl = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl) foo;
+       render("(");
+       render("ConcreteTypelessFuncDecl");
+       sh(_concretetypelessfuncdecl.jid_);
+       render("[");
+       sh(_concretetypelessfuncdecl.listparam_);
+       render("]");
+       sh(_concretetypelessfuncdecl.expr_);
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl _concretetypedfuncdecl = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl) foo;
+       render("(");
+       render("ConcreteTypedFuncDecl");
+       sh(_concretetypedfuncdecl.jid_);
+       render("[");
+       sh(_concretetypedfuncdecl.listparam_);
+       render("]");
+       sh(_concretetypedfuncdecl.typedesc_);
+       sh(_concretetypedfuncdecl.expr_);
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListParam foo)
+  {
+     for (java.util.Iterator<Param> it = foo.iterator(); it.hasNext();)
+     {
+       sh(it.next());
+       if (it.hasNext())
+         render(",");
+     }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Param foo)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam _bindingparam = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam) foo;
+       render("(");
+       render("BindingParam");
+       sh(_bindingparam.binding_);
        render(")");
     }
   }

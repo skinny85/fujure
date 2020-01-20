@@ -34,13 +34,27 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* Defs */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* Def */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+/* FuncDecl */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncDecl p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+/* Param */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Param p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* Binding */

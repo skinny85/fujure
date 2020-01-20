@@ -172,13 +172,13 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDefinitions(FujureParser.DefinitionsContext ctx) { }
+	@Override public void enterDefListDefs(FujureParser.DefListDefsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDefinitions(FujureParser.DefinitionsContext ctx) { }
+	@Override public void exitDefListDefs(FujureParser.DefListDefsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -215,6 +215,114 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSimpleValueDef(FujureParser.SimpleValueDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFunctionValueDef(FujureParser.FunctionValueDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFunctionValueDef(FujureParser.FunctionValueDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAbstractTypelessFuncDecl(FujureParser.AbstractTypelessFuncDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAbstractTypelessFuncDecl(FujureParser.AbstractTypelessFuncDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAbstractTypedFuncDecl(FujureParser.AbstractTypedFuncDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAbstractTypedFuncDecl(FujureParser.AbstractTypedFuncDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterConcreteTypelessFuncDecl(FujureParser.ConcreteTypelessFuncDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConcreteTypelessFuncDecl(FujureParser.ConcreteTypelessFuncDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterConcreteTypedFuncDecl(FujureParser.ConcreteTypedFuncDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConcreteTypedFuncDecl(FujureParser.ConcreteTypedFuncDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListParam_Empty(FujureParser.ListParam_EmptyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListParam_Empty(FujureParser.ListParam_EmptyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListParam_AppendLast(FujureParser.ListParam_AppendLastContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListParam_AppendLast(FujureParser.ListParam_AppendLastContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListParam_PrependFirst(FujureParser.ListParam_PrependFirstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListParam_PrependFirst(FujureParser.ListParam_PrependFirstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBindingParam(FujureParser.BindingParamContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBindingParam(FujureParser.BindingParamContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

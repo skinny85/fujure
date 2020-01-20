@@ -13,9 +13,17 @@ ImportStmt . Import ::= "import" [ImportFragm] ;
 separator nonempty ImportFragm "." ;
 ImportFragment . ImportFragm ::= JID ;
 
-Definitions . Defs ::= [Def] ;
+DefListDefs . Defs ::= [Def] ;
 separator Def "" ;
-SimpleValueDef . Def ::= "def" Binding ;
+SimpleValueDef   . Def ::= "def" Binding ;
+FunctionValueDef . Def ::= "def" FuncDecl ;
+
+AbstractTypelessFuncDecl . FuncDecl ::= JID "(" [Param] ")" ;
+AbstractTypedFuncDecl    . FuncDecl ::= JID "(" [Param] ")" ":" TypeDesc ;
+ConcreteTypelessFuncDecl . FuncDecl ::= JID "(" [Param] ")" "=" Expr ;
+ConcreteTypedFuncDecl    . FuncDecl ::= JID "(" [Param] ")" ":" TypeDesc "=" Expr ;
+separator Param "," ;
+BindingParam . Param ::= Binding ;
 
 OnlyNameBinding . Binding ::= JID ;
 NameTypeBinding . Binding ::= JID ":" TypeDesc ;

@@ -12,6 +12,8 @@ public class ComposVisitor<A> implements
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragm,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncDecl.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncDecl,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Param.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Param,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeDesc.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeDesc,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncType.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncType,A>,
@@ -81,20 +83,72 @@ public class ComposVisitor<A> implements
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ImportFragment(jid_);
     }
 /* Defs */
-    public Defs visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions p, A arg)
+    public Defs visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs p, A arg)
     {
       ListDef listdef_ = new ListDef();
       for (Def x : p.listdef_)
       {
         listdef_.add(x.accept(this,arg));
       }
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions(listdef_);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs(listdef_);
     }
 /* Def */
     public Def visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef p, A arg)
     {
       Binding binding_ = p.binding_.accept(this, arg);
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef(binding_);
+    }    public Def visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef p, A arg)
+    {
+      FuncDecl funcdecl_ = p.funcdecl_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef(funcdecl_);
+    }
+/* FuncDecl */
+    public FuncDecl visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl p, A arg)
+    {
+      String jid_ = p.jid_;
+      ListParam listparam_ = new ListParam();
+      for (Param x : p.listparam_)
+      {
+        listparam_.add(x.accept(this,arg));
+      }
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl(jid_, listparam_);
+    }    public FuncDecl visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl p, A arg)
+    {
+      String jid_ = p.jid_;
+      ListParam listparam_ = new ListParam();
+      for (Param x : p.listparam_)
+      {
+        listparam_.add(x.accept(this,arg));
+      }
+      TypeDesc typedesc_ = p.typedesc_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl(jid_, listparam_, typedesc_);
+    }    public FuncDecl visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl p, A arg)
+    {
+      String jid_ = p.jid_;
+      ListParam listparam_ = new ListParam();
+      for (Param x : p.listparam_)
+      {
+        listparam_.add(x.accept(this,arg));
+      }
+      Expr expr_ = p.expr_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl(jid_, listparam_, expr_);
+    }    public FuncDecl visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl p, A arg)
+    {
+      String jid_ = p.jid_;
+      ListParam listparam_ = new ListParam();
+      for (Param x : p.listparam_)
+      {
+        listparam_.add(x.accept(this,arg));
+      }
+      TypeDesc typedesc_ = p.typedesc_.accept(this, arg);
+      Expr expr_ = p.expr_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl(jid_, listparam_, typedesc_, expr_);
+    }
+/* Param */
+    public Param visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam p, A arg)
+    {
+      Binding binding_ = p.binding_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam(binding_);
     }
 /* Binding */
     public Binding visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding p, A arg)

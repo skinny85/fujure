@@ -69,8 +69,8 @@ public class VisitSkel
   }
   public class DefsVisitor<R,A> implements Defs.Visitor<R,A>
   {
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions p, A arg)
-    { /* Code For Definitions Goes Here */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs p, A arg)
+    { /* Code For DefListDefs Goes Here */
       for (Def x: p.listdef_)
       { /* ... */ }
       return null;
@@ -80,6 +80,50 @@ public class VisitSkel
   {
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef p, A arg)
     { /* Code For SimpleValueDef Goes Here */
+      p.binding_.accept(new BindingVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef p, A arg)
+    { /* Code For FunctionValueDef Goes Here */
+      p.funcdecl_.accept(new FuncDeclVisitor<R,A>(), arg);
+      return null;
+    }
+  }
+  public class FuncDeclVisitor<R,A> implements FuncDecl.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl p, A arg)
+    { /* Code For AbstractTypelessFuncDecl Goes Here */
+      //p.jid_;
+      for (Param x: p.listparam_)
+      { /* ... */ }
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl p, A arg)
+    { /* Code For AbstractTypedFuncDecl Goes Here */
+      //p.jid_;
+      for (Param x: p.listparam_)
+      { /* ... */ }
+      p.typedesc_.accept(new TypeDescVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl p, A arg)
+    { /* Code For ConcreteTypelessFuncDecl Goes Here */
+      //p.jid_;
+      for (Param x: p.listparam_)
+      { /* ... */ }
+      p.expr_.accept(new ExprVisitor<R,A>(), arg);
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl p, A arg)
+    { /* Code For ConcreteTypedFuncDecl Goes Here */
+      //p.jid_;
+      for (Param x: p.listparam_)
+      { /* ... */ }
+      p.typedesc_.accept(new TypeDescVisitor<R,A>(), arg);
+      p.expr_.accept(new ExprVisitor<R,A>(), arg);
+      return null;
+    }
+  }
+  public class ParamVisitor<R,A> implements Param.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam p, A arg)
+    { /* Code For BindingParam Goes Here */
       p.binding_.accept(new BindingVisitor<R,A>(), arg);
       return null;
     }

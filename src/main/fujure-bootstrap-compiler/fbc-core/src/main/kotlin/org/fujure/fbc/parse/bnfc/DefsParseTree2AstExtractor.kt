@@ -4,13 +4,14 @@ import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Def.ValueDef
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Definitions
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDef
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDefinition
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding
@@ -35,12 +36,16 @@ internal object DefsParseTree2AstExtractor :
 
     private fun visitDefs(defs: Defs) = defs.accept(this, Unit)
 
-    override fun visit(definitions: Definitions, arg: Unit): List<Def> {
-        return definitions.listdef_.map { def -> def.accept(this, arg) }
+    override fun visit(defListDefs: DefListDefs, arg: Unit): List<Def> {
+        return defListDefs.listdef_.map { def -> def.accept(this, arg) }
     }
 
     override fun visit(simpleValueDef: SimpleValueDef, arg: Unit): Def {
         return simpleValueDef.binding_.accept(this, arg)
+    }
+
+    override fun visit(functionValueDef: FunctionValueDef, arg: Unit): Def {
+        throw UnsupportedOperationException()
     }
 
     override fun visit(letDefinition: LetDefinition, arg: Unit): ValueDef {
