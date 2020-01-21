@@ -245,7 +245,7 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
         }
     }
 
-    it.describes("called with an expression with two consecutive '-'") {
+    it.describes("called with a prefix -- expression") {
         it.beginsAll {
             parse("""
                 def a = --b
@@ -254,6 +254,18 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
 
         it.should("fail to parse") {
             assertParsingFailed()
+        }
+    }
+
+    it.describes("called with binary ++ and -- expressions") {
+        it.beginsAll {
+            parse("""
+                def a = 1 -- 2 ++ 3
+            """)
+        }
+
+        it.should("parse correctly") {
+            assertParsingSucceeded()
         }
     }
 })
