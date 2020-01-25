@@ -70,10 +70,10 @@ class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                         .analyzed()
             }
 
-            it.should("report a MissingInitializer error in the top-level declaration") {
+            it.should("report a CannotBeAbstract error in the top-level declaration with the name of the abstract 'let' binding") {
                 assertThat(file1Errors()).containsExactly(
-                        SemanticError.MissingInitializer(
-                                ErrorContext.ValueDefinition("a")))
+                        SemanticError.CannotBeAbstract(
+                                ErrorContext.ValueDefinition("a"), "b"))
             }
         }
 

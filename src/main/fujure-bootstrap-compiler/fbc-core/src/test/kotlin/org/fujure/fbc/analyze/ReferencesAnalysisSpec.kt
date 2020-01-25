@@ -427,12 +427,12 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                             .analyzed()
                 }
 
-                it.should("report only TypeNotFound and MissingInitializer errors") {
+                it.should("report only TypeNotFound and CannotBeAbstract errors") {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.TypeNotFound(
                                     ValueDefinition("a"),
                                     TypeReference.SimpleType("DoesNotExist")),
-                            SemanticError.MissingInitializer(
+                            SemanticError.CannotBeAbstract(
                                     ValueDefinition("a")))
                 }
             }

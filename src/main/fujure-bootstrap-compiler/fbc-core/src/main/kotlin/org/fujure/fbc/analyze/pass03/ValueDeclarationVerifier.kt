@@ -10,11 +10,11 @@ import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.common.NameValidator
 import org.funktionale.either.Disjunction
-import java.lang.UnsupportedOperationException
 
 class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
         private val module: Module, private val valName: String,
-        private val chain: List<ValueCoordinates>) {
+        private val chain: List<ValueCoordinates>,
+        private val topLevelDeclaration: Boolean = true) {
     fun analyzeValueDeclaration(valueDeclaration: Def.ValueDef):
             Disjunction<List<SemanticError>, ADef.AValueDef?> {
         val errors = mutableListOf<SemanticError>()
@@ -31,7 +31,7 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                 val declaredQualifiedType = qualifiedType(valueDeclaration.declaredType, errors, context)
 
                 if (valueDeclaration.initializer == null) {
-                    errors.add(SemanticError.MissingInitializer(context))
+                    errors.add(SemanticError.CannotBeAbstract(context, if (topLevelDeclaration) null else valueDeclaration.id))
                 } else {
                     val initializerAnalysisResult = ExprVerifier(symbolTable, module, valName, chain)
                             .analyzeExpr(valueDeclaration.initializer)

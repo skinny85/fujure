@@ -28,7 +28,7 @@ sealed class SemanticError {
     data class IllegalSelfReference(val context: ErrorContext) :
             SemanticError()
 
-    data class MissingInitializer(val context: ErrorContext) :
+    data class CannotBeAbstract(val context: ErrorContext, val subValue: String? = null) :
             SemanticError()
 
     data class CyclicDefinition(val context: ErrorContext, val cycle: List<ValueCoordinates>) :
@@ -73,9 +73,12 @@ sealed class SemanticError {
         is SemanticError.IllegalSelfReference ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Illegal self reference"
-        is SemanticError.MissingInitializer ->
+        is SemanticError.CannotBeAbstract ->
             "Error ${this.context.humanReadableMsg()}: " +
-                    "a non-abstract value declaration must have an initializer"
+                    (if (this.subValue == null)
+                        "a top-level value definition in a module cannot be abstract"
+                    else
+                        "local variable '${this.subValue}' cannot be abstract")
         is SemanticError.CyclicDefinition ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Cycle detected, ${this.cycle.map { it.inStringForm() }.joinToString(" -> ")}"

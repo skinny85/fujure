@@ -464,7 +464,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
         for (declaration in letExpr.declarations) {
             var aValueDeclaration: ADef.AValueDef? = null
 
-            val result = ValueDeclarationVerifier(symbolTable, module, valName, chain).analyzeValueDeclaration(declaration)
+            val result = ValueDeclarationVerifier(symbolTable, module, valName, chain, false).analyzeValueDeclaration(declaration)
             when (result) {
                 is Disjunction.Left -> errors.addAll(result.value)
                 is Disjunction.Right -> {
