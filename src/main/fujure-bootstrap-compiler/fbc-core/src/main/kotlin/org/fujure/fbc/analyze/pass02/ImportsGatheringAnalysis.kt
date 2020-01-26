@@ -51,7 +51,7 @@ object ImportsGatheringAnalysis {
 
         val moduleSymbols = symbolTable.modules[parsedFile.module()]!!
         return Pair(
-                Pass03ModuleSymbols(imports, moduleSymbols.simpleValues),
+                Pass03ModuleSymbols(imports, moduleSymbols.values),
                 errors)
     }
 }

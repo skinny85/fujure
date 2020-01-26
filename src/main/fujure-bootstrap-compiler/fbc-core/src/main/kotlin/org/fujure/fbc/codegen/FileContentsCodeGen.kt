@@ -217,6 +217,8 @@ class FileContentsCodeGen {
                     val initCode = when (decl) {
                         is ADef.AValueDef.ASimpleValueDef ->
                             aExpr2CodeBlock(decl.initializer, module, decl.type)
+                        is ADef.AValueDef.AFunctionValueDef ->
+                            throw UnsupportedOperationException("functions in let expressions are not supported by code generation")
                     }
                     when (initCode) {
                         is InitializerCode.InlineCode -> {

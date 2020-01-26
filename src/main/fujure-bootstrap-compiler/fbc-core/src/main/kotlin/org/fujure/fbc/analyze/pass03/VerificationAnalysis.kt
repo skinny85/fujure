@@ -62,6 +62,9 @@ object VerificationAnalysis {
                 ValueDeclarationVerifier(symbolTable, module, def.id,
                         listOf(ValueCoordinates(module.packageName, module.moduleName, def.id))).analyzeValueDeclaration(def)
             }
+            is Def.ValueDef.FunctionValueDef -> {
+                ValueDeclarationVerifier(symbolTable, module, def.id, null).analyzeValueDeclaration(def)
+            }
         }
     }
 }

@@ -57,6 +57,8 @@ class Aast2TruffleNodes(
         return when (aDef) {
             is ADef.AValueDef.ASimpleValueDef ->
                 SimpleValueDefNode(aDef.id, translateExpr(aDef.initializer))
+            is ADef.AValueDef.AFunctionValueDef ->
+                TODO()
         }
     }
 
@@ -169,6 +171,9 @@ class Aast2TruffleNodes(
                 val initializer = translateExpr(aDeclaration.initializer)
                 bindings.reserve(aDeclaration.id)
                 LocalSimpleValueDefNode(aDeclaration.id, bindings, initializer)
+            }
+            is ADef.AValueDef.AFunctionValueDef -> {
+                TODO()
             }
         }
     }

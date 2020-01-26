@@ -6,9 +6,7 @@ import org.fujure.fbc.analyze.SymbolTable
 import org.fujure.fbc.analyze.pass02.Pass02ModuleSymbols
 import org.fujure.fbc.analyze.pass02.Pass02SymbolTable
 import org.fujure.fbc.ast.Def
-import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.Module
-import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.parse.ParsedFile
 
 object SymbolsGatheringAnalysis {
@@ -39,20 +37,20 @@ object SymbolsGatheringAnalysis {
     }
 
     private fun analyzeFile(parsedFile: ParsedFile): Pair<Pass02ModuleSymbols, List<SemanticError>> {
-        val simpleValues = linkedMapOf<String, Pair<TypeReference?, Expr?>>()
+        val values = linkedMapOf<String, Def.ValueDef>()
         val errors = mutableListOf<SemanticError>()
 
         for (def in parsedFile.ast.defs) {
             when (def) {
-                is Def.ValueDef.SimpleValueDef -> {
+                is Def.ValueDef -> {
                     val id = def.id
-                    if (simpleValues.putIfAbsent(id, Pair(def.declaredType, def.initializer)) != null) {
+                    if (values.putIfAbsent(id, def) != null) {
                         errors.add(SemanticError.DuplicateDefinition(id))
                     }
                 }
             }
         }
 
-        return Pair(Pass02ModuleSymbols(parsedFile.inputFile, simpleValues), errors)
+        return Pair(Pass02ModuleSymbols(parsedFile.inputFile, values), errors)
     }
 }

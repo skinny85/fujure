@@ -1,5 +1,6 @@
 package org.fujure.fbc.parse.bnfc
 
+import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.ValueReference
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr
@@ -19,6 +20,8 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.InequalityExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserEqualExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LesserExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDef
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDefinition
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr
@@ -38,6 +41,7 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr as AbsynExpr
 
 internal object ExprParseTree2AstVisitor :
         AbsynExpr.Visitor<Expr, Unit>,
+        LetDef.Visitor<Def.ValueDef, Unit>,
         CallArg.Visitor<Expr, Unit>,
         ValRef.Visitor<ValueReference, Unit>,
         Literal.Visitor<Expr, Unit> {
@@ -49,8 +53,12 @@ internal object ExprParseTree2AstVisitor :
 
     override fun visit(letExpr: LetExpr, arg: Unit): Expr {
         return Expr.Let(letExpr.listletdef_.map { letDef ->
-            letDef.accept(DefsParseTree2AstExtractor, arg)
+            letDef.accept(this, arg)
         }, letExpr.expr_.accept(this, arg))
+    }
+
+    override fun visit(letDefinition: LetDefinition, arg: Unit): Def.ValueDef {
+        return letDefinition.binding_.accept(DefsParseTree2AstExtractor, arg)
     }
 
     override fun visit(orExpr: OrExpr, arg: Unit): Expr {

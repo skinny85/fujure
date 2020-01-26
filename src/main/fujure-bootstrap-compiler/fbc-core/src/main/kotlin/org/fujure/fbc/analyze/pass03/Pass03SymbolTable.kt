@@ -4,6 +4,7 @@ import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.analyze.SymbolTable
+import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.TypeReference
@@ -42,7 +43,7 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         }
     }
 
-    fun lookup(ref: ValueReference, module: Module, anchor: String?, chain: List<ValueCoordinates>):
+    fun lookup(ref: ValueReference, module: Module, anchor: String?, chain: List<ValueCoordinates>?):
             LookupResult {
         val candidateModule = when (ref.size) {
             1 -> module
@@ -84,10 +85,13 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
     }
 }
 
-class Pass03ModuleSymbols(val imports: Map<String, Module?>,
-        simpleValues: Map<String, Pair<TypeReference?, Expr?>>) {
-    internal val values: Map<String, ValueTypeHolder> = simpleValues.mapValues { (_, pair) ->
-        ValueTypeHolder(pair.first, pair.second)
+class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String, Def.ValueDef>) {
+    internal val values: Map<String, ValueTypeHolder> = values.mapValues { entry ->
+        val def = entry.value
+        when (def) {
+            is Def.ValueDef.SimpleValueDef -> ValueTypeHolder.SimpleValueTypeHolder(def)
+            is Def.ValueDef.FunctionValueDef -> ValueTypeHolder.FunctionValueTypeHolder(def)
+        }
     }
 
     private val scopes = mutableListOf<Scope>()
@@ -117,7 +121,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
         scopes.removeAt(0)
     }
 
-    fun lookupVariable(id: String, module: Module, anchor: String?, symbolTable: Pass03SymbolTable, chain: List<ValueCoordinates>):
+    fun lookupVariable(id: String, module: Module, anchor: String?, symbolTable: Pass03SymbolTable, chain: List<ValueCoordinates>?):
             Pass03SymbolTable.LookupResult {
         // checks local scopes first
         for (scope in scopes) {
@@ -143,7 +147,8 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
                 } else {
                     try {
                         val valueCoordinates = ValueCoordinates(module.packageName, module.moduleName, id)
-                        val qualifiedType = valHolder.resolvedType(symbolTable, module, id, chain + valueCoordinates)
+                        val qualifiedType = valHolder.resolvedType(symbolTable, module, id,
+                                if (chain == null) null else chain + valueCoordinates)
                         Pass03SymbolTable.LookupResult.RefFound(qualifiedType, module)
                     } catch (e: CyclicReferenceException) {
                         Pass03SymbolTable.LookupResult.CyclicReference(e.cycle)
@@ -185,23 +190,41 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
         }
     }
 
-    internal class ValueTypeHolder(declaredType: TypeReference?, initializer: Expr?) {
-        private val valResolution = ValueResolution.fromDeclaration(declaredType, initializer)
-        private var resolved = false
-        private var resolvedType: QualifiedType? = null
+    internal sealed class ValueTypeHolder {
+        abstract fun resolvedType(symbolTable: Pass03SymbolTable, module: Module, valName: String,
+                chain: List<ValueCoordinates>?): QualifiedType?
 
-        fun resolvedType(symbolTable: Pass03SymbolTable, module: Module, valName: String,
-                chain: List<ValueCoordinates>): QualifiedType? {
-            if (!resolved)
-                resolve(symbolTable, module, valName, chain)
-
-            return resolvedType
+        class FunctionValueTypeHolder(private val functionValueDef: Def.ValueDef.FunctionValueDef) : ValueTypeHolder() {
+            override fun resolvedType(symbolTable: Pass03SymbolTable, module: Module, valName: String,
+                    chain: List<ValueCoordinates>?): QualifiedType? {
+                val returnType = functionValueDef.returnType;
+                val argumentTypes = functionValueDef.arguments.map { arg -> arg.declaredType }
+                return if (returnType != null && argumentTypes.all { it != null }) {
+                    symbolTable.findType(TypeReference.FunctionType(returnType, argumentTypes.requireNoNulls()))
+                } else {
+                    null
+                }
+            }
         }
 
-        private fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String,
-                chain: List<ValueCoordinates>) {
-            resolvedType = valResolution.resolve(symbolTable, module, valName, chain)
-            resolved = true
+        class SimpleValueTypeHolder(simpleValueDef: Def.ValueDef.SimpleValueDef) : ValueTypeHolder() {
+            private val valResolution = ValueResolution.fromDeclaration(simpleValueDef.declaredType, simpleValueDef.initializer)
+            private var resolved = false
+            private var resolvedType: QualifiedType? = null
+
+            override fun resolvedType(symbolTable: Pass03SymbolTable, module: Module, valName: String,
+                    chain: List<ValueCoordinates>?): QualifiedType? {
+                if (!resolved)
+                    resolve(symbolTable, module, valName, chain)
+
+                return resolvedType
+            }
+
+            private fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String,
+                    chain: List<ValueCoordinates>?) {
+                resolvedType = valResolution.resolve(symbolTable, module, valName, chain)
+                resolved = true
+            }
         }
     }
 
@@ -221,14 +244,14 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>,
             }
         }
 
-        fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>):
+        fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>?):
                 QualifiedType? {
             return when (this) {
                 is NoInfoProvided -> null
                 is FromDeclaredType -> symbolTable.findType(this.declaredType)
                 is FromInitializer -> {
                     // first, check if we don't have a cycle already
-                    if (chain.size > 1) {
+                    if (chain != null && chain.size > 1) {
                         val chainAsSet = chain.toSet()
                         if (chainAsSet.size < chain.size)
                             throw CyclicReferenceException(chain)

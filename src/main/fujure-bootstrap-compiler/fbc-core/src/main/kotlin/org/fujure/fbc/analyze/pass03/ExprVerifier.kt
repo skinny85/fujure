@@ -16,7 +16,7 @@ import org.funktionale.either.Disjunction
 
 class ExprVerifier(private val symbolTable: Pass03SymbolTable,
         private val module: Module, private val valName: String,
-        private val chain: List<ValueCoordinates>) {
+        private val chain: List<ValueCoordinates>?) {
     fun analyzeExpr(expr: Expr): ExprVerificationResult {
         val context = ErrorContext.ValueDefinition(valName)
 
@@ -175,7 +175,8 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
 
     private fun handleValueReference(ref: ValueReference, context: ErrorContext.ValueDefinition):
             ExprVerificationResult {
-        val lookupResult = symbolTable.lookup(ref, module, valName, chain)
+        // a null chain means a function - we don't care about an anchor in that case (functions can use forward declarations)
+        val lookupResult = symbolTable.lookup(ref, module, if (chain == null) null else valName, chain)
         return when (lookupResult) {
             is Pass03SymbolTable.LookupResult.RefNotFound ->
                 ExprVerificationResult.Failure(SemanticError.UnresolvedReference(context, ref))
@@ -476,6 +477,8 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
 
             val id = when (declaration) {
                 is Def.ValueDef.SimpleValueDef -> declaration.id
+                is Def.ValueDef.FunctionValueDef -> throw UnsupportedOperationException(
+                        "Function declarations are not currently supported in 'let' expressions")
             }
             val qualifiedType = when (aValueDeclaration) {
                 is ADef.AValueDef.ASimpleValueDef -> aValueDeclaration.type

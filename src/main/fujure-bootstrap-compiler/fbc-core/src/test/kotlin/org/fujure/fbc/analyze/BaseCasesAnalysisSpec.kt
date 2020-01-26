@@ -55,12 +55,28 @@ class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 }
             }
 
-            it.describes("called with duplicate value definitions") {
+            it.describes("called with duplicate simple value definitions") {
                 it.beginsAll {
                     AnalysisBuilder
                             .file("""
                                 def a: Bool = true
                                 def a: Int = 2
+                            """)
+                            .analyzed()
+                }
+
+                it.should("report a DuplicateDefinition error") {
+                    assertThat(file1Errors()).containsExactly(
+                            SemanticError.DuplicateDefinition("a"))
+                }
+            }
+
+            it.describes("for a function definition with the same name as a simple value definition in that module") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def a = true
+                                def a(): Int = 2
                             """)
                             .analyzed()
                 }

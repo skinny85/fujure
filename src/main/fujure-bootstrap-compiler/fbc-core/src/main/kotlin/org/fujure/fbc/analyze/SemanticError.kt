@@ -34,6 +34,13 @@ sealed class SemanticError {
     data class CyclicDefinition(val context: ErrorContext, val cycle: List<ValueCoordinates>) :
             SemanticError()
 
+    sealed class TypeRequired : SemanticError() {
+        data class FunctionReturn(val context: ErrorContext) : TypeRequired()
+        data class FunctionArgument(val context: ErrorContext, val argName: String) : TypeRequired()
+    }
+
+    data class DefaultArgumentValueUnsupported(val context: ErrorContext, val argName: String) : SemanticError()
+
     data class TypeNotFound(val context: ErrorContext, val typeReference: TypeReference.SimpleType) :
             SemanticError()
 
@@ -83,6 +90,15 @@ sealed class SemanticError {
         is CyclicDefinition ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Cycle detected, ${this.cycle.map { it.inStringForm() }.joinToString(" -> ")}"
+        is TypeRequired.FunctionReturn ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "A function definition must specify its return type"
+        is TypeRequired.FunctionArgument ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "function argument '${this.argName}' does not declare its type"
+        is DefaultArgumentValueUnsupported ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "Argument '${this.argName}' declares a default value, which is currently not supported"
         is TypeMismatch ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Type mismatch, expected: ${this.expected.inStringForm()} " +
