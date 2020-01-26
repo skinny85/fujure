@@ -35,23 +35,22 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                 } else {
                     val initializerAnalysisResult = ExprVerifier(symbolTable, module, valName, chain)
                             .analyzeExpr(valueDeclaration.initializer)
+                    val initializerType = initializerAnalysisResult.qualifiedType
                     when (initializerAnalysisResult) {
                         is ExprVerificationResult.Failure -> {
                             errors.addAll(initializerAnalysisResult.errors)
                         }
                         is ExprVerificationResult.Success -> {
-                            val initializerType = initializerAnalysisResult.qualifiedType
-                            if (initializerType != null && declaredQualifiedType != null &&
-                                    declaredQualifiedType != initializerType) {
-                                errors.add(SemanticError.TypeMismatch(context, declaredQualifiedType, initializerType))
-                            }
-
-                            val initializerExpr = initializerAnalysisResult.aExpr
+                            val initializerAExpr = initializerAnalysisResult.aExpr
                             val valueType = declaredQualifiedType ?: initializerType
-                            if (valueType != null && initializerExpr != null) {
-                                aDef = ADef.AValueDef.ASimpleValueDef(valueDeclaration.id, valueType, initializerExpr)
+                            if (valueType != null && initializerAExpr != null) {
+                                aDef = ADef.AValueDef.ASimpleValueDef(valueDeclaration.id, valueType, initializerAExpr)
                             }
                         }
+                    }
+                    if (initializerType != null && declaredQualifiedType != null &&
+                            declaredQualifiedType != initializerType) {
+                        errors.add(SemanticError.TypeMismatch(context, declaredQualifiedType, initializerType))
                     }
                 }
             }
@@ -65,15 +64,15 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
 
     private fun qualifiedType(typeReference: TypeReference?, errors: MutableList<SemanticError>,
             context: ErrorContext.ValueDefinition): QualifiedType? {
-        return when {
-            typeReference is TypeReference.SimpleType -> {
+        return when (typeReference) {
+            is TypeReference.SimpleType -> {
                 val ret = symbolTable.findType(typeReference)
                 if (ret == null) {
                     errors.add(SemanticError.TypeNotFound(context, typeReference))
                 }
                 ret
             }
-            typeReference is TypeReference.FunctionType -> {
+            is TypeReference.FunctionType -> {
                 val qualifiedArgumentTypes = typeReference.argumentTypes.map { qualifiedType(it, errors, context) }
                 val qualifiedReturnType = qualifiedType(typeReference.returnType, errors, context)
                 if (qualifiedReturnType != null && qualifiedArgumentTypes.all { it != null }) {
@@ -82,7 +81,7 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                     null
                 }
             }
-            else -> null
+            null -> null
         }
     }
 }

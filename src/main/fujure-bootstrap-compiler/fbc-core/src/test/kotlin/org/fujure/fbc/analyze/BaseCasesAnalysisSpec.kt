@@ -3,6 +3,7 @@ package org.fujure.fbc.analyze
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.analyze.ErrorContext.ValueDefinition
 import org.fujure.fbc.ast.TypeReference
+import org.fujure.fbc.ast.ValueReference
 
 class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
     init {
@@ -212,7 +213,7 @@ class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                 }
             }
 
-            it.describes("using a nonexistent type in the declaration of a function type") {
+            it.describes("using nonexistent types in the declaration of a function type") {
                 it.beginsAll {
                     AnalysisBuilder
                             .file("""
@@ -229,6 +230,29 @@ class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                             SemanticError.TypeNotFound(
                                     ValueDefinition("a"),
                                     TypeReference.SimpleType("B")))
+                }
+            }
+
+            it.describes("called with an invalid expression, but whose type can nevertheless be determined") {
+                it.beginsAll {
+                    AnalysisBuilder
+                            .file("""
+                                def a: String = b * c
+                            """)
+                            .analyzed()
+                }
+
+                it.should("use the type information from the incorrect expression") {
+                    assertThat(file1Errors()).containsExactly(
+                            SemanticError.UnresolvedReference(
+                                    ValueDefinition("a"),
+                                    ValueReference("b")),
+                            SemanticError.UnresolvedReference(
+                                    ValueDefinition("a"),
+                                    ValueReference("c")),
+                            SemanticError.TypeMismatch(
+                                    ValueDefinition("a"),
+                                    BuiltInTypes.String, BuiltInTypes.Int))
                 }
             }
         }
