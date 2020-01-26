@@ -48,49 +48,49 @@ sealed class SemanticError {
             SemanticError()
 
     fun humanReadableMsg(): String = when (this) {
-        is SemanticError.DuplicateModule -> {
+        is DuplicateModule -> {
             val prefix = if (this.packageName.isEmpty()) "" else "${this.packageName}."
             "Error: module ${prefix}${this.moduleName} is defined twice, in " +
                     "${this.firstOccurence.userProvidedFilePath} and " +
                     this.secondOccurance.userProvidedFilePath
         }
-        is SemanticError.InvalidName ->
+        is InvalidName ->
             "Invalid name: '${this.name}'. Fujure names cannot contain '$' characters, " +
                     "can't be a single underscore, nor one of the reserved keywords"
-        is SemanticError.DuplicateDefinition ->
+        is DuplicateDefinition ->
             (if (this.context != null) "Error ${this.context.humanReadableMsg()}: " else "") +
                 "${this.name} is already defined"
-        is SemanticError.UnresolvedImport ->
+        is UnresolvedImport ->
             "Unresolved import: '${this.import.inStringForm()}'"
-        is SemanticError.TypeNotFound ->
+        is TypeNotFound ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Unresolved type reference ${this.typeReference.inStringForm()}"
-        is SemanticError.UnresolvedReference ->
+        is UnresolvedReference ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Unresolved reference '${this.valueReference.inStringForm()}'"
-        is SemanticError.IllegalForwardReference ->
+        is IllegalForwardReference ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Illegal forward reference to '${this.name}'"
-        is SemanticError.IllegalSelfReference ->
+        is IllegalSelfReference ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Illegal self reference"
-        is SemanticError.CannotBeAbstract ->
+        is CannotBeAbstract ->
             "Error ${this.context.humanReadableMsg()}: " +
                     (if (this.subValue == null)
                         "a top-level value definition in a module cannot be abstract"
                     else
                         "local variable '${this.subValue}' cannot be abstract")
-        is SemanticError.CyclicDefinition ->
+        is CyclicDefinition ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Cycle detected, ${this.cycle.map { it.inStringForm() }.joinToString(" -> ")}"
-        is SemanticError.TypeMismatch ->
+        is TypeMismatch ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Type mismatch, expected: ${this.expected.inStringForm()} " +
                     "but got: ${this.actual.inStringForm()}"
-        is SemanticError.NotInvokable ->
+        is NotInvokable ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Expression of type '${this.found.inStringForm()}' cannot be invoked as a function"
-        is SemanticError.ArgumentCountMismatch ->
+        is ArgumentCountMismatch ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Expected ${this.expected} arguments to function call, but received: ${this.actual}"
     }
@@ -101,7 +101,7 @@ sealed class ErrorContext {
             ErrorContext()
 
     fun humanReadableMsg(): String = when (this) {
-        is ErrorContext.ValueDefinition ->
+        is ValueDefinition ->
             "in definition of ${this.name}"
     }
 }
