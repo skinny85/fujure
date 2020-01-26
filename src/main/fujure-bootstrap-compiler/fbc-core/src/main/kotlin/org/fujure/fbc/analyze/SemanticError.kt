@@ -14,7 +14,7 @@ sealed class SemanticError {
     data class InvalidName(val name: String) :
             SemanticError()
 
-    data class DuplicateDefinition(val name: String) :
+    data class DuplicateDefinition(val name: String, val context: ErrorContext? = null) :
             SemanticError()
 
     data class UnresolvedImport(val import: Import) : SemanticError()
@@ -58,7 +58,8 @@ sealed class SemanticError {
             "Invalid name: '${this.name}'. Fujure names cannot contain '$' characters, " +
                     "can't be a single underscore, nor one of the reserved keywords"
         is SemanticError.DuplicateDefinition ->
-            "${this.name} is already defined"
+            (if (this.context != null) "Error ${this.context.humanReadableMsg()}: " else "") +
+                "${this.name} is already defined"
         is SemanticError.UnresolvedImport ->
             "Unresolved import: '${this.import.inStringForm()}'"
         is SemanticError.TypeNotFound ->

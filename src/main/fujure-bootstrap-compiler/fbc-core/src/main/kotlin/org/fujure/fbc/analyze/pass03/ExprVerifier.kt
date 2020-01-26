@@ -482,7 +482,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 else -> null
             }
             if (!symbolTable.addToLatestScope(module, id, qualifiedType)) {
-                errors.add(SemanticError.DuplicateDefinition(id))
+                errors.add(SemanticError.DuplicateDefinition(id, ErrorContext.ValueDefinition(valName)))
             }
         }
 

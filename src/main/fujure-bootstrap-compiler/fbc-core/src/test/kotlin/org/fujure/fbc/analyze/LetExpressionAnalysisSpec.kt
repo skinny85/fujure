@@ -149,7 +149,7 @@ class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             it.should("report a DuplicateDefinition error") {
                 assertThat(file1Errors()).containsExactly(
                         SemanticError.UnresolvedReference(ErrorContext.ValueDefinition("a"), ValueReference("x")),
-                        SemanticError.DuplicateDefinition("b"))
+                        SemanticError.DuplicateDefinition("b", ErrorContext.ValueDefinition("a")))
             }
         }
 
