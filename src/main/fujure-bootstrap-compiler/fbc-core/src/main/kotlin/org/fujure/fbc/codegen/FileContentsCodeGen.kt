@@ -110,6 +110,9 @@ class FileContentsCodeGen {
                     InitializerCode.InlineCode(CodeBlock.of("\$T.${aExpr.reference}", className))
                 }
             }
+            is AExpr.ATemporaryVarReference -> {
+                literalCodeBlock(aExpr.variable)
+            }
             is AExpr.AComplement -> {
                 val operandCode = aExpr2CodeBlock(aExpr.operand, module, BuiltInTypes.Bool)
 
@@ -529,6 +532,7 @@ class FileContentsCodeGen {
         is AExpr.ACharLiteral -> 9
         is AExpr.AStringLiteral -> 9
         is AExpr.AValueReference -> 9
+        is AExpr.ATemporaryVarReference -> 9
         is AExpr.ANegation -> throw Exception("precedence() for negation expr has not been implemented yet")
         is AExpr.APositation -> throw Exception("precedence() for positation expr has not been implemented yet")
         is AExpr.ACall -> throw Exception("precedence() for function calls has not been implemented yet")

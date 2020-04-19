@@ -47,7 +47,12 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
             LookupResult {
         val candidateModule = when (ref.size) {
             1 -> module
-            2 -> modules[module]!!.candidateModule(ref.ids[0], module) ?: return LookupResult.RefFound(null, module)
+            2 -> modules[module]!!.candidateModule(ref.ids[0], module) ?:
+                return LookupResult.ValueRefFound(null, module)
+                // null candidateModule means "there was an import with that name,
+                // but the imported module doesn't exist" -
+                // so, we say the value exists (to not cascade errors),
+                // but with an unknown type
             else -> return LookupResult.RefNotFound
         }
         val candidateModuleSymbols = modules[candidateModule]
@@ -61,7 +66,7 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         } catch (e: SymbolTable.NotFound) {
             return LookupResult.RefNotFound
         }
-        return LookupResult.RefFound(qualifiedType, candidateModule)
+        return LookupResult.ValueRefFound(qualifiedType, candidateModule)
     }
 
     fun pushNewScope(module: Module) {
@@ -81,7 +86,8 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         data class ForwardReference(val name: String) : LookupResult()
         data class SelfReference(val name: String) : LookupResult()
         data class CyclicReference(val cycle: List<ValueCoordinates>) : LookupResult()
-        data class RefFound(val qualifiedType: QualifiedType?, val module: Module) : LookupResult()
+        data class ValueRefFound(val qualifiedType: QualifiedType?, val module: Module) : LookupResult()
+        data class TempRefFound(val qualifiedType: QualifiedType?) : LookupResult()
     }
 }
 
@@ -127,7 +133,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
         for (scope in scopes) {
             val result = scope.find(id)
             if (result.nonEmpty()) {
-                return Pass03SymbolTable.LookupResult.RefFound(result.get(), module)
+                return Pass03SymbolTable.LookupResult.TempRefFound(result.get())
             }
         }
 
@@ -149,7 +155,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
                         val valueCoordinates = ValueCoordinates(module.packageName, module.moduleName, id)
                         val qualifiedType = valHolder.resolvedType(symbolTable, module, id,
                                 if (chain == null) null else chain + valueCoordinates)
-                        Pass03SymbolTable.LookupResult.RefFound(qualifiedType, module)
+                        Pass03SymbolTable.LookupResult.ValueRefFound(qualifiedType, module)
                     } catch (e: CyclicReferenceException) {
                         Pass03SymbolTable.LookupResult.CyclicReference(e.cycle)
                     }

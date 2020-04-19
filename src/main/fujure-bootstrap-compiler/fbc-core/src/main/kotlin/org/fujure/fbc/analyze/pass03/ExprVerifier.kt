@@ -186,7 +186,15 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 ExprVerificationResult.Failure(SemanticError.IllegalSelfReference(context))
             is Pass03SymbolTable.LookupResult.CyclicReference ->
                 ExprVerificationResult.Failure(SemanticError.CyclicDefinition(context, lookupResult.cycle))
-            is Pass03SymbolTable.LookupResult.RefFound -> {
+            is Pass03SymbolTable.LookupResult.TempRefFound -> {
+                val qualifiedType = lookupResult.qualifiedType
+                ExprVerificationResult.Success(qualifiedType, if (qualifiedType == null)
+                    null
+                else
+                    AExpr.ATemporaryVarReference(ref.variable(), qualifiedType)
+                )
+            }
+            is Pass03SymbolTable.LookupResult.ValueRefFound -> {
                 val qualifiedType = lookupResult.qualifiedType
                 ExprVerificationResult.Success(qualifiedType, if (qualifiedType == null)
                     null

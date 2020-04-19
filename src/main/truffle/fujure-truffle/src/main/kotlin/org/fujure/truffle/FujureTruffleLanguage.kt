@@ -59,10 +59,12 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
                         throw FujureTruffleSemanticException(analysisResults.issues.first())
                     }
                     is SemanticAnalysisResult.Success -> {
-                        symbolTable = analysisResults.symbolTable
+                        this.symbolTable = analysisResults.symbolTable
+                        val frameDescriptor = FrameDescriptor()
                         Truffle.getRuntime().createCallTarget(RootModuleNode(
                             this,
-                            Aast2TruffleNodes(analysisResults.aasts.first(), this).translate()
+                            frameDescriptor,
+                            Aast2TruffleNodes(this, frameDescriptor).translate(analysisResults.aasts.first())
                         ))
                     }
                 }

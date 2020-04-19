@@ -6,12 +6,12 @@ import org.fujure.fbc.ast.Module;
 import org.fujure.truffle.FujureTruffleContext;
 import org.fujure.truffle.FujureTruffleLanguage;
 
-public final class ReferenceExprNode extends ExprNode {
+public final class ValueReferenceExprNode extends ExprNode {
     private final Module targetModule;
     private final String reference;
     private final TruffleLanguage.ContextReference<FujureTruffleContext> contextReference;
 
-    public ReferenceExprNode(Module targetModule, String reference, FujureTruffleLanguage fujureTruffleLanguage) {
+    public ValueReferenceExprNode(Module targetModule, String reference, FujureTruffleLanguage fujureTruffleLanguage) {
         this.targetModule = targetModule;
         this.reference = reference;
         this.contextReference = fujureTruffleLanguage.getContextReference();

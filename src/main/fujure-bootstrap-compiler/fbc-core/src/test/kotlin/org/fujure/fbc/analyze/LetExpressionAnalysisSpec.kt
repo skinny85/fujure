@@ -159,12 +159,12 @@ class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                         .file("""
                             def b = true
 
-                            def a: Int =
+                            def a: Bool =
                                 let
                                     a = 1,
                                     b = a
                                 in
-                                    a + b
+                                    a > b
                         """)
                         .analyzed()
             }

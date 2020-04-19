@@ -7,8 +7,16 @@ import org.fujure.fbc.ast.Module
 sealed class AExpr {
     abstract val type: QualifiedType
 
+    // A reference to a value defined in a module
+    // (possibly the same one the reference is in).
     data class AValueReference(val targetModule: Module,
             val reference: String, override val type: QualifiedType): AExpr()
+
+    // A reference to a temporary variable.
+    // In Fujure, these can only be created through 'let' expressions
+    // (or... function parameters!).
+    data class ATemporaryVarReference(val variable: String,
+            override val type: QualifiedType): AExpr()
 
     data class AIntLiteral(val value: Int) : AExpr() {
         override val type = BuiltInTypes.Int

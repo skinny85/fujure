@@ -81,16 +81,8 @@ public final class FujureTruffleBindings implements TruffleObject {
             this.moduleValues = new HashMap<>();
         }
 
-        public void reserve(String name) {
-            moduleValues.put(name, null);
-        }
-
         public void register(String name, Object value) {
             moduleValues.put(name, value);
-        }
-
-        public boolean contains(String name) {
-            return moduleValues.containsKey(name);
         }
 
         public Object find(String reference) {

@@ -1,6 +1,7 @@
 package org.fujure.truffle.nodes;
 
 import com.oracle.truffle.api.TruffleLanguage;
+import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.RootNode;
 import org.fujure.fbc.ast.Module;
@@ -17,8 +18,8 @@ public final class RootModuleNode extends RootNode {
     private boolean registered = false;
 
     public RootModuleNode(FujureTruffleLanguage language,
-            ModuleNonRootNode moduleNode) {
-        super(language);
+            FrameDescriptor frameDescriptor, ModuleNonRootNode moduleNode) {
+        super(language, frameDescriptor);
 
         this.contextReference = language.getContextReference();
         this.module = moduleNode.getModule();
