@@ -157,7 +157,7 @@ class Aast2TruffleNodes(
             is ADef.AValueDef.ASimpleValueDef -> {
                 val deeperThis = this.deeperCopy()
                 val initializer = deeperThis.translateExpr(aDeclaration.initializer)
-                val slotName = aDeclaration.id + (if (this.depth == 0) "" else this.depth)
+                val slotName = aDeclaration.id + (if (this.depth == 0) "" else "#" + this.depth)
                 val frameSlot = this.frameDescriptor.findOrAddFrameSlot(slotName)
                 this.tempVars2Slots[aDeclaration.id] = frameSlot
                 TemporarySimpleVariableDeclNode.create(initializer, frameSlot)

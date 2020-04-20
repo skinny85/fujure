@@ -205,7 +205,11 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                     def i = 3 + (intMax - (intMax - 2))
                     def b4 = !("a" == "b") != true
                     def b5 = "b" + "5"
-                    def b6 = let b6 = false in !b6
+                    def b6 = let
+                        a1 = 3,
+                        b6 = let a = "flse" in a
+                    in
+                        !(a1 + 1 != 4)
                     def i2 = if b6 then 23 else 45
                     def minusOne: Int = Int.minInt + Int.maxInt
                     def three = +Int.abs(-3)

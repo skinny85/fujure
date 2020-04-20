@@ -19,8 +19,8 @@ public final class LetExprNode extends ExprNode {
 
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-        for (TemporaryVariableDeclNode localValue : temporaryDeclarations) {
-            localValue.executeDeclaration(frame);
+        for (TemporaryVariableDeclNode temporaryDeclaration : temporaryDeclarations) {
+            temporaryDeclaration.executeDeclaration(frame);
         }
 
         return expr.executeGeneric(frame);
