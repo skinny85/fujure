@@ -7,6 +7,7 @@ import org.fujure.fbc.aast.ADef
 import org.fujure.fbc.aast.AExpr
 import org.fujure.fbc.aast.AFileContents
 import org.fujure.truffle.nodes.DefNode
+import org.fujure.truffle.nodes.FunctionValueDefNode
 import org.fujure.truffle.nodes.ModuleNonRootNode
 import org.fujure.truffle.nodes.SimpleValueDefNode
 import org.fujure.truffle.nodes.TemporarySimpleVariableDeclNode
@@ -22,6 +23,7 @@ import org.fujure.truffle.nodes.exprs.DisjunctionExprNode
 import org.fujure.truffle.nodes.exprs.DivisionExprNode
 import org.fujure.truffle.nodes.exprs.EqualityExprNode
 import org.fujure.truffle.nodes.exprs.ExprNode
+import org.fujure.truffle.nodes.exprs.FuncArgumentReferenceExprNode
 import org.fujure.truffle.nodes.exprs.GreaterEqualExprNode
 import org.fujure.truffle.nodes.exprs.GreaterExprNode
 import org.fujure.truffle.nodes.exprs.IfExprNode
@@ -43,7 +45,7 @@ import org.fujure.truffle.nodes.exprs.ValueReferenceExprNode
 class Aast2TruffleNodes(
         private val fujureTruffleLanguage: FujureTruffleLanguage,
         private val frameDescriptor: FrameDescriptor) {
-    private var depth: Int = 0
+    private var counter = 0
     private val tempVars2Slots = mutableMapOf<String, FrameSlot>()
 
     fun translate(aFileContents: AFileContents): ModuleNonRootNode {
@@ -58,10 +60,15 @@ class Aast2TruffleNodes(
 
     private fun translateValueDef(aDef: ADef.AValueDef): ValueDefNode {
         return when (aDef) {
-            is ADef.AValueDef.ASimpleValueDef ->
+            is ADef.AValueDef.ASimpleValueDef -> {
                 SimpleValueDefNode(aDef.id, translateExpr(aDef.initializer))
-            is ADef.AValueDef.AFunctionValueDef ->
-                TODO()
+            }
+            is ADef.AValueDef.AFunctionValueDef -> {
+                val frameDescriptor = FrameDescriptor()
+                val newTranslator = Aast2TruffleNodes(this.fujureTruffleLanguage, frameDescriptor)
+                val funcBody = newTranslator.translateExpr(aDef.body)
+                FunctionValueDefNode(this.fujureTruffleLanguage, frameDescriptor, aDef.id, funcBody)
+            }
         }
     }
 
@@ -131,13 +138,22 @@ class Aast2TruffleNodes(
                     translateExpr(aExpr.thenExpr),
                     translateExpr(aExpr.elseExpr))
             is AExpr.ALet -> {
-                val temporaryDeclarations = aExpr.declarations.map { translateTemporaryDeclaration(it) }
-                val deeperThis = this.deeperCopy()
-                val expr = deeperThis.translateExpr(aExpr.expr)
+                val temporaryDeclarations = aExpr.declarations.map { decl -> translateTemporaryDeclaration(decl) }
+                val expr = this.translateExpr(aExpr.expr)
+                for (decl in aExpr.declarations) {
+                    val id = when (decl) {
+                        is ADef.AValueDef.ASimpleValueDef -> decl.id
+                        is ADef.AValueDef.AFunctionValueDef -> decl.id
+                    }
+                    this.tempVars2Slots.remove(id)
+                }
                 LetExprNode(temporaryDeclarations, expr)
             }
             is AExpr.ATemporaryVarReference -> {
                 TemporaryVarReferenceExprNode.create(this.frameSlotFor(aExpr.variable))
+            }
+            is AExpr.AFuncArgReference -> {
+                FuncArgumentReferenceExprNode(aExpr.argIndex)
             }
             is AExpr.AValueReference -> {
                 ValueReferenceExprNode(aExpr.targetModule, aExpr.reference, fujureTruffleLanguage)
@@ -155,9 +171,8 @@ class Aast2TruffleNodes(
     private fun translateTemporaryDeclaration(aDeclaration: ADef.AValueDef): TemporaryVariableDeclNode {
         return when (aDeclaration) {
             is ADef.AValueDef.ASimpleValueDef -> {
-                val deeperThis = this.deeperCopy()
-                val initializer = deeperThis.translateExpr(aDeclaration.initializer)
-                val slotName = aDeclaration.id + (if (this.depth == 0) "" else "#" + this.depth)
+                val initializer = this.translateExpr(aDeclaration.initializer)
+                val slotName = aDeclaration.id + ("#" + ++this.counter)
                 val frameSlot = this.frameDescriptor.findOrAddFrameSlot(slotName)
                 this.tempVars2Slots[aDeclaration.id] = frameSlot
                 TemporarySimpleVariableDeclNode.create(initializer, frameSlot)
@@ -166,13 +181,6 @@ class Aast2TruffleNodes(
                 throw IllegalStateException("Local function declarations in 'let' expressions are not supported (yet) in Truffle")
             }
         }
-    }
-
-    private fun deeperCopy(): Aast2TruffleNodes {
-        val ret = Aast2TruffleNodes(this.fujureTruffleLanguage, this.frameDescriptor)
-        ret.depth = this.depth + 1
-        ret.tempVars2Slots.putAll(this.tempVars2Slots)
-        return ret
     }
 
     private fun frameSlotFor(id: String): FrameSlot {

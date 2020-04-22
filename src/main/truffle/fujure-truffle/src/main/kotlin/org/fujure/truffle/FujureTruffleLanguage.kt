@@ -16,7 +16,7 @@ import org.fujure.fbc.read.OpenedFile
 import org.fujure.truffle.nodes.RootFunctionNode
 import org.fujure.truffle.nodes.RootModuleNode
 import org.fujure.truffle.nodes.exprs.ExprNode
-import org.fujure.truffle.nodes.exprs.ReadFunctionArgExprNode
+import org.fujure.truffle.nodes.exprs.FuncArgumentReferenceExprNode
 import org.fujure.truffle.nodes.exprs.builtins.BuiltInAbsFunctionBodyExpr
 import org.fujure.truffle.nodes.exprs.builtins.BuiltInFunctionBodyExpr
 import org.fujure.truffle.runtime.FujureFunctionObject
@@ -85,7 +85,7 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
         val argumentCount = functionBodyFactory.executionSignature.size
         val argumentNodes = arrayOfNulls<ExprNode>(argumentCount)
         for (i in 0 until argumentCount) {
-            argumentNodes[i] = ReadFunctionArgExprNode(i)
+            argumentNodes[i] = FuncArgumentReferenceExprNode(i)
         }
 
         context.registerValue(module, name,

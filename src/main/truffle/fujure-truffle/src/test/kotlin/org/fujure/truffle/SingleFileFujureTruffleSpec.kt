@@ -294,6 +294,28 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
             }
         }
 
+        it.describes("when evaluating code with function definitions") {
+            it.beginsAll {
+                evalFujure("""
+                   def inc(n: Int): Int = n + i
+                   
+                   def i = 1
+                   
+                   def result = inc(33)
+                """)
+            }
+
+            it.should("evaluate without errors") {
+                assertNoException()
+            }
+
+            it.should("correctly call the defined function") {
+                val result = fujureBindings.getMember("Unnamed").getMember("result")
+
+                assertThat(result.asInt()).isEqualTo(34)
+            }
+        }
+
         it.describes("when evaluating syntactically incorrect code") {
             it.beginsAll {
                 evalFujure("1 + 2")

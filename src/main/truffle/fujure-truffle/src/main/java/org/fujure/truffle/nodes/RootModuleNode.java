@@ -40,6 +40,18 @@ public final class RootModuleNode extends RootNode {
 
     private void registerTruffleValues(VirtualFrame frame) {
         contextReference.get().resetModule(module);
+
+        // start with functions, as simple values are eagerly executed,
+        // and may use functions in their definitions
+        for (DefNode defNode : defs) {
+            if (defNode instanceof FunctionValueDefNode) {
+                FunctionValueDefNode functionValueDefNode = (FunctionValueDefNode) defNode;
+                contextReference.get().registerValue(module, functionValueDefNode.id,
+                        functionValueDefNode.execute(frame));
+            }
+        }
+
+        // and now, simple values
         for (DefNode defNode : defs) {
             if (defNode instanceof SimpleValueDefNode) {
                 SimpleValueDefNode simpleValueDefNode = (SimpleValueDefNode) defNode;

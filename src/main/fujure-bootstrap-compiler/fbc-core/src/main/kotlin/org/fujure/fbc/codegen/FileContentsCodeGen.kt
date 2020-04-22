@@ -110,6 +110,9 @@ class FileContentsCodeGen {
                     InitializerCode.InlineCode(CodeBlock.of("\$T.${aExpr.reference}", className))
                 }
             }
+            is AExpr.AFuncArgReference -> {
+                literalCodeBlock(aExpr.funcArg)
+            }
             is AExpr.ATemporaryVarReference -> {
                 literalCodeBlock(aExpr.variable)
             }
@@ -532,6 +535,7 @@ class FileContentsCodeGen {
         is AExpr.ACharLiteral -> 9
         is AExpr.AStringLiteral -> 9
         is AExpr.AValueReference -> 9
+        is AExpr.AFuncArgReference -> 9
         is AExpr.ATemporaryVarReference -> 9
         is AExpr.ANegation -> throw Exception("precedence() for negation expr has not been implemented yet")
         is AExpr.APositation -> throw Exception("precedence() for positation expr has not been implemented yet")

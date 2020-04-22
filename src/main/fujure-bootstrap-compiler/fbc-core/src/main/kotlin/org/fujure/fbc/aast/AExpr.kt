@@ -12,11 +12,15 @@ sealed class AExpr {
     data class AValueReference(val targetModule: Module,
             val reference: String, override val type: QualifiedType): AExpr()
 
+    // A reference to a function argument.
+    // Obviously, only valid inside a function body.
+    data class AFuncArgReference(val funcArg: String,
+            val argIndex: Int, override val type: QualifiedType) : AExpr()
+
     // A reference to a temporary variable.
-    // In Fujure, these can only be created through 'let' expressions
-    // (or... function parameters!).
+    // In Fujure, these can only be created through 'let' expressions.
     data class ATemporaryVarReference(val variable: String,
-            override val type: QualifiedType): AExpr()
+            val index: Int, override val type: QualifiedType): AExpr()
 
     data class AIntLiteral(val value: Int) : AExpr() {
         override val type = BuiltInTypes.Int

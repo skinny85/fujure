@@ -3,7 +3,9 @@
  * Used for testing import and reference semantics in Java.
  */
 public class DefaultPackageClass {
-    public static void m() {
-        // do nothing
+    public static int m() {
+        return f;
     }
+
+    static int f = m();
 }

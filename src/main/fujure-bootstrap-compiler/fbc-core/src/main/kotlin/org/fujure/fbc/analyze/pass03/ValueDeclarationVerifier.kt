@@ -58,7 +58,7 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
             is Def.ValueDef.FunctionValueDef -> {
                 // handle the function arguments
                 val aArguments = mutableListOf<AArgument>()
-                symbolTable.pushNewScope(module)
+                symbolTable.pushNewScope(module, true)
                 for (argument in valueDeclaration.arguments) {
                     val argumentType: QualifiedType? = if (argument.declaredType != null)
                         qualifiedType(argument.declaredType, errors, context)

@@ -188,11 +188,13 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 ExprVerificationResult.Failure(SemanticError.CyclicDefinition(context, lookupResult.cycle))
             is Pass03SymbolTable.LookupResult.TempRefFound -> {
                 val qualifiedType = lookupResult.qualifiedType
-                ExprVerificationResult.Success(qualifiedType, if (qualifiedType == null)
+                val referenceExpr = if (qualifiedType == null)
                     null
+                else if (lookupResult.isFuncArg)
+                    AExpr.AFuncArgReference(ref.variable(), lookupResult.index, qualifiedType)
                 else
-                    AExpr.ATemporaryVarReference(ref.variable(), qualifiedType)
-                )
+                    AExpr.ATemporaryVarReference(ref.variable(), lookupResult.index, qualifiedType)
+                ExprVerificationResult.Success(qualifiedType, referenceExpr)
             }
             is Pass03SymbolTable.LookupResult.ValueRefFound -> {
                 val qualifiedType = lookupResult.qualifiedType
@@ -469,7 +471,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
         val errors = mutableListOf<SemanticError>()
         val declarations = mutableListOf<ADef.AValueDef>()
 
-        symbolTable.pushNewScope(module)
+        symbolTable.pushNewScope(module, false)
         for (declaration in letExpr.declarations) {
             var aValueDeclaration: ADef.AValueDef? = null
 

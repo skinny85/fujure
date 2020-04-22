@@ -95,5 +95,36 @@ class FunctionsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                 assertAnalysisSucceeded()
             }
         }
+
+        it.describes("for a recursive function") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def fact(n: Int): Int = if n > 1
+                                then n * fact(n - 1)
+                                else 1
+                        """)
+                        .analyzed()
+            }
+
+            it.should("analyze the recursive function correctly") {
+                assertAnalysisSucceeded()
+            }
+        }
+
+        it.describes("for a function that references a forward-declared simple value") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def f(): Int = v
+                            def v = f()
+                        """)
+                        .analyzed()
+            }
+
+            it.should("analyze correctly") {
+                assertAnalysisSucceeded()
+            }
+        }
     }
 }}
