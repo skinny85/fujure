@@ -61,7 +61,7 @@ class Aast2TruffleNodes(
     private fun translateValueDef(aDef: ADef.AValueDef): ValueDefNode {
         return when (aDef) {
             is ADef.AValueDef.ASimpleValueDef -> {
-                SimpleValueDefNode(aDef.id, translateExpr(aDef.initializer))
+                SimpleValueDefNode(aDef.id, translateExpr(aDef.initializer), aDef.type)
             }
             is ADef.AValueDef.AFunctionValueDef -> {
                 val frameDescriptor = FrameDescriptor()

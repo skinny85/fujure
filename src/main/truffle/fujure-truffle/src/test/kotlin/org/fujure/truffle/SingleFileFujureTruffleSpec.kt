@@ -297,11 +297,11 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
         it.describes("when evaluating code with function definitions") {
             it.beginsAll {
                 evalFujure("""
-                   def inc(n: Int): Int = n + i
-                   
-                   def i = 1
-                   
-                   def result = inc(33)
+                    def inc(n: Int): Int = n + i
+                    
+                    def i = inc(1)
+                    
+                    def result = inc(33)
                 """)
             }
 

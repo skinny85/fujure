@@ -12,7 +12,7 @@ class FujureTruffleContext {
         fujureTruffleBindings.resetModule(module)
     }
 
-    fun registerValue(module: Module, name: String, value: Any) {
+    fun registerValue(module: Module, name: String, value: Any?) {
         fujureTruffleBindings.registerValue(module, name, value)
     }
 
