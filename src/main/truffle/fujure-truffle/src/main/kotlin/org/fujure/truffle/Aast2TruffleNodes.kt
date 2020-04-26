@@ -160,8 +160,7 @@ class Aast2TruffleNodes(
             }
             is AExpr.ACall -> {
                 CallExprNode(
-                        ValueReferenceExprNode(aExpr.function.targetModule,
-                                aExpr.function.reference, fujureTruffleLanguage),
+                        translateExpr(aExpr.target),
                         aExpr.arguments.map { translateExpr(it) }
                 )
             }

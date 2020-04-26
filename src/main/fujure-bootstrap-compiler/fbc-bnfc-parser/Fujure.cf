@@ -63,7 +63,7 @@ NegateExpr         . Expr7  ::= "-" Expr8 ;
 PositateExpr       . Expr7  ::= "+" Expr8 ;
 LiteralExpr        . Expr8  ::= Literal ;
 VariableExpr       . Expr8  ::= ValRef ;
-FunCallExpr        . Expr8  ::= ValRef "(" [CallArg] ")" ;
+FunCallExpr        . Expr8  ::= Expr8 "(" [CallArg] ")" ;
 ExprCallArg . CallArg ::= Expr ;
 separator CallArg "," ;
 coercions Expr 8 ;

@@ -268,4 +268,17 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
             assertParsingSucceeded()
         }
     }
+
+    it.describes("called with a complex expression as the target of a function call") {
+        it.beginsAll {
+            parse("""
+                def f(): Int -> Int = Int.abs
+                def v = f()(-1)
+            """)
+        }
+
+        it.should("parse correctly") {
+            assertParsingSucceeded()
+        }
+    }
 })

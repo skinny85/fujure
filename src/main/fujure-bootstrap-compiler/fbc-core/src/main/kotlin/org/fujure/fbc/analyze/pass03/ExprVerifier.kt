@@ -2,7 +2,6 @@ package org.fujure.fbc.analyze.pass03
 
 import org.fujure.fbc.aast.ADef
 import org.fujure.fbc.aast.AExpr
-import org.fujure.fbc.aast.AFunctionReference
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.QualifiedType
@@ -103,48 +102,43 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 val errors = mutableListOf<SemanticError>()
 
                 // first, resolve the target of the call
-                val targetFunctionAnalysis = handleValueReference(expr.function, context)
-                if (targetFunctionAnalysis.qualifiedType != null &&
-                        targetFunctionAnalysis.qualifiedType !is QualifiedType.FunctionType) {
-                    // this means the type is not invokable
-                    errors.add(SemanticError.NotInvokable(context, targetFunctionAnalysis.qualifiedType))
-                }
-                val targetFunction: AFunctionReference? = when (targetFunctionAnalysis) {
+                val callTargetAnalysis = analyzeExpr(expr.target)
+                val callTargetExpr: AExpr? = when (callTargetAnalysis) {
                     is ExprVerificationResult.Success -> {
-                        val referenceExpr = targetFunctionAnalysis.aExpr
-                        if (referenceExpr is AExpr.AValueReference) {
-                            if (referenceExpr.type is QualifiedType.FunctionType) {
-                                AFunctionReference(referenceExpr.targetModule, referenceExpr.reference,
-                                        referenceExpr.type as QualifiedType.FunctionType)
-                            } else {
-                                null
-                            }
-                        } else {
-                            null
-                        }
+                        callTargetAnalysis.aExpr
                     }
                     is ExprVerificationResult.Failure -> {
-                        errors.addAll(targetFunctionAnalysis.errors)
+                        errors.addAll(callTargetAnalysis.errors)
                         null
                     }
                 }
 
-                // report an error about incorrect number of arguments
-                if (targetFunction != null &&
-                        targetFunction.type.argumentTypes.size != expr.arguments.size) {
-                    errors.add(SemanticError.ArgumentCountMismatch(context,
-                            targetFunction.type.argumentTypes.size, expr.arguments.size))
+                val targetFunctionType: QualifiedType.FunctionType? = if (callTargetAnalysis.qualifiedType == null) {
+                    null
+                } else {
+                    if (callTargetAnalysis.qualifiedType is QualifiedType.FunctionType) {
+                        // report an error about incorrect number of arguments
+                        if (callTargetAnalysis.qualifiedType.argumentTypes.size != expr.arguments.size) {
+                            errors.add(SemanticError.ArgumentCountMismatch(context,
+                                    callTargetAnalysis.qualifiedType.argumentTypes.size, expr.arguments.size))
+                        }
+                        callTargetAnalysis.qualifiedType
+                    } else {
+                        // report an error that the target is of a non-invokable type
+                        errors.add(SemanticError.NotInvokable(context, callTargetAnalysis.qualifiedType))
+                        null
+                    }
                 }
 
                 // then, handle the arguments
                 val args: List<AExpr?> = expr.arguments.mapIndexed { i, arg ->
                     val argAnalysis = analyzeExpr(arg)
                     // check whether the argument type for this index matches
-                    if (targetFunction != null && i < targetFunction.type.argumentTypes.size &&
+                    if (targetFunctionType != null && i < targetFunctionType.argumentTypes.size &&
                             argAnalysis.qualifiedType != null &&
-                            argAnalysis.qualifiedType != targetFunction.type.argumentTypes[i]) {
+                            argAnalysis.qualifiedType != targetFunctionType.argumentTypes[i]) {
                         errors.add(SemanticError.TypeMismatch(context,
-                                targetFunction.type.argumentTypes[i],
+                                targetFunctionType.argumentTypes[i],
                                 argAnalysis.qualifiedType))
                     }
 
@@ -160,14 +154,14 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
 
                 if (errors.isEmpty()) {
-                    ExprVerificationResult.Success(targetFunction?.type?.returnType,
-                            if (targetFunction != null && args.all { it != null })
-                                AExpr.ACall(targetFunction, args.requireNoNulls())
+                    ExprVerificationResult.Success(targetFunctionType?.returnType,
+                            if (callTargetExpr != null && args.all { it != null } && targetFunctionType != null)
+                                AExpr.ACall(callTargetExpr, args.requireNoNulls(), targetFunctionType.returnType)
                             else
                                 null
                     )
                 } else {
-                    ExprVerificationResult.Failure(targetFunction?.type?.returnType, errors)
+                    ExprVerificationResult.Failure(targetFunctionType?.returnType, errors)
                 }
             }
         }

@@ -112,9 +112,7 @@ sealed class AExpr {
         override val type = thenExpr.type
     }
 
-    data class ACall(val function: AFunctionReference, val arguments: List<AExpr>) : AExpr() {
-        override val type = function.type.returnType
+    data class ACall(val target: AExpr, val arguments: List<AExpr>, val returnType: QualifiedType) : AExpr() {
+        override val type = returnType
     }
 }
-
-data class AFunctionReference(val targetModule: Module, val reference: String, val type: QualifiedType.FunctionType)

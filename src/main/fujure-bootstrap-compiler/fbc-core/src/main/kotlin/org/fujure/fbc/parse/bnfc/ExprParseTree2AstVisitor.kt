@@ -158,7 +158,7 @@ internal object ExprParseTree2AstVisitor :
 
     override fun visit(funCallExpr: FunCallExpr, arg: Unit): Expr {
         return Expr.Call(
-                funCallExpr.valref_.accept(this, arg),
+                funCallExpr.expr_.accept(this, arg),
                 funCallExpr.listcallarg_.map { callArg -> callArg.accept(this, arg) }
         )
     }

@@ -1107,7 +1107,7 @@ public class PrettyPrinter
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr _funcallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr) foo;
        if (_i_ > 8) render(_L_PAREN);
-       pp(_funcallexpr.valref_, 0);
+       pp(_funcallexpr.expr_, 8);
        render("(");
        pp(_funcallexpr.listcallarg_, 0);
        render(")");
@@ -1813,7 +1813,7 @@ public class PrettyPrinter
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr _funcallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr) foo;
        render("(");
        render("FunCallExpr");
-       sh(_funcallexpr.valref_);
+       sh(_funcallexpr.expr_);
        render("[");
        sh(_funcallexpr.listcallarg_);
        render("]");

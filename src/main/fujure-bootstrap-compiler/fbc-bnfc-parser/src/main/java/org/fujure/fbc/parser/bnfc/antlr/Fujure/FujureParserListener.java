@@ -860,6 +860,30 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitCoercion_Expr7(FujureParser.Coercion_Expr7Context ctx);
 	/**
+	 * Enter a parse tree produced by the {@code Coercion_Expr8}
+	 * labeled alternative in {@link FujureParser#expr8}.
+	 * @param ctx the parse tree
+	 */
+	void enterCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Coercion_Expr8}
+	 * labeled alternative in {@link FujureParser#expr8}.
+	 * @param ctx the parse tree
+	 */
+	void exitCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx);
+	/**
+	 * Enter a parse tree produced by the {@code FunCallExpr}
+	 * labeled alternative in {@link FujureParser#expr8}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunCallExpr(FujureParser.FunCallExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code FunCallExpr}
+	 * labeled alternative in {@link FujureParser#expr8}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunCallExpr(FujureParser.FunCallExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code LiteralExpr}
 	 * labeled alternative in {@link FujureParser#expr8}.
 	 * @param ctx the parse tree
@@ -883,30 +907,6 @@ public interface FujureParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitVariableExpr(FujureParser.VariableExprContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code FunCallExpr}
-	 * labeled alternative in {@link FujureParser#expr8}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunCallExpr(FujureParser.FunCallExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code FunCallExpr}
-	 * labeled alternative in {@link FujureParser#expr8}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunCallExpr(FujureParser.FunCallExprContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Coercion_Expr8}
-	 * labeled alternative in {@link FujureParser#expr8}.
-	 * @param ctx the parse tree
-	 */
-	void enterCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Coercion_Expr8}
-	 * labeled alternative in {@link FujureParser#expr8}.
-	 * @param ctx the parse tree
-	 */
-	void exitCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ExprCallArg}
 	 * labeled alternative in {@link FujureParser#callArg}.

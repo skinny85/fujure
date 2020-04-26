@@ -326,13 +326,13 @@ public class ComposVisitor<A> implements
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr(valref_);
     }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr p, A arg)
     {
-      ValRef valref_ = p.valref_.accept(this, arg);
+      Expr expr_ = p.expr_.accept(this, arg);
       ListCallArg listcallarg_ = new ListCallArg();
       for (CallArg x : p.listcallarg_)
       {
         listcallarg_.add(x.accept(this,arg));
       }
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr(valref_, listcallarg_);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr(expr_, listcallarg_);
     }
 /* LetDef */
     public LetDef visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDefinition p, A arg)

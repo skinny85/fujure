@@ -301,7 +301,9 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                     
                     def i = inc(1)
                     
-                    def result = inc(33)
+                    def inc_indirect(): Int -> Int = inc
+                    
+                    def result = inc_indirect()(33)
                 """)
             }
 
