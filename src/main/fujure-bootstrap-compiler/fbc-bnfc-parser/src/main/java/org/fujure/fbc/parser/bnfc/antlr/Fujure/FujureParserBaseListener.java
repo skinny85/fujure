@@ -868,6 +868,18 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterComplexRefExpr(FujureParser.ComplexRefExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitComplexRefExpr(FujureParser.ComplexRefExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -880,13 +892,37 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunCallExpr(FujureParser.FunCallExprContext ctx) { }
+	@Override public void enterSimpleRefExpr(FujureParser.SimpleRefExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunCallExpr(FujureParser.FunCallExprContext ctx) { }
+	@Override public void exitSimpleRefExpr(FujureParser.SimpleRefExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCoercion_Expr9(FujureParser.Coercion_Expr9Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCoercion_Expr9(FujureParser.Coercion_Expr9Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMethCallExpr(FujureParser.MethCallExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMethCallExpr(FujureParser.MethCallExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -904,13 +940,13 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVariableExpr(FujureParser.VariableExprContext ctx) { }
+	@Override public void enterFuncCallExpr(FujureParser.FuncCallExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVariableExpr(FujureParser.VariableExprContext ctx) { }
+	@Override public void exitFuncCallExpr(FujureParser.FuncCallExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -959,54 +995,6 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitListCallArg_PrependFirst(FujureParser.ListCallArg_PrependFirstContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterValueRef(FujureParser.ValueRefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitValueRef(FujureParser.ValueRefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterListValRefFragm_AppendLast(FujureParser.ListValRefFragm_AppendLastContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitListValRefFragm_AppendLast(FujureParser.ListValRefFragm_AppendLastContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterListValRefFragm_PrependFirst(FujureParser.ListValRefFragm_PrependFirstContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitListValRefFragm_PrependFirst(FujureParser.ListValRefFragm_PrependFirstContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterValueRefFragment(FujureParser.ValueRefFragmentContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitValueRefFragment(FujureParser.ValueRefFragmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

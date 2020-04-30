@@ -322,23 +322,35 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
       r = combine(p.expr_.accept(this, arg), r, arg);
       return r;
     }
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg) {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ComplexRefExpr p, A arg) {
       R r = leaf(arg);
-      r = combine(p.literal_.accept(this, arg), r, arg);
       return r;
     }
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr p, A arg) {
-      R r = leaf(arg);
-      r = combine(p.valref_.accept(this, arg), r, arg);
-      return r;
-    }
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr p, A arg) {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr p, A arg) {
       R r = leaf(arg);
       r = combine(p.expr_.accept(this, arg), r, arg);
       for (CallArg x : p.listcallarg_)
       {
         r = combine(x.accept(this, arg), r, arg);
       }
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.expr_.accept(this, arg), r, arg);
+      for (CallArg x : p.listcallarg_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleRefExpr p, A arg) {
+      R r = leaf(arg);
+      return r;
+    }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.literal_.accept(this, arg), r, arg);
       return r;
     }
 
@@ -353,22 +365,6 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg p, A arg) {
       R r = leaf(arg);
       r = combine(p.expr_.accept(this, arg), r, arg);
-      return r;
-    }
-
-/* ValRef */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef p, A arg) {
-      R r = leaf(arg);
-      for (ValRefFragm x : p.listvalreffragm_)
-      {
-        r = combine(x.accept(this, arg), r, arg);
-      }
-      return r;
-    }
-
-/* ValRefFragm */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment p, A arg) {
-      R r = leaf(arg);
       return r;
     }
 

@@ -39,8 +39,11 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             is Expr.StringLiteral -> {
                 ExprVerificationResult.Success(BuiltInTypes.String, AExpr.AStringLiteral(expr.value))
             }
-            is Expr.ValueReference -> {
-                handleValueReference(expr.ref, context)
+            is Expr.UnqualifiedReference -> {
+                handleValueReference(ValueReference(expr.ref), context)
+            }
+            is Expr.QualifiedReference -> {
+                handleValueReference(ValueReference(expr.module, expr.ref), context)
             }
             is Expr.Complement -> {
                 handleUnaryOperation(expr.operand, BuiltInTypes.Bool, AExpr::AComplement)
@@ -98,7 +101,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             is Expr.If -> {
                 handleIfExpression(expr)
             }
-            is Expr.Call -> {
+            is Expr.FunctionCall -> {
                 val errors = mutableListOf<SemanticError>()
 
                 // first, resolve the target of the call
@@ -163,6 +166,15 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 } else {
                     ExprVerificationResult.Failure(targetFunctionType?.returnType, errors)
                 }
+            }
+            is Expr.MethodCall -> {
+                if (expr.receiver is Expr.UnqualifiedReference) {
+                    // special case - the call is to a function in a module, like Int.abs(-1)
+                    return this.analyzeExpr(Expr.FunctionCall(
+                            Expr.QualifiedReference(expr.receiver.ref, expr.methodName),
+                            expr.arguments))
+                }
+                throw UnsupportedOperationException("Method calls are not supported yet")
             }
         }
     }

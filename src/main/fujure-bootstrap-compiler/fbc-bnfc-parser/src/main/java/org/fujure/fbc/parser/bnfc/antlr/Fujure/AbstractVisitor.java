@@ -120,9 +120,12 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NegateExpr p, A arg) { return visitDefault(p, arg); }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PositateExpr p, A arg) { return visitDefault(p, arg); }
 
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ComplexRefExpr p, A arg) { return visitDefault(p, arg); }
+
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleRefExpr p, A arg) { return visitDefault(p, arg); }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg) { return visitDefault(p, arg); }
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr p, A arg) { return visitDefault(p, arg); }
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr p, A arg) { return visitDefault(p, arg); }
 
     public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
@@ -135,16 +138,6 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
 /* CallArg */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg p, A arg) {
-      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
-    }
-/* ValRef */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef p, A arg) { return visitDefault(p, arg); }
-    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef p, A arg) {
-      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
-    }
-/* ValRefFragm */
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment p, A arg) { return visitDefault(p, arg); }
-    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRefFragm p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* Literal */

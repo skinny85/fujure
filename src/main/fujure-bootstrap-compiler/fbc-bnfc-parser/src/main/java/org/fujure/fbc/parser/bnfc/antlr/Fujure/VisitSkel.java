@@ -298,19 +298,31 @@ public class VisitSkel
     { /* Code For PositateExpr Goes Here */
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
-    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg)
-    { /* Code For LiteralExpr Goes Here */
-      p.literal_.accept(new LiteralVisitor<R,A>(), arg);
+    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ComplexRefExpr p, A arg)
+    { /* Code For ComplexRefExpr Goes Here */
+      //p.jid_1;
+      //p.jid_2;
       return null;
-    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr p, A arg)
-    { /* Code For VariableExpr Goes Here */
-      p.valref_.accept(new ValRefVisitor<R,A>(), arg);
-      return null;
-    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr p, A arg)
-    { /* Code For FunCallExpr Goes Here */
+    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr p, A arg)
+    { /* Code For FuncCallExpr Goes Here */
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
       for (CallArg x: p.listcallarg_)
       { /* ... */ }
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr p, A arg)
+    { /* Code For MethCallExpr Goes Here */
+      p.expr_.accept(new ExprVisitor<R,A>(), arg);
+      //p.jid_;
+      for (CallArg x: p.listcallarg_)
+      { /* ... */ }
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleRefExpr p, A arg)
+    { /* Code For SimpleRefExpr Goes Here */
+      //p.jid_;
+      return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr p, A arg)
+    { /* Code For LiteralExpr Goes Here */
+      p.literal_.accept(new LiteralVisitor<R,A>(), arg);
       return null;
     }    
   }
@@ -327,23 +339,6 @@ public class VisitSkel
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg p, A arg)
     { /* Code For ExprCallArg Goes Here */
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
-      return null;
-    }
-  }
-  public class ValRefVisitor<R,A> implements ValRef.Visitor<R,A>
-  {
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef p, A arg)
-    { /* Code For ValueRef Goes Here */
-      for (ValRefFragm x: p.listvalreffragm_)
-      { /* ... */ }
-      return null;
-    }
-  }
-  public class ValRefFragmVisitor<R,A> implements ValRefFragm.Visitor<R,A>
-  {
-    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRefFragment p, A arg)
-    { /* Code For ValueRefFragment Goes Here */
-      //p.jid_;
       return null;
     }
   }

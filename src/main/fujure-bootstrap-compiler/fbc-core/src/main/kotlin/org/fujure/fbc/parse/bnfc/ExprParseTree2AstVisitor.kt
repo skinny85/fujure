@@ -2,19 +2,18 @@ package org.fujure.fbc.parse.bnfc
 
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
-import org.fujure.fbc.ast.ValueReference
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AdditionExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AndExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolFalseLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BoolTrueLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CharLiteral
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterEqualExpr
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DivisionExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.EqualityExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ExprCallArg
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunCallExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterEqualExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GreaterExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.InequalityExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IntLiteral
@@ -25,25 +24,24 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDefinition
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Literal
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LiteralExpr
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ModuloExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiplicationExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NegateExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NotExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OrExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.PositateExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ComplexRefExpr
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleRefExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.StringLiteral
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SubtractionExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.UnitLiteral
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValRef
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ValueRef
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.VariableExpr
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr as AbsynExpr
 
 internal object ExprParseTree2AstVisitor :
         AbsynExpr.Visitor<Expr, Unit>,
         LetDef.Visitor<Def.ValueDef, Unit>,
         CallArg.Visitor<Expr, Unit>,
-        ValRef.Visitor<ValueReference, Unit>,
         Literal.Visitor<Expr, Unit> {
     override fun visit(ifExpr: IfExpr, arg: Unit): Expr {
         return Expr.If(ifExpr.expr_1.accept(this, arg),
@@ -151,23 +149,27 @@ internal object ExprParseTree2AstVisitor :
         return Expr.Positation(positateExpr.expr_.accept(this, arg))
     }
 
-    override fun visit(variableExpr: VariableExpr, arg: Unit): Expr {
-        return Expr.ValueReference(
-                variableExpr.valref_.accept(this, arg))
+    override fun visit(simpleRefExpr: SimpleRefExpr, arg: Unit): Expr {
+        return Expr.UnqualifiedReference(simpleRefExpr.jid_)
     }
 
-    override fun visit(funCallExpr: FunCallExpr, arg: Unit): Expr {
-        return Expr.Call(
-                funCallExpr.expr_.accept(this, arg),
-                funCallExpr.listcallarg_.map { callArg -> callArg.accept(this, arg) }
+    override fun visit(complexRefExpr: ComplexRefExpr, arg: Unit): Expr {
+        return Expr.QualifiedReference(complexRefExpr.jid_1, complexRefExpr.jid_2)
+    }
+
+    override fun visit(funcCallExpr: FuncCallExpr, arg: Unit): Expr {
+        return Expr.FunctionCall(
+                funcCallExpr.expr_.accept(this, arg),
+                funcCallExpr.listcallarg_.map { callArg -> callArg.accept(this, arg) }
         )
     }
 
-    override fun visit(valueRef: ValueRef, arg: Unit): ValueReference {
-        return ValueReference(valueRef.listvalreffragm_.map { valRefFragm ->
-            valRefFragm.accept({ valueRefFragment, _ ->
-                valueRefFragment.jid_}, arg)
-        })
+    override fun visit(methCallExpr: MethCallExpr, arg: Unit): Expr {
+        return Expr.MethodCall(
+                methCallExpr.expr_.accept(this, arg),
+                methCallExpr.jid_,
+                methCallExpr.listcallarg_.map { callArg -> callArg.accept(this, arg) }
+        )
     }
 
     override fun visit(exprCallArg: ExprCallArg, arg: Unit): Expr {

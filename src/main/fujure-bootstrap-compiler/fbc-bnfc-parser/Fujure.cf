@@ -61,16 +61,14 @@ ModuloExpr     	   . Expr6  ::= Expr6 "%"  Expr7 ;
 NotExpr            . Expr7  ::= "!" Expr8 ;
 NegateExpr         . Expr7  ::= "-" Expr8 ;
 PositateExpr       . Expr7  ::= "+" Expr8 ;
-LiteralExpr        . Expr8  ::= Literal ;
-VariableExpr       . Expr8  ::= ValRef ;
-FunCallExpr        . Expr8  ::= Expr8 "(" [CallArg] ")" ;
+ComplexRefExpr     . Expr8  ::= JID "." JID ;
+FuncCallExpr       . Expr9  ::= Expr9 "(" [CallArg] ")" ;
+MethCallExpr       . Expr9  ::= Expr9 "." JID "(" [CallArg] ")" ;
+SimpleRefExpr      . Expr9  ::= JID ;
+LiteralExpr        . Expr9  ::= Literal ;
 ExprCallArg . CallArg ::= Expr ;
 separator CallArg "," ;
-coercions Expr 8 ;
-
-ValueRef . ValRef ::= [ValRefFragm] ;
-separator nonempty ValRefFragm "." ;
-ValueRefFragment . ValRefFragm ::= JID ;
+coercions Expr 9 ;
 
 IntLiteral        . Literal ::= Integer ;
 UnitLiteral       . Literal ::= "unit" ;

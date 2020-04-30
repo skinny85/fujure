@@ -1,9 +1,8 @@
 package org.fujure.fbc.ast
 
-import org.fujure.fbc.ast.ValueReference as ValueRef
-
 sealed class Expr {
-    data class ValueReference(val ref: ValueRef): Expr()
+    data class UnqualifiedReference(val ref: String): Expr()
+    data class QualifiedReference(val module: String, val ref: String): Expr()
 
     data class IntLiteral(val value: Int) : Expr()
 
@@ -40,5 +39,6 @@ sealed class Expr {
     data class Let(val declarations: List<Def.ValueDef>, val expr: Expr) : Expr()
     data class If(val conditionExpr: Expr, val thenExpr: Expr, val elseExpr: Expr) : Expr()
 
-    data class Call(val target: Expr, val arguments: List<Expr>) : Expr()
+    data class FunctionCall(val target: Expr, val arguments: List<Expr>) : Expr()
+    data class MethodCall(val receiver: Expr, val methodName: String, val arguments: List<Expr>) : Expr()
 }

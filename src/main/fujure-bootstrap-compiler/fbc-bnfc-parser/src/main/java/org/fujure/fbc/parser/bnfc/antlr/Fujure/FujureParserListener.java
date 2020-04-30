@@ -860,6 +860,18 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitCoercion_Expr7(FujureParser.Coercion_Expr7Context ctx);
 	/**
+	 * Enter a parse tree produced by the {@code ComplexRefExpr}
+	 * labeled alternative in {@link FujureParser#expr8}.
+	 * @param ctx the parse tree
+	 */
+	void enterComplexRefExpr(FujureParser.ComplexRefExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ComplexRefExpr}
+	 * labeled alternative in {@link FujureParser#expr8}.
+	 * @param ctx the parse tree
+	 */
+	void exitComplexRefExpr(FujureParser.ComplexRefExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code Coercion_Expr8}
 	 * labeled alternative in {@link FujureParser#expr8}.
 	 * @param ctx the parse tree
@@ -872,41 +884,65 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx);
 	/**
-	 * Enter a parse tree produced by the {@code FunCallExpr}
-	 * labeled alternative in {@link FujureParser#expr8}.
+	 * Enter a parse tree produced by the {@code SimpleRefExpr}
+	 * labeled alternative in {@link FujureParser#expr9}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunCallExpr(FujureParser.FunCallExprContext ctx);
+	void enterSimpleRefExpr(FujureParser.SimpleRefExprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code FunCallExpr}
-	 * labeled alternative in {@link FujureParser#expr8}.
+	 * Exit a parse tree produced by the {@code SimpleRefExpr}
+	 * labeled alternative in {@link FujureParser#expr9}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunCallExpr(FujureParser.FunCallExprContext ctx);
+	void exitSimpleRefExpr(FujureParser.SimpleRefExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Coercion_Expr9}
+	 * labeled alternative in {@link FujureParser#expr9}.
+	 * @param ctx the parse tree
+	 */
+	void enterCoercion_Expr9(FujureParser.Coercion_Expr9Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Coercion_Expr9}
+	 * labeled alternative in {@link FujureParser#expr9}.
+	 * @param ctx the parse tree
+	 */
+	void exitCoercion_Expr9(FujureParser.Coercion_Expr9Context ctx);
+	/**
+	 * Enter a parse tree produced by the {@code MethCallExpr}
+	 * labeled alternative in {@link FujureParser#expr9}.
+	 * @param ctx the parse tree
+	 */
+	void enterMethCallExpr(FujureParser.MethCallExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code MethCallExpr}
+	 * labeled alternative in {@link FujureParser#expr9}.
+	 * @param ctx the parse tree
+	 */
+	void exitMethCallExpr(FujureParser.MethCallExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code LiteralExpr}
-	 * labeled alternative in {@link FujureParser#expr8}.
+	 * labeled alternative in {@link FujureParser#expr9}.
 	 * @param ctx the parse tree
 	 */
 	void enterLiteralExpr(FujureParser.LiteralExprContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code LiteralExpr}
-	 * labeled alternative in {@link FujureParser#expr8}.
+	 * labeled alternative in {@link FujureParser#expr9}.
 	 * @param ctx the parse tree
 	 */
 	void exitLiteralExpr(FujureParser.LiteralExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code VariableExpr}
-	 * labeled alternative in {@link FujureParser#expr8}.
+	 * Enter a parse tree produced by the {@code FuncCallExpr}
+	 * labeled alternative in {@link FujureParser#expr9}.
 	 * @param ctx the parse tree
 	 */
-	void enterVariableExpr(FujureParser.VariableExprContext ctx);
+	void enterFuncCallExpr(FujureParser.FuncCallExprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code VariableExpr}
-	 * labeled alternative in {@link FujureParser#expr8}.
+	 * Exit a parse tree produced by the {@code FuncCallExpr}
+	 * labeled alternative in {@link FujureParser#expr9}.
 	 * @param ctx the parse tree
 	 */
-	void exitVariableExpr(FujureParser.VariableExprContext ctx);
+	void exitFuncCallExpr(FujureParser.FuncCallExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ExprCallArg}
 	 * labeled alternative in {@link FujureParser#callArg}.
@@ -955,54 +991,6 @@ public interface FujureParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitListCallArg_PrependFirst(FujureParser.ListCallArg_PrependFirstContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code ValueRef}
-	 * labeled alternative in {@link FujureParser#valRef}.
-	 * @param ctx the parse tree
-	 */
-	void enterValueRef(FujureParser.ValueRefContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ValueRef}
-	 * labeled alternative in {@link FujureParser#valRef}.
-	 * @param ctx the parse tree
-	 */
-	void exitValueRef(FujureParser.ValueRefContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code ListValRefFragm_AppendLast}
-	 * labeled alternative in {@link FujureParser#listValRefFragm}.
-	 * @param ctx the parse tree
-	 */
-	void enterListValRefFragm_AppendLast(FujureParser.ListValRefFragm_AppendLastContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ListValRefFragm_AppendLast}
-	 * labeled alternative in {@link FujureParser#listValRefFragm}.
-	 * @param ctx the parse tree
-	 */
-	void exitListValRefFragm_AppendLast(FujureParser.ListValRefFragm_AppendLastContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code ListValRefFragm_PrependFirst}
-	 * labeled alternative in {@link FujureParser#listValRefFragm}.
-	 * @param ctx the parse tree
-	 */
-	void enterListValRefFragm_PrependFirst(FujureParser.ListValRefFragm_PrependFirstContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ListValRefFragm_PrependFirst}
-	 * labeled alternative in {@link FujureParser#listValRefFragm}.
-	 * @param ctx the parse tree
-	 */
-	void exitListValRefFragm_PrependFirst(FujureParser.ListValRefFragm_PrependFirstContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code ValueRefFragment}
-	 * labeled alternative in {@link FujureParser#valRefFragm}.
-	 * @param ctx the parse tree
-	 */
-	void enterValueRefFragment(FujureParser.ValueRefFragmentContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ValueRefFragment}
-	 * labeled alternative in {@link FujureParser#valRefFragm}.
-	 * @param ctx the parse tree
-	 */
-	void exitValueRefFragment(FujureParser.ValueRefFragmentContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code IntLiteral}
 	 * labeled alternative in {@link FujureParser#literal}.
