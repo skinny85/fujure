@@ -318,6 +318,24 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
             }
         }
 
+        it.describes("when evaluating code with method calls") {
+            it.beginsAll {
+                evalFujure("""
+                   def result = (-1).abs() 
+                """)
+            }
+
+            it.should("evaluate without errors") {
+                assertNoException()
+            }
+
+            it.should("return 1 for (-1).abs()") {
+                val result = fujureBindings.getMember("Unnamed").getMember("result")
+
+                assertThat(result.asInt()).isEqualTo(1)
+            }
+        }
+
         it.describes("when evaluating syntactically incorrect code") {
             it.beginsAll {
                 evalFujure("1 + 2")

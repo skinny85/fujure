@@ -174,7 +174,100 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                             Expr.QualifiedReference(expr.receiver.ref, expr.methodName),
                             expr.arguments))
                 }
-                throw UnsupportedOperationException("Method calls are not supported yet")
+
+                val errors = mutableListOf<SemanticError>()
+                // first, analyze the receiver expression
+                val receiverAnalysisResult = analyzeExpr(expr.receiver)
+                val receiverAExpr = when (receiverAnalysisResult) {
+                    is ExprVerificationResult.Success -> receiverAnalysisResult.aExpr
+                    is ExprVerificationResult.Failure -> {
+                        errors.addAll(receiverAnalysisResult.errors)
+                        null
+                    }
+                }
+                val receiverType: QualifiedType? = receiverAnalysisResult.qualifiedType
+                val receiverModule: Module? = when (receiverType) {
+                    is QualifiedType.SimpleType -> Module(receiverType.packageName, receiverType.typeName)
+                    null -> null
+                    else -> null // ToDo we need to report some error here, but I'm not sure what it should be...?
+                }
+                // look up the method in the module of the receiver
+                val methodReferenceType: QualifiedType? = if (receiverModule == null) null else {
+                    val methodReference = ValueReference(expr.methodName)
+                    val methodLookupResult = symbolTable.lookup(methodReference, receiverModule, null, null)
+                    when (methodLookupResult) {
+                        is Pass03SymbolTable.LookupResult.ValueRefFound -> {
+                            methodLookupResult.qualifiedType
+                        }
+                        else -> {
+                            // report an undefined reference error
+                            errors.add(SemanticError.UnresolvedReference(context, methodReference))
+                            null
+                        }
+                    }
+                }
+                val methodType: QualifiedType.FunctionType? = when (methodReferenceType) {
+                    is QualifiedType.FunctionType -> {
+                        // report an error about incorrect number of arguments
+                        if (methodReferenceType.argumentTypes.size != expr.arguments.size + 1) {
+                            errors.add(SemanticError.ArgumentCountMismatch(context,
+                                    methodReferenceType.argumentTypes.size, expr.arguments.size))
+                        }
+                        methodReferenceType
+                    }
+                    null -> null
+                    else -> {
+                        // report an error that the target is of a non-invokable type
+                        errors.add(SemanticError.NotInvokable(context, methodReferenceType))
+                        null
+                    }
+                }
+
+                // handle the arguments
+                // first, check the receiver (= first argument)
+                if (methodType != null && methodType.argumentTypes.size > 0 &&
+                            receiverType != null &&
+                            receiverType != methodType.argumentTypes[0]) {
+                    errors.add(SemanticError.TypeMismatch(context,
+                            methodType.argumentTypes[0],
+                            receiverType))
+                }
+                // then, check the remaining arguments
+                val argExprs: List<AExpr?> = expr.arguments.mapIndexed { i, arg ->
+                    val argAnalysis = analyzeExpr(arg)
+                    // check whether the argument type for this index matches
+                    if (methodType != null && i + 1 < methodType.argumentTypes.size &&
+                            argAnalysis.qualifiedType != null &&
+                            argAnalysis.qualifiedType != methodType.argumentTypes[i + 1]) {
+                        errors.add(SemanticError.TypeMismatch(context,
+                                methodType.argumentTypes[i + 1],
+                                argAnalysis.qualifiedType))
+                    }
+
+                    when (argAnalysis) {
+                        is ExprVerificationResult.Failure -> {
+                            errors.addAll(argAnalysis.errors)
+                            null
+                        }
+                        is ExprVerificationResult.Success -> {
+                            argAnalysis.aExpr
+                        }
+                    }
+                }
+
+                if (errors.isEmpty()) {
+                    ExprVerificationResult.Success(methodType?.returnType,
+                            if (receiverModule != null && receiverAExpr != null && argExprs.all { it != null } && methodType != null)
+                                AExpr.ACall(
+                                        AExpr.AValueReference(receiverModule, expr.methodName, methodType),
+                                        listOf(receiverAExpr) + argExprs.requireNoNulls(),
+                                        methodType.returnType)
+                            else
+                                null
+                    )
+                } else {
+                    ExprVerificationResult.Failure(methodType?.returnType, errors)
+                }
             }
         }
     }
