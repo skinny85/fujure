@@ -17,5 +17,20 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                 assertAnalysisSucceeded()
             }
         }
+
+        it.describes("for a local module function called as a method on an int literal") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def abs(i: Int): String = "abs"
+                            def a: String = (-1).abs()
+                        """)
+                        .analyzed()
+            }
+
+            it.should("be analyzed correctly") {
+                assertAnalysisSucceeded()
+            }
+        }
     }
 }}

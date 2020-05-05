@@ -170,6 +170,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             is Expr.MethodCall -> {
                 if (expr.receiver is Expr.UnqualifiedReference) {
                     // special case - the call is to a function in a module, like Int.abs(-1)
+                    // ToDo this obviously doesn't work the receiver is a variable, like i.abs()
                     return this.analyzeExpr(Expr.FunctionCall(
                             Expr.QualifiedReference(expr.receiver.ref, expr.methodName),
                             expr.arguments))
@@ -186,13 +187,25 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                     }
                 }
                 val receiverType: QualifiedType? = receiverAnalysisResult.qualifiedType
+
+                // The algorithm is as follows (currently):
+                // 1. Check the current scope. If a value with that name was found, take it.
+                // 2. Check the module of the receiver. If a value with that name was found, take it.
+
+                // do 1.
+                val currentModuleMethodLookupResult = symbolTable.lookup(ValueReference(expr.methodName), module, null, null)
+                val currentModuleMethodReferenceType: QualifiedType? = when (currentModuleMethodLookupResult) {
+                    is Pass03SymbolTable.LookupResult.ValueRefFound -> currentModuleMethodLookupResult.qualifiedType
+                    else -> null
+                }
+                // do 2.
                 val receiverModule: Module? = when (receiverType) {
                     is QualifiedType.SimpleType -> Module(receiverType.packageName, receiverType.typeName)
                     null -> null
                     else -> null // ToDo we need to report some error here, but I'm not sure what it should be...?
                 }
                 // look up the method in the module of the receiver
-                val methodReferenceType: QualifiedType? = if (receiverModule == null) null else {
+                val receiverModuleMethodReferenceType: QualifiedType? = if (receiverModule == null) null else {
                     val methodReference = ValueReference(expr.methodName)
                     val methodLookupResult = symbolTable.lookup(methodReference, receiverModule, null, null)
                     when (methodLookupResult) {
@@ -200,11 +213,23 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                             methodLookupResult.qualifiedType
                         }
                         else -> {
-                            // report an undefined reference error
-                            errors.add(SemanticError.UnresolvedReference(context, methodReference))
+                            // ToDo report an undefined reference error "higher up"
+//                            errors.add(SemanticError.UnresolvedReference(context, methodReference))
                             null
                         }
                     }
+                }
+
+                // choose 1. first, then 2.
+                var methodModule: Module? = null
+                val methodReferenceType = if (currentModuleMethodReferenceType != null) {
+                    methodModule = module
+                    currentModuleMethodReferenceType
+                } else if (receiverModuleMethodReferenceType != null) {
+                    methodModule = receiverModule
+                    receiverModuleMethodReferenceType
+                } else {
+                    null
                 }
                 val methodType: QualifiedType.FunctionType? = when (methodReferenceType) {
                     is QualifiedType.FunctionType -> {
@@ -225,7 +250,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
 
                 // handle the arguments
                 // first, check the receiver (= first argument)
-                if (methodType != null && methodType.argumentTypes.size > 0 &&
+                if (methodType != null && methodType.argumentTypes.isNotEmpty() &&
                             receiverType != null &&
                             receiverType != methodType.argumentTypes[0]) {
                     errors.add(SemanticError.TypeMismatch(context,
@@ -257,9 +282,9 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
 
                 if (errors.isEmpty()) {
                     ExprVerificationResult.Success(methodType?.returnType,
-                            if (receiverModule != null && receiverAExpr != null && argExprs.all { it != null } && methodType != null)
+                            if (methodModule != null && receiverAExpr != null && argExprs.all { it != null } && methodType != null)
                                 AExpr.ACall(
-                                        AExpr.AValueReference(receiverModule, expr.methodName, methodType),
+                                        AExpr.AValueReference(methodModule, expr.methodName, methodType),
                                         listOf(receiverAExpr) + argExprs.requireNoNulls(),
                                         methodType.returnType)
                             else
