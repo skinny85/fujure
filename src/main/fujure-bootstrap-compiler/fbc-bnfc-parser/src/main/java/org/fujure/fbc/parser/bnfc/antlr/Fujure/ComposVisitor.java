@@ -319,15 +319,6 @@ public class ComposVisitor<A> implements
       String jid_1 = p.jid_1;
       String jid_2 = p.jid_2;
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ComplexRefExpr(jid_1, jid_2);
-    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr p, A arg)
-    {
-      Expr expr_ = p.expr_.accept(this, arg);
-      ListCallArg listcallarg_ = new ListCallArg();
-      for (CallArg x : p.listcallarg_)
-      {
-        listcallarg_.add(x.accept(this,arg));
-      }
-      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr(expr_, listcallarg_);
     }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr p, A arg)
     {
       Expr expr_ = p.expr_.accept(this, arg);
@@ -338,6 +329,15 @@ public class ComposVisitor<A> implements
         listcallarg_.add(x.accept(this,arg));
       }
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr(expr_, jid_, listcallarg_);
+    }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr p, A arg)
+    {
+      Expr expr_ = p.expr_.accept(this, arg);
+      ListCallArg listcallarg_ = new ListCallArg();
+      for (CallArg x : p.listcallarg_)
+      {
+        listcallarg_.add(x.accept(this,arg));
+      }
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr(expr_, listcallarg_);
     }    public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleRefExpr p, A arg)
     {
       String jid_ = p.jid_;

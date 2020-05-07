@@ -303,16 +303,16 @@ public class VisitSkel
       //p.jid_1;
       //p.jid_2;
       return null;
-    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr p, A arg)
-    { /* Code For FuncCallExpr Goes Here */
-      p.expr_.accept(new ExprVisitor<R,A>(), arg);
-      for (CallArg x: p.listcallarg_)
-      { /* ... */ }
-      return null;
     }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr p, A arg)
     { /* Code For MethCallExpr Goes Here */
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
       //p.jid_;
+      for (CallArg x: p.listcallarg_)
+      { /* ... */ }
+      return null;
+    }        public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr p, A arg)
+    { /* Code For FuncCallExpr Goes Here */
+      p.expr_.accept(new ExprVisitor<R,A>(), arg);
       for (CallArg x: p.listcallarg_)
       { /* ... */ }
       return null;

@@ -289,6 +289,18 @@ class ParserSpec : SpecnazKotlinJUnit("Parser#parse", {
             """)
         }
 
+        it.should("fail parsing") {
+            assertParsingFailed()
+        }
+    }
+
+    it.describes("called with a method call in parentheses as the target of a function call") {
+        it.beginsAll {
+            parse("""
+                def a = (b.c())()
+            """)
+        }
+
         it.should("parse correctly") {
             assertParsingSucceeded()
         }

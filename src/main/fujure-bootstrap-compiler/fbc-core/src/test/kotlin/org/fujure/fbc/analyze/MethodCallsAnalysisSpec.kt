@@ -8,7 +8,7 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             it.beginsAll {
                 AnalysisBuilder
                         .file("""
-                            def a: Int = (-1).abs()
+                            def a: Int = (-1).abs().abs()
                         """)
                         .analyzed()
             }
@@ -24,6 +24,20 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                         .file("""
                             def abs(i: Int): String = "abs"
                             def a: String = (-1).abs()
+                        """)
+                        .analyzed()
+            }
+
+            it.should("be analyzed correctly") {
+                assertAnalysisSucceeded()
+            }
+        }
+
+        it.describes("for a method call on a module-qualified value") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a: Int = Int.maxInt.abs()
                         """)
                         .analyzed()
             }

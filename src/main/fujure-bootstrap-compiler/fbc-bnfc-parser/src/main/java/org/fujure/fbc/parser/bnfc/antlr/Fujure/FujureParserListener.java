@@ -860,6 +860,18 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitCoercion_Expr7(FujureParser.Coercion_Expr7Context ctx);
 	/**
+	 * Enter a parse tree produced by the {@code Coercion_Expr8}
+	 * labeled alternative in {@link FujureParser#expr8}.
+	 * @param ctx the parse tree
+	 */
+	void enterCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Coercion_Expr8}
+	 * labeled alternative in {@link FujureParser#expr8}.
+	 * @param ctx the parse tree
+	 */
+	void exitCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx);
+	/**
 	 * Enter a parse tree produced by the {@code ComplexRefExpr}
 	 * labeled alternative in {@link FujureParser#expr8}.
 	 * @param ctx the parse tree
@@ -872,17 +884,17 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitComplexRefExpr(FujureParser.ComplexRefExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code Coercion_Expr8}
+	 * Enter a parse tree produced by the {@code MethCallExpr}
 	 * labeled alternative in {@link FujureParser#expr8}.
 	 * @param ctx the parse tree
 	 */
-	void enterCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx);
+	void enterMethCallExpr(FujureParser.MethCallExprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code Coercion_Expr8}
+	 * Exit a parse tree produced by the {@code MethCallExpr}
 	 * labeled alternative in {@link FujureParser#expr8}.
 	 * @param ctx the parse tree
 	 */
-	void exitCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx);
+	void exitMethCallExpr(FujureParser.MethCallExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code SimpleRefExpr}
 	 * labeled alternative in {@link FujureParser#expr9}.
@@ -907,18 +919,6 @@ public interface FujureParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCoercion_Expr9(FujureParser.Coercion_Expr9Context ctx);
-	/**
-	 * Enter a parse tree produced by the {@code MethCallExpr}
-	 * labeled alternative in {@link FujureParser#expr9}.
-	 * @param ctx the parse tree
-	 */
-	void enterMethCallExpr(FujureParser.MethCallExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code MethCallExpr}
-	 * labeled alternative in {@link FujureParser#expr9}.
-	 * @param ctx the parse tree
-	 */
-	void exitMethCallExpr(FujureParser.MethCallExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code LiteralExpr}
 	 * labeled alternative in {@link FujureParser#expr9}.

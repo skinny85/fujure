@@ -1053,6 +1053,18 @@ public class PrettyPrinter
        pp(_complexrefexpr.jid_2, 0);
        if (_i_ > 8) render(_R_PAREN);
     }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr _methcallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr) foo;
+       if (_i_ > 8) render(_L_PAREN);
+       pp(_methcallexpr.expr_, 8);
+       render(".");
+       pp(_methcallexpr.jid_, 0);
+       render("(");
+       pp(_methcallexpr.listcallarg_, 0);
+       render(")");
+       if (_i_ > 8) render(_R_PAREN);
+    }
     else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr _funccallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr) foo;
@@ -1060,18 +1072,6 @@ public class PrettyPrinter
        pp(_funccallexpr.expr_, 9);
        render("(");
        pp(_funccallexpr.listcallarg_, 0);
-       render(")");
-       if (_i_ > 9) render(_R_PAREN);
-    }
-    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr)
-    {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr _methcallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr) foo;
-       if (_i_ > 9) render(_L_PAREN);
-       pp(_methcallexpr.expr_, 9);
-       render(".");
-       pp(_methcallexpr.jid_, 0);
-       render("(");
-       pp(_methcallexpr.listcallarg_, 0);
        render(")");
        if (_i_ > 9) render(_R_PAREN);
     }
@@ -1743,17 +1743,6 @@ public class PrettyPrinter
        sh(_complexrefexpr.jid_2);
        render(")");
     }
-    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr)
-    {
-       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr _funccallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr) foo;
-       render("(");
-       render("FuncCallExpr");
-       sh(_funccallexpr.expr_);
-       render("[");
-       sh(_funccallexpr.listcallarg_);
-       render("]");
-       render(")");
-    }
     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr _methcallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MethCallExpr) foo;
@@ -1763,6 +1752,17 @@ public class PrettyPrinter
        sh(_methcallexpr.jid_);
        render("[");
        sh(_methcallexpr.listcallarg_);
+       render("]");
+       render(")");
+    }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr _funccallexpr = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncCallExpr) foo;
+       render("(");
+       render("FuncCallExpr");
+       sh(_funccallexpr.expr_);
+       render("[");
+       sh(_funccallexpr.listcallarg_);
        render("]");
        render(")");
     }

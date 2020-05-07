@@ -868,6 +868,18 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterComplexRefExpr(FujureParser.ComplexRefExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -880,13 +892,13 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx) { }
+	@Override public void enterMethCallExpr(FujureParser.MethCallExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCoercion_Expr8(FujureParser.Coercion_Expr8Context ctx) { }
+	@Override public void exitMethCallExpr(FujureParser.MethCallExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -911,18 +923,6 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCoercion_Expr9(FujureParser.Coercion_Expr9Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterMethCallExpr(FujureParser.MethCallExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMethCallExpr(FujureParser.MethCallExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
