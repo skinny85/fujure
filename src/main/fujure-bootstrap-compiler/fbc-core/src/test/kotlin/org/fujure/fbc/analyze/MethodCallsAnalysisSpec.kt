@@ -46,5 +46,20 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                 assertAnalysisSucceeded()
             }
         }
+
+        it.describes("for a method call on a variable") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def x = 0
+                            def a: Int = x.abs()
+                        """)
+                        .analyzed()
+            }
+
+            it.should("be analyzed correctly") {
+                assertAnalysisSucceeded()
+            }
+        }
     }
 }}

@@ -169,11 +169,20 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             }
             is Expr.MethodCall -> {
                 if (expr.receiver is Expr.UnqualifiedReference) {
-                    // special case - the call is to a function in a module, like Int.abs(-1)
-                    // ToDo this obviously doesn't work the receiver is a variable, like i.abs()
-                    return this.analyzeExpr(Expr.FunctionCall(
-                            Expr.QualifiedReference(expr.receiver.ref, expr.methodName),
-                            expr.arguments))
+                    // Check if there is a variable of that name in scope -
+                    // if there is, we treat it as any other method call.
+                    // If there isn't, we treat it as a module reference, like Int.abs(-1).
+                    val referenceLookupResult = symbolTable.lookup(ValueReference(expr.receiver.ref), this.module, null, null)
+                    val treatAsFuncCall = when (referenceLookupResult) {
+                        is Pass03SymbolTable.LookupResult.ValueRefFound -> false
+                        is Pass03SymbolTable.LookupResult.TempRefFound -> false
+                        else -> true
+                    }
+                    if (treatAsFuncCall) {
+                        return this.analyzeExpr(Expr.FunctionCall(
+                                Expr.QualifiedReference(expr.receiver.ref, expr.methodName),
+                                expr.arguments))
+                    }
                 }
 
                 val errors = mutableListOf<SemanticError>()
@@ -189,8 +198,9 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 val receiverType: QualifiedType? = receiverAnalysisResult.qualifiedType
 
                 // The algorithm is as follows (currently):
-                // 1. Check the current scope. If a value with that name was found, take it.
-                // 2. Check the module of the receiver. If a value with that name was found, take it.
+                // 1. Check the current scope. If a value with the name of the method was found, take it.
+                // 2. If #1 failed, check the module of the receiver. If a value with the name of the method was found, take it.
+                // 3. If #2 failed, report an unresolved reference error.
 
                 // do 1.
                 val currentModuleMethodLookupResult = symbolTable.lookup(ValueReference(expr.methodName), module, null, null)
