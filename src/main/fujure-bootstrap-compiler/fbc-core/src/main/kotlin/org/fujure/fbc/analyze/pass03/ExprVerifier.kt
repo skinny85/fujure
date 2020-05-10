@@ -202,11 +202,13 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 // 2. If #1 failed, check the module of the receiver. If a value with the name of the method was found, take it.
                 // 3. If #2 failed, report an unresolved reference error.
 
+                val methodReference = ValueReference(expr.methodName)
+
                 // do 1.
-                val currentModuleMethodLookupResult = symbolTable.lookup(ValueReference(expr.methodName), module, null, null)
-                val currentModuleMethodReferenceType: QualifiedType? = when (currentModuleMethodLookupResult) {
-                    is Pass03SymbolTable.LookupResult.ValueRefFound -> currentModuleMethodLookupResult.qualifiedType
-                    else -> null
+                val currentModuleMethodLookupResult = symbolTable.lookup(methodReference, module, null, null)
+                val (currentModuleMethodReferenceType: QualifiedType?, foundInCurrentModule) = when (currentModuleMethodLookupResult) {
+                    is Pass03SymbolTable.LookupResult.ValueRefFound -> Pair(currentModuleMethodLookupResult.qualifiedType, true)
+                    else -> Pair(null, false)
                 }
                 // do 2.
                 val receiverModule: Module? = when (receiverType) {
@@ -215,20 +217,18 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                     else -> null // ToDo we need to report some error here, but I'm not sure what it should be...?
                 }
                 // look up the method in the module of the receiver
-                val receiverModuleMethodReferenceType: QualifiedType? = if (receiverModule == null) null else {
-                    val methodReference = ValueReference(expr.methodName)
-                    val methodLookupResult = symbolTable.lookup(methodReference, receiverModule, null, null)
-                    when (methodLookupResult) {
-                        is Pass03SymbolTable.LookupResult.ValueRefFound -> {
-                            methodLookupResult.qualifiedType
+                val (receiverModuleMethodReferenceType: QualifiedType?, foundInReceiverModule) =
+                        if (receiverModule == null) Pair(null, false) else {
+                            val methodLookupResult = symbolTable.lookup(methodReference, receiverModule, null, null)
+                            when (methodLookupResult) {
+                                is Pass03SymbolTable.LookupResult.ValueRefFound -> {
+                                    Pair(methodLookupResult.qualifiedType, true)
+                                }
+                                else -> {
+                                    Pair(null, false)
+                                }
+                            }
                         }
-                        else -> {
-                            // ToDo report an undefined reference error "higher up"
-//                            errors.add(SemanticError.UnresolvedReference(context, methodReference))
-                            null
-                        }
-                    }
-                }
 
                 // choose 1. first, then 2.
                 var methodModule: Module? = null
@@ -240,6 +240,9 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                     receiverModuleMethodReferenceType
                 } else {
                     null
+                }
+                if (!foundInCurrentModule && !foundInReceiverModule) {
+                    errors.add(SemanticError.UnresolvedReference(context, methodReference))
                 }
                 val methodType: QualifiedType.FunctionType? = when (methodReferenceType) {
                     is QualifiedType.FunctionType -> {

@@ -79,5 +79,22 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                                 BuiltInTypes.Int))
             }
         }
+
+        it.describes("for a method call that doesn't exist") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a: Int = 1.doesNotExist()
+                        """)
+                        .analyzed()
+            }
+
+            it.should("fail with an UnresolvedReference error") {
+                assertThat(file1Errors()).containsExactly(
+                        SemanticError.UnresolvedReference(
+                                ErrorContext.ValueDefinition("a"),
+                                ValueReference("doesNotExist")))
+            }
+        }
     }
 }}
