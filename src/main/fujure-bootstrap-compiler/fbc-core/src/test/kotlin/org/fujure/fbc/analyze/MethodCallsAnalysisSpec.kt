@@ -1,6 +1,7 @@
 package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
+import org.fujure.fbc.ast.ValueReference
 
 class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
     describes("Method calls Semantic Analysis") {
@@ -59,6 +60,23 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
 
             it.should("be analyzed correctly") {
                 assertAnalysisSucceeded()
+            }
+        }
+
+        it.describes("for a simple value in a built-in module called as a method") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a: Int = 1.maxInt()
+                        """)
+                        .analyzed()
+            }
+
+            it.should("fail with a NotInvokable error") {
+                assertThat(file1Errors()).containsExactly(
+                        SemanticError.NotInvokable(
+                                ErrorContext.ValueDefinition("a"),
+                                BuiltInTypes.Int))
             }
         }
     }
