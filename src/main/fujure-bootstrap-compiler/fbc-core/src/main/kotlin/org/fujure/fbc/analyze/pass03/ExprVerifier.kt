@@ -186,6 +186,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
 
                 val errors = mutableListOf<SemanticError>()
+
                 // first, analyze the receiver expression
                 val receiverAnalysisResult = analyzeExpr(expr.receiver)
                 val receiverAExpr = when (receiverAnalysisResult) {
@@ -197,26 +198,33 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
                 val receiverType: QualifiedType? = receiverAnalysisResult.qualifiedType
 
-                // The algorithm is as follows (currently):
-                // 1. Check the current scope. If a value with the name of the method was found, take it.
-                // 2. If #1 failed, check the module of the receiver. If a value with the name of the method was found, take it.
-                // 3. If #2 failed, report an unresolved reference error.
+                // The algorithm of method resolution is as follows:
+                //   1. Check the current scope. If a value with the name of the method was found:
+                //     1.1. If the value is of a function type and its argument type(s) match the call argument type(s),
+                //       that's the resolved function.
+                //   2. If 1 or 1.1 failed, check the module of the receiver. If a value with the name of the method was found:
+                //     2.1. If the value is a function type and its argument type(s) match the call argument type(s),
+                //       that's the resolved function.
+                //   3. The error reporting is as follows:
+                //     3.1. If 1 and 2 fail, report an UnresolvedReference error.
+                //     3.3. If 1 fails, 2 succeeds, but 2.1 fails, report a NotInvokable/incorrect arguments error for the value from 2.
+                //     3.2. If 1 succeeds, 1.1 fails, 2 fails, report a NotInvokable/incorrect arguments error for the value from 1.
+                //     3.4. If 1 succeeds, 1.1 fails, 2 succeeds, but 2.1 fails, report a NotInvokable/incorrect arguments error for the value from 1.
 
                 val methodReference = ValueReference(expr.methodName)
 
-                // do 1.
+                // Look up 1.
                 val currentModuleMethodLookupResult = symbolTable.lookup(methodReference, module, null, null)
                 val (currentModuleMethodReferenceType: QualifiedType?, foundInCurrentModule) = when (currentModuleMethodLookupResult) {
                     is Pass03SymbolTable.LookupResult.ValueRefFound -> Pair(currentModuleMethodLookupResult.qualifiedType, true)
                     else -> Pair(null, false)
                 }
-                // do 2.
+                // Look up 2.
                 val receiverModule: Module? = when (receiverType) {
                     is QualifiedType.SimpleType -> Module(receiverType.packageName, receiverType.typeName)
                     null -> null
-                    else -> null // ToDo we need to report some error here, but I'm not sure what it should be...?
+                    else -> null // ToDo do we need to report some error when the receiver is a function...?
                 }
-                // look up the method in the module of the receiver
                 val (receiverModuleMethodReferenceType: QualifiedType?, foundInReceiverModule) =
                         if (receiverModule == null) Pair(null, false) else {
                             val methodLookupResult = symbolTable.lookup(methodReference, receiverModule, null, null)
@@ -230,20 +238,42 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                             }
                         }
 
-                // choose 1. first, then 2.
-                var methodModule: Module? = null
-                val methodReferenceType = if (currentModuleMethodReferenceType != null) {
-                    methodModule = module
-                    currentModuleMethodReferenceType
-                } else if (receiverModuleMethodReferenceType != null) {
-                    methodModule = receiverModule
-                    receiverModuleMethodReferenceType
+                // Run the algorithm!
+                val (methodModule: Module?, methodReferenceType: QualifiedType?) = if (!foundInCurrentModule) {
+                    // we know that 1 failed
+                    if (!foundInReceiverModule) {
+                        // 2 failed as well - report an UnresolvedReference error
+                        errors.add(SemanticError.UnresolvedReference(context, methodReference))
+                        Pair(null, null)
+                    } else {
+                        // since there's no local value, the receiver module's value wins -
+                        // regardless if it matches or not
+                        Pair(receiverModule, receiverModuleMethodReferenceType)
+                    }
                 } else {
-                    null
+                    // 1 succeeds - check 2
+                    if (!foundInReceiverModule) {
+                        // 2 failed - so, the current module's value wins,
+                        // regardless if it matches or not
+                        Pair(this.module, currentModuleMethodReferenceType)
+                    } else {
+                        // This is the most interesting case -
+                        // both a local and receiver's module values have been found.
+                        // In this case, whoever matches - wins!
+                        // In case both or neither matches, the local wins.
+                        val argTypes = listOf(receiverType) + expr.arguments.map { analyzeExpr(it).qualifiedType }
+                        val currentMatches = currentModuleMethodReferenceType is QualifiedType.FunctionType &&
+                                compareListsIgnoringNulls(currentModuleMethodReferenceType.argumentTypes, argTypes)
+                        val receiversMatches = receiverModuleMethodReferenceType is QualifiedType.FunctionType &&
+                                compareListsIgnoringNulls(receiverModuleMethodReferenceType.argumentTypes, argTypes)
+                        if (!currentMatches && receiversMatches) {
+                            Pair(receiverModule, receiverModuleMethodReferenceType)
+                        } else {
+                            Pair(this.module, currentModuleMethodReferenceType)
+                        }
+                    }
                 }
-                if (!foundInCurrentModule && !foundInReceiverModule) {
-                    errors.add(SemanticError.UnresolvedReference(context, methodReference))
-                }
+
                 val methodType: QualifiedType.FunctionType? = when (methodReferenceType) {
                     is QualifiedType.FunctionType -> {
                         // report an error about incorrect number of arguments
@@ -260,8 +290,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         null
                     }
                 }
-
-                // handle the arguments
+                // type-check the method arguments
                 // first, check the receiver (= first argument)
                 if (methodType != null && methodType.argumentTypes.isNotEmpty() &&
                             receiverType != null &&
@@ -270,7 +299,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                             methodType.argumentTypes[0],
                             receiverType))
                 }
-                // then, check the remaining arguments
+                // now, do the remaining arguments
                 val argExprs: List<AExpr?> = expr.arguments.mapIndexed { i, arg ->
                     val argAnalysis = analyzeExpr(arg)
                     // check whether the argument type for this index matches
@@ -654,4 +683,18 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             ExprVerificationResult.Failure(result.qualifiedType, errors)
         }
     }
+}
+
+fun <T> compareListsIgnoringNulls(list1: List<T?>, list2: List<T?>): Boolean {
+    if (list1.size != list2.size)
+        return false
+
+    for (i in 0 until list1.size) {
+        val item1 = list1[i]
+        val item2 = list2[i]
+        if (item1 != null && item2 != null && item1 != item2)
+            return false
+    }
+
+    return true;
 }

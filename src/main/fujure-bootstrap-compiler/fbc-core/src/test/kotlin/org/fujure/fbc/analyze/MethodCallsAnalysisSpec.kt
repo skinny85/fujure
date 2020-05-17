@@ -5,7 +5,7 @@ import org.fujure.fbc.ast.ValueReference
 
 class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
     describes("Method calls Semantic Analysis") {
-        it.describes("for a call to an int literal method from the Int module") {
+        it.describes("for a chained method call on a literal that is a function in the module of the receiver") {
             it.beginsAll {
                 AnalysisBuilder
                         .file("""
@@ -19,7 +19,7 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             }
         }
 
-        it.describes("for a local module function called as a method on an int literal") {
+        it.describes("for a method call to a local function with the same name as a function in the receiver's module") {
             it.beginsAll {
                 AnalysisBuilder
                         .file("""
@@ -29,7 +29,7 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                         .analyzed()
             }
 
-            it.should("be analyzed correctly") {
+            it.should("give precedence to the local function") {
                 assertAnalysisSucceeded()
             }
         }
@@ -80,7 +80,7 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             }
         }
 
-        it.describes("for a method call that doesn't exist") {
+        it.describes("for a method call that doesn't correspond to any function, locally or in the receiver's module") {
             it.beginsAll {
                 AnalysisBuilder
                         .file("""
@@ -94,6 +94,21 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                         SemanticError.UnresolvedReference(
                                 ErrorContext.ValueDefinition("a"),
                                 ValueReference("doesNotExist")))
+            }
+        }
+
+        it.describes("for a method call with the same name as a local function, but with different argument types") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def abs(s: String): Int = 42
+                            def a: Int = 1.abs()
+                        """)
+                        .analyzed()
+            }
+
+            it.should("fall back to the receiver module's function with argument types matching the call") {
+                assertAnalysisSucceeded()
             }
         }
     }
