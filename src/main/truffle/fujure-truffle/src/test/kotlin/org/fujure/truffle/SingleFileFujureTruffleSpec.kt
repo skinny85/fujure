@@ -321,7 +321,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
         it.describes("when evaluating code with method calls") {
             it.beginsAll {
                 evalFujure("""
-                   def result = (-1).abs() 
+                   def result1 = (-1).abs() 
+                   def result2 = (-3).min(2) + -5.max(4)
                 """)
             }
 
@@ -330,9 +331,15 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
             }
 
             it.should("return 1 for (-1).abs()") {
-                val result = fujureBindings.getMember("Unnamed").getMember("result")
+                val result = fujureBindings.getMember("Unnamed").getMember("result1")
 
                 assertThat(result.asInt()).isEqualTo(1)
+            }
+
+            it.should("return -8 for (-3).min(2) + -5.max(4)") {
+                val result = fujureBindings.getMember("Unnamed").getMember("result2")
+
+                assertThat(result.asInt()).isEqualTo(-8)
             }
         }
 
