@@ -24,7 +24,7 @@ public final class FunctionValueDefNode extends ValueDefNode {
     }
 
     @Override
-    public Object execute(VirtualFrame frame) {
+    public FujureFunctionObject execute(VirtualFrame frame) {
         return new FujureFunctionObject(Truffle.getRuntime().createCallTarget(
                 new RootFunctionNode(this.fujureTruffleLanguage, this.frameDescriptor, this.body)));
     }

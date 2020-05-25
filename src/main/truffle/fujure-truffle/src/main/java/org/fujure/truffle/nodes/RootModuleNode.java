@@ -3,11 +3,13 @@ package org.fujure.truffle.nodes;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.DirectCallNode;
 import com.oracle.truffle.api.nodes.RootNode;
 import org.fujure.fbc.analyze.QualifiedType;
 import org.fujure.fbc.ast.Module;
 import org.fujure.truffle.FujureTruffleContext;
 import org.fujure.truffle.FujureTruffleLanguage;
+import org.fujure.truffle.runtime.FujureFunctionObject;
 import org.fujure.truffle.runtime.Unit;
 
 public final class RootModuleNode extends RootNode {
@@ -18,6 +20,8 @@ public final class RootModuleNode extends RootNode {
     private final DefNode[] defs;
 
     private boolean registered = false;
+    @Child
+    private DirectCallNode mainFunctionCallNode;
 
     public RootModuleNode(FujureTruffleLanguage language,
             FrameDescriptor frameDescriptor, ModuleNonRootNode moduleNode) {
@@ -35,9 +39,9 @@ public final class RootModuleNode extends RootNode {
             registerTruffleValues(frame);
         }
 
-        return module.getPackageName().isEmpty()
-                ? 42
-                : 129;
+        return mainFunctionCallNode == null
+                ? Unit.INSTANCE // you can't return null from RootNode.execute()
+                : mainFunctionCallNode.call(frame.getArguments());
     }
 
     private void registerTruffleValues(VirtualFrame frame) {
@@ -60,8 +64,13 @@ public final class RootModuleNode extends RootNode {
         for (DefNode defNode : defs) {
             if (defNode instanceof FunctionValueDefNode) {
                 FunctionValueDefNode functionValueDefNode = (FunctionValueDefNode) defNode;
+                FujureFunctionObject functionDefFujureFunction = functionValueDefNode.execute(frame);
                 contextReference.get().registerValue(module, functionValueDefNode.id,
-                        functionValueDefNode.execute(frame));
+                        functionDefFujureFunction);
+                if ("main".equals(functionValueDefNode.id)) {
+                    // the main function is special - it will be invoked when the module is evaluated
+                    mainFunctionCallNode = DirectCallNode.create(functionDefFujureFunction.callTarget);
+                }
             }
         }
 

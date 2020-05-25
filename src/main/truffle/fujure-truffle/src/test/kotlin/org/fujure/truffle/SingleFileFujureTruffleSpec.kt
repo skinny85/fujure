@@ -17,10 +17,9 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                 """)
             }
 
-            it.should("result in the value 42") {
+            it.should("result in a value for which isNull returns true") {
                 assertNoException()
-                assertThat(result.isNumber).isTrue()
-                assertThat(result.asInt()).isEqualTo(42)
+                assertThat(result.isNull).isTrue()
             }
 
             it.describes("the Fujure bindings after evaluation") {
@@ -109,9 +108,9 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                 """)
             }
 
-            it.should("result in the value 129") {
+            it.should("result in a value for which isNull returns true") {
                 assertNoException()
-                assertThat(result.asInt()).isEqualTo(129)
+                assertThat(result.isNull).isTrue()
             }
 
             it.describes("the Fujure bindings after evaluation") {
@@ -303,16 +302,12 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                     
                     def inc_indirect(): Int -> Int = inc
                     
-                    def result = inc_indirect()(33)
+                    def main(): Int = inc_indirect()(33)
                 """)
             }
 
-            it.should("evaluate without errors") {
+            it.should("evaluate to the result of 'main'") {
                 assertNoException()
-            }
-
-            it.should("correctly call the defined function") {
-                val result = fujureBindings.getMember("Unnamed").getMember("result")
 
                 assertThat(result.asInt()).isEqualTo(34)
             }
