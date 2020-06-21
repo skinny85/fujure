@@ -17,10 +17,10 @@ import org.fujure.truffle.nodes.RootFunctionNode
 import org.fujure.truffle.nodes.RootModuleNode
 import org.fujure.truffle.nodes.exprs.ExprNode
 import org.fujure.truffle.nodes.exprs.FuncArgumentReferenceExprNode
-import org.fujure.truffle.nodes.exprs.builtins.BuiltInAbsFunctionBodyExpr
+import org.fujure.truffle.nodes.exprs.builtins.Int.IntAbsBuiltInFunction
 import org.fujure.truffle.nodes.exprs.builtins.BuiltInFunctionBodyExpr
-import org.fujure.truffle.nodes.exprs.builtins.BuiltInMaxFunctionBodyExpr
-import org.fujure.truffle.nodes.exprs.builtins.BuiltInMinFunctionBodyExpr
+import org.fujure.truffle.nodes.exprs.builtins.Int.IntMaxBuiltInFunction
+import org.fujure.truffle.nodes.exprs.builtins.Int.IntMinBuiltInFunction
 import org.fujure.truffle.runtime.FujureFunctionObject
 import org.funktionale.either.Disjunction
 
@@ -37,9 +37,9 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
         context.resetModule(intModule);
         context.registerValue(intModule, "minInt", Integer.MIN_VALUE)
         context.registerValue(intModule, "maxInt", Integer.MAX_VALUE)
-        registerBuiltInFunction(context, intModule, "abs", BuiltInAbsFunctionBodyExpr.getFactory())
-        registerBuiltInFunction(context, intModule, "min", BuiltInMinFunctionBodyExpr.getFactory())
-        registerBuiltInFunction(context, intModule, "max", BuiltInMaxFunctionBodyExpr.getFactory())
+        registerBuiltInFunction(context, intModule, "abs", IntAbsBuiltInFunction.getFactory())
+        registerBuiltInFunction(context, intModule, "min", IntMinBuiltInFunction.getFactory())
+        registerBuiltInFunction(context, intModule, "max", IntMaxBuiltInFunction.getFactory())
 
         return context
     }
