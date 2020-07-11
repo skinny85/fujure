@@ -1,6 +1,8 @@
 package org.fujure.truffle
 
 import org.assertj.core.api.Assertions.assertThat
+import org.fujure.truffle.runtime.IO
+import org.fujure.truffle.runtime.io.Effect
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Value
 
@@ -335,6 +337,23 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
                 val result = fujureBindings.getMember("Unnamed").getMember("result2")
 
                 assertThat(result.asInt()).isEqualTo(-8)
+            }
+        }
+
+        it.describes("when evaluating IO methods") {
+            it.beginsAll {
+                evalFujure("""
+                    def main(): IO = IO.putStrLn("Hello, world!")
+                """)
+            }
+
+            it.should("evaluate without errors") {
+                assertNoException()
+            }
+
+            it.should("return an IO result") {
+                val io = result.asHostObject<IO<*>>()
+                assertThat(io.effects).containsExactly(Effect.Print("Hello, world!\n"))
             }
         }
 

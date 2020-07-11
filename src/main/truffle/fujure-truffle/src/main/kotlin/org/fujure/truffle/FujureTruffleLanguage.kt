@@ -17,8 +17,9 @@ import org.fujure.truffle.nodes.RootFunctionNode
 import org.fujure.truffle.nodes.RootModuleNode
 import org.fujure.truffle.nodes.exprs.ExprNode
 import org.fujure.truffle.nodes.exprs.FuncArgumentReferenceExprNode
-import org.fujure.truffle.nodes.exprs.builtins.Int.IntAbsBuiltInFunction
 import org.fujure.truffle.nodes.exprs.builtins.BuiltInFunctionBodyExpr
+import org.fujure.truffle.nodes.exprs.builtins.IO.IOPutStrLnBuiltInFunction
+import org.fujure.truffle.nodes.exprs.builtins.Int.IntAbsBuiltInFunction
 import org.fujure.truffle.nodes.exprs.builtins.Int.IntMaxBuiltInFunction
 import org.fujure.truffle.nodes.exprs.builtins.Int.IntMinBuiltInFunction
 import org.fujure.truffle.runtime.FujureFunctionObject
@@ -40,6 +41,11 @@ class FujureTruffleLanguage : TruffleLanguage<FujureTruffleContext>() {
         registerBuiltInFunction(context, intModule, "abs", IntAbsBuiltInFunction.getFactory())
         registerBuiltInFunction(context, intModule, "min", IntMinBuiltInFunction.getFactory())
         registerBuiltInFunction(context, intModule, "max", IntMaxBuiltInFunction.getFactory())
+
+        // fujure.io.std.IO
+        val ioModule = Module("fujure.io.std", "IO")
+        context.resetModule(ioModule)
+        registerBuiltInFunction(context, ioModule, "putStrLn", IOPutStrLnBuiltInFunction.getFactory())
 
         return context
     }

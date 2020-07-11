@@ -35,4 +35,5 @@ object BuiltInTypes {
     val Bool = SimpleType("fujure", "Bool")
     val Char = SimpleType("fujure", "Char")
     val String = SimpleType("fujure", "String")
+    val IO = SimpleType("fujure.io.std", "IO")
 }

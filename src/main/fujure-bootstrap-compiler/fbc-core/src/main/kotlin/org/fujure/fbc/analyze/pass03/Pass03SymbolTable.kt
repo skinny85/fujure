@@ -37,6 +37,7 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
                 "Bool" -> BuiltInTypes.Bool
                 "Char" -> BuiltInTypes.Char
                 "String" -> BuiltInTypes.String
+                "IO" -> BuiltInTypes.IO
                 else -> null
             }
         }
@@ -174,7 +175,9 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
                 "Unit" to Module("fujure", "Unit"),
                 "Bool" to Module("fujure", "Bool"),
                 "Char" to Module("fujure", "Char"),
-                "String" to Module("fujure", "String"))
+                "String" to Module("fujure", "String"),
+                "IO" to Module("fujure.io.std", "IO")
+        )
     }
 
     private class Scope(private val isFuncArgScope: Boolean) {

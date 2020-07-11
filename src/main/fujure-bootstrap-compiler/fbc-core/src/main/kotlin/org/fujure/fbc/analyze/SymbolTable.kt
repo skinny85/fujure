@@ -48,6 +48,10 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols> = emptyMap()) 
                 Module("fujure", "Char") to mapOf(
                 ),
                 Module("fujure", "String") to mapOf(
+                ),
+                Module("fujure.io.std", "IO") to mapOf(
+                        "putStrLn" to QualifiedType.FunctionType(BuiltInTypes.IO, listOf(BuiltInTypes.String)),
+                        "chain" to QualifiedType.FunctionType(BuiltInTypes.IO, listOf(BuiltInTypes.IO, BuiltInTypes.IO))
                 )
         )
     }

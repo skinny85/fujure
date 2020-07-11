@@ -61,6 +61,6 @@ abstract class AbstractTruffleSpec : SpecnazKotlin {
     }
 
     private companion object {
-        val BUILT_IN_KEY_REGEX: Pattern = Pattern.compile("""^fujure\.\w+$""")
+        val BUILT_IN_KEY_REGEX: Pattern = Pattern.compile("""^fujure\..+$""")
     }
 }

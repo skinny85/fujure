@@ -111,5 +111,20 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                 assertAnalysisSucceeded()
             }
         }
+
+        it.describes("for a pseudo-do block with the IO type") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def main(): IO = IO.putStrLn("Hello, how are you?")
+                                .chain(IO.putStrLn("I'm great, thanks for asking!"))
+                        """)
+                        .analyzed()
+            }
+
+            it.should("be analyzed successfully") {
+                assertAnalysisSucceeded()
+            }
+        }
     }
 }}
