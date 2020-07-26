@@ -343,7 +343,9 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
         it.describes("when evaluating IO methods") {
             it.beginsAll {
                 evalFujure("""
-                    def main(): IO = IO.putStrLn("Hello, world!")
+                    def main(): IO = IO.putStrLn("Tic")
+                        .chain(IO.putStrLn("Tac"))
+                        .chain(IO.putStrLn("Toe"))
                 """)
             }
 
@@ -353,7 +355,11 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
 
             it.should("return an IO result") {
                 val io = result.asHostObject<IO<*>>()
-                assertThat(io.effects).containsExactly(Effect.Print("Hello, world!\n"))
+                assertThat(io.effects).containsExactly(
+                        Effect.Print("Tic\n"),
+                        Effect.Print("Tac\n"),
+                        Effect.Print("Toe\n")
+                )
             }
         }
 

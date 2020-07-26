@@ -4,6 +4,7 @@ import com.oracle.truffle.api.dsl.NodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;
 import org.fujure.truffle.nodes.exprs.builtins.BuiltInFunctionBodyExpr;
 import org.fujure.truffle.runtime.IO;
+import org.fujure.truffle.runtime.Unit;
 import org.fujure.truffle.runtime.io.Effect;
 
 public abstract class IOPutStrLnBuiltInFunction extends BuiltInFunctionBodyExpr {
@@ -12,7 +13,7 @@ public abstract class IOPutStrLnBuiltInFunction extends BuiltInFunctionBodyExpr 
     }
 
     @Specialization
-    public IO putStrLn(String line) {
+    public IO<Unit> putStrLn(String line) {
         return IO.of(new Effect.Print(line + "\n"));
     }
 }
