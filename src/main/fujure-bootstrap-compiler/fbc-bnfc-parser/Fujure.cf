@@ -38,8 +38,11 @@ separator nonempty FuncTypeFragm "->" ;
 SimpleFuncTypeFragm         . FuncTypeFragm   ::= SimpleType ;
 FuncFuncTypeFragm           . FuncTypeFragm   ::= "(" FuncType ")" ;
 FragmSimpleType             . SimpleType      ::= [SimpleTypeFragm] ;
+GenericSimpleType           . SimpleType      ::= [SimpleTypeFragm] "<" [GenericTypeValue] ">" ;
 separator nonempty SimpleTypeFragm "." ;
 IdSimpleTypeFragm           . SimpleTypeFragm ::= JID ;
+separator GenericTypeValue "," ;
+GenericTypeDescValue        . GenericTypeValue ::= TypeDesc ;
 
 IfExpr             . Expr   ::= "if" Expr "then" Expr "else" Expr ;
 LetExpr            . Expr   ::= "let" [LetDef] "in" Expr ;

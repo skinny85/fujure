@@ -6,10 +6,12 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncFuncTypeFragm
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncType
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeDesc
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeFragm
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiArgFuncType
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleFuncTypeFragm
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleType
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeDesc
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeFragm
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeDesc
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ZeroArgFuncType
 
@@ -47,8 +49,16 @@ internal object TypeDesc2TypeReference :
     }
 
     override fun visit(fragmSimpleType: FragmSimpleType, arg: Unit): TypeReference.SimpleType {
-        return TypeReference.SimpleType(fragmSimpleType.listsimpletypefragm_.map { simpleTypeFragm ->
-            simpleTypeFragm.accept({ idSimpleTypeFragm, _ -> idSimpleTypeFragm.jid_ }, arg)
+        return simpleType2TypeReference(fragmSimpleType.listsimpletypefragm_)
+    }
+
+    override fun visit(genericSimpleType: GenericSimpleType, arg: Unit): TypeReference.SimpleType {
+        return simpleType2TypeReference(genericSimpleType.listsimpletypefragm_)
+    }
+
+    private fun simpleType2TypeReference(simpleTypeFragments: List<SimpleTypeFragm>): TypeReference.SimpleType {
+        return TypeReference.SimpleType(simpleTypeFragments.map { simpleTypeFragm ->
+            simpleTypeFragm.accept({ idSimpleTypeFragm, _ -> idSimpleTypeFragm.jid_ }, Unit)
         })
     }
 }

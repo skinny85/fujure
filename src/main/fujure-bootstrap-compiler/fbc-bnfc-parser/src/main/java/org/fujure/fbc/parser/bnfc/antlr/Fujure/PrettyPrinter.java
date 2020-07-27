@@ -408,6 +408,36 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListGenericTypeValue foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListGenericTypeValue foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeValue foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeValue foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
   public static String print(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr foo)
   {
     pp(foo, 0);
@@ -854,6 +884,16 @@ public class PrettyPrinter
        pp(_fragmsimpletype.listsimpletypefragm_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType _genericsimpletype = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_genericsimpletype.listsimpletypefragm_, 0);
+       render("<");
+       pp(_genericsimpletype.listgenerictypevalue_, 0);
+       render(">");
+       if (_i_ > 0) render(_R_PAREN);
+    }
   }
 
   private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListSimpleTypeFragm foo, int _i_)
@@ -875,6 +915,29 @@ public class PrettyPrinter
        org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IdSimpleTypeFragm _idsimpletypefragm = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IdSimpleTypeFragm) foo;
        if (_i_ > 0) render(_L_PAREN);
        pp(_idsimpletypefragm.jid_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListGenericTypeValue foo, int _i_)
+  {
+     for (java.util.Iterator<GenericTypeValue> it = foo.iterator(); it.hasNext();)
+     {
+       pp(it.next(), _i_);
+       if (it.hasNext()) {
+         render(",");
+       } else {
+         render("");
+       }
+     }  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeValue foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue _generictypedescvalue = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_generictypedescvalue.typedesc_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -1546,6 +1609,19 @@ public class PrettyPrinter
        render("]");
        render(")");
     }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType _genericsimpletype = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType) foo;
+       render("(");
+       render("GenericSimpleType");
+       render("[");
+       sh(_genericsimpletype.listsimpletypefragm_);
+       render("]");
+       render("[");
+       sh(_genericsimpletype.listgenerictypevalue_);
+       render("]");
+       render(")");
+    }
   }
 
   private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListSimpleTypeFragm foo)
@@ -1566,6 +1642,28 @@ public class PrettyPrinter
        render("(");
        render("IdSimpleTypeFragm");
        sh(_idsimpletypefragm.jid_);
+       render(")");
+    }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ListGenericTypeValue foo)
+  {
+     for (java.util.Iterator<GenericTypeValue> it = foo.iterator(); it.hasNext();)
+     {
+       sh(it.next());
+       if (it.hasNext())
+         render(",");
+     }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeValue foo)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue _generictypedescvalue = (org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue) foo;
+       render("(");
+       render("GenericTypeDescValue");
+       sh(_generictypedescvalue.typedesc_);
        render(")");
     }
   }

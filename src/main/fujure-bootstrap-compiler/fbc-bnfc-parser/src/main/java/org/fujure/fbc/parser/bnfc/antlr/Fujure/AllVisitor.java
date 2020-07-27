@@ -20,6 +20,7 @@ public interface AllVisitor<R,A> extends
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeFragm.Visitor<R,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleType.Visitor<R,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeFragm.Visitor<R,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeValue.Visitor<R,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr.Visitor<R,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDef.Visitor<R,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg.Visitor<R,A>,

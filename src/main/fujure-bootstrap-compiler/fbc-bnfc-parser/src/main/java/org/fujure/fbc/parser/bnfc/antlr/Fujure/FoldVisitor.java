@@ -205,10 +205,29 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
       }
       return r;
     }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType p, A arg) {
+      R r = leaf(arg);
+      for (SimpleTypeFragm x : p.listsimpletypefragm_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
+      for (GenericTypeValue x : p.listgenerictypevalue_)
+      {
+        r = combine(x.accept(this, arg), r, arg);
+      }
+      return r;
+    }
 
 /* SimpleTypeFragm */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IdSimpleTypeFragm p, A arg) {
       R r = leaf(arg);
+      return r;
+    }
+
+/* GenericTypeValue */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue p, A arg) {
+      R r = leaf(arg);
+      r = combine(p.typedesc_.accept(this, arg), r, arg);
       return r;
     }
 

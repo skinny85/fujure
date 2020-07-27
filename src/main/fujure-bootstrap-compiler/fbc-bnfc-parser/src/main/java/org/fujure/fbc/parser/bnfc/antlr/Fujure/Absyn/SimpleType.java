@@ -4,6 +4,7 @@ public abstract class SimpleType implements java.io.Serializable {
   public abstract <R,A> R accept(SimpleType.Visitor<R,A> v, A arg);
   public interface Visitor <R,A> {
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FragmSimpleType p, A arg);
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType p, A arg);
 
   }
 

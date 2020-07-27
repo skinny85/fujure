@@ -484,6 +484,18 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGenericSimpleType(FujureParser.GenericSimpleTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGenericSimpleType(FujureParser.GenericSimpleTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterListSimpleTypeFragm_AppendLast(FujureParser.ListSimpleTypeFragm_AppendLastContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -515,6 +527,54 @@ public class FujureParserBaseListener implements FujureParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitIdSimpleTypeFragm(FujureParser.IdSimpleTypeFragmContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListGenericTypeValue_Empty(FujureParser.ListGenericTypeValue_EmptyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListGenericTypeValue_Empty(FujureParser.ListGenericTypeValue_EmptyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListGenericTypeValue_AppendLast(FujureParser.ListGenericTypeValue_AppendLastContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListGenericTypeValue_AppendLast(FujureParser.ListGenericTypeValue_AppendLastContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListGenericTypeValue_PrependFirst(FujureParser.ListGenericTypeValue_PrependFirstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListGenericTypeValue_PrependFirst(FujureParser.ListGenericTypeValue_PrependFirstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGenericTypeDescValue(FujureParser.GenericTypeDescValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGenericTypeDescValue(FujureParser.GenericTypeDescValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

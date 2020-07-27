@@ -476,6 +476,18 @@ public interface FujureParserListener extends ParseTreeListener {
 	 */
 	void exitFragmSimpleType(FujureParser.FragmSimpleTypeContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code GenericSimpleType}
+	 * labeled alternative in {@link FujureParser#simpleType}.
+	 * @param ctx the parse tree
+	 */
+	void enterGenericSimpleType(FujureParser.GenericSimpleTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code GenericSimpleType}
+	 * labeled alternative in {@link FujureParser#simpleType}.
+	 * @param ctx the parse tree
+	 */
+	void exitGenericSimpleType(FujureParser.GenericSimpleTypeContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code ListSimpleTypeFragm_AppendLast}
 	 * labeled alternative in {@link FujureParser#listSimpleTypeFragm}.
 	 * @param ctx the parse tree
@@ -511,6 +523,54 @@ public interface FujureParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIdSimpleTypeFragm(FujureParser.IdSimpleTypeFragmContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListGenericTypeValue_Empty}
+	 * labeled alternative in {@link FujureParser#listGenericTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterListGenericTypeValue_Empty(FujureParser.ListGenericTypeValue_EmptyContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListGenericTypeValue_Empty}
+	 * labeled alternative in {@link FujureParser#listGenericTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitListGenericTypeValue_Empty(FujureParser.ListGenericTypeValue_EmptyContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListGenericTypeValue_AppendLast}
+	 * labeled alternative in {@link FujureParser#listGenericTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterListGenericTypeValue_AppendLast(FujureParser.ListGenericTypeValue_AppendLastContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListGenericTypeValue_AppendLast}
+	 * labeled alternative in {@link FujureParser#listGenericTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitListGenericTypeValue_AppendLast(FujureParser.ListGenericTypeValue_AppendLastContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ListGenericTypeValue_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listGenericTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterListGenericTypeValue_PrependFirst(FujureParser.ListGenericTypeValue_PrependFirstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ListGenericTypeValue_PrependFirst}
+	 * labeled alternative in {@link FujureParser#listGenericTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitListGenericTypeValue_PrependFirst(FujureParser.ListGenericTypeValue_PrependFirstContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code GenericTypeDescValue}
+	 * labeled alternative in {@link FujureParser#genericTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterGenericTypeDescValue(FujureParser.GenericTypeDescValueContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code GenericTypeDescValue}
+	 * labeled alternative in {@link FujureParser#genericTypeValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitGenericTypeDescValue(FujureParser.GenericTypeDescValueContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code IfExpr}
 	 * labeled alternative in {@link FujureParser#expr}.

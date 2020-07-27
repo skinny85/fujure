@@ -85,12 +85,18 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
     }
 /* SimpleType */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FragmSimpleType p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleType p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* SimpleTypeFragm */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IdSimpleTypeFragm p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeFragm p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+/* GenericTypeValue */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeValue p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
 /* Expr */

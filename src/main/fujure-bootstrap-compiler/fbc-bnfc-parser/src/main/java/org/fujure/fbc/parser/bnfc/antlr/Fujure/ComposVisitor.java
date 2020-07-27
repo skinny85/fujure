@@ -20,6 +20,7 @@ public class ComposVisitor<A> implements
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeFragm,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleType.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleType,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeFragm.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeFragm,A>,
+  org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeValue.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeValue,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDef.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.LetDef,A>,
   org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg.Visitor<org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.CallArg,A>,
@@ -214,12 +215,31 @@ public class ComposVisitor<A> implements
         listsimpletypefragm_.add(x.accept(this,arg));
       }
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FragmSimpleType(listsimpletypefragm_);
+    }    public SimpleType visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType p, A arg)
+    {
+      ListSimpleTypeFragm listsimpletypefragm_ = new ListSimpleTypeFragm();
+      for (SimpleTypeFragm x : p.listsimpletypefragm_)
+      {
+        listsimpletypefragm_.add(x.accept(this,arg));
+      }
+      ListGenericTypeValue listgenerictypevalue_ = new ListGenericTypeValue();
+      for (GenericTypeValue x : p.listgenerictypevalue_)
+      {
+        listgenerictypevalue_.add(x.accept(this,arg));
+      }
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType(listsimpletypefragm_, listgenerictypevalue_);
     }
 /* SimpleTypeFragm */
     public SimpleTypeFragm visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IdSimpleTypeFragm p, A arg)
     {
       String jid_ = p.jid_;
       return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IdSimpleTypeFragm(jid_);
+    }
+/* GenericTypeValue */
+    public GenericTypeValue visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue p, A arg)
+    {
+      TypeDesc typedesc_ = p.typedesc_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue(typedesc_);
     }
 /* Expr */
     public Expr visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IfExpr p, A arg)

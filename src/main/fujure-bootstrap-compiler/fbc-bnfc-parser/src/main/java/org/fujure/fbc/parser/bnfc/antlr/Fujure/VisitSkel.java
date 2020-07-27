@@ -197,6 +197,13 @@ public class VisitSkel
       for (SimpleTypeFragm x: p.listsimpletypefragm_)
       { /* ... */ }
       return null;
+    }    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType p, A arg)
+    { /* Code For GenericSimpleType Goes Here */
+      for (SimpleTypeFragm x: p.listsimpletypefragm_)
+      { /* ... */ }
+      for (GenericTypeValue x: p.listgenerictypevalue_)
+      { /* ... */ }
+      return null;
     }
   }
   public class SimpleTypeFragmVisitor<R,A> implements SimpleTypeFragm.Visitor<R,A>
@@ -204,6 +211,14 @@ public class VisitSkel
     public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.IdSimpleTypeFragm p, A arg)
     { /* Code For IdSimpleTypeFragm Goes Here */
       //p.jid_;
+      return null;
+    }
+  }
+  public class GenericTypeValueVisitor<R,A> implements GenericTypeValue.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue p, A arg)
+    { /* Code For GenericTypeDescValue Goes Here */
+      p.typedesc_.accept(new TypeDescVisitor<R,A>(), arg);
       return null;
     }
   }
