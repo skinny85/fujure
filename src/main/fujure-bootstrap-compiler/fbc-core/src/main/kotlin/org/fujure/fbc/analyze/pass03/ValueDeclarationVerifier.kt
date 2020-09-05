@@ -21,7 +21,7 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
         val errors = mutableListOf<SemanticError>()
         var aDef: ADef.AValueDef? = null
 
-        // logic common for all kinds of values
+        // logic common to all kinds of values
         val context = ErrorContext.ValueDefinition(valName)
         if (!NameValidator.validValueName(valueDeclaration.id)) {
             errors.add(SemanticError.InvalidName(valueDeclaration.id))

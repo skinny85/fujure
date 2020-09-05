@@ -13,7 +13,7 @@ import org.fujure.fbc.ast.ValueReference
 
 class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         private val symbolTable: SymbolTable) {
-    fun findType(typeReference: TypeReference): QualifiedType?  = when (typeReference) {
+    fun findType(typeReference: TypeReference): QualifiedType? = when (typeReference) {
         is TypeReference.SimpleType -> findType(typeReference)
         is TypeReference.FunctionType -> {
             val returnType = findType(typeReference.returnType)

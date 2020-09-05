@@ -8,13 +8,17 @@ import java.util.List;
 
 public final class IO<T> {
     public static <T> IO<T> of(Effect<T> effect) {
-        return new IO<>(Collections.singletonList(effect));
+        return new IO<>(effect);
     }
 
     public final List<Effect<?>> effects;
 
+    private IO(Effect<T> effect) {
+        this.effects = Collections.singletonList(effect);
+    }
+
     private IO(List<Effect<?>> effects) {
-        this.effects = Collections.unmodifiableList(effects);
+        this.effects = effects;
     }
 
     public <U> IO<U> chain(IO<U> that) {
