@@ -49,4 +49,11 @@ public class ExampleTest {
     public void test_string_value() {
         assertThat(Example.s).isEqualTo("Hello, \nWorld!");
     }
+
+    @Test
+    public void test_ternary_operator_precedence() {
+        // let b = if 1 + 1 == 2 then if 3 + 3 == 6 then 5 else 2 else true || false
+
+//        boolean b = 1 + 1 == 2 + 2 ? 3 + 3 == 4 + 4 ? 5 + 5 : 6 + 6 : true ? false : false || true;
+    }
 }

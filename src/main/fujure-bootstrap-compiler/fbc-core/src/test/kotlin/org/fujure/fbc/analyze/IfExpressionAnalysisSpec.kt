@@ -51,5 +51,22 @@ class IfExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                                 BuiltInTypes.Char, BuiltInTypes.Unit))
             }
         }
+
+        it.describes("with nested 'if' expressions") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a = if true
+                                then if false then 1 else 2
+                                else 3
+                            def b: Int = a + 1
+                        """)
+                        .analyzed()
+            }
+
+            it.should("analyze them correctly") {
+                assertAnalysisSucceeded()
+            }
+        }
     }
 }}
