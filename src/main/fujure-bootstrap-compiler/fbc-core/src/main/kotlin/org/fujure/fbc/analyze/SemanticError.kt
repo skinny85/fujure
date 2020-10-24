@@ -44,6 +44,9 @@ sealed class SemanticError {
     data class TypeNotFound(val context: ErrorContext, val typeReference: TypeReference.SimpleType) :
             SemanticError()
 
+    data class TypeParametersMismatch(val context: ErrorContext, val reference: TypeReference.SimpleType,
+            val typeFamily: TypeFamily) : SemanticError()
+
     data class TypeMismatch(val context: ErrorContext, val expected: QualifiedType,
                             val actual: QualifiedType) :
             SemanticError()
@@ -99,6 +102,15 @@ sealed class SemanticError {
         is DefaultArgumentValueUnsupported ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Argument '${this.argName}' declares a default value, which is currently not supported"
+        is TypeParametersMismatch -> {
+            val preamble = "Error ${this.context.humanReadableMsg()}: "
+            val errorMessage = if (this.typeFamily.typeParameters > 0) {
+                "Wrong number of type arguments for ${this.typeFamily.inStringForm()}: ${this.reference.genericTypes.size}, required: ${this.typeFamily.typeParameters}"
+            } else {
+                "Type ${this.typeFamily.inStringForm()} does not have type parameters"
+            }
+            preamble + errorMessage
+        }
         is TypeMismatch ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Type mismatch, expected: ${this.expected.inStringForm()} " +

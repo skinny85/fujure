@@ -124,11 +124,20 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
             context: ErrorContext.ValueDefinition): QualifiedType? {
         return when (typeReference) {
             is TypeReference.SimpleType -> {
-                val ret = symbolTable.findType(typeReference)
-                if (ret == null) {
+                val genericTypes = typeReference.genericTypes.map { qualifiedType(it, errors, context) }
+                val typeFamily = symbolTable.findTypeFamily(typeReference)
+                if (typeFamily == null) {
                     errors.add(SemanticError.TypeNotFound(context, typeReference))
                 }
-                ret
+                if (typeFamily != null && genericTypes.all { it != null }) {
+                    val ret = typeFamily.toQualifiedType(genericTypes.requireNoNulls())
+                    if (ret == null) {
+                        errors.add(SemanticError.TypeParametersMismatch(context, typeReference, typeFamily))
+                    }
+                    ret
+                } else {
+                    null
+                }
             }
             is TypeReference.FunctionType -> {
                 val qualifiedArgumentTypes = typeReference.argumentTypes.map { qualifiedType(it, errors, context) }

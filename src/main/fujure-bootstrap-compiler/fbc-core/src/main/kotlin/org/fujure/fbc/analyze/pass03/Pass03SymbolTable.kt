@@ -1,9 +1,11 @@
 package org.fujure.fbc.analyze.pass03
 
+import org.fujure.fbc.analyze.BuiltInTypeFamilies
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.QualifiedType
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.analyze.SymbolTable
+import org.fujure.fbc.analyze.TypeFamily
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.Module
@@ -14,7 +16,14 @@ import org.fujure.fbc.ast.ValueReference
 class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         private val symbolTable: SymbolTable) {
     fun findType(typeReference: TypeReference): QualifiedType? = when (typeReference) {
-        is TypeReference.SimpleType -> findType(typeReference)
+        is TypeReference.SimpleType -> {
+            val genericTypes = typeReference.genericTypes.map { findType(it) }
+            val typeFamily = findTypeFamily(typeReference)
+            if (typeFamily != null && genericTypes.all { it != null })
+                typeFamily.toQualifiedType(genericTypes.requireNoNulls())
+            else
+                null
+        }
         is TypeReference.FunctionType -> {
             val returnType = findType(typeReference.returnType)
             val argumentTypes = typeReference.argumentTypes.map { findType(it) }
@@ -26,18 +35,18 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         }
     }
 
-    fun findType(typeReference: TypeReference.SimpleType): QualifiedType? {
+    fun findTypeFamily(typeReference: TypeReference.SimpleType): TypeFamily? {
         if (typeReference.ids.size != 1) {
             return null
         } else {
             val id = typeReference.ids[0]
             return when (id) {
-                "Int" -> BuiltInTypes.Int
-                "Unit" -> BuiltInTypes.Unit
-                "Bool" -> BuiltInTypes.Bool
-                "Char" -> BuiltInTypes.Char
-                "String" -> BuiltInTypes.String
-                "IO" -> BuiltInTypes.IO
+                "Int" -> BuiltInTypeFamilies.Int
+                "Unit" -> BuiltInTypeFamilies.Unit
+                "Bool" -> BuiltInTypeFamilies.Bool
+                "Char" -> BuiltInTypeFamilies.Char
+                "String" -> BuiltInTypeFamilies.String
+                "IO" -> BuiltInTypeFamilies.IO
                 else -> null
             }
         }

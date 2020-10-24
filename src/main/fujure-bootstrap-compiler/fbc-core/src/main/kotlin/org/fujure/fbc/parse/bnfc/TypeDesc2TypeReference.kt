@@ -7,6 +7,8 @@ import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncType
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeDesc
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeFragm
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue
+import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeValue
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiArgFuncType
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleFuncTypeFragm
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleType
@@ -19,7 +21,8 @@ internal object TypeDesc2TypeReference :
         TypeDesc.Visitor<TypeReference, Unit>,
         FuncType.Visitor<TypeReference.FunctionType, Unit>,
         FuncTypeFragm.Visitor<TypeReference, Unit>,
-        SimpleType.Visitor<TypeReference.SimpleType, Unit> {
+        SimpleType.Visitor<TypeReference.SimpleType, Unit>,
+        GenericTypeValue.Visitor<TypeReference, Unit> {
     override fun visit(simpleTypeDesc: SimpleTypeDesc, arg: Unit): TypeReference {
         return simpleTypeDesc.simpletype_.accept(this, arg)
     }
@@ -53,12 +56,18 @@ internal object TypeDesc2TypeReference :
     }
 
     override fun visit(genericSimpleType: GenericSimpleType, arg: Unit): TypeReference.SimpleType {
-        return simpleType2TypeReference(genericSimpleType.listsimpletypefragm_)
+        return simpleType2TypeReference(genericSimpleType.listsimpletypefragm_,
+                genericSimpleType.listgenerictypevalue_.map { genericTypeValue -> genericTypeValue.accept(this, arg) })
     }
 
-    private fun simpleType2TypeReference(simpleTypeFragments: List<SimpleTypeFragm>): TypeReference.SimpleType {
+    override fun visit(genericTypeDescValue: GenericTypeDescValue, arg: Unit): TypeReference {
+        return genericTypeDescValue.typedesc_.accept(this, arg)
+    }
+
+    private fun simpleType2TypeReference(simpleTypeFragments: List<SimpleTypeFragm>,
+            genericTypes: List<TypeReference> = listOf()): TypeReference.SimpleType {
         return TypeReference.SimpleType(simpleTypeFragments.map { simpleTypeFragm ->
             simpleTypeFragm.accept({ idSimpleTypeFragm, _ -> idSimpleTypeFragm.jid_ }, Unit)
-        })
+        }, genericTypes)
     }
 }

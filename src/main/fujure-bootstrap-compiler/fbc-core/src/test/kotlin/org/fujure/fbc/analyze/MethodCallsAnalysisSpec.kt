@@ -112,11 +112,11 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             }
         }
 
-        it.describes("for a pseudo-do block with the IO type") {
+        it.describes("for a pseudo do-block with the IO type") {
             it.beginsAll {
                 AnalysisBuilder
                         .file("""
-                            def main(): IO = IO.putStrLn("Hello, how are you?")
+                            def main(): IO<String> = IO.putStrLn("Hello, how are you?")
                                 .chain(IO.putStrLn("I'm great, thanks for asking!"))
                         """)
                         .analyzed()
