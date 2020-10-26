@@ -1,5 +1,6 @@
 package org.fujure.fbc.parse.bnfc
 
+import org.fujure.fbc.ast.TypeName
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FragmSimpleType
 import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncFuncTypeFragm
@@ -66,8 +67,8 @@ internal object TypeDesc2TypeReference :
 
     private fun simpleType2TypeReference(simpleTypeFragments: List<SimpleTypeFragm>,
             genericTypes: List<TypeReference> = listOf()): TypeReference.SimpleType {
-        return TypeReference.SimpleType(simpleTypeFragments.map { simpleTypeFragm ->
+        return TypeReference.SimpleType(TypeName(simpleTypeFragments.map { simpleTypeFragm ->
             simpleTypeFragm.accept({ idSimpleTypeFragm, _ -> idSimpleTypeFragm.jid_ }, Unit)
-        }, genericTypes)
+        }), genericTypes)
     }
 }

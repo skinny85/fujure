@@ -1,6 +1,7 @@
 package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
+import org.fujure.fbc.ast.TypeName
 import org.fujure.fbc.ast.TypeReference
 
 class GenericTypesSpec : AbstractSemanticAnalysisSpec() { init {
@@ -19,7 +20,7 @@ class GenericTypesSpec : AbstractSemanticAnalysisSpec() { init {
                         SemanticError.TypeParametersMismatch(
                                 ErrorContext.ValueDefinition("a"),
                                 TypeReference.SimpleType(
-                                        listOf("String"),
+                                        TypeName("String"),
                                         listOf(TypeReference.SimpleType("Int"))),
                                 BuiltInTypeFamilies.String))
             }
@@ -39,6 +40,27 @@ class GenericTypesSpec : AbstractSemanticAnalysisSpec() { init {
                         SemanticError.TypeParametersMismatch(
                                 ErrorContext.ValueDefinition("a"),
                                 TypeReference.SimpleType("IO"),
+                                BuiltInTypeFamilies.IO))
+            }
+        }
+
+        it.describes("for a value with a type with an extra type parameter") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a: IO<String, Int> = IO.putStrLn("a")
+                        """)
+                        .analyzed()
+            }
+
+            it.should("report a TypeParametersMismatch error") {
+                assertThat(file1Errors()).containsExactly(
+                        SemanticError.TypeParametersMismatch(
+                                ErrorContext.ValueDefinition("a"),
+                                TypeReference.SimpleType(
+                                        TypeName("IO"),
+                                        listOf(TypeReference.SimpleType("String"), TypeReference.SimpleType("Int"))
+                                ),
                                 BuiltInTypeFamilies.IO))
             }
         }
@@ -74,7 +96,7 @@ class GenericTypesSpec : AbstractSemanticAnalysisSpec() { init {
                         SemanticError.TypeNotFound(
                                 ErrorContext.ValueDefinition("a"),
                                 TypeReference.SimpleType(
-                                        listOf("DoesNotExist"),
+                                        TypeName("DoesNotExist"),
                                         listOf(TypeReference.SimpleType("Unit")))))
             }
         }

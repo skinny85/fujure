@@ -125,7 +125,7 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
         return when (typeReference) {
             is TypeReference.SimpleType -> {
                 val genericTypes = typeReference.genericTypes.map { qualifiedType(it, errors, context) }
-                val typeFamily = symbolTable.findTypeFamily(typeReference)
+                val typeFamily = symbolTable.findTypeFamily(typeReference.typeName)
                 if (typeFamily == null) {
                     errors.add(SemanticError.TypeNotFound(context, typeReference))
                 }
