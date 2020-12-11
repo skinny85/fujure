@@ -2,7 +2,7 @@ package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.analyze.ErrorContext.ValueDefinition
-import org.fujure.fbc.ast.TypeReference
+import org.fujure.fbc.ast.TypeName
 import org.fujure.fbc.ast.ValueReference
 
 class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
@@ -240,12 +240,12 @@ class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
 
                 it.should("first report the error for the argument type, and then the return type") {
                     assertThat(file1Errors()).containsExactly(
+                            SemanticError.  TypeNotFound(
+                                    ValueDefinition("a"),
+                                    TypeName("A")),
                             SemanticError.TypeNotFound(
                                     ValueDefinition("a"),
-                                    TypeReference.SimpleType("A")),
-                            SemanticError.TypeNotFound(
-                                    ValueDefinition("a"),
-                                    TypeReference.SimpleType("B")))
+                                    TypeName("B")))
                 }
             }
 

@@ -2,6 +2,7 @@ package org.fujure.fbc.analyze
 
 import org.fujure.fbc.ast.Import
 import org.fujure.fbc.ast.InputFile
+import org.fujure.fbc.ast.TypeName
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
@@ -41,7 +42,7 @@ sealed class SemanticError {
 
     data class DefaultArgumentValueUnsupported(val context: ErrorContext, val argName: String) : SemanticError()
 
-    data class TypeNotFound(val context: ErrorContext, val typeReference: TypeReference.SimpleType) :
+    data class TypeNotFound(val context: ErrorContext, val typeName: TypeName) :
             SemanticError()
 
     data class TypeParametersMismatch(val context: ErrorContext, val reference: TypeReference.SimpleType,
@@ -51,7 +52,7 @@ sealed class SemanticError {
                             val actual: QualifiedType) :
             SemanticError()
 
-    data class NotInvokable(val context: ErrorContext, val found: QualifiedType) :
+    data class NotInvokable(val context: ErrorContext, val found: QualifiedType.SimpleType) :
             SemanticError()
 
     data class ArgumentCountMismatch(val context: ErrorContext, val expected: Int, val actual: Int) :
@@ -74,7 +75,7 @@ sealed class SemanticError {
             "Unresolved import: '${this.import.inStringForm()}'"
         is TypeNotFound ->
             "Error ${this.context.humanReadableMsg()}: " +
-                    "Unresolved type reference ${this.typeReference.inStringForm()}"
+                    "Unresolved type reference ${this.typeName.inStringForm()}"
         is UnresolvedReference ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Unresolved reference '${this.valueReference.inStringForm()}'"

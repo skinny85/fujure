@@ -2,7 +2,7 @@ package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.analyze.ErrorContext.ValueDefinition
-import org.fujure.fbc.ast.TypeReference
+import org.fujure.fbc.ast.TypeName
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
 
@@ -101,7 +101,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     ValueReference("x")),
                             SemanticError.TypeNotFound(
                                     ValueDefinition("a"),
-                                    TypeReference.SimpleType("DoesNotExist")))
+                                    TypeName("DoesNotExist")))
                 }
             }
 
@@ -127,7 +127,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                                     BuiltInTypes.Bool, BuiltInTypes.Int),
                             SemanticError.TypeNotFound(
                                     ValueDefinition("y"),
-                                    TypeReference.SimpleType("a", "B", "C")),
+                                    TypeName("a", "B", "C")),
                             SemanticError.TypeMismatch(
                                     ValueDefinition("z"),
                                     BuiltInTypes.Bool, BuiltInTypes.Int),
@@ -431,7 +431,7 @@ class ReferencesAnalysisSpec : AbstractSemanticAnalysisSpec() {
                     assertThat(file1Errors()).containsExactly(
                             SemanticError.TypeNotFound(
                                     ValueDefinition("a"),
-                                    TypeReference.SimpleType("DoesNotExist")),
+                                    TypeName("DoesNotExist")),
                             SemanticError.CannotBeAbstract(
                                     ValueDefinition("a")))
                 }

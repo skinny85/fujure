@@ -78,7 +78,7 @@ class GenericTypesSpec : AbstractSemanticAnalysisSpec() { init {
                 assertThat(file1Errors()).containsExactly(
                         SemanticError.TypeNotFound(
                                 ErrorContext.ValueDefinition("a"),
-                                TypeReference.SimpleType("DoesNotExist")))
+                                TypeName("DoesNotExist")))
             }
         }
 
@@ -95,9 +95,7 @@ class GenericTypesSpec : AbstractSemanticAnalysisSpec() { init {
                 assertThat(file1Errors()).containsExactly(
                         SemanticError.TypeNotFound(
                                 ErrorContext.ValueDefinition("a"),
-                                TypeReference.SimpleType(
-                                        TypeName("DoesNotExist"),
-                                        listOf(TypeReference.SimpleType("Unit")))))
+                                TypeName("DoesNotExist")))
             }
         }
     }

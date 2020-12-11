@@ -40,11 +40,11 @@ sealed class QualifiedType {
 }
 
 object BuiltInTypes {
-    val Int = BuiltInTypeFamilies.Int.toQualifiedType()!!
-    val Unit = BuiltInTypeFamilies.Unit.toQualifiedType()!!
-    val Bool = BuiltInTypeFamilies.Bool.toQualifiedType()!!
-    val Char = BuiltInTypeFamilies.Char.toQualifiedType()!!
-    val String = BuiltInTypeFamilies.String.toQualifiedType()!!
+    val Int: SimpleType = SimpleType(BuiltInTypeFamilies.Int)
+    val Unit: SimpleType = SimpleType(BuiltInTypeFamilies.Unit)
+    val Bool: SimpleType = SimpleType(BuiltInTypeFamilies.Bool)
+    val Char: SimpleType = SimpleType(BuiltInTypeFamilies.Char)
+    val String: SimpleType = SimpleType(BuiltInTypeFamilies.String)
     fun io(qualifiedType: QualifiedType): SimpleType {
         return SimpleType(BuiltInTypeFamilies.IO, listOf(qualifiedType))
     }

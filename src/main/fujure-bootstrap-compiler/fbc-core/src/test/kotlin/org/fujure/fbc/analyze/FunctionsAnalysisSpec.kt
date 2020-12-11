@@ -1,6 +1,7 @@
 package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
+import org.fujure.fbc.ast.TypeName
 import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueReference
 
@@ -56,9 +57,9 @@ class FunctionsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             it.should("report a TypeNotFound error for each instance of providing an unknown type (even if they're the same)") {
                 assertThat(file1Errors()).containsExactly(
                         SemanticError.TypeNotFound(
-                                ErrorContext.ValueDefinition("f"), TypeReference.SimpleType("B")),
+                                ErrorContext.ValueDefinition("f"), TypeName("B")),
                         SemanticError.TypeNotFound(
-                                ErrorContext.ValueDefinition("f"), TypeReference.SimpleType("B")))
+                                ErrorContext.ValueDefinition("f"), TypeName("B")))
             }
         }
 

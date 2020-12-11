@@ -116,17 +116,17 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                     }
                 }
 
-                val targetFunctionType: QualifiedType.FunctionType? = if (callTargetAnalysis.qualifiedType == null) {
-                    null
-                } else {
-                    if (callTargetAnalysis.qualifiedType is QualifiedType.FunctionType) {
+                val targetFunctionType: QualifiedType.FunctionType? = when (callTargetAnalysis.qualifiedType) {
+                    null -> null
+                    is QualifiedType.FunctionType -> {
                         // report an error about incorrect number of arguments
                         if (callTargetAnalysis.qualifiedType.argumentTypes.size != expr.arguments.size) {
                             errors.add(SemanticError.ArgumentCountMismatch(context,
                                     callTargetAnalysis.qualifiedType.argumentTypes.size, expr.arguments.size))
                         }
                         callTargetAnalysis.qualifiedType
-                    } else {
+                    }
+                    is QualifiedType.SimpleType -> {
                         // report an error that the target is of a non-invokable type
                         errors.add(SemanticError.NotInvokable(context, callTargetAnalysis.qualifiedType))
                         null
@@ -275,6 +275,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
 
                 val methodType: QualifiedType.FunctionType? = when (methodReferenceType) {
+                    null -> null
                     is QualifiedType.FunctionType -> {
                         // report an error about incorrect number of arguments
                         if (methodReferenceType.argumentTypes.size != expr.arguments.size + 1) {
@@ -283,8 +284,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         }
                         methodReferenceType
                     }
-                    null -> null
-                    else -> {
+                    is QualifiedType.SimpleType -> {
                         // report an error that the target is of a non-invokable type
                         errors.add(SemanticError.NotInvokable(context, methodReferenceType))
                         null
