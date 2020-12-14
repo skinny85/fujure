@@ -38,7 +38,6 @@ object JavaPoetCodeGenerator : CodeGenerator {
         val destFile = joinPaths(destDir, path)
 
         try {
-            destDir.mkdirs()
             javaFile.writeTo(destDir)
         } catch (e: IOException) {
             return CodeGenResult.Failure(annotatedAst.inputFile, destFile, e)

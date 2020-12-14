@@ -5,6 +5,9 @@ on: [ push ]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # disable the demon, as it's causing some problems
+      GRADLE_OPTS: -Dorg.gradle.debug=true
 
     steps:
       - uses: actions/checkout@v2
