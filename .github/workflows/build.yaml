@@ -25,6 +25,6 @@ jobs:
         run: ./gradlew build publish
 
       - name: Run the end-to-end tests
-        run:
-          - cd src/test/e2e-test-gradle
-          - ../../../gradlew build
+        run: |
+          cd src/test/e2e-test-gradle
+          ../../../gradlew build
