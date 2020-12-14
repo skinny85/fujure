@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # disable the demon, as it's causing some problems
-      GRADLE_OPTS: -Dorg.gradle.debug=true
+      GRADLE_OPTS: -Dorg.gradle.daemon=false
 
     steps:
       - uses: actions/checkout@v2
