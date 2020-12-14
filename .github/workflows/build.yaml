@@ -21,5 +21,10 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Build the Fujure compiler and plugins
+        run: ./gradlew build publish
+
+      - name: Run the end-to-end tests
+        run:
+          - cd src/test/e2e-test-gradle
+          - ../../../gradlew build
