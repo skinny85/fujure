@@ -11,7 +11,7 @@ public abstract class IOChainBuiltInFunction extends BuiltInFunctionBodyExpr {
     }
 
     @Specialization
-    public IO<?> putStrLn(IO<?> first, IO<?> second) {
+    public IO<?> chain(IO<?> first, IO<?> second) {
         return first.chain(second);
     }
 }

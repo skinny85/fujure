@@ -1,5 +1,6 @@
 package org.fujure.fbc.analyze
 
+import org.fujure.fbc.analyze.BuiltInTypes.io
 import org.fujure.fbc.ast.Module
 
 class SymbolTable(private val modules: Map<Module, ModuleSymbols> = emptyMap()) {
@@ -50,8 +51,8 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols> = emptyMap()) 
                 Module("fujure", "String") to mapOf(
                 ),
                 Module("fujure.io.std", "IO") to mapOf(
-                        "putStrLn" to QualifiedType.FunctionType(BuiltInTypes.io(BuiltInTypes.String), listOf(BuiltInTypes.String)),
-                        "chain" to QualifiedType.FunctionType(BuiltInTypes.io(BuiltInTypes.String), listOf(BuiltInTypes.io(BuiltInTypes.String), BuiltInTypes.io(BuiltInTypes.String)))
+                        "putStrLn" to QualifiedType.FunctionType(io(BuiltInTypes.Unit), listOf(BuiltInTypes.String)),
+                        "chain" to QualifiedType.FunctionType(io(BuiltInTypes.Unit), listOf(io(BuiltInTypes.Unit), io(BuiltInTypes.Unit)))
                 )
         )
     }

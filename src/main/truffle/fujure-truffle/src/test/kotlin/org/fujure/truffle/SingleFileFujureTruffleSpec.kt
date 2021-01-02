@@ -343,7 +343,7 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
         it.describes("when evaluating IO methods") {
             it.beginsAll {
                 evalFujure("""
-                    def main(): IO<String> = IO.putStrLn("Tic")
+                    def main(): IO<Unit> = IO.putStrLn("Tic")
                         .chain(IO.putStrLn("Tac"))
                         .chain(IO.putStrLn("Toe"))
                 """)

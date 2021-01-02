@@ -116,7 +116,7 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             it.beginsAll {
                 AnalysisBuilder
                         .file("""
-                            def main(): IO<String> = IO.putStrLn("Hello, how are you?")
+                            def main(): IO<Unit> = IO.putStrLn("Hello, how are you?")
                                 .chain(IO.putStrLn("I'm great, thanks for asking!"))
                         """)
                         .analyzed()

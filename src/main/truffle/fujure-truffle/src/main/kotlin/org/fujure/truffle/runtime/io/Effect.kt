@@ -7,7 +7,7 @@ sealed class Effect<T> {
 
     data class Print(private val text: String): Effect<Unit>() {
         override fun unsafePerformEffect(): Unit {
-            println(text)
+            print(text)
             return Unit.INSTANCE
         }
     }
