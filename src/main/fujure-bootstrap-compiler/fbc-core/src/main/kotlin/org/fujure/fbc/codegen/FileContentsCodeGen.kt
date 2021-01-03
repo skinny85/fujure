@@ -9,7 +9,7 @@ import org.fujure.fbc.aast.ADef
 import org.fujure.fbc.aast.AExpr
 import org.fujure.fbc.aast.AFileContents
 import org.fujure.fbc.analyze.BuiltInTypes
-import org.fujure.fbc.analyze.QualifiedType
+import org.fujure.fbc.analyze.PartialType
 import org.fujure.fbc.ast.Module
 import java.lang.reflect.Type
 import javax.lang.model.element.Modifier
@@ -40,11 +40,11 @@ class FileContentsCodeGen {
     }
 
     private fun generateField(simpleValueDef: ADef.AValueDef.ASimpleValueDef, module: Module): FieldSpec {
-        val fieldType = toJavaType(simpleValueDef.type)!!
+        val fieldType = toJavaType(simpleValueDef.type.partialType)!!
         val builder = FieldSpec.builder(fieldType, simpleValueDef.id,
                 Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
 
-        val initializerCodeBlock = aExpr2CodeBlock(simpleValueDef.initializer, module, simpleValueDef.type)
+        val initializerCodeBlock = aExpr2CodeBlock(simpleValueDef.initializer, module, simpleValueDef.type.partialType)
         return when (initializerCodeBlock) {
             is InitializerCode.InlineCode -> {
                 builder
@@ -67,8 +67,8 @@ class FileContentsCodeGen {
         staticInitializer!!.add(code)
     }
 
-    private fun toJavaType(qualifiedType: QualifiedType?): Type? {
-        return when (qualifiedType) {
+    private fun toJavaType(partialType: PartialType?): Type? {
+        return when (partialType) {
             BuiltInTypes.Int -> Integer.TYPE
             BuiltInTypes.Unit -> Void::class.java
             BuiltInTypes.Bool -> java.lang.Boolean.TYPE
@@ -85,7 +85,7 @@ class FileContentsCodeGen {
         class BlockCode(val code: CodeBlock, val variable: String) : InitializerCode()
     }
 
-    private fun aExpr2CodeBlock(aExpr: AExpr, module: Module, type: QualifiedType): InitializerCode {
+    private fun aExpr2CodeBlock(aExpr: AExpr, module: Module, type: PartialType): InitializerCode {
         return when (aExpr) {
             is AExpr.AIntLiteral -> {
                 literalCodeBlock(aExpr.value)
@@ -222,21 +222,21 @@ class FileContentsCodeGen {
                 for (decl in aExpr.declarations) {
                     val initCode = when (decl) {
                         is ADef.AValueDef.ASimpleValueDef ->
-                            aExpr2CodeBlock(decl.initializer, module, decl.type)
+                            aExpr2CodeBlock(decl.initializer, module, decl.type.partialType)
                         is ADef.AValueDef.AFunctionValueDef ->
                             throw UnsupportedOperationException("functions in let expressions are not supported by code generation")
                     }
                     when (initCode) {
                         is InitializerCode.InlineCode -> {
                             code
-                                    .add("\$T \$L = ", toJavaType(decl.type), decl.id)
+                                    .add("\$T \$L = ", toJavaType(decl.type.partialType), decl.id)
                                     .add(initCode.code)
                                     .add(";\n")
                         }
                         is InitializerCode.BlockCode -> {
                             code
                                     .add(initCode.code)
-                                    .addStatement("\$T \$L = \$L", toJavaType(decl.type), decl.id, initCode.variable)
+                                    .addStatement("\$T \$L = \$L", toJavaType(decl.type.partialType), decl.id, initCode.variable)
                         }
                     }
                 }
@@ -354,7 +354,7 @@ class FileContentsCodeGen {
     }
 
     private fun handleBinaryOperation(leftExpr: AExpr, rightExpr: AExpr, module: Module, operator: String,
-            operatorPrecedence: Int, resultType: QualifiedType, operandType: QualifiedType): InitializerCode {
+            operatorPrecedence: Int, resultType: PartialType, operandType: PartialType): InitializerCode {
         val leftOperandInitializer = aExpr2CodeBlock(leftExpr, module, operandType)
         val rightOperandInitializer = aExpr2CodeBlock(rightExpr, module, operandType)
 
@@ -430,7 +430,7 @@ class FileContentsCodeGen {
     }
 
     private fun handleComparisonOperation(leftExpr: AExpr, rightExpr: AExpr, module: Module, prolog: String,
-            operatorPrecedence: Int, operandType: QualifiedType): InitializerCode {
+            operatorPrecedence: Int, operandType: PartialType): InitializerCode {
         val leftOperandInitializer = aExpr2CodeBlock(leftExpr, module, operandType)
         val rightOperandInitializer = aExpr2CodeBlock(rightExpr, module, operandType)
 

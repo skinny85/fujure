@@ -1,26 +1,26 @@
 package org.fujure.fbc.aast
 
 import org.fujure.fbc.analyze.BuiltInTypes
-import org.fujure.fbc.analyze.QualifiedType
+import org.fujure.fbc.analyze.PartialType
 import org.fujure.fbc.ast.Module
 
 sealed class AExpr {
-    abstract val type: QualifiedType
+    abstract val type: PartialType
 
     // A reference to a value defined in a module
     // (possibly the same one the reference is in).
     data class AValueReference(val targetModule: Module,
-            val reference: String, override val type: QualifiedType): AExpr()
+            val reference: String, override val type: PartialType): AExpr()
 
     // A reference to a function argument.
     // Obviously, only valid inside a function body.
     data class AFuncArgReference(val funcArg: String,
-            val argIndex: Int, override val type: QualifiedType) : AExpr()
+            val argIndex: Int, override val type: PartialType) : AExpr()
 
     // A reference to a temporary variable.
     // In Fujure, these can only be created through 'let' expressions.
     data class ATemporaryVarReference(val variable: String,
-            val index: Int, override val type: QualifiedType): AExpr()
+            val index: Int, override val type: PartialType): AExpr()
 
     data class AIntLiteral(val value: Int) : AExpr() {
         override val type = BuiltInTypes.Int
@@ -112,7 +112,7 @@ sealed class AExpr {
         override val type = thenExpr.type
     }
 
-    data class ACall(val target: AExpr, val arguments: List<AExpr>, val returnType: QualifiedType) : AExpr() {
+    data class ACall(val target: AExpr, val arguments: List<AExpr>, val returnType: PartialType) : AExpr() {
         override val type = returnType
     }
 }

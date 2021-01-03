@@ -4,7 +4,8 @@ import org.fujure.fbc.aast.ADef
 import org.fujure.fbc.aast.AExpr
 import org.fujure.fbc.analyze.BuiltInTypes
 import org.fujure.fbc.analyze.ErrorContext
-import org.fujure.fbc.analyze.QualifiedType
+import org.fujure.fbc.analyze.CompleteType
+import org.fujure.fbc.analyze.PartialType
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
@@ -116,19 +117,19 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                     }
                 }
 
-                val targetFunctionType: QualifiedType.FunctionType? = when (callTargetAnalysis.qualifiedType) {
+                val targetFunctionType: PartialType.FunctionType? = when (callTargetAnalysis.partialType) {
                     null -> null
-                    is QualifiedType.FunctionType -> {
+                    is PartialType.FunctionType -> {
                         // report an error about incorrect number of arguments
-                        if (callTargetAnalysis.qualifiedType.argumentTypes.size != expr.arguments.size) {
+                        if (callTargetAnalysis.partialType.argumentTypes.size != expr.arguments.size) {
                             errors.add(SemanticError.ArgumentCountMismatch(context,
-                                    callTargetAnalysis.qualifiedType.argumentTypes.size, expr.arguments.size))
+                                    callTargetAnalysis.partialType.argumentTypes.size, expr.arguments.size))
                         }
-                        callTargetAnalysis.qualifiedType
+                        callTargetAnalysis.partialType
                     }
-                    is QualifiedType.SimpleType -> {
+                    is PartialType.SimpleType -> {
                         // report an error that the target is of a non-invokable type
-                        errors.add(SemanticError.NotInvokable(context, callTargetAnalysis.qualifiedType))
+                        errors.add(SemanticError.NotInvokable(context, callTargetAnalysis.partialType))
                         null
                     }
                 }
@@ -138,11 +139,11 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                     val argAnalysis = analyzeExpr(arg)
                     // check whether the argument type for this index matches
                     if (targetFunctionType != null && i < targetFunctionType.argumentTypes.size &&
-                            argAnalysis.qualifiedType != null &&
-                            argAnalysis.qualifiedType != targetFunctionType.argumentTypes[i]) {
+                            argAnalysis.partialType != null &&
+                            argAnalysis.partialType != targetFunctionType.argumentTypes[i]) {
                         errors.add(SemanticError.TypeMismatch(context,
                                 targetFunctionType.argumentTypes[i],
-                                argAnalysis.qualifiedType))
+                                argAnalysis.partialType))
                     }
 
                     when (argAnalysis) {
@@ -196,7 +197,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         null
                     }
                 }
-                val receiverType: QualifiedType? = receiverAnalysisResult.qualifiedType
+                val receiverType: PartialType? = receiverAnalysisResult.partialType
 
                 // The algorithm of method resolution is as follows:
                 //   1. Check the current scope. If a value with the name of the method was found:
@@ -215,22 +216,22 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
 
                 // Look up 1.
                 val currentModuleMethodLookupResult = symbolTable.lookup(methodReference, module, null, null)
-                val (currentModuleMethodReferenceType: QualifiedType?, foundInCurrentModule) = when (currentModuleMethodLookupResult) {
-                    is Pass03SymbolTable.LookupResult.ValueRefFound -> Pair(currentModuleMethodLookupResult.qualifiedType, true)
+                val (currentModuleMethodReferenceType: CompleteType?, foundInCurrentModule) = when (currentModuleMethodLookupResult) {
+                    is Pass03SymbolTable.LookupResult.ValueRefFound -> Pair(currentModuleMethodLookupResult.completeType, true)
                     else -> Pair(null, false)
                 }
                 // Look up 2.
                 val receiverModule: Module? = when (receiverType) {
-                    is QualifiedType.SimpleType -> Module(receiverType.packageName, receiverType.typeName)
+                    is PartialType.SimpleType -> Module(receiverType.packageName, receiverType.typeName)
                     null -> null
                     else -> null // ToDo do we need to report some error when the receiver is a function...?
                 }
-                val (receiverModuleMethodReferenceType: QualifiedType?, foundInReceiverModule) =
+                val (receiverModuleMethodReferenceType: CompleteType?, foundInReceiverModule) =
                         if (receiverModule == null) Pair(null, false) else {
                             val methodLookupResult = symbolTable.lookup(methodReference, receiverModule, null, null)
                             when (methodLookupResult) {
                                 is Pass03SymbolTable.LookupResult.ValueRefFound -> {
-                                    Pair(methodLookupResult.qualifiedType, true)
+                                    Pair(methodLookupResult.completeType, true)
                                 }
                                 else -> {
                                     Pair(null, false)
@@ -239,7 +240,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         }
 
                 // Run the algorithm!
-                val (methodModule: Module?, methodReferenceType: QualifiedType?) = if (!foundInCurrentModule) {
+                val (methodModule: Module?, methodReferenceType: CompleteType?) = if (!foundInCurrentModule) {
                     // we know that 1 failed
                     if (!foundInReceiverModule) {
                         // 2 failed as well - report an UnresolvedReference error
@@ -261,11 +262,11 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         // both a local and receiver's module values have been found.
                         // In this case, whoever matches - wins!
                         // In case both or neither matches, the local wins.
-                        val argTypes = listOf(receiverType) + expr.arguments.map { analyzeExpr(it).qualifiedType }
-                        val currentMatches = currentModuleMethodReferenceType is QualifiedType.FunctionType &&
-                                compareListsIgnoringNulls(currentModuleMethodReferenceType.argumentTypes, argTypes)
-                        val receiversMatches = receiverModuleMethodReferenceType is QualifiedType.FunctionType &&
-                                compareListsIgnoringNulls(receiverModuleMethodReferenceType.argumentTypes, argTypes)
+                        val argTypes = listOf(receiverType) + expr.arguments.map { analyzeExpr(it).partialType }
+                        val currentMatches = currentModuleMethodReferenceType?.partialType is PartialType.FunctionType &&
+                                compareListsIgnoringNulls((currentModuleMethodReferenceType.partialType as PartialType.FunctionType).argumentTypes, argTypes)
+                        val receiversMatches = receiverModuleMethodReferenceType?.partialType is PartialType.FunctionType &&
+                                compareListsIgnoringNulls((receiverModuleMethodReferenceType.partialType as PartialType.FunctionType).argumentTypes, argTypes)
                         if (!currentMatches && receiversMatches) {
                             Pair(receiverModule, receiverModuleMethodReferenceType)
                         } else {
@@ -274,19 +275,20 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                     }
                 }
 
-                val methodType: QualifiedType.FunctionType? = when (methodReferenceType) {
+                val methodReferencePartialType = methodReferenceType?.partialType
+                val methodType: PartialType.FunctionType? = when (methodReferencePartialType) {
                     null -> null
-                    is QualifiedType.FunctionType -> {
+                    is PartialType.FunctionType -> {
                         // report an error about incorrect number of arguments
-                        if (methodReferenceType.argumentTypes.size != expr.arguments.size + 1) {
+                        if (methodReferencePartialType.argumentTypes.size != expr.arguments.size + 1) {
                             errors.add(SemanticError.ArgumentCountMismatch(context,
-                                    methodReferenceType.argumentTypes.size, expr.arguments.size))
+                                    methodReferencePartialType.argumentTypes.size, expr.arguments.size))
                         }
-                        methodReferenceType
+                        methodReferencePartialType
                     }
-                    is QualifiedType.SimpleType -> {
+                    is PartialType.SimpleType -> {
                         // report an error that the target is of a non-invokable type
-                        errors.add(SemanticError.NotInvokable(context, methodReferenceType))
+                        errors.add(SemanticError.NotInvokable(context, methodReferencePartialType))
                         null
                     }
                 }
@@ -304,11 +306,11 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                     val argAnalysis = analyzeExpr(arg)
                     // check whether the argument type for this index matches
                     if (methodType != null && i + 1 < methodType.argumentTypes.size &&
-                            argAnalysis.qualifiedType != null &&
-                            argAnalysis.qualifiedType != methodType.argumentTypes[i + 1]) {
+                            argAnalysis.partialType != null &&
+                            argAnalysis.partialType != methodType.argumentTypes[i + 1]) {
                         errors.add(SemanticError.TypeMismatch(context,
                                 methodType.argumentTypes[i + 1],
-                                argAnalysis.qualifiedType))
+                                argAnalysis.partialType))
                     }
 
                     when (argAnalysis) {
@@ -353,7 +355,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             is Pass03SymbolTable.LookupResult.CyclicReference ->
                 ExprVerificationResult.Failure(SemanticError.CyclicDefinition(context, lookupResult.cycle))
             is Pass03SymbolTable.LookupResult.TempRefFound -> {
-                val qualifiedType = lookupResult.qualifiedType
+                val qualifiedType = lookupResult.partialType
                 val referenceExpr = if (qualifiedType == null)
                     null
                 else if (lookupResult.isFuncArg)
@@ -363,17 +365,17 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 ExprVerificationResult.Success(qualifiedType, referenceExpr)
             }
             is Pass03SymbolTable.LookupResult.ValueRefFound -> {
-                val qualifiedType = lookupResult.qualifiedType
-                ExprVerificationResult.Success(qualifiedType, if (qualifiedType == null)
+                val partialType = lookupResult.completeType?.partialType
+                ExprVerificationResult.Success(partialType, if (partialType == null)
                     null
                 else
-                    AExpr.AValueReference(lookupResult.module, ref.variable(), qualifiedType)
+                    AExpr.AValueReference(lookupResult.module, ref.variable(), partialType)
                 )
             }
         }
     }
 
-    private fun handleUnaryOperation(operand: Expr, expectedType: QualifiedType, cons: (AExpr) -> AExpr):
+    private fun handleUnaryOperation(operand: Expr, expectedType: PartialType, cons: (AExpr) -> AExpr):
             ExprVerificationResult {
         val errors = mutableListOf<SemanticError>()
         val operandAnalysisResult = analyzeExpr(operand)
@@ -386,7 +388,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 operandAnalysisResult.aExpr
             }
         }
-        val operandType = operandAnalysisResult.qualifiedType
+        val operandType = operandAnalysisResult.partialType
         if (operandType != null && operandType != expectedType) {
             errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), expectedType, operandType))
         }
@@ -408,7 +410,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
     }
 
     private fun handleHomogeneousBinaryOperatorReturningBool(leftExpr: Expr, rightExpr: Expr, cons: (AExpr, AExpr) -> AExpr,
-            expectedType: QualifiedType): ExprVerificationResult {
+            expectedType: PartialType): ExprVerificationResult {
         return handleHomogeneousBinaryOperation(leftExpr, rightExpr, cons, expectedType, BuiltInTypes.Bool)
     }
 
@@ -418,7 +420,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
     }
 
     private fun handleHomogeneousBinaryOperation(leftExpr: Expr, rightExpr: Expr, cons: (AExpr, AExpr) -> AExpr,
-            expectedType: QualifiedType, returnType: QualifiedType): ExprVerificationResult {
+            expectedType: PartialType, returnType: PartialType): ExprVerificationResult {
         val errors = mutableListOf<SemanticError>()
 
         val leftOperandAnalysisResult = analyzeExpr(leftExpr)
@@ -433,7 +435,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 leftOperandAnalysisResult.aExpr
             }
         }
-        val leftOperandType = leftOperandAnalysisResult.qualifiedType
+        val leftOperandType = leftOperandAnalysisResult.partialType
         if (leftOperandType != null && leftOperandType != expectedType) {
             errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), expectedType,
                     leftOperandType))
@@ -448,7 +450,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 rightOperandAnalysisResult.aExpr
             }
         }
-        val rightOperandType = rightOperandAnalysisResult.qualifiedType
+        val rightOperandType = rightOperandAnalysisResult.partialType
         if (rightOperandType != null && rightOperandType != expectedType) {
             errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), expectedType,
                     rightOperandType))
@@ -490,8 +492,8 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             }
         }
 
-        val leftOperandType = leftOperandAnalysisResult.qualifiedType
-        val rightOperandType = rightOperandAnalysisResult.qualifiedType
+        val leftOperandType = leftOperandAnalysisResult.partialType
+        val rightOperandType = rightOperandAnalysisResult.partialType
         if (leftOperandType != null && rightOperandType != null &&
                 leftOperandType != rightOperandType) {
             errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName),
@@ -527,7 +529,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 leftOperandAnalysisResult.aExpr
             }
         }
-        val leftOperandType = leftOperandAnalysisResult.qualifiedType
+        val leftOperandType = leftOperandAnalysisResult.partialType
 
         val rightOperandAast: AExpr? = when (rightOperandAnalysisResult) {
             is ExprVerificationResult.Failure -> {
@@ -538,7 +540,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 rightOperandAnalysisResult.aExpr
             }
         }
-        val rightOperandType = rightOperandAnalysisResult.qualifiedType
+        val rightOperandType = rightOperandAnalysisResult.partialType
 
         val errorContext = ErrorContext.ValueDefinition(valName)
         val exprIsStringConcatenation = leftOperandType == BuiltInTypes.String && rightOperandType != BuiltInTypes.Int ||
@@ -582,7 +584,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 conditionAnalysisResult.aExpr
             }
         }
-        val conditionType = conditionAnalysisResult.qualifiedType
+        val conditionType = conditionAnalysisResult.partialType
 
         val thenAast: AExpr? = when (thenAnalysisResult) {
             is ExprVerificationResult.Failure -> {
@@ -593,7 +595,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 thenAnalysisResult.aExpr
             }
         }
-        val thenType = thenAnalysisResult.qualifiedType
+        val thenType = thenAnalysisResult.partialType
 
         val elseAast: AExpr? = when (elseAnalysisResult) {
             is ExprVerificationResult.Failure -> {
@@ -604,7 +606,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 elseAnalysisResult.aExpr
             }
         }
-        val elseType = elseAnalysisResult.qualifiedType
+        val elseType = elseAnalysisResult.partialType
 
         val errorContext = ErrorContext.ValueDefinition(valName)
         if (conditionType != null && conditionType != BuiltInTypes.Bool) {
@@ -660,7 +662,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 is ADef.AValueDef.ASimpleValueDef -> aValueDeclaration.type
                 else -> null
             }
-            if (!symbolTable.addToLatestScope(module, id, qualifiedType)) {
+            if (!symbolTable.addToLatestScope(module, id, qualifiedType?.partialType)) {
                 errors.add(SemanticError.DuplicateDefinition(id, ErrorContext.ValueDefinition(valName)))
             }
         }
@@ -675,12 +677,12 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
         symbolTable.popLatestScope(module)
 
         return if (errors.isEmpty()) {
-            ExprVerificationResult.Success(result.qualifiedType, if (aExpr == null)
+            ExprVerificationResult.Success(result.partialType, if (aExpr == null)
                 null
             else
                 AExpr.ALet(declarations, aExpr))
         } else {
-            ExprVerificationResult.Failure(result.qualifiedType, errors)
+            ExprVerificationResult.Failure(result.partialType, errors)
         }
     }
 }
@@ -696,5 +698,5 @@ fun <T> compareListsIgnoringNulls(list1: List<T?>, list2: List<T?>): Boolean {
             return false
     }
 
-    return true;
+    return true
 }

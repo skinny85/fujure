@@ -1,7 +1,8 @@
 package org.fujure.fbc.analyze.pass03
 
 import org.fujure.fbc.analyze.BuiltInTypeFamilies
-import org.fujure.fbc.analyze.QualifiedType
+import org.fujure.fbc.analyze.CompleteType
+import org.fujure.fbc.analyze.PartialType
 import org.fujure.fbc.analyze.SemanticError
 import org.fujure.fbc.analyze.SymbolTable
 import org.fujure.fbc.analyze.TypeFamily
@@ -15,12 +16,12 @@ import org.fujure.fbc.ast.ValueReference
 
 class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         private val symbolTable: SymbolTable) {
-    fun findType(typeReference: TypeReference): QualifiedType? = when (typeReference) {
+    fun findType(typeReference: TypeReference): PartialType? = when (typeReference) {
         is TypeReference.SimpleType -> {
             val genericTypes = typeReference.genericTypes.map { findType(it) }
             val typeFamily = findTypeFamily(typeReference.typeName)
             if (typeFamily != null && genericTypes.all { it != null })
-                typeFamily.toQualifiedType(genericTypes.requireNoNulls())
+                typeFamily.toPartialType(genericTypes.requireNoNulls())
             else
                 null
         }
@@ -28,7 +29,7 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
             val returnType = findType(typeReference.returnType)
             val argumentTypes = typeReference.argumentTypes.map { findType(it) }
             if (returnType != null && argumentTypes.all { it != null }) {
-                QualifiedType.FunctionType(returnType, argumentTypes.requireNoNulls())
+                PartialType.FunctionType(returnType, argumentTypes.requireNoNulls())
             } else {
                 null
             }
@@ -64,21 +65,21 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
             return candidateModuleSymbols.lookupVariable(ref.variable(), candidateModule, anchor, this, chain)
         }
 
-        val qualifiedType: QualifiedType
+        val completeType: CompleteType
         try {
-            qualifiedType = symbolTable.lookup(candidateModule, ref.variable())
+            completeType = symbolTable.lookup(candidateModule, ref.variable())
         } catch (e: SymbolTable.NotFound) {
             return LookupResult.RefNotFound
         }
-        return LookupResult.ValueRefFound(qualifiedType, candidateModule)
+        return LookupResult.ValueRefFound(completeType, candidateModule)
     }
 
     fun pushNewScope(module: Module, isFuncArgScope: Boolean) {
         modules[module]!!.pushNewScope(isFuncArgScope)
     }
 
-    fun addToLatestScope(module: Module, id: String, qualifiedType: QualifiedType?): Boolean {
-        return modules[module]!!.addToLatestScope(id, qualifiedType)
+    fun addToLatestScope(module: Module, id: String, partialType: PartialType?): Boolean {
+        return modules[module]!!.addToLatestScope(id, partialType)
     }
 
     fun popLatestScope(module: Module) {
@@ -90,8 +91,8 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         data class ForwardReference(val name: String) : LookupResult()
         data class SelfReference(val name: String) : LookupResult()
         data class CyclicReference(val cycle: List<ValueCoordinates>) : LookupResult()
-        data class ValueRefFound(val qualifiedType: QualifiedType?, val module: Module) : LookupResult()
-        data class TempRefFound(val qualifiedType: QualifiedType?, val index: Int, val isFuncArg: Boolean) : LookupResult()
+        data class ValueRefFound(val completeType: CompleteType?, val module: Module) : LookupResult()
+        data class TempRefFound(val partialType: PartialType?, val index: Int, val isFuncArg: Boolean) : LookupResult()
     }
 }
 
@@ -123,8 +124,8 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
         scopes.add(0, Scope(isFuncArgScope))
     }
 
-    fun addToLatestScope(id: String, qualifiedType: QualifiedType?): Boolean {
-        return scopes[0].add(id, qualifiedType)
+    fun addToLatestScope(id: String, partialType: PartialType?): Boolean {
+        return scopes[0].add(id, partialType)
     }
 
     fun popLatestScope() {
@@ -138,7 +139,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
             val result = scope.find(id)
             when (result) {
                 is ScopeFindResult.Found -> {
-                    return Pass03SymbolTable.LookupResult.TempRefFound(result.qualifiedType,
+                    return Pass03SymbolTable.LookupResult.TempRefFound(result.partialType,
                             result.index, result.isFuncArg)
                 }
             }
@@ -185,13 +186,13 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
     }
 
     private class Scope(private val isFuncArgScope: Boolean) {
-        private val values = linkedMapOf<String, QualifiedType?>()
+        private val values = linkedMapOf<String, PartialType?>()
 
-        fun add(id: String, qualifiedType: QualifiedType?): Boolean {
+        fun add(id: String, partialType: PartialType?): Boolean {
             return if (values.containsKey(id)) {
                 false
             } else {
-                values[id] = qualifiedType
+                values[id] = partialType
                 true
             }
         }
@@ -209,21 +210,22 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
     }
 
     private sealed class ScopeFindResult {
-        data class Found(val qualifiedType: QualifiedType?, val index: Int, val isFuncArg: Boolean) : ScopeFindResult()
+        data class Found(val partialType: PartialType?, val index: Int, val isFuncArg: Boolean) : ScopeFindResult()
         object Missing : ScopeFindResult()
     }
 
     internal sealed class ValueTypeHolder {
         abstract fun resolvedType(symbolTable: Pass03SymbolTable, module: Module, valName: String,
-                chain: List<ValueCoordinates>?): QualifiedType?
+                chain: List<ValueCoordinates>?): CompleteType?
 
         class FunctionValueTypeHolder(private val functionValueDef: Def.ValueDef.FunctionValueDef) : ValueTypeHolder() {
             override fun resolvedType(symbolTable: Pass03SymbolTable, module: Module, valName: String,
-                    chain: List<ValueCoordinates>?): QualifiedType? {
-                val returnType = functionValueDef.returnType;
+                    chain: List<ValueCoordinates>?): CompleteType? {
+                val returnType = functionValueDef.returnType
                 val argumentTypes = functionValueDef.arguments.map { arg -> arg.declaredType }
                 return if (returnType != null && argumentTypes.all { it != null }) {
-                    symbolTable.findType(TypeReference.FunctionType(returnType, argumentTypes.requireNoNulls()))
+                    // ToDo handle type variables from the function definition's AST here
+                    CompleteType.fromPartialType(symbolTable.findType(TypeReference.FunctionType(returnType, argumentTypes.requireNoNulls())))
                 } else {
                     null
                 }
@@ -233,20 +235,23 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
         class SimpleValueTypeHolder(simpleValueDef: Def.ValueDef.SimpleValueDef) : ValueTypeHolder() {
             private val valResolution = ValueResolution.fromDeclaration(simpleValueDef.declaredType, simpleValueDef.initializer)
             private var resolved = false
-            private var resolvedType: QualifiedType? = null
+            private var resolvedType: CompleteType? = null
 
             override fun resolvedType(symbolTable: Pass03SymbolTable, module: Module, valName: String,
-                    chain: List<ValueCoordinates>?): QualifiedType? {
-                if (!resolved)
-                    resolve(symbolTable, module, valName, chain)
+                    chain: List<ValueCoordinates>?): CompleteType? {
+                if (!resolved) {
+                    this.resolve(symbolTable, module, valName, chain)
+                }
 
-                return resolvedType
+                return this.resolvedType
             }
 
             private fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String,
                     chain: List<ValueCoordinates>?) {
-                resolvedType = valResolution.resolve(symbolTable, module, valName, chain)
-                resolved = true
+                val declaredType = valResolution.resolve(symbolTable, module, valName, chain)
+                // simple value definitions cannot declare type variables
+                this.resolvedType = CompleteType.fromPartialType(declaredType)
+                this.resolved = true
             }
         }
     }
@@ -268,7 +273,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
         }
 
         fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>?):
-                QualifiedType? {
+                PartialType? {
             return when (this) {
                 is NoInfoProvided -> null
                 is FromDeclaredType -> symbolTable.findType(this.declaredType)
@@ -287,11 +292,11 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
                             val semanticErrors = exprAnalysisResult.errors
                             val cyclicError = semanticErrors.find { it is SemanticError.CyclicDefinition }
                             if (cyclicError == null)
-                                exprAnalysisResult.qualifiedType
+                                exprAnalysisResult.partialType
                             else
                                 throw CyclicReferenceException((cyclicError as SemanticError.CyclicDefinition).cycle)
                         }
-                        is ExprVerificationResult.Success -> exprAnalysisResult.qualifiedType
+                        is ExprVerificationResult.Success -> exprAnalysisResult.partialType
                     }
                 }
             }

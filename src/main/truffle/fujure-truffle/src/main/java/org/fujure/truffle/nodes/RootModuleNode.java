@@ -5,7 +5,7 @@ import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.DirectCallNode;
 import com.oracle.truffle.api.nodes.RootNode;
-import org.fujure.fbc.analyze.QualifiedType;
+import org.fujure.fbc.analyze.PartialType;
 import org.fujure.fbc.ast.Module;
 import org.fujure.truffle.FujureTruffleContext;
 import org.fujure.truffle.FujureTruffleLanguage;
@@ -55,7 +55,7 @@ public final class RootModuleNode extends RootNode {
             if (defNode instanceof SimpleValueDefNode) {
                 SimpleValueDefNode simpleValueDefNode = (SimpleValueDefNode) defNode;
                 contextReference.get().registerValue(module, simpleValueDefNode.id,
-                        this.defaultValueFor(simpleValueDefNode.type));
+                        this.defaultValueFor(simpleValueDefNode.type.getPartialType()));
             }
         }
 
@@ -84,9 +84,9 @@ public final class RootModuleNode extends RootNode {
         }
     }
 
-    private Object defaultValueFor(QualifiedType type) {
-        if (type instanceof QualifiedType.SimpleType) {
-            QualifiedType.SimpleType simpleType = (QualifiedType.SimpleType) type;
+    private Object defaultValueFor(PartialType type) {
+        if (type instanceof PartialType.SimpleType) {
+            PartialType.SimpleType simpleType = (PartialType.SimpleType) type;
             if ("fujure".equals(simpleType.getPackageName())) {
                 switch (simpleType.getTypeName()) {
                     case "Int": return 0;

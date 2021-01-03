@@ -48,11 +48,11 @@ sealed class SemanticError {
     data class TypeParametersMismatch(val context: ErrorContext, val reference: TypeReference.SimpleType,
             val typeFamily: TypeFamily) : SemanticError()
 
-    data class TypeMismatch(val context: ErrorContext, val expected: QualifiedType,
-                            val actual: QualifiedType) :
+    data class TypeMismatch(val context: ErrorContext, val expected: PartialType,
+                            val actual: PartialType) :
             SemanticError()
 
-    data class NotInvokable(val context: ErrorContext, val found: QualifiedType.SimpleType) :
+    data class NotInvokable(val context: ErrorContext, val found: PartialType.SimpleType) :
             SemanticError()
 
     data class ArgumentCountMismatch(val context: ErrorContext, val expected: Int, val actual: Int) :

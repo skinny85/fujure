@@ -7,9 +7,9 @@ data class TypeFamily(val packageName: String, val typeName: String, val typePar
     else
         "$packageName.$typeName"
 
-    fun toQualifiedType(genericTypes: List<QualifiedType> = emptyList()): QualifiedType? {
+    fun toPartialType(genericTypes: List<PartialType> = emptyList()): PartialType? {
         return if (this.typeParameters == genericTypes.size)
-            QualifiedType.SimpleType(this, genericTypes)
+            PartialType.SimpleType(this, genericTypes)
         else
             null
     }

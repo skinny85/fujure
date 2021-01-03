@@ -2,9 +2,11 @@ package org.fujure.fbc.analyze.pass03
 
 import org.fujure.fbc.aast.AArgument
 import org.fujure.fbc.aast.ADef
+import org.fujure.fbc.analyze.PartialType
 import org.fujure.fbc.analyze.ErrorContext
-import org.fujure.fbc.analyze.QualifiedType
+import org.fujure.fbc.analyze.CompleteType
 import org.fujure.fbc.analyze.SemanticError
+import org.fujure.fbc.analyze.TypeVariables
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Module
 import org.fujure.fbc.ast.TypeReference
@@ -29,14 +31,14 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
 
         when (valueDeclaration) {
             is Def.ValueDef.SimpleValueDef -> {
-                val declaredQualifiedType = qualifiedType(valueDeclaration.declaredType, errors, context)
+                val declaredQualifiedType = partialType(valueDeclaration.declaredType, errors, context)
 
                 if (valueDeclaration.initializer == null) {
                     errors.add(SemanticError.CannotBeAbstract(context, if (topLevelDeclaration) null else valueDeclaration.id))
                 } else {
                     val initializerAnalysisResult = ExprVerifier(symbolTable, module, valName, chain)
                             .analyzeExpr(valueDeclaration.initializer)
-                    val initializerType = initializerAnalysisResult.qualifiedType
+                    val initializerType = initializerAnalysisResult.partialType
                     when (initializerAnalysisResult) {
                         is ExprVerificationResult.Failure -> {
                             errors.addAll(initializerAnalysisResult.errors)
@@ -45,7 +47,8 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                             val initializerAExpr = initializerAnalysisResult.aExpr
                             val valueType = declaredQualifiedType ?: initializerType
                             if (valueType != null && initializerAExpr != null) {
-                                aDef = ADef.AValueDef.ASimpleValueDef(valueDeclaration.id, valueType, initializerAExpr)
+                                // simple values do not have type variables
+                                aDef = ADef.AValueDef.ASimpleValueDef(valueDeclaration.id, CompleteType(valueType), initializerAExpr)
                             }
                         }
                     }
@@ -60,10 +63,7 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                 val aArguments = mutableListOf<AArgument>()
                 symbolTable.pushNewScope(module, true)
                 for (argument in valueDeclaration.arguments) {
-                    val argumentType: QualifiedType? = if (argument.declaredType != null)
-                        qualifiedType(argument.declaredType, errors, context)
-                    else
-                        null
+                    val argumentType = partialType(argument.declaredType, errors, context)
                     if (!symbolTable.addToLatestScope(module, argument.id, argumentType)) {
                         errors.add(SemanticError.DuplicateDefinition(argument.id, context))
                     }
@@ -79,11 +79,11 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                 }
 
                 // handle the return type
-                val returnType: QualifiedType? = if (valueDeclaration.returnType == null) {
+                val returnType: PartialType? = if (valueDeclaration.returnType == null) {
                     errors.add(SemanticError.TypeRequired.FunctionReturn(context))
                     null
                 } else {
-                    qualifiedType(valueDeclaration.returnType, errors, context)
+                    partialType(valueDeclaration.returnType, errors, context)
                 }
 
                 // handle the body
@@ -92,7 +92,7 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                 } else {
                     val bodyAnalysisResult = ExprVerifier(symbolTable, module, valName, chain)
                             .analyzeExpr(valueDeclaration.body)
-                    val bodyType = bodyAnalysisResult.qualifiedType
+                    val bodyType = bodyAnalysisResult.partialType
                     when (bodyAnalysisResult) {
                         is ExprVerificationResult.Failure -> {
                             errors.addAll(bodyAnalysisResult.errors)
@@ -100,7 +100,8 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                         is ExprVerificationResult.Success -> {
                             val bodyAExpr = bodyAnalysisResult.aExpr
                             if (returnType != null && bodyAExpr != null) {
-                                aDef = ADef.AValueDef.AFunctionValueDef(valueDeclaration.id, aArguments, returnType, bodyAExpr)
+                                // ToDo allow function definitions to have type variables
+                                aDef = ADef.AValueDef.AFunctionValueDef(valueDeclaration.id, TypeVariables(), aArguments, returnType, bodyAExpr)
                             }
                         }
                     }
@@ -120,17 +121,17 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
             Disjunction.Left(errors)
     }
 
-    private fun qualifiedType(typeReference: TypeReference?, errors: MutableList<SemanticError>,
-            context: ErrorContext.ValueDefinition): QualifiedType? {
+    private fun partialType(typeReference: TypeReference?, errors: MutableList<SemanticError>,
+            context: ErrorContext.ValueDefinition): PartialType? {
         return when (typeReference) {
             is TypeReference.SimpleType -> {
-                val genericTypes = typeReference.genericTypes.map { qualifiedType(it, errors, context) }
+                val genericTypes = typeReference.genericTypes.map { partialType(it, errors, context) }
                 val typeFamily = symbolTable.findTypeFamily(typeReference.typeName)
                 if (typeFamily == null) {
                     errors.add(SemanticError.TypeNotFound(context, typeReference.typeName))
                 }
                 if (typeFamily != null && genericTypes.all { it != null }) {
-                    val ret = typeFamily.toQualifiedType(genericTypes.requireNoNulls())
+                    val ret = typeFamily.toPartialType(genericTypes.requireNoNulls())
                     if (ret == null) {
                         errors.add(SemanticError.TypeParametersMismatch(context, typeReference, typeFamily))
                     }
@@ -140,10 +141,10 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                 }
             }
             is TypeReference.FunctionType -> {
-                val qualifiedArgumentTypes = typeReference.argumentTypes.map { qualifiedType(it, errors, context) }
-                val qualifiedReturnType = qualifiedType(typeReference.returnType, errors, context)
+                val qualifiedArgumentTypes = typeReference.argumentTypes.map { partialType(it, errors, context) }
+                val qualifiedReturnType = partialType(typeReference.returnType, errors, context)
                 if (qualifiedReturnType != null && qualifiedArgumentTypes.all { it != null }) {
-                    QualifiedType.FunctionType(qualifiedReturnType, qualifiedArgumentTypes.requireNoNulls())
+                    PartialType.FunctionType(qualifiedReturnType, qualifiedArgumentTypes.requireNoNulls())
                 } else {
                     null
                 }

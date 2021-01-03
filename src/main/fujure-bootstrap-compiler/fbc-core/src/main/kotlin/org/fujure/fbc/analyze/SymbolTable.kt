@@ -9,7 +9,7 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols> = emptyMap()) 
                 modules.containsKey(module)
     }
 
-    fun lookup(targetModule: Module, name: String): QualifiedType {
+    fun lookup(targetModule: Module, name: String): CompleteType {
         val builtInModuleSymbols = BUILT_IN_MODULES[targetModule]
         if (builtInModuleSymbols != null) {
             val qualifiedType = builtInModuleSymbols[name]
@@ -36,11 +36,11 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols> = emptyMap()) 
     private companion object {
         val BUILT_IN_MODULES = mapOf(
                 Module("fujure", "Int") to mapOf(
-                        "minInt" to BuiltInTypes.Int,
-                        "maxInt" to BuiltInTypes.Int,
-                        "abs" to QualifiedType.FunctionType(BuiltInTypes.Int, listOf(BuiltInTypes.Int)),
-                        "min" to QualifiedType.FunctionType(BuiltInTypes.Int, listOf(BuiltInTypes.Int, BuiltInTypes.Int)),
-                        "max" to QualifiedType.FunctionType(BuiltInTypes.Int, listOf(BuiltInTypes.Int, BuiltInTypes.Int))
+                        "minInt" to CompleteType(BuiltInTypes.Int),
+                        "maxInt" to CompleteType(BuiltInTypes.Int),
+                        "abs" to CompleteType(PartialType.FunctionType(BuiltInTypes.Int, listOf(BuiltInTypes.Int))),
+                        "min" to CompleteType(PartialType.FunctionType(BuiltInTypes.Int, listOf(BuiltInTypes.Int, BuiltInTypes.Int))),
+                        "max" to CompleteType(PartialType.FunctionType(BuiltInTypes.Int, listOf(BuiltInTypes.Int, BuiltInTypes.Int)))
                 ),
                 Module("fujure", "Unit") to mapOf(
                 ),
@@ -51,15 +51,15 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols> = emptyMap()) 
                 Module("fujure", "String") to mapOf(
                 ),
                 Module("fujure.io.std", "IO") to mapOf(
-                        "putStrLn" to QualifiedType.FunctionType(io(BuiltInTypes.Unit), listOf(BuiltInTypes.String)),
-                        "chain" to QualifiedType.FunctionType(io(BuiltInTypes.Unit), listOf(io(BuiltInTypes.Unit), io(BuiltInTypes.Unit)))
+                        "putStrLn" to CompleteType(PartialType.FunctionType(io(BuiltInTypes.Unit), listOf(BuiltInTypes.String))),
+                        "chain" to CompleteType(PartialType.FunctionType(io(BuiltInTypes.Unit), listOf(io(BuiltInTypes.Unit), io(BuiltInTypes.Unit))))
                 )
         )
     }
 }
 
-class ModuleSymbols(private val simpleValues: Map<String, QualifiedType>) {
-    fun lookup(name: String): QualifiedType? {
+class ModuleSymbols(private val simpleValues: Map<String, CompleteType>) {
+    fun lookup(name: String): CompleteType? {
         return simpleValues[name]
     }
 }
