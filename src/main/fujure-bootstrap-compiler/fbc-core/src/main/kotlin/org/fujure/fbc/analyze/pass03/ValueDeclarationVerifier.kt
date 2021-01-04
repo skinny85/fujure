@@ -31,14 +31,14 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
 
         when (valueDeclaration) {
             is Def.ValueDef.SimpleValueDef -> {
-                val declaredQualifiedType = partialType(valueDeclaration.declaredType, errors, context)
+                val declaredQualifiedType = CompleteType.fromPartialType(partialType(valueDeclaration.declaredType, errors, context))
 
                 if (valueDeclaration.initializer == null) {
                     errors.add(SemanticError.CannotBeAbstract(context, if (topLevelDeclaration) null else valueDeclaration.id))
                 } else {
                     val initializerAnalysisResult = ExprVerifier(symbolTable, module, valName, chain)
                             .analyzeExpr(valueDeclaration.initializer)
-                    val initializerType = initializerAnalysisResult.partialType
+                    val initializerType = initializerAnalysisResult.completeType
                     when (initializerAnalysisResult) {
                         is ExprVerificationResult.Failure -> {
                             errors.addAll(initializerAnalysisResult.errors)
@@ -47,14 +47,13 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                             val initializerAExpr = initializerAnalysisResult.aExpr
                             val valueType = declaredQualifiedType ?: initializerType
                             if (valueType != null && initializerAExpr != null) {
-                                // simple values do not have type variables
-                                aDef = ADef.AValueDef.ASimpleValueDef(valueDeclaration.id, CompleteType(valueType), initializerAExpr)
+                                aDef = ADef.AValueDef.ASimpleValueDef(valueDeclaration.id, valueType, initializerAExpr)
                             }
                         }
                     }
                     if (initializerType != null && declaredQualifiedType != null &&
                             declaredQualifiedType != initializerType) {
-                        errors.add(SemanticError.TypeMismatch(context, declaredQualifiedType, initializerType))
+                        errors.add(SemanticError.TypeMismatch(context, declaredQualifiedType.partialType, initializerType.partialType))
                     }
                 }
             }
@@ -63,7 +62,7 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                 val aArguments = mutableListOf<AArgument>()
                 symbolTable.pushNewScope(module, true)
                 for (argument in valueDeclaration.arguments) {
-                    val argumentType = partialType(argument.declaredType, errors, context)
+                    val argumentType = CompleteType.fromPartialType(partialType(argument.declaredType, errors, context))
                     if (!symbolTable.addToLatestScope(module, argument.id, argumentType)) {
                         errors.add(SemanticError.DuplicateDefinition(argument.id, context))
                     }
@@ -74,7 +73,7 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                         errors.add(SemanticError.DefaultArgumentValueUnsupported(context, argument.id))
                     }
                     if (argumentType != null) {
-                        aArguments.add(AArgument(argument.id, argumentType))
+                        aArguments.add(AArgument(argument.id, argumentType.partialType))
                     }
                 }
 
@@ -92,7 +91,7 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                 } else {
                     val bodyAnalysisResult = ExprVerifier(symbolTable, module, valName, chain)
                             .analyzeExpr(valueDeclaration.body)
-                    val bodyType = bodyAnalysisResult.partialType
+                    val bodyType = bodyAnalysisResult.completeType
                     when (bodyAnalysisResult) {
                         is ExprVerificationResult.Failure -> {
                             errors.addAll(bodyAnalysisResult.errors)
@@ -106,8 +105,8 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                         }
                     }
                     if (bodyType != null && returnType != null &&
-                            bodyType != returnType) {
-                        errors.add(SemanticError.TypeMismatch(context, returnType, bodyType))
+                            bodyType != CompleteType(returnType)) {
+                        errors.add(SemanticError.TypeMismatch(context, returnType, bodyType.partialType))
                     }
                 }
 

@@ -22,23 +22,23 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
 
         return when (expr)  {
             is Expr.IntLiteral -> {
-                ExprVerificationResult.Success(BuiltInTypes.Int, AExpr.AIntLiteral(expr.value))
+                ExprVerificationResult.Success(CompleteType(BuiltInTypes.Int), AExpr.AIntLiteral(expr.value))
             }
             is Expr.UnitLiteral -> {
-                ExprVerificationResult.Success(BuiltInTypes.Unit, AExpr.AUnitLiteral)
+                ExprVerificationResult.Success(CompleteType(BuiltInTypes.Unit), AExpr.AUnitLiteral)
             }
             is Expr.BoolLiteral -> {
-                ExprVerificationResult.Success(BuiltInTypes.Bool, if (expr is Expr.BoolLiteral.True)
+                ExprVerificationResult.Success(CompleteType(BuiltInTypes.Bool), if (expr is Expr.BoolLiteral.True)
                     AExpr.ABoolLiteral.True
                 else
                     AExpr.ABoolLiteral.False
                 )
             }
             is Expr.CharLiteral -> {
-                ExprVerificationResult.Success(BuiltInTypes.Char, AExpr.ACharLiteral(expr.value))
+                ExprVerificationResult.Success(CompleteType(BuiltInTypes.Char), AExpr.ACharLiteral(expr.value))
             }
             is Expr.StringLiteral -> {
-                ExprVerificationResult.Success(BuiltInTypes.String, AExpr.AStringLiteral(expr.value))
+                ExprVerificationResult.Success(CompleteType(BuiltInTypes.String), AExpr.AStringLiteral(expr.value))
             }
             is Expr.UnqualifiedReference -> {
                 handleValueReference(ValueReference(expr.ref), context)
@@ -47,13 +47,13 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 handleValueReference(ValueReference(expr.module, expr.ref), context)
             }
             is Expr.Complement -> {
-                handleUnaryOperation(expr.operand, BuiltInTypes.Bool, AExpr::AComplement)
+                handleUnaryOperation(expr.operand, CompleteType(BuiltInTypes.Bool), AExpr::AComplement)
             }
             is Expr.Negation -> {
-                handleUnaryOperation(expr.operand, BuiltInTypes.Int, AExpr::ANegation)
+                handleUnaryOperation(expr.operand, CompleteType(BuiltInTypes.Int), AExpr::ANegation)
             }
             is Expr.Positation -> {
-                handleUnaryOperation(expr.operand, BuiltInTypes.Int, AExpr::APositation)
+                handleUnaryOperation(expr.operand, CompleteType(BuiltInTypes.Int), AExpr::APositation)
             }
             is Expr.Disjunction -> {
                 handleBinaryBoolOperation(expr.leftDisjunct, expr.rightDisjunct, { left, right -> AExpr.ADisjunction(left, right) })
@@ -117,19 +117,20 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                     }
                 }
 
-                val targetFunctionType: PartialType.FunctionType? = when (callTargetAnalysis.partialType) {
+                val targetFunctionPartialType = callTargetAnalysis.completeType?.partialType
+                val targetFunctionType: PartialType.FunctionType? = when (targetFunctionPartialType) {
                     null -> null
                     is PartialType.FunctionType -> {
                         // report an error about incorrect number of arguments
-                        if (callTargetAnalysis.partialType.argumentTypes.size != expr.arguments.size) {
+                        if (targetFunctionPartialType.argumentTypes.size != expr.arguments.size) {
                             errors.add(SemanticError.ArgumentCountMismatch(context,
-                                    callTargetAnalysis.partialType.argumentTypes.size, expr.arguments.size))
+                                    targetFunctionPartialType.argumentTypes.size, expr.arguments.size))
                         }
-                        callTargetAnalysis.partialType
+                        targetFunctionPartialType
                     }
                     is PartialType.SimpleType -> {
                         // report an error that the target is of a non-invokable type
-                        errors.add(SemanticError.NotInvokable(context, callTargetAnalysis.partialType))
+                        errors.add(SemanticError.NotInvokable(context, targetFunctionPartialType))
                         null
                     }
                 }
@@ -137,13 +138,15 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 // then, handle the arguments
                 val args: List<AExpr?> = expr.arguments.mapIndexed { i, arg ->
                     val argAnalysis = analyzeExpr(arg)
+
+                    val argPartialType = argAnalysis.completeType?.partialType
                     // check whether the argument type for this index matches
                     if (targetFunctionType != null && i < targetFunctionType.argumentTypes.size &&
-                            argAnalysis.partialType != null &&
-                            argAnalysis.partialType != targetFunctionType.argumentTypes[i]) {
+                            argPartialType != null &&
+                            argPartialType != targetFunctionType.argumentTypes[i]) {
                         errors.add(SemanticError.TypeMismatch(context,
                                 targetFunctionType.argumentTypes[i],
-                                argAnalysis.partialType))
+                                argPartialType))
                     }
 
                     when (argAnalysis) {
@@ -158,14 +161,16 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
 
                 if (errors.isEmpty()) {
-                    ExprVerificationResult.Success(targetFunctionType?.returnType,
+                    // ToDo the return type here is probably wrong...
+                    ExprVerificationResult.Success(CompleteType.fromPartialType(targetFunctionType?.returnType),
                             if (callTargetExpr != null && args.all { it != null } && targetFunctionType != null)
                                 AExpr.ACall(callTargetExpr, args.requireNoNulls(), targetFunctionType.returnType)
                             else
                                 null
                     )
                 } else {
-                    ExprVerificationResult.Failure(targetFunctionType?.returnType, errors)
+                    // ToDo ...and here too...
+                    ExprVerificationResult.Failure(CompleteType.fromPartialType(targetFunctionType?.returnType), errors)
                 }
             }
             is Expr.MethodCall -> {
@@ -197,7 +202,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         null
                     }
                 }
-                val receiverType: PartialType? = receiverAnalysisResult.partialType
+                val receiverType: PartialType? = receiverAnalysisResult.completeType?.partialType
 
                 // The algorithm of method resolution is as follows:
                 //   1. Check the current scope. If a value with the name of the method was found:
@@ -262,7 +267,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         // both a local and receiver's module values have been found.
                         // In this case, whoever matches - wins!
                         // In case both or neither matches, the local wins.
-                        val argTypes = listOf(receiverType) + expr.arguments.map { analyzeExpr(it).partialType }
+                        val argTypes = listOf(receiverType) + expr.arguments.map { analyzeExpr(it).completeType }
                         val currentMatches = currentModuleMethodReferenceType?.partialType is PartialType.FunctionType &&
                                 compareListsIgnoringNulls((currentModuleMethodReferenceType.partialType as PartialType.FunctionType).argumentTypes, argTypes)
                         val receiversMatches = receiverModuleMethodReferenceType?.partialType is PartialType.FunctionType &&
@@ -304,13 +309,15 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 // now, do the remaining arguments
                 val argExprs: List<AExpr?> = expr.arguments.mapIndexed { i, arg ->
                     val argAnalysis = analyzeExpr(arg)
+
+                    val argPartialType = argAnalysis.completeType?.partialType
                     // check whether the argument type for this index matches
                     if (methodType != null && i + 1 < methodType.argumentTypes.size &&
-                            argAnalysis.partialType != null &&
-                            argAnalysis.partialType != methodType.argumentTypes[i + 1]) {
+                            argPartialType != null &&
+                            argPartialType != methodType.argumentTypes[i + 1]) {
                         errors.add(SemanticError.TypeMismatch(context,
                                 methodType.argumentTypes[i + 1],
-                                argAnalysis.partialType))
+                                argPartialType))
                     }
 
                     when (argAnalysis) {
@@ -325,7 +332,8 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
 
                 if (errors.isEmpty()) {
-                    ExprVerificationResult.Success(methodType?.returnType,
+                    // ToDo this return type is almost certainly wrong
+                    ExprVerificationResult.Success(CompleteType.fromPartialType(methodType?.returnType),
                             if (methodModule != null && receiverAExpr != null && argExprs.all { it != null } && methodType != null)
                                 AExpr.ACall(
                                         AExpr.AValueReference(methodModule, expr.methodName, methodType),
@@ -335,7 +343,8 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                                 null
                     )
                 } else {
-                    ExprVerificationResult.Failure(methodType?.returnType, errors)
+                    // ToDo ...and this one too...
+                    ExprVerificationResult.Failure(CompleteType.fromPartialType(methodType?.returnType), errors)
                 }
             }
         }
@@ -355,27 +364,27 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             is Pass03SymbolTable.LookupResult.CyclicReference ->
                 ExprVerificationResult.Failure(SemanticError.CyclicDefinition(context, lookupResult.cycle))
             is Pass03SymbolTable.LookupResult.TempRefFound -> {
-                val qualifiedType = lookupResult.partialType
+                val qualifiedType = lookupResult.completeType
                 val referenceExpr = if (qualifiedType == null)
                     null
                 else if (lookupResult.isFuncArg)
-                    AExpr.AFuncArgReference(ref.variable(), lookupResult.index, qualifiedType)
+                    AExpr.AFuncArgReference(ref.variable(), lookupResult.index, qualifiedType.partialType)
                 else
-                    AExpr.ATemporaryVarReference(ref.variable(), lookupResult.index, qualifiedType)
+                    AExpr.ATemporaryVarReference(ref.variable(), lookupResult.index, qualifiedType.partialType)
                 ExprVerificationResult.Success(qualifiedType, referenceExpr)
             }
             is Pass03SymbolTable.LookupResult.ValueRefFound -> {
-                val partialType = lookupResult.completeType?.partialType
-                ExprVerificationResult.Success(partialType, if (partialType == null)
+                val completeType = lookupResult.completeType
+                ExprVerificationResult.Success(completeType, if (completeType == null)
                     null
                 else
-                    AExpr.AValueReference(lookupResult.module, ref.variable(), partialType)
+                    AExpr.AValueReference(lookupResult.module, ref.variable(), completeType.partialType)
                 )
             }
         }
     }
 
-    private fun handleUnaryOperation(operand: Expr, expectedType: PartialType, cons: (AExpr) -> AExpr):
+    private fun handleUnaryOperation(operand: Expr, expectedType: CompleteType, cons: (AExpr) -> AExpr):
             ExprVerificationResult {
         val errors = mutableListOf<SemanticError>()
         val operandAnalysisResult = analyzeExpr(operand)
@@ -388,9 +397,9 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 operandAnalysisResult.aExpr
             }
         }
-        val operandType = operandAnalysisResult.partialType
+        val operandType = operandAnalysisResult.completeType
         if (operandType != null && operandType != expectedType) {
-            errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), expectedType, operandType))
+            errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), expectedType.partialType, operandType.partialType))
         }
         return if (errors.isEmpty())
             ExprVerificationResult.Success(expectedType, if (operandAast == null) null else
@@ -401,26 +410,26 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
 
     private fun handleBinaryBoolOperation(leftExpr: Expr, rightExpr: Expr, cons: (AExpr, AExpr) -> AExpr):
             ExprVerificationResult {
-        return handleHomogeneousBinaryOperatorReturningBool(leftExpr, rightExpr, cons, BuiltInTypes.Bool)
+        return handleHomogeneousBinaryOperatorReturningBool(leftExpr, rightExpr, cons, CompleteType(BuiltInTypes.Bool))
     }
 
     private fun handleOrderingOperation(leftExpr: Expr, rightExpr: Expr, cons: (AExpr, AExpr) -> AExpr):
             ExprVerificationResult {
-        return handleHomogeneousBinaryOperatorReturningBool(leftExpr, rightExpr, cons, BuiltInTypes.Int)
+        return handleHomogeneousBinaryOperatorReturningBool(leftExpr, rightExpr, cons, CompleteType(BuiltInTypes.Int))
     }
 
     private fun handleHomogeneousBinaryOperatorReturningBool(leftExpr: Expr, rightExpr: Expr, cons: (AExpr, AExpr) -> AExpr,
-            expectedType: PartialType): ExprVerificationResult {
-        return handleHomogeneousBinaryOperation(leftExpr, rightExpr, cons, expectedType, BuiltInTypes.Bool)
+            expectedType: CompleteType): ExprVerificationResult {
+        return handleHomogeneousBinaryOperation(leftExpr, rightExpr, cons, expectedType, CompleteType(BuiltInTypes.Bool))
     }
 
     private fun handleArithmeticOperation(leftExpr: Expr, rightExpr: Expr, cons: (AExpr, AExpr) -> AExpr):
             ExprVerificationResult {
-        return handleHomogeneousBinaryOperation(leftExpr, rightExpr, cons, BuiltInTypes.Int, BuiltInTypes.Int)
+        return handleHomogeneousBinaryOperation(leftExpr, rightExpr, cons, CompleteType(BuiltInTypes.Int), CompleteType(BuiltInTypes.Int))
     }
 
     private fun handleHomogeneousBinaryOperation(leftExpr: Expr, rightExpr: Expr, cons: (AExpr, AExpr) -> AExpr,
-            expectedType: PartialType, returnType: PartialType): ExprVerificationResult {
+            expectedType: CompleteType, returnType: CompleteType): ExprVerificationResult {
         val errors = mutableListOf<SemanticError>()
 
         val leftOperandAnalysisResult = analyzeExpr(leftExpr)
@@ -435,10 +444,10 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 leftOperandAnalysisResult.aExpr
             }
         }
-        val leftOperandType = leftOperandAnalysisResult.partialType
+        val leftOperandType = leftOperandAnalysisResult.completeType
         if (leftOperandType != null && leftOperandType != expectedType) {
-            errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), expectedType,
-                    leftOperandType))
+            errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), expectedType.partialType,
+                    leftOperandType.partialType))
         }
 
         val rightOperandAast: AExpr? = when (rightOperandAnalysisResult) {
@@ -450,10 +459,10 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 rightOperandAnalysisResult.aExpr
             }
         }
-        val rightOperandType = rightOperandAnalysisResult.partialType
+        val rightOperandType = rightOperandAnalysisResult.completeType
         if (rightOperandType != null && rightOperandType != expectedType) {
-            errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), expectedType,
-                    rightOperandType))
+            errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName), expectedType.partialType,
+                    rightOperandType.partialType))
         }
 
         return if (errors.isEmpty()) {
@@ -492,17 +501,17 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
             }
         }
 
-        val leftOperandType = leftOperandAnalysisResult.partialType
-        val rightOperandType = rightOperandAnalysisResult.partialType
+        val leftOperandType = leftOperandAnalysisResult.completeType
+        val rightOperandType = rightOperandAnalysisResult.completeType
         if (leftOperandType != null && rightOperandType != null &&
                 leftOperandType != rightOperandType) {
             errors.add(SemanticError.TypeMismatch(ErrorContext.ValueDefinition(valName),
-                    leftOperandType, rightOperandType))
+                    leftOperandType.partialType, rightOperandType.partialType))
         }
 
         return if (errors.isEmpty()) {
-            ExprVerificationResult.Success(BuiltInTypes.Bool, if (leftOperandAast != null && rightOperandAast != null) {
-                if (leftOperandType == BuiltInTypes.String)
+            ExprVerificationResult.Success(CompleteType(BuiltInTypes.Bool), if (leftOperandAast != null && rightOperandAast != null) {
+                if (leftOperandType?.partialType == BuiltInTypes.String)
                     consIfString(leftOperandAast, rightOperandAast)
                 else
                     consIfPrimitive(leftOperandAast, rightOperandAast)
@@ -510,7 +519,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 null
             })
         } else {
-            ExprVerificationResult.Failure(BuiltInTypes.Bool, errors)
+            ExprVerificationResult.Failure(CompleteType(BuiltInTypes.Bool), errors)
         }
     }
 
@@ -529,7 +538,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 leftOperandAnalysisResult.aExpr
             }
         }
-        val leftOperandType = leftOperandAnalysisResult.partialType
+        val leftOperandType = leftOperandAnalysisResult.completeType
 
         val rightOperandAast: AExpr? = when (rightOperandAnalysisResult) {
             is ExprVerificationResult.Failure -> {
@@ -540,23 +549,23 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 rightOperandAnalysisResult.aExpr
             }
         }
-        val rightOperandType = rightOperandAnalysisResult.partialType
+        val rightOperandType = rightOperandAnalysisResult.completeType
 
         val errorContext = ErrorContext.ValueDefinition(valName)
-        val exprIsStringConcatenation = leftOperandType == BuiltInTypes.String && rightOperandType != BuiltInTypes.Int ||
-                rightOperandType == BuiltInTypes.String && leftOperandType != BuiltInTypes.Int
-        val exprType = if (exprIsStringConcatenation) BuiltInTypes.String else BuiltInTypes.Int
+        val exprIsStringConcatenation = leftOperandType?.partialType == BuiltInTypes.String && rightOperandType?.partialType != BuiltInTypes.Int ||
+                rightOperandType?.partialType == BuiltInTypes.String && leftOperandType?.partialType != BuiltInTypes.Int
+        val exprType = CompleteType(if (exprIsStringConcatenation) BuiltInTypes.String else BuiltInTypes.Int)
 
         if (leftOperandType != null && leftOperandType != exprType) {
-            errors.add(SemanticError.TypeMismatch(errorContext, exprType, leftOperandType))
+            errors.add(SemanticError.TypeMismatch(errorContext, exprType.partialType, leftOperandType.partialType))
         }
         if (rightOperandType != null && rightOperandType != exprType) {
-            errors.add(SemanticError.TypeMismatch(errorContext, exprType, rightOperandType))
+            errors.add(SemanticError.TypeMismatch(errorContext, exprType.partialType, rightOperandType.partialType))
         }
 
         return if (errors.isEmpty()) {
             ExprVerificationResult.Success(exprType, if (leftOperandAast != null && rightOperandAast != null) {
-                if (leftOperandType == BuiltInTypes.String)
+                if (leftOperandType == CompleteType(BuiltInTypes.String))
                     AExpr.AStringConcatenation(leftOperandAast, rightOperandAast)
                 else
                     AExpr.AAddition(leftOperandAast, rightOperandAast)
@@ -584,7 +593,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 conditionAnalysisResult.aExpr
             }
         }
-        val conditionType = conditionAnalysisResult.partialType
+        val conditionType = conditionAnalysisResult.completeType
 
         val thenAast: AExpr? = when (thenAnalysisResult) {
             is ExprVerificationResult.Failure -> {
@@ -595,7 +604,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 thenAnalysisResult.aExpr
             }
         }
-        val thenType = thenAnalysisResult.partialType
+        val thenType = thenAnalysisResult.completeType
 
         val elseAast: AExpr? = when (elseAnalysisResult) {
             is ExprVerificationResult.Failure -> {
@@ -606,16 +615,16 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 elseAnalysisResult.aExpr
             }
         }
-        val elseType = elseAnalysisResult.partialType
+        val elseType = elseAnalysisResult.completeType
 
         val errorContext = ErrorContext.ValueDefinition(valName)
-        if (conditionType != null && conditionType != BuiltInTypes.Bool) {
+        if (conditionType != null && conditionType.partialType != BuiltInTypes.Bool) {
             errors.add(SemanticError.TypeMismatch(errorContext,
-                    BuiltInTypes.Bool, conditionType))
+                    BuiltInTypes.Bool, conditionType.partialType))
         }
         if (thenType != null && elseType != null && thenType != elseType) {
             errors.add(SemanticError.TypeMismatch(errorContext,
-                    thenType, elseType))
+                    thenType.partialType, elseType.partialType))
         }
         val returnType = thenType ?: elseType
 
@@ -662,7 +671,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 is ADef.AValueDef.ASimpleValueDef -> aValueDeclaration.type
                 else -> null
             }
-            if (!symbolTable.addToLatestScope(module, id, qualifiedType?.partialType)) {
+            if (!symbolTable.addToLatestScope(module, id, qualifiedType)) {
                 errors.add(SemanticError.DuplicateDefinition(id, ErrorContext.ValueDefinition(valName)))
             }
         }
@@ -677,12 +686,12 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
         symbolTable.popLatestScope(module)
 
         return if (errors.isEmpty()) {
-            ExprVerificationResult.Success(result.partialType, if (aExpr == null)
+            ExprVerificationResult.Success(result.completeType, if (aExpr == null)
                 null
             else
                 AExpr.ALet(declarations, aExpr))
         } else {
-            ExprVerificationResult.Failure(result.partialType, errors)
+            ExprVerificationResult.Failure(result.completeType, errors)
         }
     }
 }

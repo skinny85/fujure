@@ -78,8 +78,8 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         modules[module]!!.pushNewScope(isFuncArgScope)
     }
 
-    fun addToLatestScope(module: Module, id: String, partialType: PartialType?): Boolean {
-        return modules[module]!!.addToLatestScope(id, partialType)
+    fun addToLatestScope(module: Module, id: String, completeType: CompleteType?): Boolean {
+        return modules[module]!!.addToLatestScope(id, completeType)
     }
 
     fun popLatestScope(module: Module) {
@@ -92,7 +92,7 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         data class SelfReference(val name: String) : LookupResult()
         data class CyclicReference(val cycle: List<ValueCoordinates>) : LookupResult()
         data class ValueRefFound(val completeType: CompleteType?, val module: Module) : LookupResult()
-        data class TempRefFound(val partialType: PartialType?, val index: Int, val isFuncArg: Boolean) : LookupResult()
+        data class TempRefFound(val completeType: CompleteType?, val index: Int, val isFuncArg: Boolean) : LookupResult()
     }
 }
 
@@ -124,8 +124,8 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
         scopes.add(0, Scope(isFuncArgScope))
     }
 
-    fun addToLatestScope(id: String, partialType: PartialType?): Boolean {
-        return scopes[0].add(id, partialType)
+    fun addToLatestScope(id: String, completeType: CompleteType?): Boolean {
+        return scopes[0].add(id, completeType)
     }
 
     fun popLatestScope() {
@@ -139,7 +139,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
             val result = scope.find(id)
             when (result) {
                 is ScopeFindResult.Found -> {
-                    return Pass03SymbolTable.LookupResult.TempRefFound(result.partialType,
+                    return Pass03SymbolTable.LookupResult.TempRefFound(result.completeType,
                             result.index, result.isFuncArg)
                 }
             }
@@ -186,13 +186,13 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
     }
 
     private class Scope(private val isFuncArgScope: Boolean) {
-        private val values = linkedMapOf<String, PartialType?>()
+        private val values = linkedMapOf<String, CompleteType?>()
 
-        fun add(id: String, partialType: PartialType?): Boolean {
+        fun add(id: String, completeType: CompleteType?): Boolean {
             return if (values.containsKey(id)) {
                 false
             } else {
-                values[id] = partialType
+                values[id] = completeType
                 true
             }
         }
@@ -210,7 +210,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
     }
 
     private sealed class ScopeFindResult {
-        data class Found(val partialType: PartialType?, val index: Int, val isFuncArg: Boolean) : ScopeFindResult()
+        data class Found(val completeType: CompleteType?, val index: Int, val isFuncArg: Boolean) : ScopeFindResult()
         object Missing : ScopeFindResult()
     }
 
@@ -248,9 +248,8 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
 
             private fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String,
                     chain: List<ValueCoordinates>?) {
-                val declaredType = valResolution.resolve(symbolTable, module, valName, chain)
                 // simple value definitions cannot declare type variables
-                this.resolvedType = CompleteType.fromPartialType(declaredType)
+                this.resolvedType = valResolution.resolve(symbolTable, module, valName, chain)
                 this.resolved = true
             }
         }
@@ -273,10 +272,11 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
         }
 
         fun resolve(symbolTable: Pass03SymbolTable, module: Module, valName: String, chain: List<ValueCoordinates>?):
-                PartialType? {
+                CompleteType? {
             return when (this) {
                 is NoInfoProvided -> null
-                is FromDeclaredType -> symbolTable.findType(this.declaredType)
+                // a declared type cannot have type variables in Fujure
+                is FromDeclaredType -> CompleteType.fromPartialType(symbolTable.findType(this.declaredType))
                 is FromInitializer -> {
                     // first, check if we don't have a cycle already
                     if (chain != null && chain.size > 1) {
@@ -292,11 +292,11 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
                             val semanticErrors = exprAnalysisResult.errors
                             val cyclicError = semanticErrors.find { it is SemanticError.CyclicDefinition }
                             if (cyclicError == null)
-                                exprAnalysisResult.partialType
+                                exprAnalysisResult.completeType
                             else
                                 throw CyclicReferenceException((cyclicError as SemanticError.CyclicDefinition).cycle)
                         }
-                        is ExprVerificationResult.Success -> exprAnalysisResult.partialType
+                        is ExprVerificationResult.Success -> exprAnalysisResult.completeType
                     }
                 }
             }
