@@ -117,10 +117,12 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                     }
                 }
 
-                val targetFunctionPartialType = callTargetAnalysis.completeType?.partialType
-                val targetFunctionType: PartialType.FunctionType? = when (targetFunctionPartialType) {
+                val targetFunctionCompleteType = callTargetAnalysis.completeType
+//                targetFunctionCompleteType.variables
+                val targetFunctionPartialType = targetFunctionCompleteType?.partialType
+                val targetFunctionType: PartialType.Func? = when (targetFunctionPartialType) {
                     null -> null
-                    is PartialType.FunctionType -> {
+                    is PartialType.Func -> {
                         // report an error about incorrect number of arguments
                         if (targetFunctionPartialType.argumentTypes.size != expr.arguments.size) {
                             errors.add(SemanticError.ArgumentCountMismatch(context,
@@ -128,7 +130,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         }
                         targetFunctionPartialType
                     }
-                    is PartialType.SimpleType -> {
+                    is PartialType.NonFunc -> {
                         // report an error that the target is of a non-invokable type
                         errors.add(SemanticError.NotInvokable(context, targetFunctionPartialType))
                         null
@@ -136,18 +138,8 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
 
                 // then, handle the arguments
-                val args: List<AExpr?> = expr.arguments.mapIndexed { i, arg ->
+                val args: List<AExpr?> = expr.arguments.map { arg ->
                     val argAnalysis = analyzeExpr(arg)
-
-                    val argPartialType = argAnalysis.completeType?.partialType
-                    // check whether the argument type for this index matches
-                    if (targetFunctionType != null && i < targetFunctionType.argumentTypes.size &&
-                            argPartialType != null &&
-                            argPartialType != targetFunctionType.argumentTypes[i]) {
-                        errors.add(SemanticError.TypeMismatch(context,
-                                targetFunctionType.argumentTypes[i],
-                                argPartialType))
-                    }
 
                     when (argAnalysis) {
                         is ExprVerificationResult.Failure -> {
@@ -157,6 +149,20 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         is ExprVerificationResult.Success -> {
                             argAnalysis.aExpr
                         }
+                    }
+                }
+
+                // check the argument types against the function's type signature,
+                // including doing substitutions of the variables
+                args.forEachIndexed { i, arg ->
+                    val argPartialType = arg?.type
+                    // check whether the argument type for this index matches
+                    if (targetFunctionType != null && i < targetFunctionType.argumentTypes.size &&
+                            argPartialType != null &&
+                            argPartialType != targetFunctionType.argumentTypes[i]) {
+                        errors.add(SemanticError.TypeMismatch(context,
+                                targetFunctionType.argumentTypes[i],
+                                argPartialType))
                     }
                 }
 
@@ -227,7 +233,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
                 // Look up 2.
                 val receiverModule: Module? = when (receiverType) {
-                    is PartialType.SimpleType -> Module(receiverType.packageName, receiverType.typeName)
+                    is PartialType.NonFunc -> Module(receiverType.packageName, receiverType.typeName)
                     null -> null
                     else -> null // ToDo do we need to report some error when the receiver is a function...?
                 }
@@ -268,10 +274,10 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         // In this case, whoever matches - wins!
                         // In case both or neither matches, the local wins.
                         val argTypes = listOf(receiverType) + expr.arguments.map { analyzeExpr(it).completeType }
-                        val currentMatches = currentModuleMethodReferenceType?.partialType is PartialType.FunctionType &&
-                                compareListsIgnoringNulls((currentModuleMethodReferenceType.partialType as PartialType.FunctionType).argumentTypes, argTypes)
-                        val receiversMatches = receiverModuleMethodReferenceType?.partialType is PartialType.FunctionType &&
-                                compareListsIgnoringNulls((receiverModuleMethodReferenceType.partialType as PartialType.FunctionType).argumentTypes, argTypes)
+                        val currentMatches = currentModuleMethodReferenceType?.partialType is PartialType.Func &&
+                                compareListsIgnoringNulls((currentModuleMethodReferenceType.partialType as PartialType.Func).argumentTypes, argTypes)
+                        val receiversMatches = receiverModuleMethodReferenceType?.partialType is PartialType.Func &&
+                                compareListsIgnoringNulls((receiverModuleMethodReferenceType.partialType as PartialType.Func).argumentTypes, argTypes)
                         if (!currentMatches && receiversMatches) {
                             Pair(receiverModule, receiverModuleMethodReferenceType)
                         } else {
@@ -281,9 +287,9 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
 
                 val methodReferencePartialType = methodReferenceType?.partialType
-                val methodType: PartialType.FunctionType? = when (methodReferencePartialType) {
+                val methodType: PartialType.Func? = when (methodReferencePartialType) {
                     null -> null
-                    is PartialType.FunctionType -> {
+                    is PartialType.Func -> {
                         // report an error about incorrect number of arguments
                         if (methodReferencePartialType.argumentTypes.size != expr.arguments.size + 1) {
                             errors.add(SemanticError.ArgumentCountMismatch(context,
@@ -291,7 +297,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         }
                         methodReferencePartialType
                     }
-                    is PartialType.SimpleType -> {
+                    is PartialType.NonFunc -> {
                         // report an error that the target is of a non-invokable type
                         errors.add(SemanticError.NotInvokable(context, methodReferencePartialType))
                         null

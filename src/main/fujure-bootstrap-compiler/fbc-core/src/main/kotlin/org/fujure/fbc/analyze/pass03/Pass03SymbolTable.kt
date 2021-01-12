@@ -29,7 +29,7 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
             val returnType = findType(typeReference.returnType)
             val argumentTypes = typeReference.argumentTypes.map { findType(it) }
             if (returnType != null && argumentTypes.all { it != null }) {
-                PartialType.FunctionType(returnType, argumentTypes.requireNoNulls())
+                PartialType.Func(returnType, argumentTypes.requireNoNulls())
             } else {
                 null
             }

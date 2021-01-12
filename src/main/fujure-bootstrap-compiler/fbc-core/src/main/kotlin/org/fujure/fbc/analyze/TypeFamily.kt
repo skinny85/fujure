@@ -9,7 +9,7 @@ data class TypeFamily(val packageName: String, val typeName: String, val typePar
 
     fun toPartialType(genericTypes: List<PartialType> = emptyList()): PartialType? {
         return if (this.typeParameters == genericTypes.size)
-            PartialType.SimpleType(this, genericTypes)
+            PartialType.NonFunc(this, genericTypes)
         else
             null
     }

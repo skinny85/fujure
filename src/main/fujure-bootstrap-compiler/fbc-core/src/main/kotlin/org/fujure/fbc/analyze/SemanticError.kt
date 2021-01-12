@@ -52,7 +52,7 @@ sealed class SemanticError {
                             val actual: PartialType) :
             SemanticError()
 
-    data class NotInvokable(val context: ErrorContext, val found: PartialType.SimpleType) :
+    data class NotInvokable(val context: ErrorContext, val found: PartialType.NonFunc) :
             SemanticError()
 
     data class ArgumentCountMismatch(val context: ErrorContext, val expected: Int, val actual: Int) :

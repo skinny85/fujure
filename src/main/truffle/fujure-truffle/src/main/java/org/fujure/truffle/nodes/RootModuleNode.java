@@ -85,10 +85,10 @@ public final class RootModuleNode extends RootNode {
     }
 
     private Object defaultValueFor(PartialType type) {
-        if (type instanceof PartialType.SimpleType) {
-            PartialType.SimpleType simpleType = (PartialType.SimpleType) type;
-            if ("fujure".equals(simpleType.getPackageName())) {
-                switch (simpleType.getTypeName()) {
+        if (type instanceof PartialType.NonFunc) {
+            PartialType.NonFunc nonFuncType = (PartialType.NonFunc) type;
+            if ("fujure".equals(nonFuncType.getPackageName())) {
+                switch (nonFuncType.getTypeName()) {
                     case "Int": return 0;
                     case "Char": return 0;
                     case "Bool": return false;

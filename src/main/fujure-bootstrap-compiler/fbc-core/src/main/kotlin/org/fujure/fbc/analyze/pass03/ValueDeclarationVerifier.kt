@@ -143,7 +143,7 @@ class ValueDeclarationVerifier(private val symbolTable: Pass03SymbolTable,
                 val qualifiedArgumentTypes = typeReference.argumentTypes.map { partialType(it, errors, context) }
                 val qualifiedReturnType = partialType(typeReference.returnType, errors, context)
                 if (qualifiedReturnType != null && qualifiedArgumentTypes.all { it != null }) {
-                    PartialType.FunctionType(qualifiedReturnType, qualifiedArgumentTypes.requireNoNulls())
+                    PartialType.Func(qualifiedReturnType, qualifiedArgumentTypes.requireNoNulls())
                 } else {
                     null
                 }

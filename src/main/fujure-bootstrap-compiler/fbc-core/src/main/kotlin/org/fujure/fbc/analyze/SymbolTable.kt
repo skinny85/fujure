@@ -38,9 +38,9 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols> = emptyMap()) 
                 Module("fujure", "Int") to mapOf(
                         "minInt" to CompleteType(BuiltInTypes.Int),
                         "maxInt" to CompleteType(BuiltInTypes.Int),
-                        "abs" to CompleteType(PartialType.FunctionType(BuiltInTypes.Int, listOf(BuiltInTypes.Int))),
-                        "min" to CompleteType(PartialType.FunctionType(BuiltInTypes.Int, listOf(BuiltInTypes.Int, BuiltInTypes.Int))),
-                        "max" to CompleteType(PartialType.FunctionType(BuiltInTypes.Int, listOf(BuiltInTypes.Int, BuiltInTypes.Int)))
+                        "abs" to CompleteType(PartialType.Func(BuiltInTypes.Int, listOf(BuiltInTypes.Int))),
+                        "min" to CompleteType(PartialType.Func(BuiltInTypes.Int, listOf(BuiltInTypes.Int, BuiltInTypes.Int))),
+                        "max" to CompleteType(PartialType.Func(BuiltInTypes.Int, listOf(BuiltInTypes.Int, BuiltInTypes.Int)))
                 ),
                 Module("fujure", "Unit") to mapOf(
                 ),
@@ -51,8 +51,8 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols> = emptyMap()) 
                 Module("fujure", "String") to mapOf(
                 ),
                 Module("fujure.io.std", "IO") to mapOf(
-                        "putStrLn" to CompleteType(PartialType.FunctionType(io(BuiltInTypes.Unit), listOf(BuiltInTypes.String))),
-                        "chain" to CompleteType(PartialType.FunctionType(io(BuiltInTypes.Unit), listOf(io(BuiltInTypes.Unit), io(BuiltInTypes.Unit))))
+                        "putStrLn" to CompleteType(PartialType.Func(io(BuiltInTypes.Unit), listOf(BuiltInTypes.String))),
+                        "chain" to CompleteType(PartialType.Func(io(BuiltInTypes.Unit), listOf(io(BuiltInTypes.Unit), io(BuiltInTypes.Unit))))
                 )
         )
     }
