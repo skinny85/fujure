@@ -20,22 +20,30 @@ data class CompleteType(val variables: TypeVariables, val partialType: PartialTy
 sealed class PartialType {
     abstract fun inStringForm(): String
 
-    data class NonFunc internal constructor(private val typeFamily: TypeFamily, private val genericTypes: List<PartialType> = emptyList()) : PartialType() {
-        override fun inStringForm(): String {
-            val typeFamilyPart = this.typeFamily.inStringForm()
+    sealed class NonFunc : PartialType() {
+        data class KnownType internal constructor(private val typeFamily: TypeFamily, private val genericTypes: List<PartialType> = emptyList()) : NonFunc() {
+            override fun inStringForm(): String {
+                val typeFamilyPart = this.typeFamily.inStringForm()
 
-            val genericPart = if (genericTypes.isEmpty())
-                ""
-            else
-                "<" + genericTypes.joinToString(", ") { it.inStringForm() } + ">"
+                val genericPart = if (genericTypes.isEmpty())
+                    ""
+                else
+                    "<" + genericTypes.joinToString(", ") { it.inStringForm() } + ">"
 
-            return typeFamilyPart + genericPart
+                return typeFamilyPart + genericPart
+            }
+
+            val packageName = this.typeFamily.packageName
+            val typeName = this.typeFamily.typeName
+
+            override fun toString(): String = inStringForm()
         }
 
-        val packageName = this.typeFamily.packageName
-        val typeName = this.typeFamily.typeName
-
-        override fun toString(): String = inStringForm()
+        data class TypeVariable(val name: String) : NonFunc() {
+            override fun inStringForm(): String {
+                return name
+            }
+        }
     }
 
     data class Func(val returnType: PartialType, val argumentTypes: List<PartialType>) : PartialType() {
@@ -55,12 +63,12 @@ sealed class PartialType {
 }
 
 object BuiltInTypes {
-    val Int = PartialType.NonFunc(BuiltInTypeFamilies.Int)
-    val Unit = PartialType.NonFunc(BuiltInTypeFamilies.Unit)
-    val Bool = PartialType.NonFunc(BuiltInTypeFamilies.Bool)
-    val Char = PartialType.NonFunc(BuiltInTypeFamilies.Char)
-    val String = PartialType.NonFunc(BuiltInTypeFamilies.String)
+    val Int = PartialType.NonFunc.KnownType(BuiltInTypeFamilies.Int)
+    val Unit = PartialType.NonFunc.KnownType(BuiltInTypeFamilies.Unit)
+    val Bool = PartialType.NonFunc.KnownType(BuiltInTypeFamilies.Bool)
+    val Char = PartialType.NonFunc.KnownType(BuiltInTypeFamilies.Char)
+    val String = PartialType.NonFunc.KnownType(BuiltInTypeFamilies.String)
     fun io(partialType: PartialType): PartialType {
-        return PartialType.NonFunc(BuiltInTypeFamilies.IO, listOf(partialType))
+        return PartialType.NonFunc.KnownType(BuiltInTypeFamilies.IO, listOf(partialType))
     }
 }

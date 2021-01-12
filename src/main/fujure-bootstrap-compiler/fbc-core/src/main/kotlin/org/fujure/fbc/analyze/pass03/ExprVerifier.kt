@@ -118,7 +118,6 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
 
                 val targetFunctionCompleteType = callTargetAnalysis.completeType
-//                targetFunctionCompleteType.variables
                 val targetFunctionPartialType = targetFunctionCompleteType?.partialType
                 val targetFunctionType: PartialType.Func? = when (targetFunctionPartialType) {
                     null -> null
@@ -233,8 +232,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
                 // Look up 2.
                 val receiverModule: Module? = when (receiverType) {
-                    is PartialType.NonFunc -> Module(receiverType.packageName, receiverType.typeName)
-                    null -> null
+                    is PartialType.NonFunc.KnownType -> Module(receiverType.packageName, receiverType.typeName)
                     else -> null // ToDo do we need to report some error when the receiver is a function...?
                 }
                 val (receiverModuleMethodReferenceType: CompleteType?, foundInReceiverModule) =
