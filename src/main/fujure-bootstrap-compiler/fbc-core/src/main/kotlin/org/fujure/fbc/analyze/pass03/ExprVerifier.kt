@@ -7,6 +7,7 @@ import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.CompleteType
 import org.fujure.fbc.analyze.PartialType
 import org.fujure.fbc.analyze.SemanticError
+import org.fujure.fbc.analyze.TypeResolveResult
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.Module
@@ -137,39 +138,44 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 }
 
                 // then, handle the arguments
-                val args: List<AExpr?> = expr.arguments.map { arg ->
+                // ToDo get rid of this crap if favor of AExpr having a CompleteType instead
+                val argExprsWithTypes: List<Pair<AExpr?, CompleteType?>> = expr.arguments.map { arg ->
                     val argAnalysis = analyzeExpr(arg)
 
                     when (argAnalysis) {
                         is ExprVerificationResult.Failure -> {
                             errors.addAll(argAnalysis.errors)
-                            null
+                            Pair(null, argAnalysis.completeType)
                         }
                         is ExprVerificationResult.Success -> {
-                            argAnalysis.aExpr
+                            Pair(argAnalysis.aExpr, argAnalysis.completeType)
                         }
                     }
                 }
 
                 // check the argument types against the function's type signature,
                 // including doing substitutions of the variables
-                args.forEachIndexed { i, arg ->
-                    val argPartialType = arg?.type
-                    // check whether the argument type for this index matches
-                    if (targetFunctionType != null && i < targetFunctionType.argumentTypes.size &&
-                            argPartialType != null &&
-                            argPartialType != targetFunctionType.argumentTypes[i]) {
-                        errors.add(SemanticError.TypeMismatch(context,
-                                targetFunctionType.argumentTypes[i],
-                                argPartialType))
+                val argTypes = argExprsWithTypes.map { it.second }
+                val argumentsResolve = targetFunctionCompleteType?.resolve(argTypes)
+                val returnType: PartialType? = when (argumentsResolve) {
+                    is TypeResolveResult.Failure -> {
+                        for (reason in argumentsResolve.reasons) {
+                            errors.add(SemanticError.TypeMismatch(context,
+                                reason.declaredType, reason.providedType))
+                        }
+                        null
                     }
+                    is TypeResolveResult.Success -> {
+                        argumentsResolve.returnType
+                    }
+                    null -> null
                 }
 
                 if (errors.isEmpty()) {
-                    // ToDo the return type here is probably wrong...
-                    ExprVerificationResult.Success(CompleteType.fromPartialType(targetFunctionType?.returnType),
-                            if (callTargetExpr != null && args.all { it != null } && targetFunctionType != null)
-                                AExpr.ACall(callTargetExpr, args.requireNoNulls(), targetFunctionType.returnType)
+                    val args = argExprsWithTypes.map { it.first }
+                    ExprVerificationResult.Success(CompleteType.fromPartialType(returnType),
+                            if (callTargetExpr != null && args.all { it != null } && returnType != null)
+                                AExpr.ACall(callTargetExpr, args.requireNoNulls(), returnType)
                             else
                                 null
                     )

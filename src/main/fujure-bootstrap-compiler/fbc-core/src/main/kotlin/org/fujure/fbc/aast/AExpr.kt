@@ -5,6 +5,7 @@ import org.fujure.fbc.analyze.PartialType
 import org.fujure.fbc.ast.Module
 
 sealed class AExpr {
+    // ToDo change this to CompleteType
     abstract val type: PartialType
 
     // A reference to a value defined in a module

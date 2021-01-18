@@ -1,11 +1,46 @@
 package org.fujure.fbc.analyze
 
-data class TypeVariables(private val variables: List<String> = emptyList()) {
-    constructor(firstVariable: String, vararg remainingVariables: String): this(listOf(firstVariable, *remainingVariables))
+data class TypeVariables(private val variables: Int = 0)
+
+data class UnificationError(val declaredType: PartialType, val providedType: PartialType)
+
+sealed class TypeResolveResult {
+    data class Success(val returnType: PartialType) : TypeResolveResult()
+    data class Failure(val reasons: List<UnificationError>) : TypeResolveResult()
 }
 
 data class CompleteType(val variables: TypeVariables, val partialType: PartialType) {
     constructor(partialType: PartialType): this(TypeVariables(), partialType)
+
+    fun resolve(providedTypes: List<CompleteType?>): TypeResolveResult {
+        return when (this.partialType) {
+            is PartialType.NonFunc -> {
+                // if this type is not a function, just return success,
+                // and let the semantic analysis handle reporting the NotInvokable error
+                TypeResolveResult.Success(this.partialType)
+            }
+            is PartialType.Func -> {
+                val errors = mutableListOf<UnificationError>()
+                for (i in 0 until this.partialType.argumentTypes.size) {
+                    val providedCompleteType = if (i < providedTypes.size) providedTypes[i] else null
+                    if (providedCompleteType == null) {
+                        continue
+                    }
+                    val providedType = providedCompleteType.partialType
+                    val declaredType = this.partialType.argumentTypes[i]
+                    if (!declaredType.unify(providedType)) {
+                        errors.add(UnificationError(declaredType, providedType))
+                    }
+                }
+
+                if (errors.isEmpty()) {
+                    TypeResolveResult.Success(this.partialType.returnType)
+                } else {
+                    TypeResolveResult.Failure(errors)
+                }
+            }
+        }
+    }
 
     companion object {
         fun fromPartialType(partialType: PartialType?): CompleteType? {
@@ -19,6 +54,10 @@ data class CompleteType(val variables: TypeVariables, val partialType: PartialTy
 
 sealed class PartialType {
     abstract fun inStringForm(): String
+    fun unify(providedType: PartialType): Boolean {
+        // ToDO this needs to be much more sophisticated to handle variables :)
+        return this == providedType
+    }
 
     sealed class NonFunc : PartialType() {
         data class KnownType internal constructor(private val typeFamily: TypeFamily, private val genericTypes: List<PartialType> = emptyList()) : NonFunc() {
