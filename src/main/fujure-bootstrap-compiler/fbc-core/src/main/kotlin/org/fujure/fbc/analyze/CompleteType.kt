@@ -28,8 +28,19 @@ data class CompleteType(val variables: TypeVariables, val partialType: PartialTy
                     }
                     val providedType = providedCompleteType.partialType
                     val declaredType = this.partialType.argumentTypes[i]
-                    if (!declaredType.unify(providedType)) {
-                        errors.add(UnificationError(declaredType, providedType))
+                    val unificationResults = declaredType.unify(providedType)
+                    for (unificationResult in unificationResults) {
+                        when (unificationResult) {
+                            is UnificationResult.TypesMismatch -> {
+                                errors.add(UnificationError(
+                                        unificationResult.declaredType, unificationResult.providedType))
+                            }
+                            is UnificationResult.FamilyMismatch -> {
+                                errors.add(UnificationError(
+                                        PartialType.NonFunc.KnownType(unificationResult.declaredFamily),
+                                        PartialType.NonFunc.KnownType(unificationResult.providedFamily)))
+                            }
+                        }
                     }
                 }
 
@@ -52,15 +63,37 @@ data class CompleteType(val variables: TypeVariables, val partialType: PartialTy
     }
 }
 
+sealed class UnificationResult {
+    data class TypesMismatch(val declaredType: PartialType, val providedType: PartialType) : UnificationResult()
+    data class FamilyMismatch(val declaredFamily: TypeFamily, val providedFamily: TypeFamily) : UnificationResult()
+}
+
 sealed class PartialType {
     abstract fun inStringForm(): String
-    fun unify(providedType: PartialType): Boolean {
-        // ToDO this needs to be much more sophisticated to handle variables :)
-        return this == providedType
-    }
+    abstract fun unify(providedType: PartialType): List<UnificationResult>
 
     sealed class NonFunc : PartialType() {
         data class KnownType internal constructor(private val typeFamily: TypeFamily, private val genericTypes: List<PartialType> = emptyList()) : NonFunc() {
+            override fun unify(providedType: PartialType): List<UnificationResult> {
+                return when (providedType) {
+                    is KnownType -> {
+                        if (this.typeFamily != providedType.typeFamily) {
+                            // if the families don't match, don't bother with the argument types
+                            listOf(UnificationResult.FamilyMismatch(this.typeFamily, providedType.typeFamily))
+                        } else {
+                            val results = mutableListOf<UnificationResult>()
+                            for (i in 0.until(this.genericTypes.size)) {
+                                if (providedType.genericTypes.size < i) {
+                                    results.addAll(this.genericTypes[i].unify(providedType.genericTypes[i]))
+                                }
+                            }
+                            results
+                        }
+                    }
+                    else -> listOf(UnificationResult.TypesMismatch(this, providedType))
+                }
+            }
+
             override fun inStringForm(): String {
                 val typeFamilyPart = this.typeFamily.inStringForm()
 
@@ -78,14 +111,34 @@ sealed class PartialType {
             override fun toString(): String = inStringForm()
         }
 
-        data class TypeVariable(val name: String) : NonFunc() {
+        data class TypeVariable(val index: Int) : NonFunc() {
+            override fun unify(providedType: PartialType): List<UnificationResult> {
+                TODO()
+            }
+
             override fun inStringForm(): String {
-                return name
+                return "$index"
             }
         }
     }
 
     data class Func(val returnType: PartialType, val argumentTypes: List<PartialType>) : PartialType() {
+        override fun unify(providedType: PartialType): List<UnificationResult> {
+            return when (providedType) {
+                is Func -> {
+                    val results = mutableListOf<UnificationResult>()
+                    for (i in 0.until(this.argumentTypes.size)) {
+                        if (providedType.argumentTypes.size < i) {
+                            results.addAll(this.argumentTypes[i].unify(providedType.argumentTypes[i]))
+                        }
+                    }
+                    results.addAll(this.returnType.unify(providedType.returnType))
+                    results
+                }
+                else -> listOf(UnificationResult.TypesMismatch(this, providedType))
+            }
+        }
+
         override fun inStringForm(): String {
             val argumentsPart = if (argumentTypes.isEmpty())
                 "()"
