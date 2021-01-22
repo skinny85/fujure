@@ -35,11 +35,6 @@ data class CompleteType(val variables: TypeVariables, val partialType: PartialTy
                                 errors.add(UnificationError(
                                         unificationResult.declaredType, unificationResult.providedType))
                             }
-                            is UnificationResult.FamilyMismatch -> {
-                                errors.add(UnificationError(
-                                        PartialType.NonFunc.KnownType(unificationResult.declaredFamily),
-                                        PartialType.NonFunc.KnownType(unificationResult.providedFamily)))
-                            }
                         }
                     }
                 }
@@ -65,7 +60,6 @@ data class CompleteType(val variables: TypeVariables, val partialType: PartialTy
 
 sealed class UnificationResult {
     data class TypesMismatch(val declaredType: PartialType, val providedType: PartialType) : UnificationResult()
-    data class FamilyMismatch(val declaredFamily: TypeFamily, val providedFamily: TypeFamily) : UnificationResult()
 }
 
 sealed class PartialType {
@@ -79,7 +73,7 @@ sealed class PartialType {
                     is KnownType -> {
                         if (this.typeFamily != providedType.typeFamily) {
                             // if the families don't match, don't bother with the argument types
-                            listOf(UnificationResult.FamilyMismatch(this.typeFamily, providedType.typeFamily))
+                            listOf(UnificationResult.TypesMismatch(this, providedType))
                         } else {
                             val results = mutableListOf<UnificationResult>()
                             for (i in 0.until(this.genericTypes.size)) {
