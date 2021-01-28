@@ -127,5 +127,21 @@ class FunctionsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                 assertAnalysisSucceeded()
             }
         }
+
+        it.describes("for a call to a polymorphic function") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def main(): IO<Unit> = IO.chain(
+                                IO.putStrLn("Hello, how are you?"),
+                                IO.putStrLn("I'm great, thanks for asking!"))
+                        """)
+                        .analyzed()
+            }
+
+            it.should("infer the type variables") {
+                assertAnalysisSucceeded()
+            }
+        }
     }
 }}

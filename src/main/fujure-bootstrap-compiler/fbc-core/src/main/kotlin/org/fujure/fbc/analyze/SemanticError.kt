@@ -49,8 +49,12 @@ sealed class SemanticError {
             val typeFamily: TypeFamily) : SemanticError()
 
     data class TypeMismatch(val context: ErrorContext, val expected: PartialType,
-                            val actual: PartialType) :
-            SemanticError()
+            val actual: PartialType) : SemanticError()
+
+    data class ConflictingTypeVariables(val context: ErrorContext, val variableIndex: Int,
+            val type1: PartialType, val type2: PartialType) : SemanticError()
+
+    data class UnresolvedTypeVariable(val context: ErrorContext, val variable: Int) : SemanticError()
 
     data class NotInvokable(val context: ErrorContext, val found: PartialType.NonFunc) :
             SemanticError()
@@ -116,6 +120,12 @@ sealed class SemanticError {
             "Error ${this.context.humanReadableMsg()}: " +
                     "Type mismatch, expected: ${this.expected.inStringForm()} " +
                     "but got: ${this.actual.inStringForm()}"
+        is ConflictingTypeVariables ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "Conflicting types provided: ${this.type1.inStringForm()} and ${this.type2.inStringForm()}"
+        is UnresolvedTypeVariable ->
+            "Error ${this.context.humanReadableMsg()}: " +
+                    "Type variable ${this.variable} could not be inferred from the function arguments"
         is NotInvokable ->
             "Error ${this.context.humanReadableMsg()}: " +
                     "Expression of type '${this.found.inStringForm()}' cannot be invoked as a function"

@@ -3,10 +3,11 @@ package org.fujure.fbc.analyze.pass03
 import org.fujure.fbc.aast.ADef
 import org.fujure.fbc.aast.AExpr
 import org.fujure.fbc.analyze.BuiltInTypes
-import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.CompleteType
+import org.fujure.fbc.analyze.ErrorContext
 import org.fujure.fbc.analyze.PartialType
 import org.fujure.fbc.analyze.SemanticError
+import org.fujure.fbc.analyze.TypeResolutionProblem
 import org.fujure.fbc.analyze.TypeResolveResult
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
@@ -160,8 +161,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 val returnType: PartialType? = when (argumentsResolve) {
                     is TypeResolveResult.Failure -> {
                         for (reason in argumentsResolve.reasons) {
-                            errors.add(SemanticError.TypeMismatch(context,
-                                reason.declaredType, reason.providedType))
+                            errors.add(reason.reasonToSemanticError(context))
                         }
                         null
                     }
@@ -180,8 +180,7 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                                 null
                     )
                 } else {
-                    // ToDo ...and here too...
-                    ExprVerificationResult.Failure(CompleteType.fromPartialType(targetFunctionType?.returnType), errors)
+                    ExprVerificationResult.Failure(CompleteType.fromPartialType(returnType), errors)
                 }
             }
             is Expr.MethodCall -> {
@@ -213,7 +212,25 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         null
                     }
                 }
-                val receiverType: PartialType? = receiverAnalysisResult.completeType?.partialType
+                val receiverCompleteType: CompleteType? = receiverAnalysisResult.completeType
+                val receiverType: PartialType? = receiverCompleteType?.partialType
+
+                // analyze the method argument expressions
+                // ToDo get rid of this crap in favor of AExpr having a complete type
+                val argExprsWithTypes: List<Pair<AExpr?, CompleteType?>> = expr.arguments.map { arg ->
+                    val argAnalysis = analyzeExpr(arg)
+
+                    when (argAnalysis) {
+                        is ExprVerificationResult.Failure -> {
+                            errors.addAll(argAnalysis.errors)
+                            Pair(null, argAnalysis.completeType)
+                        }
+                        is ExprVerificationResult.Success -> {
+                            Pair(argAnalysis.aExpr, argAnalysis.completeType)
+                        }
+                    }
+                }
+                val argTypes = listOf(receiverCompleteType) + argExprsWithTypes.map { it.second }
 
                 // The algorithm of method resolution is as follows:
                 //   1. Check the current scope. If a value with the name of the method was found:
@@ -277,11 +294,10 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         // both a local and receiver's module values have been found.
                         // In this case, whoever matches - wins!
                         // In case both or neither matches, the local wins.
-                        val argTypes = listOf(receiverType) + expr.arguments.map { analyzeExpr(it).completeType }
                         val currentMatches = currentModuleMethodReferenceType?.partialType is PartialType.Func &&
-                                compareListsIgnoringNulls((currentModuleMethodReferenceType.partialType as PartialType.Func).argumentTypes, argTypes)
+                                currentModuleMethodReferenceType.resolve(argTypes) is TypeResolveResult.Success
                         val receiversMatches = receiverModuleMethodReferenceType?.partialType is PartialType.Func &&
-                                compareListsIgnoringNulls((receiverModuleMethodReferenceType.partialType as PartialType.Func).argumentTypes, argTypes)
+                                receiverModuleMethodReferenceType.resolve(argTypes) is TypeResolveResult.Success
                         if (!currentMatches && receiversMatches) {
                             Pair(receiverModule, receiverModuleMethodReferenceType)
                         } else {
@@ -307,54 +323,35 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                         null
                     }
                 }
-                // type-check the method arguments
-                // first, check the receiver (= first argument)
-                if (methodType != null && methodType.argumentTypes.isNotEmpty() &&
-                            receiverType != null &&
-                            receiverType != methodType.argumentTypes[0]) {
-                    errors.add(SemanticError.TypeMismatch(context,
-                            methodType.argumentTypes[0],
-                            receiverType))
-                }
-                // now, do the remaining arguments
-                val argExprs: List<AExpr?> = expr.arguments.mapIndexed { i, arg ->
-                    val argAnalysis = analyzeExpr(arg)
 
-                    val argPartialType = argAnalysis.completeType?.partialType
-                    // check whether the argument type for this index matches
-                    if (methodType != null && i + 1 < methodType.argumentTypes.size &&
-                            argPartialType != null &&
-                            argPartialType != methodType.argumentTypes[i + 1]) {
-                        errors.add(SemanticError.TypeMismatch(context,
-                                methodType.argumentTypes[i + 1],
-                                argPartialType))
-                    }
-
-                    when (argAnalysis) {
-                        is ExprVerificationResult.Failure -> {
-                            errors.addAll(argAnalysis.errors)
-                            null
+                val argumentsResolve = methodReferenceType?.resolve(argTypes)
+                val returnType: PartialType? = when (argumentsResolve) {
+                    is TypeResolveResult.Failure -> {
+                        for (reason in argumentsResolve.reasons) {
+                            errors.add(reason.reasonToSemanticError(context))
                         }
-                        is ExprVerificationResult.Success -> {
-                            argAnalysis.aExpr
-                        }
+                        null
                     }
+                    is TypeResolveResult.Success -> {
+                        argumentsResolve.returnType
+                    }
+                    null -> null
                 }
 
                 if (errors.isEmpty()) {
-                    // ToDo this return type is almost certainly wrong
-                    ExprVerificationResult.Success(CompleteType.fromPartialType(methodType?.returnType),
-                            if (methodModule != null && receiverAExpr != null && argExprs.all { it != null } && methodType != null)
+                    val methodArgExprs = argExprsWithTypes.map { it.first }
+                    ExprVerificationResult.Success(CompleteType.fromPartialType(returnType),
+                            if (methodModule != null && receiverAExpr != null && methodArgExprs.all { it != null } &&
+                                    methodType != null && returnType != null)
                                 AExpr.ACall(
                                         AExpr.AValueReference(methodModule, expr.methodName, methodType),
-                                        listOf(receiverAExpr) + argExprs.requireNoNulls(),
-                                        methodType.returnType)
+                                        listOf(receiverAExpr) + methodArgExprs.requireNoNulls(),
+                                        returnType)
                             else
                                 null
                     )
                 } else {
-                    // ToDo ...and this one too...
-                    ExprVerificationResult.Failure(CompleteType.fromPartialType(methodType?.returnType), errors)
+                    ExprVerificationResult.Failure(CompleteType.fromPartialType(returnType), errors)
                 }
             }
         }
@@ -706,16 +703,16 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
     }
 }
 
-fun <T> compareListsIgnoringNulls(list1: List<T?>, list2: List<T?>): Boolean {
-    if (list1.size != list2.size)
-        return false
-
-    for (i in 0 until list1.size) {
-        val item1 = list1[i]
-        val item2 = list2[i]
-        if (item1 != null && item2 != null && item1 != item2)
-            return false
+private fun TypeResolutionProblem.reasonToSemanticError(context: ErrorContext): SemanticError = when (this) {
+    is TypeResolutionProblem.TypeMismatch -> {
+        SemanticError.TypeMismatch(context,
+                this.declaredType, this.providedType)
     }
-
-    return true
+    is TypeResolutionProblem.ConflictingVariables -> {
+        SemanticError.ConflictingTypeVariables(context,
+                this.variableIndex, this.type1, this.type2)
+    }
+    is TypeResolutionProblem.UnresolvedVariable -> {
+        SemanticError.UnresolvedTypeVariable(context, this.variable)
+    }
 }
