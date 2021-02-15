@@ -2,21 +2,21 @@ package org.fujure.fbc.parse.bnfc
 
 import org.fujure.fbc.ast.TypeName
 import org.fujure.fbc.ast.TypeReference
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FragmSimpleType
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncFuncTypeFragm
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncType
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeDesc
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncTypeFragm
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericSimpleType
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeDescValue
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.GenericTypeValue
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.MultiArgFuncType
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleFuncTypeFragm
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleType
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeDesc
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleTypeFragm
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeDesc
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ZeroArgFuncType
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FragmSimpleType
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FuncFuncTypeFragm
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FuncType
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FuncTypeDesc
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FuncTypeFragm
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.GenericSimpleType
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.GenericTypeDescValue
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.GenericTypeValue
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.MultiArgFuncType
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.SimpleFuncTypeFragm
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.SimpleType
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.SimpleTypeDesc
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.SimpleTypeFragm
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.TypeDesc
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ZeroArgFuncType
 
 internal object TypeDesc2TypeReference :
         TypeDesc.Visitor<TypeReference, Unit>,

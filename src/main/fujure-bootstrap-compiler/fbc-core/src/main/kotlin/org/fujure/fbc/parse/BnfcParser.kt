@@ -5,16 +5,16 @@ import org.antlr.v4.runtime.CommonTokenStream
 import org.fujure.fbc.ProblematicFile
 import org.fujure.fbc.parse.bnfc.FbcAntlrErrorListener
 import org.fujure.fbc.parse.bnfc.ParseTree2AstVisitor
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureLexer
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.FujureParser
+import org.fujure.fbc.parser.bnfc.antlr.fujure.fujureLexer
+import org.fujure.fbc.parser.bnfc.antlr.fujure.fujureParser
 import org.fujure.fbc.read.OpenedFile
 import org.funktionale.either.Disjunction
 
 object BnfcParser : Parser {
     override fun parse(openedFile: OpenedFile):
             Disjunction<ProblematicFile.ParsingFileIssue, ParsedFile> {
-        val lexer = FujureLexer(ANTLRInputStream(openedFile.stream))
-        val parser = FujureParser(CommonTokenStream(lexer))
+        val lexer = fujureLexer(ANTLRInputStream(openedFile.stream))
+        val parser = fujureParser(CommonTokenStream(lexer))
         parser.removeErrorListeners() // remove the default console listener
         val errorListener = FbcAntlrErrorListener()
         parser.addErrorListener(errorListener)

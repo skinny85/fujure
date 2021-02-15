@@ -1,10 +1,10 @@
 package org.fujure.fbc.parse.bnfc
 
 import org.fujure.fbc.ast.Import
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Imports
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FileContents
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FileInDefaultPackage
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FileInNamedPackage
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Imports
 
 internal object ImportsExtractor : FileContents.Visitor<List<Import>, Unit> {
     override fun visit(fileContents: FileInNamedPackage, arg: Unit): List<Import> {

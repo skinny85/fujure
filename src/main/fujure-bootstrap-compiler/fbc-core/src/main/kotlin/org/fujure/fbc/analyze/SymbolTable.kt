@@ -53,10 +53,10 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols> = emptyMap()) 
                 Module("fujure.io.std", "IO") to mapOf(
                         "putStrLn" to CompleteType(PartialType.Func(io(BuiltInTypes.Unit), listOf(BuiltInTypes.String))),
                         "chain" to CompleteType(PartialType.Func(io(PartialType.NonFunc.TypeVariable(2)),
-                                    listOf(
-                                            io(PartialType.NonFunc.TypeVariable(1)),
-                                            io(PartialType.NonFunc.TypeVariable(2)))
-                            ))
+                                listOf(
+                                        io(PartialType.NonFunc.TypeVariable(1)),
+                                        io(PartialType.NonFunc.TypeVariable(2)))
+                        ))
                 )
         )
     }

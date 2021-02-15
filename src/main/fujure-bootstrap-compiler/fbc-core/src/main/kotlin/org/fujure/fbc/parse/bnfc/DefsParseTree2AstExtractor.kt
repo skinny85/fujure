@@ -2,28 +2,28 @@ package org.fujure.fbc.parse.bnfc
 
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Def.ValueDef
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypedFuncDecl
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.AbstractTypelessFuncDecl
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Binding
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.BindingParam
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypedFuncDecl
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.ConcreteTypelessFuncDecl
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.DefListDefs
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Defs
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileContents
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInDefaultPackage
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FileInNamedPackage
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FullBinding
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FuncDecl
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.FunctionValueDef
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameInitBinding
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.NameTypeBinding
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.OnlyNameBinding
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Param
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.SimpleValueDef
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.TypeDesc
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Def as AbsynDef
-import org.fujure.fbc.parser.bnfc.antlr.Fujure.Absyn.Expr as AbsynExpr
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.AbstractTypedFuncDecl
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.AbstractTypelessFuncDecl
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Binding
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.BindingParam
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ConcreteTypedFuncDecl
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ConcreteTypelessFuncDecl
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.DefListDefs
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Defs
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FileContents
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FileInDefaultPackage
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FileInNamedPackage
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FullBinding
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FuncDecl
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FunctionValueDef
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.NameInitBinding
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.NameTypeBinding
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.OnlyNameBinding
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Param
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.SimpleValueDef
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.TypeDesc
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Def as AbsynDef
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Expr as AbsynExpr
 
 internal object DefsParseTree2AstExtractor :
         FileContents.Visitor<List<Def>, Unit>,
