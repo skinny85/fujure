@@ -487,6 +487,36 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ListStmt foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ListStmt foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String print(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt foo)
+  {
+    pp(foo, 0);
+    trim();
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
+  public static String show(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt foo)
+  {
+    sh(foo);
+    String temp = buf_.toString();
+    buf_.delete(0,buf_.length());
+    return temp;
+  }
   public static String print(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.CallArg foo)
   {
     pp(foo, 0);
@@ -970,6 +1000,15 @@ public class PrettyPrinter
        pp(_letexpr.expr_, 0);
        if (_i_ > 0) render(_R_PAREN);
     }
+    else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr _stmtblockexpr = (org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       render("{");
+       pp(_stmtblockexpr.liststmt_, 0);
+       render("}");
+       if (_i_ > 0) render(_R_PAREN);
+    }
     else     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.OrExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.OrExpr _orexpr = (org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.OrExpr) foo;
@@ -1180,6 +1219,29 @@ public class PrettyPrinter
          render("");
        }
      }  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ListStmt foo, int _i_)
+  {
+     for (java.util.Iterator<org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt> it = foo.iterator(); it.hasNext();)
+     {
+       pp(it.next(), _i_);
+       if (it.hasNext()) {
+         render(";");
+       } else {
+         render("");
+       }
+     }  }
+
+  private static void pp(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt foo, int _i_)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprStmt)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprStmt _exprstmt = (org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprStmt) foo;
+       if (_i_ > 0) render(_L_PAREN);
+       pp(_exprstmt.expr_, 0);
+       if (_i_ > 0) render(_R_PAREN);
+    }
+  }
 
   private static void pp(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.CallArg foo, int _i_)
   {
@@ -1695,6 +1757,16 @@ public class PrettyPrinter
        sh(_letexpr.expr_);
        render(")");
     }
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr _stmtblockexpr = (org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr) foo;
+       render("(");
+       render("StmtBlockExpr");
+       render("[");
+       sh(_stmtblockexpr.liststmt_);
+       render("]");
+       render(")");
+    }
     if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.OrExpr)
     {
        org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.OrExpr _orexpr = (org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.OrExpr) foo;
@@ -1906,6 +1978,28 @@ public class PrettyPrinter
        if (it.hasNext())
          render(",");
      }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ListStmt foo)
+  {
+     for (java.util.Iterator<org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt> it = foo.iterator(); it.hasNext();)
+     {
+       sh(it.next());
+       if (it.hasNext())
+         render(",");
+     }
+  }
+
+  private static void sh(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt foo)
+  {
+    if (foo instanceof org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprStmt)
+    {
+       org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprStmt _exprstmt = (org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprStmt) foo;
+       render("(");
+       render("ExprStmt");
+       sh(_exprstmt.expr_);
+       render(")");
+    }
   }
 
   private static void sh(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.CallArg foo)

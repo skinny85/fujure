@@ -264,6 +264,13 @@ public class VisitSkel
       p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
     }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr p, A arg)
+    { /* Code for StmtBlockExpr goes here */
+      for (org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt x: p.liststmt_) {
+        x.accept(new StmtVisitor<R,A>(), arg);
+      }
+      return null;
+    }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.OrExpr p, A arg)
     { /* Code for OrExpr goes here */
       p.expr_1.accept(new ExprVisitor<R,A>(), arg);
@@ -396,6 +403,14 @@ public class VisitSkel
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.LetDefinition p, A arg)
     { /* Code for LetDefinition goes here */
       p.binding_.accept(new BindingVisitor<R,A>(), arg);
+      return null;
+    }
+  }
+  public class StmtVisitor<R,A> implements org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt.Visitor<R,A>
+  {
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprStmt p, A arg)
+    { /* Code for ExprStmt goes here */
+      p.expr_.accept(new ExprVisitor<R,A>(), arg);
       return null;
     }
   }

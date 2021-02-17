@@ -298,6 +298,26 @@ public interface fujureParserListener extends ParseTreeListener {
 	 */
 	void exitListLetDef(fujureParser.ListLetDefContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link fujureParser#listStmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterListStmt(fujureParser.ListStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link fujureParser#listStmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitListStmt(fujureParser.ListStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link fujureParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmt(fujureParser.StmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link fujureParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmt(fujureParser.StmtContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link fujureParser#expr1}.
 	 * @param ctx the parse tree
 	 */

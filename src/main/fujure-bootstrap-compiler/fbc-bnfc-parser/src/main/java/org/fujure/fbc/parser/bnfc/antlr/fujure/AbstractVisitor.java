@@ -103,6 +103,7 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
     /* Expr */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.IfExpr p, A arg) { return visitDefault(p, arg); }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.LetExpr p, A arg) { return visitDefault(p, arg); }
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr p, A arg) { return visitDefault(p, arg); }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.OrExpr p, A arg) { return visitDefault(p, arg); }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.AndExpr p, A arg) { return visitDefault(p, arg); }
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.EqualityExpr p, A arg) { return visitDefault(p, arg); }
@@ -130,6 +131,11 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
     /* LetDef */
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.LetDefinition p, A arg) { return visitDefault(p, arg); }
     public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.LetDef p, A arg) {
+      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
+    }
+    /* Stmt */
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprStmt p, A arg) { return visitDefault(p, arg); }
+    public R visitDefault(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
     /* CallArg */

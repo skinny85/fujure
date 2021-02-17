@@ -8,6 +8,7 @@ import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.BoolFalseLiteral
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.BoolTrueLiteral
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.CallArg
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.CharLiteral
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ComplexRefExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.DivisionExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.EqualityExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprCallArg
@@ -31,8 +32,8 @@ import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.NegateExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.NotExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.OrExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.PositateExpr
-import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ComplexRefExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.SimpleRefExpr
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StringLiteral
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.SubtractionExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.UnitLiteral
@@ -57,6 +58,10 @@ internal object ExprParseTree2AstVisitor :
 
     override fun visit(letDefinition: LetDefinition, arg: Unit): Def.ValueDef {
         return letDefinition.binding_.accept(DefsParseTree2AstExtractor, arg)
+    }
+
+    override fun visit(stmtBlock: StmtBlockExpr, arg: Unit): Expr {
+        TODO("Not implemented yet")
     }
 
     override fun visit(orExpr: OrExpr, arg: Unit): Expr {

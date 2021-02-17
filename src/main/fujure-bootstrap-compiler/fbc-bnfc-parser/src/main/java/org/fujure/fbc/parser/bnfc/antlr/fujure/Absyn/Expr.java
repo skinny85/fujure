@@ -5,6 +5,7 @@ public abstract class Expr implements java.io.Serializable {
   public interface Visitor <R,A> {
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.IfExpr p, A arg);
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.LetExpr p, A arg);
+    public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr p, A arg);
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.OrExpr p, A arg);
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.AndExpr p, A arg);
     public R visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.EqualityExpr p, A arg);

@@ -22,6 +22,7 @@ public class ComposVisitor<A> implements
   org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.GenericTypeValue.Visitor<org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.GenericTypeValue,A>,
   org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Expr.Visitor<org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Expr,A>,
   org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.LetDef.Visitor<org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.LetDef,A>,
+  org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt.Visitor<org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt,A>,
   org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.CallArg.Visitor<org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.CallArg,A>,
   org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Literal.Visitor<org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Literal,A>
 {
@@ -287,6 +288,15 @@ public class ComposVisitor<A> implements
       org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Expr expr_ = p.expr_.accept(this, arg);
       return new org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.LetExpr(listletdef_, expr_);
     }
+    public org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Expr visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr p, A arg)
+    {
+      org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ListStmt liststmt_ = new org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ListStmt();
+      for (org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt x : p.liststmt_)
+      {
+        liststmt_.add(x.accept(this,arg));
+      }
+      return new org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr(liststmt_);
+    }
     public org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Expr visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.OrExpr p, A arg)
     {
       org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Expr expr_1 = p.expr_1.accept(this, arg);
@@ -423,6 +433,13 @@ public class ComposVisitor<A> implements
     {
       org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Binding binding_ = p.binding_.accept(this, arg);
       return new org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.LetDefinition(binding_);
+    }
+
+    /* Stmt */
+    public org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt visit(org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprStmt p, A arg)
+    {
+      org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Expr expr_ = p.expr_.accept(this, arg);
+      return new org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprStmt(expr_);
     }
 
     /* CallArg */
