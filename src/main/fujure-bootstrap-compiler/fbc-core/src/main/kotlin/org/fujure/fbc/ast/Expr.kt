@@ -41,4 +41,10 @@ sealed class Expr {
 
     data class FunctionCall(val target: Expr, val arguments: List<Expr>) : Expr()
     data class MethodCall(val receiver: Expr, val methodName: String, val arguments: List<Expr>) : Expr()
+
+    data class StatementBlock(val statements: List<Stmt>) : Expr()
+}
+
+sealed class Stmt {
+    data class Expression(val expr: Expr) : Stmt()
 }

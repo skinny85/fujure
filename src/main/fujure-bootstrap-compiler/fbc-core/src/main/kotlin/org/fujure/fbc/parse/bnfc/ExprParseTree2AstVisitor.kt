@@ -2,6 +2,7 @@ package org.fujure.fbc.parse.bnfc
 
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
+import org.fujure.fbc.ast.Stmt
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.AdditionExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.AndExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.BoolFalseLiteral
@@ -12,6 +13,7 @@ import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ComplexRefExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.DivisionExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.EqualityExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprCallArg
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.ExprStmt
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.FuncCallExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.GreaterEqualExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.GreaterExpr
@@ -37,10 +39,12 @@ import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StmtBlockExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.StringLiteral
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.SubtractionExpr
 import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.UnitLiteral
-import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Expr as AbsynExpr
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Expr as BncfExpr
+import org.fujure.fbc.parser.bnfc.antlr.fujure.Absyn.Stmt as BncfStmt
 
 internal object ExprParseTree2AstVisitor :
-        AbsynExpr.Visitor<Expr, Unit>,
+        BncfExpr.Visitor<Expr, Unit>,
+        BncfStmt.Visitor<Stmt, Unit>,
         LetDef.Visitor<Def.ValueDef, Unit>,
         CallArg.Visitor<Expr, Unit>,
         Literal.Visitor<Expr, Unit> {
@@ -61,7 +65,13 @@ internal object ExprParseTree2AstVisitor :
     }
 
     override fun visit(stmtBlock: StmtBlockExpr, arg: Unit): Expr {
-        TODO("Not implemented yet")
+        return Expr.StatementBlock(stmtBlock.liststmt_.map { stmt ->
+            stmt.accept(this, arg)
+        })
+    }
+
+    override fun visit(exprStmt: ExprStmt, arg: Unit): Stmt {
+        return Stmt.Expression(exprStmt.expr_.accept(this, arg))
     }
 
     override fun visit(orExpr: OrExpr, arg: Unit): Expr {

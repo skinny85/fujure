@@ -12,8 +12,10 @@ import org.fujure.fbc.analyze.TypeResolveResult
 import org.fujure.fbc.ast.Def
 import org.fujure.fbc.ast.Expr
 import org.fujure.fbc.ast.Module
+import org.fujure.fbc.ast.Stmt
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
+import org.funktionale.collections.tail
 import org.funktionale.either.Disjunction
 
 class ExprVerifier(private val symbolTable: Pass03SymbolTable,
@@ -353,6 +355,9 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
                 } else {
                     ExprVerificationResult.Failure(CompleteType.fromPartialType(returnType), errors)
                 }
+            }
+            is Expr.StatementBlock -> {
+                this.analyzeExpr(this.block2Exprs(expr.statements))
             }
         }
     }
@@ -700,6 +705,19 @@ class ExprVerifier(private val symbolTable: Pass03SymbolTable,
         } else {
             ExprVerificationResult.Failure(result.completeType, errors)
         }
+    }
+
+    private fun block2Exprs(statements: List<Stmt>): Expr {
+        return if (statements.size == 1) {
+            this.stmt2Expr(statements[0])
+        } else {
+            Expr.MethodCall(this.stmt2Expr(statements[0]), "chain",
+                    listOf(this.block2Exprs(statements.tail())))
+        }
+    }
+
+    private fun stmt2Expr(stmt: Stmt): Expr = when (stmt) {
+        is Stmt.Expression -> stmt.expr
     }
 }
 

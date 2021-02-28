@@ -363,6 +363,28 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
             }
         }
 
+        it.describes("when evaluating code with statement blocks") {
+            it.beginsAll {
+                evalFujure("""
+                    def main(): IO<Unit> = {
+                        IO.putStrLn("Bep");
+                        IO.putStrLn("Bop");
+                    }
+                """)
+            }
+
+            it.should("evaluate without errors") {
+                assertNoException()
+            }
+
+            it.should("return an IO result with all statements chained") {
+                val io = result.asHostObject<IO<*>>()
+                assertThat(io.effects).containsExactly(
+                        Effect.Print("Bep\n"),
+                        Effect.Print("Bop\n"))
+            }
+        }
+
         it.describes("when evaluating syntactically incorrect code") {
             it.beginsAll {
                 evalFujure("1 + 2")
