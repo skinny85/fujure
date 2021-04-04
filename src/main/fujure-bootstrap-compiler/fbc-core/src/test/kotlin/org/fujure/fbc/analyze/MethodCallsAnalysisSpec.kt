@@ -116,6 +116,8 @@ class MethodCallsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             it.beginsAll {
                 AnalysisBuilder
                         .file("""
+                            import fujure.io.std.IO
+
                             def main(): IO<Unit> = IO.putStrLn("Hello, how are you?")
                                 .chain(IO.putStrLn("I'm great, thanks for asking!"))
                         """)

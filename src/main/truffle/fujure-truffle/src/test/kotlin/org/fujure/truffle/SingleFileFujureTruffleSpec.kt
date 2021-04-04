@@ -343,6 +343,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
         it.describes("when evaluating IO methods") {
             it.beginsAll {
                 evalFujure("""
+                    import fujure.io.std.IO
+
                     def main(): IO<Unit> = IO.putStrLn("Tic")
                         .chain(IO.putStrLn("Tac"))
                         .chain(IO.putStrLn("Toe"))
@@ -366,6 +368,8 @@ class SingleFileFujureTruffleSpec : AbstractTruffleSpec() { init {
         it.describes("when evaluating code with statement blocks") {
             it.beginsAll {
                 evalFujure("""
+                    import fujure.io.std.IO
+
                     def main(): IO<Unit> = {
                         IO.putStrLn("Bep");
                         IO.putStrLn("Bop");

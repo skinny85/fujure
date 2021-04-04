@@ -180,8 +180,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
                 "Unit" to Module("fujure", "Unit"),
                 "Bool" to Module("fujure", "Bool"),
                 "Char" to Module("fujure", "Char"),
-                "String" to Module("fujure", "String"),
-                "IO" to Module("fujure.io.std", "IO")
+                "String" to Module("fujure", "String")
         )
     }
 

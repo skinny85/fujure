@@ -6,6 +6,8 @@ class StatementsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             it.beginsAll {
                 AnalysisBuilder
                         .file("""
+                            import fujure.io.std.IO
+
                             def main(): IO<Unit> = {
                                 IO.putStrLn("Hello, world!");
                             }
