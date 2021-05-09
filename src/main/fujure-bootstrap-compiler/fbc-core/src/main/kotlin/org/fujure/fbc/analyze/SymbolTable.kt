@@ -5,8 +5,12 @@ import org.fujure.fbc.ast.Module
 
 class SymbolTable(private val modules: Map<Module, ModuleSymbols> = emptyMap()) {
     fun hasModule(module: Module): Boolean {
-        return BUILT_IN_MODULES.containsKey(module) ||
+        return isBuiltInModule(module) ||
                 modules.containsKey(module)
+    }
+
+    fun isBuiltInModule(module: Module): Boolean {
+        return BUILT_IN_MODULES.containsKey(module)
     }
 
     fun findTypeOfModule(importedModule: Module): TypeFamily? {

@@ -22,6 +22,10 @@ object SymbolsGatheringAnalysis {
             semanticErrors.addAll(fileSymbolsGatheringResult.second)
 
             val module = parsedFile.module()
+            if (symbolTable.isBuiltInModule(module)) {
+                semanticErrors.add(SemanticError.ConflictsWithBuiltInModule(
+                        module.packageName, module.moduleName, parsedFile.inputFile))
+            }
             val previous = modules.putIfAbsent(module, fileSymbolsGatheringResult.first)
             if (previous != null) {
                 semanticErrors.add(SemanticError.DuplicateModule(

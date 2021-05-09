@@ -12,6 +12,9 @@ sealed class SemanticError {
                                val secondOccurance: InputFile) :
             SemanticError()
 
+    data class ConflictsWithBuiltInModule(val packageName: String, val moduleName: String, val inputFile: InputFile) :
+            SemanticError()
+
     data class InvalidName(val name: String) :
             SemanticError()
 
@@ -68,6 +71,11 @@ sealed class SemanticError {
             "Error: module ${prefix}${this.moduleName} is defined twice, in " +
                     "${this.firstOccurence.userProvidedFilePath} and " +
                     this.secondOccurance.userProvidedFilePath
+        }
+        is ConflictsWithBuiltInModule -> {
+            "Error: module '${this.packageName}.${this.moduleName}' defined in file ${this.inputFile.userProvidedFilePath}" +
+                    "conflicts with a built-in module of the same name. " +
+                    "Please change either its package name, its module name, or both"
         }
         is InvalidName ->
             "Invalid name: '${this.name}'. Fujure names cannot contain '$' characters, " +
