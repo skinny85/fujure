@@ -9,6 +9,18 @@ class SymbolTable(private val modules: Map<Module, ModuleSymbols> = emptyMap()) 
                 modules.containsKey(module)
     }
 
+    fun findTypeOfModule(importedModule: Module): TypeFamily? {
+        return when (importedModule) {
+            Module("fujure", "Int") -> BuiltInTypeFamilies.Int
+            Module("fujure", "Unit") -> BuiltInTypeFamilies.Unit
+            Module("fujure", "Bool") -> BuiltInTypeFamilies.Bool
+            Module("fujure", "Char") -> BuiltInTypeFamilies.Char
+            Module("fujure", "String") -> BuiltInTypeFamilies.String
+            Module("fujure.io.std", "IO") -> BuiltInTypeFamilies.IO
+            else -> null
+        }
+    }
+
     fun lookup(targetModule: Module, name: String): CompleteType {
         val builtInModuleSymbols = BUILT_IN_MODULES[targetModule]
         if (builtInModuleSymbols != null) {

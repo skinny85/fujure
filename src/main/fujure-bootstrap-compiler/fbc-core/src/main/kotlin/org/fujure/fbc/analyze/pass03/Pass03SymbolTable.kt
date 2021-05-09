@@ -16,18 +16,18 @@ import org.fujure.fbc.ast.ValueReference
 
 class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         private val symbolTable: SymbolTable) {
-    fun findType(typeReference: TypeReference): PartialType? = when (typeReference) {
+    fun findType(typeReference: TypeReference, module: Module): PartialType? = when (typeReference) {
         is TypeReference.SimpleType -> {
-            val genericTypes = typeReference.genericTypes.map { findType(it) }
-            val typeFamily = findTypeFamily(typeReference.typeName)
+            val genericTypes = typeReference.genericTypes.map { findType(it, module) }
+            val typeFamily = findTypeFamily(typeReference.typeName, module)
             if (typeFamily != null && genericTypes.all { it != null })
                 typeFamily.toPartialType(genericTypes.requireNoNulls())
             else
                 null
         }
         is TypeReference.FunctionType -> {
-            val returnType = findType(typeReference.returnType)
-            val argumentTypes = typeReference.argumentTypes.map { findType(it) }
+            val returnType = findType(typeReference.returnType, module)
+            val argumentTypes = typeReference.argumentTypes.map { findType(it, module) }
             if (returnType != null && argumentTypes.all { it != null }) {
                 PartialType.Func(returnType, argumentTypes.requireNoNulls())
             } else {
@@ -36,14 +36,18 @@ class Pass03SymbolTable(val modules: Map<Module, Pass03ModuleSymbols>,
         }
     }
 
-    fun findTypeFamily(typeName: TypeName): TypeFamily? {
+    fun findTypeFamily(typeName: TypeName, module: Module): TypeFamily? {
+        val importedModule = this.modules[module]?.moduleOfImportedType(typeName)
+        if (importedModule != null) {
+            return this.symbolTable.findTypeOfModule(importedModule)
+        }
+
         return when (typeName.inStringForm()) {
             "Int" -> BuiltInTypeFamilies.Int
             "Unit" -> BuiltInTypeFamilies.Unit
             "Bool" -> BuiltInTypeFamilies.Bool
             "Char" -> BuiltInTypeFamilies.Char
             "String" -> BuiltInTypeFamilies.String
-            "IO" -> BuiltInTypeFamilies.IO
             else -> null
         }
     }
@@ -106,6 +110,10 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
     }
 
     private val scopes = mutableListOf<Scope>()
+
+    fun moduleOfImportedType(typeName: TypeName): Module? {
+        return imports[typeName.inStringForm()]
+    }
 
     fun candidateModule(moduleName: String, currentModule: Module): Module? {
         // if there is an import of this name, return it
@@ -224,7 +232,9 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
                 val argumentTypes = functionValueDef.arguments.map { arg -> arg.declaredType }
                 return if (returnType != null && argumentTypes.all { it != null }) {
                     // ToDo handle type variables from the function definition's AST here
-                    CompleteType.fromPartialType(symbolTable.findType(TypeReference.FunctionType(returnType, argumentTypes.requireNoNulls())))
+                    CompleteType.fromPartialType(symbolTable.findType(
+                            TypeReference.FunctionType(returnType, argumentTypes.requireNoNulls()),
+                            module))
                 } else {
                     null
                 }
@@ -275,7 +285,7 @@ class Pass03ModuleSymbols(val imports: Map<String, Module?>, values: Map<String,
             return when (this) {
                 is NoInfoProvided -> null
                 // a declared type cannot have type variables in Fujure
-                is FromDeclaredType -> CompleteType.fromPartialType(symbolTable.findType(this.declaredType))
+                is FromDeclaredType -> CompleteType.fromPartialType(symbolTable.findType(this.declaredType, module))
                 is FromInitializer -> {
                     // first, check if we don't have a cycle already
                     if (chain != null && chain.size > 1) {

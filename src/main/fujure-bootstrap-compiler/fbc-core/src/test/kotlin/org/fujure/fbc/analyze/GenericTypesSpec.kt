@@ -30,6 +30,8 @@ class GenericTypesSpec : AbstractSemanticAnalysisSpec() { init {
             it.beginsAll {
                 AnalysisBuilder
                         .file("""
+                            import fujure.io.std.IO
+                            
                             def a: IO = 1
                         """)
                         .analyzed()
@@ -71,6 +73,8 @@ class GenericTypesSpec : AbstractSemanticAnalysisSpec() { init {
             it.beginsAll {
                 AnalysisBuilder
                         .file("""
+                            import fujure.io.std.IO
+                            
                             def a: IO<DoesNotExist> = true
                         """)
                         .analyzed()
