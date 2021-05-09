@@ -4,8 +4,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.ast.ValueCoordinates
 import org.fujure.fbc.ast.ValueReference
 
-class LetExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
-    describes("Let expressions in Semantic Analysis") {
+class LetExpressionsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
+    describes("Semantic Analysis of 'let' expressions") {
         it.describes("with a simple, correct one-variable variant without using the new variable") {
             it.beginsAll {
                 AnalysisBuilder

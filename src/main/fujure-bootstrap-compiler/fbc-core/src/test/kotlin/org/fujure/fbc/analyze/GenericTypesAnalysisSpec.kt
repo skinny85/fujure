@@ -4,8 +4,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.ast.TypeName
 import org.fujure.fbc.ast.TypeReference
 
-class GenericTypesSpec : AbstractSemanticAnalysisSpec() { init {
-    describes("Type checker") {
+class GenericTypesAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
+    describes("Type checker of generic types") {
         it.describes("for a value typed with a parameter for a type that doesn't have any") {
             it.beginsAll {
                 AnalysisBuilder

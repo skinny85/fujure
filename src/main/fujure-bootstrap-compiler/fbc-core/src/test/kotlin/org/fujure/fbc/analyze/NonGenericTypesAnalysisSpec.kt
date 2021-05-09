@@ -5,88 +5,9 @@ import org.fujure.fbc.analyze.ErrorContext.ValueDefinition
 import org.fujure.fbc.ast.TypeName
 import org.fujure.fbc.ast.ValueReference
 
-class BaseCasesAnalysisSpec : AbstractSemanticAnalysisSpec() {
+class NonGenericTypesAnalysisSpec : AbstractSemanticAnalysisSpec() {
     init {
-        describes("Base cases Semantic Analysis") {
-            it.describes("called with an empty file") {
-                it.beginsAll {
-                    AnalysisBuilder
-                            .file("""
-                            """)
-                            .analyzed()
-                }
-
-                it.should("not find any errors in the empty file") {
-                    assertAnalysisSucceeded()
-                }
-            }
-
-            it.describes("called with just a package name including a $ character") {
-                it.beginsAll {
-                    AnalysisBuilder
-                            .file("""
-                                package com.
-                                    ${'$'}example
-                            """)
-                            .analyzed()
-                }
-
-                it.should("analyze the file with only the package correctly") {
-                    assertAnalysisSucceeded()
-                }
-            }
-
-            it.describes("called with invalid value names") {
-                it.beginsAll {
-                    AnalysisBuilder
-                            .file("""
-                                def _: Bool = true
-                                def ${'$'}a: Int = 2
-                                def class = 3
-                            """)
-                            .analyzed()
-                }
-
-                it.should("report an InvalidName error for each of them") {
-                    assertThat(file1Errors()).containsExactly(
-                            SemanticError.InvalidName("_"),
-                            SemanticError.InvalidName("\$a"),
-                            SemanticError.InvalidName("class"))
-                }
-            }
-
-            it.describes("called with duplicate simple value definitions") {
-                it.beginsAll {
-                    AnalysisBuilder
-                            .file("""
-                                def a: Bool = true
-                                def a: Int = 2
-                            """)
-                            .analyzed()
-                }
-
-                it.should("report a DuplicateDefinition error") {
-                    assertThat(file1Errors()).containsExactly(
-                            SemanticError.DuplicateDefinition("a"))
-                }
-            }
-
-            it.describes("for a function definition with the same name as a simple value definition in that module") {
-                it.beginsAll {
-                    AnalysisBuilder
-                            .file("""
-                                def a = true
-                                def a(): Int = 2
-                            """)
-                            .analyzed()
-                }
-
-                it.should("report a DuplicateDefinition error") {
-                    assertThat(file1Errors()).containsExactly(
-                            SemanticError.DuplicateDefinition("a"))
-                }
-            }
-
+        describes("Type checker of non-generic types") {
             it.describes("called with a variable declared as Int but initialized as Bool") {
                 it.beginsAll {
                     AnalysisBuilder

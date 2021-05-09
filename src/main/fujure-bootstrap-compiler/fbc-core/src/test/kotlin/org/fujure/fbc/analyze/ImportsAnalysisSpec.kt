@@ -162,7 +162,7 @@ class ImportsAnalysisSpec : AbstractSemanticAnalysisSpec() {
                             .file("""
                                 import fujure.Int
 
-                                def x: Int = 3
+                                def x: Int = Int.maxInt
                             """)
                             .analyzed()
                 }

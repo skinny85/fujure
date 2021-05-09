@@ -2,8 +2,8 @@ package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
 
-class IfExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
-    describes("If expressions in Semantic Analysis") {
+class IfExpressionsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
+    describes("Semantic Analysis of 'if' expressions") {
         it.describes("with a simple correct 'if' statement") {
             it.beginsAll {
                 AnalysisBuilder
@@ -35,7 +35,7 @@ class IfExpressionAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             }
         }
 
-        it.describes("with an 'if' expression that has different types in their 'then' and 'else' branch") {
+        it.describes("with an 'if' expression that has different types in their 'then' and 'else' branches") {
             it.beginsAll {
                 AnalysisBuilder
                         .file("""

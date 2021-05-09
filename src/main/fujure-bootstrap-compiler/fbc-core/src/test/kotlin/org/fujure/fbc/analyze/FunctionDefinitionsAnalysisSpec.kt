@@ -2,11 +2,10 @@ package org.fujure.fbc.analyze
 
 import org.assertj.core.api.Assertions.assertThat
 import org.fujure.fbc.ast.TypeName
-import org.fujure.fbc.ast.TypeReference
 import org.fujure.fbc.ast.ValueReference
 
-class FunctionsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
-    describes("Functions Semantic Analysis") {
+class FunctionDefinitionsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
+    describes("Function definitions Semantic Analysis") {
         it.describes("for a function without a return type or body") {
             it.beginsAll {
                 AnalysisBuilder
@@ -81,6 +80,22 @@ class FunctionsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             }
         }
 
+        it.describes("for a function definition with the same name as a simple value definition in that module") {
+            it.beginsAll {
+                AnalysisBuilder
+                        .file("""
+                            def a = true
+                            def a(): Int = 2
+                        """)
+                        .analyzed()
+            }
+
+            it.should("report a DuplicateDefinition error") {
+                assertThat(file1Errors()).containsExactly(
+                        SemanticError.DuplicateDefinition("a"))
+            }
+        }
+
         it.describes("for a function that references a forward-declared function") {
             it.beginsAll {
                 AnalysisBuilder
@@ -124,24 +139,6 @@ class FunctionsAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
             }
 
             it.should("analyze correctly") {
-                assertAnalysisSucceeded()
-            }
-        }
-
-        it.describes("for a call to a polymorphic function") {
-            it.beginsAll {
-                AnalysisBuilder
-                        .file("""
-                            import fujure.io.std.IO
-
-                            def main(): IO<Unit> = IO.chain(
-                                IO.putStrLn("Hello, how are you?"),
-                                IO.putStrLn("I'm great, thanks for asking!"))
-                        """)
-                        .analyzed()
-            }
-
-            it.should("infer the type variables") {
                 assertAnalysisSucceeded()
             }
         }
