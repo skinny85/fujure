@@ -18,7 +18,7 @@ class ModulesAnalysisSpec : AbstractSemanticAnalysisSpec() { init {
                             import example.Int
                             
                             def b: Bool = Int.a
-                        """.trimIndent())
+                        """)
                         .analyzed()
             }
 
